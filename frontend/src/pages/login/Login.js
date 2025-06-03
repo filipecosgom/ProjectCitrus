@@ -4,6 +4,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
 import "./Login.css";
+import "../../styles/AuthTransition.css"; 
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="login-root d-flex justify-content-center align-items-center">
+    <div className="login-root d-flex justify-content-center align-items-center auth-slide-in">
       <div className="login-container d-flex">
         {/* Branding à esquerda */}
         <div className="login-left d-flex flex-column align-items-center">
