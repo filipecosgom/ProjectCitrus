@@ -77,7 +77,7 @@ public class EmailService {
             message.setContent(messageBody, "text/html");
 
             // Send the email
-            //Transport.send(message);
+            //Transport.send(message); ---TO UNCOMMENT!!!
             LOGGER.info("Sending activation token: {} to: " + recipientEmail, activationToken);
         } catch (MessagingException e) {
             e.printStackTrace();
