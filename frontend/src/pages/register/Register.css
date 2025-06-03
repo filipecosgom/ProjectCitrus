@@ -23,7 +23,7 @@
 
 /* FORMULÁRIO À ESQUERDA */
 .register-left {
-  width: 50%;
+  width: 65%;
   min-width: 320px;
   display: flex;
   flex-direction: column;
@@ -129,7 +129,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-top: 32px;
+  margin-top: 0px;
   gap: 8px;
 }
 
@@ -156,7 +156,7 @@
 
 /* BRANDING À DIREITA */
 .register-right {
-  width: 50%;
+  width: 35%;
   min-width: 240px;
   background: #424359;
   display: flex;

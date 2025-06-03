@@ -14,7 +14,6 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <div className="register-root d-flex justify-content-center align-items-center">
       <div className="register-container d-flex">
         {/* Formulário à esquerda */}
         <div className="register-left">
@@ -127,13 +126,11 @@ export default function Register() {
             alt="CITRUS Logo"
             className="register-logo"
             width={280}
-            style={{ marginTop: 60 }}
           />
           <div className="register-right-title hide-on-tablet-mobile">
             Join the CITRUS community!
           </div>
         </div>
       </div>
-    </div>
   );
 }
