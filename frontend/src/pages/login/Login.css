@@ -1,5 +1,5 @@
 /* LOGIN PAGE STYLES */
-
+/*DESKTOP*/
 /* CONTAINER */
 .login-container {
   min-height: 100vh;
@@ -171,15 +171,24 @@
   line-height: 1;
 }
 
-/* RESPONSIVE TABLET */
+/* Tablet */
 @media (max-width: 1024px) {
   .login-container {
-    flex-direction: column;
-    width: 100vw;
-    max-width: 100vw;
-    height: 100vh !important;
-    min-height: 0 !important;
-  }
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  background-color: var(--blue);
+  flex: 1;
+  display: flex;
+  order: 2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+}
   .login-left {
     width: 100vw;
     max-width: 100vw;
@@ -283,7 +292,6 @@
 .login-forgot-row {
   width: 100%;
   max-width: 400px;
-  margin: 0 auto 0 auto;
   padding-left: 0;
   text-align: left;
 }
