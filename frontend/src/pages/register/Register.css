@@ -15,9 +15,9 @@
 
 /* FORMULÁRIO À ESQUERDA */
 .register-left {
-  width: 65%;
   min-width: 320px;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
@@ -46,12 +46,13 @@
 
 .register-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   margin-bottom: 24px;
 }
 
 .register-fields {
   display: flex;
+  max-width: 100%;
   flex-direction: column;
   gap: 16px;
 }
@@ -130,14 +131,14 @@
 
 /* BRANDING À DIREITA */
 .register-right {
-  width: 35%;
   min-width: 240px;
   background: #424359;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 48px 40px;
   position: relative;
   height: 100%;
 }
@@ -186,7 +187,14 @@
     width: 140px;
   }
   .register-form {
+    max-width: 100%;
+  }
+
+  .register-fields {
+    display: flex;
     max-width: 400px;
+    flex-direction: column;
+    gap: 16px;
   }
   .register-bottom-row,
   .register-already-account,

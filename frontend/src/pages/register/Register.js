@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
@@ -13,9 +13,20 @@ export default function Register() {
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [animationClass, setAnimationClass] = useState("auth-slide-in");
+  const navigate = useNavigate();
+
+  // Handler para animação de saída
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    setAnimationClass("auth-slide-out");
+    setTimeout(() => {
+      navigate("/login");
+    }); // igual à duração da animação
+  };
 
   return (
-    <div className="register-container d-flex auth-slide-in">
+    <div className={`register-container d-flex ${animationClass}`}>
       {/* Formulário à esquerda */}
       <div className="register-left">
         <h1 className="register-title">Welcome to CITRUS</h1>
@@ -116,7 +127,11 @@ export default function Register() {
         <div className="register-bottom-row">
           <div className="register-already-account">
             Already have an account?{" "}
-            <Link className="register-login-link" to="/login">
+            <Link
+              className="register-login-link"
+              to="/login"
+              onClick={handleLoginClick}
+            >
               Log in.
             </Link>
           </div>
@@ -126,7 +141,7 @@ export default function Register() {
         </div>
       </div>
       {/* Branding à direita */}
-      <div className="register-right d-flex flex-column align-items-center">
+      <div className="register-right d-flex flex-grow-1 flex-column align-items-center">
         <img
           src={citrusLogo}
           alt="CITRUS Logo"
