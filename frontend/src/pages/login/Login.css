@@ -1,6 +1,5 @@
 /* LOGIN PAGE STYLES */
 
-
 /* CONTAINER */
 .login-container {
   min-height: 100vh;
@@ -9,7 +8,7 @@
 }
 
 /* BRANDING À ESQUERDA */
-.logo-container {
+.register-logo-container {
   background-color: var(--blue);
   flex: 1;
   display: flex;
@@ -34,7 +33,7 @@
   /* Sizing */
   text-align: center;
   max-width: 280px; /* Matches logo width for visual harmony */
-  font-size: var( --font-size-title);
+  font-size: var(--font-size-title);
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
   text-shadow: var(--shadow-text);
@@ -62,7 +61,7 @@
 }
 
 .login-title {
-  color:var(--blue);
+  color: var(--blue);
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-title);
@@ -185,7 +184,7 @@
     width: 100vw;
     max-width: 100vw;
     min-width: 0;
-    height: auto;      /* <-- ocupa só o necessário */
+    height: auto; /* <-- ocupa só o necessário */
     min-height: 0 !important;
     border-radius: 0;
     box-shadow: none;
@@ -198,8 +197,8 @@
     width: 100vw;
     max-width: 100vw;
     min-width: 0;
-    height: auto !important;      /* <-- ocupa o resto */
-    flex: 1;                      /* <-- ocupa o espaço restante */
+    height: auto !important; /* <-- ocupa o resto */
+    flex: 1; /* <-- ocupa o espaço restante */
     min-height: 0 !important;
     border-radius: 0;
     box-shadow: none;
@@ -240,7 +239,7 @@
   }
   .login-left {
     height: 15vh;
-   /*height: 0 !important;*/
+    /*height: 0 !important;*/
   }
   .login-right {
     width: 100vw;

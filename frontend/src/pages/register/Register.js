@@ -28,7 +28,7 @@ export default function Register() {
   return (
     <div className={`register-container d-flex ${animationClass}`}>
       {/* Formulário à esquerda */}
-      <div className="register-left">
+      <div className="register-form-container">
         <h1 className="register-title">Welcome to CITRUS</h1>
         <div className="register-subtitle">Register Your Account</div>
         <form className="register-form">
@@ -141,14 +141,14 @@ export default function Register() {
         </div>
       </div>
       {/* Branding à direita */}
-      <div className="register-right d-flex flex-grow-1 flex-column align-items-center">
+      <div className="register-logo-container d-flex flex-grow-1 flex-column align-items-center">
         <img
           src={citrusLogo}
           alt="CITRUS Logo"
           className="register-logo"
           width={280}
         />
-        <div className="register-right-title hide-on-tablet-mobile">
+        <div className="register-logo-container-title hide-on-tablet-mobile">
           Join the CITRUS community!
         </div>
       </div>
