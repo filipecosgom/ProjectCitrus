@@ -13,100 +13,96 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="login-container d-flex auth-slide-in">
-      {/* Branding à esquerda */}
-      <div className="login-left d-flex flex-column flex-grow-1 align-items-center">
-        <img
-          src={citrusLogo}
-          alt="CITRUS Logo"
-          className="login-logo"
-          width={280}
-          style={{ marginTop: 60 }}
-        />
-        <div className="login-left-title hide-on-tablet-mobile">
-          Sign in to your account
-        </div>
-      </div>
-      {/* Formulário à direita */}
-      <div className="login-right d-flex flex-column flex-grow-1">
-        <h1 className="login-title">Login</h1>
-        <div className="login-subtitle hide-on-tablet-mobile">
-          Sign-in to your account
-        </div>
-        <form className="login-form">
-          <div className="login-fields">
-            <div className="login-field">
-              <label className="login-label" htmlFor="login-email">
-                E-mail address
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                className="input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
-              />
-            </div>
-            <div className="login-field" style={{ position: "relative" }}>
-              <label className="login-label" htmlFor="login-password">
-                Password
-              </label>
-              <input
-                id="login-password"
-                type={showPassword ? "text" : "password"}
-                className="input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="password-eye-btn"
-                onMouseDown={() => setShowPassword(true)}
-                onMouseUp={() => setShowPassword(false)}
-                onMouseLeave={() => setShowPassword(false)}
-                tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                style={{
-                  position: "absolute",
-                  right: 12,
-                  top: 38,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  outline: "none",
-                }}
-              >
-                {showPassword ? (
-                  // Olho aberto (podes substituir por um SVG ou imagem)
-                  <FaRegEyeSlash />
-                ) : (
-                  // Olho fechado
-                  <FaRegEye />
-                )}
-              </button>
-            </div>
+      <div className="login-container">
+        {/* DIVISÃO DO LOGO */}
+        <div className="logo-container">
+          <img
+            src={citrusLogo}
+            alt="CITRUS Logo"
+            className="login-logo"
+          />
+          <div className="logo-undertitle">
+            Sign in to your CITRUS account
           </div>
-          <button className="main-button" type="submit">
-            Sign in
-          </button>
-        </form>
-        <div className="login-forgot-row">
-          <Link className="login-forgot-link" to="/forgot-password">
-            Forgot your password?
-          </Link>
         </div>
-        <div className="login-register-row">
-          Don’t have an account yet?{" "}
-          <Link className="login-register-link" to="/register">
-            Join CITRUS today.
-          </Link>
+        {/* FORMULÁRIO */}
+        <div className="loginform-container">
+          <h1 className="login-title">Login</h1>
+          <div className="login-subtitle">
+            Sign-in to your account
+          </div>
+          <form className="login-form">
+            <div className="login-fields">
+              <div className="login-field">
+                <label className="login-label" htmlFor="login-email">
+                  E-mail address
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="username"
+                />
+              </div>
+              <div className="login-field" style={{ position: "relative" }}>
+                <label className="login-label" htmlFor="login-password">
+                  Password
+                </label>
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="password-eye-btn"
+                  onMouseDown={() => setShowPassword(true)}
+                  onMouseUp={() => setShowPassword(false)}
+                  onMouseLeave={() => setShowPassword(false)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: 38,
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    outline: "none",
+                  }}
+                >
+                  {showPassword ? (
+                    // Olho aberto (podes substituir por um SVG ou imagem)
+                    <FaRegEyeSlash />
+                  ) : (
+                    // Olho fechado
+                    <FaRegEye />
+                  )}
+                </button>
+              </div>
+            </div>
+            <button className="main-button" type="submit">
+              Sign in
+            </button>
+          </form>
+          <div className="login-forgot-row">
+            <Link className="login-forgot-link" to="/forgot-password">
+              Forgot your password?
+            </Link>
+          </div>
+          <div className="login-register-row">
+            Don’t have an account yet?{" "}
+            <Link className="login-register-link" to="/register">
+              Join CITRUS today.
+            </Link>
+          </div>
+          {/* Dropdown de idioma dentro da coluna do formulário */}
+          <LanguageDropdown language={language} setLanguage={setLanguage} />
         </div>
-        {/* Dropdown de idioma dentro da coluna do formulário */}
-        <LanguageDropdown language={language} setLanguage={setLanguage} />
       </div>
-    </div>
   );
 }

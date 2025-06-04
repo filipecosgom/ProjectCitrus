@@ -11,6 +11,7 @@
   --error: #f72585;
   --blue: #424359;
   --light-red: #B61B23;
+  --background-color: #ffff;
   
   /* Fonts */
   --font-family-main: 'Khula', sans-serif;
@@ -27,7 +28,7 @@
   --font-weight-regular: 400;
 
   /* Shadows */
-  --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-text: 4px 4px 4px rgba(0, 0, 0, 0.25);
   --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-button: 0 2px 6px rgba(0, 0, 0, 0.2);
 
@@ -45,7 +46,7 @@ input{
     border: 2px solid #cbb4b4;
     border-radius: 10px;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(203, 180, 180, 0.15);
+    box-shadow: var(--shadow-text);
     padding: 8px 12px;
     font-size: 16px;
     outline: none;
