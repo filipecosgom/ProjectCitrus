@@ -14,7 +14,7 @@
 }
 
 /* FORMULÁRIO À ESQUERDA */
-.register-left {
+.register-form-container {
   min-width: 320px;
   display: flex;
   flex: 1;
@@ -130,7 +130,7 @@
 }
 
 /* BRANDING À DIREITA */
-.register-right {
+.register-logo-container {
   min-width: 240px;
   background: #424359;
   display: flex;
@@ -149,7 +149,7 @@
   height: auto;
 }
 
-.register-right-title {
+.register-logo-container-title {
   font-family: "Istok Web", sans-serif;
   font-weight: bold;
   font-size: 28px;
@@ -168,8 +168,8 @@
     height: 100vh !important;
     min-height: 0 !important;
   }
-  .register-left,
-  .register-right {
+  .register-form-container,
+  .register-logo-container {
     width: 100vw;
     max-width: 100vw;
     min-width: 0;
@@ -216,11 +216,13 @@
     box-shadow: none;
     border-radius: 0;
   }
-  .register-right {
-    display: none !important;
-    height: 0 !important;
+  .register-logo-container {
+    display: flex;
+    order: 1;
+    /* height: 0 !important; */
   }
-  .register-left {
+  .register-form-container {
+    order: 2;
     width: 100vw;
     min-width: 0;
     padding: 24px 8px 24px 8px;
@@ -254,8 +256,8 @@
     margin-right: 0;
     padding-left: 0;
     padding-right: 0;
-    text-align: right;
-    align-items: flex-end;
+    text-align: left;
+    /*align-items: flex-end;*/
   }
   .register-input {
     width: 100% !important;
