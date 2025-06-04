@@ -13,7 +13,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-      <div className="login-container">
+      <div className="login-container auth-slide-in">
         {/* DIVISÃO DO LOGO */}
         <div className="logo-container">
           <img
