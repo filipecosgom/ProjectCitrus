@@ -1,3 +1,6 @@
+/* Add this to your main CSS file (before :root) */
+@import url('https://fonts.googleapis.com/css2?family=Catamaran&family=Khula&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap');
 /* src/styles/global.css */
 :root {
   /* Colors */
@@ -10,9 +13,25 @@
   --light-red: #B61B23;
   
   /* Fonts */
-  --font-main: 'Khula', sans-serif;
-  --font-secondary: 'Catamaran', sans-serif;
-  --font-heading: 'iStok Web', sans-serif;
+  --font-family-main: 'Khula', sans-serif;
+  --font-family-secondary: 'Catamaran', sans-serif;
+  --font-family-heading: 'Istok Web', sans-serif;
+
+  /* Font Size */
+  --font-size-title: 2rem;
+  --font-size-subtitle: 1.5rem;
+  --font-size-main: 1rem;
+
+   /* Font Weights */
+  --font-weight-bold: 700;
+  --font-weight-regular: 400;
+
+  /* Shadows */
+  --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-button: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+
   
   /* Spacing */
   --gap-sm: 8px;

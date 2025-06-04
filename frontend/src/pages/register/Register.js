@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
-import "./Register.css"; // You can copy Login.css and adjust as needed
+import "./Register.css";
 
 export default function Register() {
   const [email, setEmail] = useState("");
