@@ -1,12 +1,4 @@
 /* ROOT */
-.register-root {
-  width: 100vw;
-  height: 100vh;
-  background: #f8f8f8;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
 
 /* CONTAINER */
 .register-container {
@@ -23,7 +15,7 @@
 
 /* FORMULÁRIO À ESQUERDA */
 .register-left {
-  width: 50%;
+  width: 65%;
   min-width: 320px;
   display: flex;
   flex-direction: column;
@@ -32,7 +24,7 @@
   padding: 48px 40px;
   background: #fff;
   height: 100%;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 
 .register-title {
@@ -129,7 +121,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-top: 32px;
+  margin-top: 0px;
   gap: 8px;
 }
 
@@ -156,7 +148,7 @@
 
 /* BRANDING À DIREITA */
 .register-right {
-  width: 50%;
+  width: 35%;
   min-width: 240px;
   background: #424359;
   display: flex;
@@ -246,7 +238,7 @@
     background: #fff;
     height: 100vh !important;
     min-height: 0 !important;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
   }
   .register-logo {
     display: block;
