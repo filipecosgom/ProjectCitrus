@@ -13,24 +13,22 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-      <div className="login-container d-flex">
-        {/* Branding à esquerda */}
-        <div className="login-left d-flex flex-column flex-grow-1 align-items-center">
+      <div className="login-container">
+        {/* DIVISÃO DO LOGO */}
+        <div className="logo-container">
           <img
             src={citrusLogo}
             alt="CITRUS Logo"
             className="login-logo"
-            width={280}
-            style={{ marginTop: 60 }}
           />
-          <div className="login-left-title hide-on-tablet-mobile">
-            Sign in to your account
+          <div className="logo-undertitle">
+            Sign in to your CITRUS account
           </div>
         </div>
-        {/* Formulário à direita */}
-        <div className="login-right d-flex flex-column flex-grow-1">
+        {/* FORMULÁRIO */}
+        <div className="loginform-container">
           <h1 className="login-title">Login</h1>
-          <div className="login-subtitle hide-on-tablet-mobile">
+          <div className="login-subtitle">
             Sign-in to your account
           </div>
           <form className="login-form">
@@ -42,7 +40,6 @@ export default function Login() {
                 <input
                   id="login-email"
                   type="email"
-                  className="input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="username"
@@ -55,7 +52,6 @@ export default function Login() {
                 <input
                   id="login-password"
                   type={showPassword ? "text" : "password"}
-                  className="input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
