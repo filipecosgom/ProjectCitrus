@@ -1,6 +1,7 @@
 .language-dropdown {
     position: relative;
     width: 180px;
+
   }
   .language-selected {
     border: 2px solid #CBB4B4;
