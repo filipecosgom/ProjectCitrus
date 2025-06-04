@@ -1,12 +1,5 @@
-/* ROOT */
-.login-root {
-  width: 100vw;
-  height: 100vh;
-  background: #f8f8f8;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
+/* LOGIN PAGE STYLES */
+
 
 /* CONTAINER */
 .login-container {
@@ -148,24 +141,6 @@
   font-family: "Catamaran", sans-serif;
   font-size: 16px;
   color: #424359;
-}
-
-.login-signin-btn {
-  width: 100%;
-  max-width: 230px;
-  height: 45px;
-  border-radius: 10px;
-  background: #9c2f31;
-  border: 2px solid #cbb4b4;
-  color: #fff;
-  font-family: "Catamaran", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 .login-register-row {

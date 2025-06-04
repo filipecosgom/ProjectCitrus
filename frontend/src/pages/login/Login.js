@@ -13,10 +13,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="login-root d-flex justify-content-center align-items-center auth-slide-in">
       <div className="login-container d-flex">
         {/* Branding à esquerda */}
-        <div className="login-left d-flex flex-column align-items-center">
+        <div className="login-left d-flex flex-column flex-grow-1 align-items-center">
           <img
             src={citrusLogo}
             alt="CITRUS Logo"
@@ -29,7 +28,7 @@ export default function Login() {
           </div>
         </div>
         {/* Formulário à direita */}
-        <div className="login-right">
+        <div className="login-right d-flex flex-column flex-grow-1">
           <h1 className="login-title">Login</h1>
           <div className="login-subtitle hide-on-tablet-mobile">
             Sign-in to your account
@@ -90,7 +89,7 @@ export default function Login() {
                 </button>
               </div>
             </div>
-            <button className="login-signin-btn" type="submit">
+            <button className="main-button" type="submit">
               Sign in
             </button>
           </form>
@@ -109,6 +108,5 @@ export default function Login() {
           <LanguageDropdown language={language} setLanguage={setLanguage} />
         </div>
       </div>
-    </div>
   );
 }

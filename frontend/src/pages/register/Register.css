@@ -97,24 +97,6 @@
   line-height: 1;
 }
 
-.register-create-btn {
-  width: 100%;
-  max-width: 230px;
-  height: 45px;
-  border-radius: 10px;
-  background: #9c2f31;
-  border: 2px solid #cbb4b4;
-  color: #fff;
-  font-family: "Catamaran", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
 /* Bottom row: right aligned */
 .register-bottom-row {
   width: 100%;
