@@ -306,10 +306,7 @@
     max-width: 320px;
     min-width: 0;
   }
-  .login-input {
-    width: 100% !important;
-    min-width: 0;
-  }
+
   .hide-on-tablet-mobile {
     display: none !important;
   }
