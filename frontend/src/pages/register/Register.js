@@ -30,7 +30,7 @@ export default function Register() {
       {/* Formulário à esquerda */}
       <div className="register-form-container">
         <h1 className="register-title">Welcome to CITRUS</h1>
-        <div className="register-subtitle">Register Your Account</div>
+        <div className="register-subtitle">Register your account</div>
         <form className="register-form">
           <div className="register-fields">
             <div className="register-field">
@@ -148,7 +148,7 @@ export default function Register() {
           className="register-logo"
           width={280}
         />
-        <div className="register-logo-container-title hide-on-tablet">
+        <div className="register-logo-container-title hide-on-mobile">
           Join the CITRUS community!
         </div>
       </div>
