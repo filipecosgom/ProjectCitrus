@@ -80,10 +80,10 @@ export default function Login() {
             </div>
           </div>
           <div className="login-forgot-row">
-          <Link className="login-forgot-link" to="/password-reset">
-            Forgot your password?
-          </Link>
-        </div>
+            <Link className="login-forgot-link" to="/password-reset">
+              Forgot your password?
+            </Link>
+          </div>
           <button className="main-button" type="submit">
             Sign in
           </button>
