@@ -155,7 +155,7 @@
   font-size: 28px;
   color: #fff;
   text-align: center;
-  margin-top: 24px;
+  margin-top: 20px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -170,6 +170,7 @@
   }
 
   .register-form-container{
+    order:2 ;
     display:flex;
     flex: 2;
     width: 100vw;
@@ -186,6 +187,7 @@
   }
   
   .register-logo-container {
+    order: 1;
     display:flex;
     flex: 1;
     width: 100vw;
@@ -235,7 +237,7 @@
     border-radius: 0;
   }
   .register-logo-container {
-    display: flex;
+    display: block;
     flex:1;
     order: 1;
     /* height: 0 !important; */
