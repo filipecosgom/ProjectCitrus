@@ -161,7 +161,7 @@
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 /*----------TABLET-CONTAINER--------------*/
-@media (min-width: 768px) {
+@media (min-width: 480px) {
   .login-container {
   min-height: 100vh;
   display: flex;
