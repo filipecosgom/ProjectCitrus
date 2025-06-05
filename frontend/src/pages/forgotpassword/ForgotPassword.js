@@ -38,11 +38,6 @@ export default function ForgotPassword() {
             Reset my password
           </button>
         </form>
-        <div className="forgot-bottom-row">
-          <div className="forgot-language-dropdown">
-            <LanguageDropdown language={language} setLanguage={setLanguage} />
-          </div>
-        </div>
       </div>
     </div>
   );
