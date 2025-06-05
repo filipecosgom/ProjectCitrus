@@ -7,6 +7,7 @@ import Register from "./pages/register/Register"; // importa o Register
 import { IntlProvider } from "react-intl";
 import languages from "./utils/translations";
 import useLocaleStore from './stores/useLocaleStore';
+import ForgotPassword from "./pages/forgotpassword/ForgotPassword";
 
 function App() {
    const locale = useLocaleStore((state) => state.locale);
@@ -16,8 +17,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> {/* <-- esta linha é essencial */}
-        {/* ...outras rotas... */}
+        <Route path="/register" element={<Register />} />{" "}
+        {/* <-- esta linha é essencial */}
+        <Route path="/password-reset" element={<ForgotPassword />} />
         <Route path="*" element={<Login />} /> {/* fallback opcional */}
       </Routes>
     </Router>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
+import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotPassword";
 import "./Login.css";
 import "../../styles/AuthTransition.css";
 
@@ -11,6 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
 
   return (
     <div className="login-container">
@@ -80,10 +82,21 @@ export default function Login() {
             </div>
           </div>
           <div className="login-forgot-row">
-          <Link className="login-forgot-link" to="/password-reset">
-            Forgot your password?
-          </Link>
-        </div>
+            <button
+              className="login-forgot-link"
+              type="button"
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                color: "#424359",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowForgot(true)}
+            >
+              Forgot your password?
+            </button>
+          </div>
           <button className="main-button" type="submit">
             Sign in
           </button>
@@ -99,6 +112,10 @@ export default function Login() {
           <LanguageDropdown language={language} setLanguage={setLanguage} />
         </div>
       </div>
+      <OffcanvasForgotPassword
+        show={showForgot}
+        onClose={() => setShowForgot(false)}
+      />
     </div>
   );
 }
