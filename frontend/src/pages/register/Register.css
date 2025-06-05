@@ -242,13 +242,18 @@
     order: 1;
     /* height: 0 !important; */
   }
+
+  .register-logo-container-title {
+    display:none;
+  }
+
   .register-form-container {
     order: 2;
     flex: 4;
     display: flex;
     width: 100vw;
     min-width: 0;
-    padding: 0px 8px 0px 32px;
+    padding: 0px 32px 0px 32px;
     align-items: flex-start;
     background: #fff;
     height: 100vh !important;
@@ -270,10 +275,9 @@
   .register-form,
   .register-field,
   .register-bottom-row,
-  .register-already-account,
   .register-language-dropdown {
     width: 100% !important;
-    max-width: 320px;
+    /* max-width: 320px; */
     min-width: 0;
     margin-left: 0;
     margin-right: 0;
@@ -281,6 +285,17 @@
     padding-right: 0;
     text-align: left;
     /*align-items: flex-end;*/
+
+    register-already-account {
+      text-align: left;
+      width: 100% !important;
+      min-width: 0;
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+      text-align: left;
+    }
   }
   .register-input {
     width: 100% !important;
