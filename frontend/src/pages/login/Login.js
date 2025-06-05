@@ -15,14 +15,16 @@ export default function Login() {
   return (
     <div className="login-container">
       {/* DIVISÃO DO LOGO */}
-      <div className="register-logo-container">
+      <div className="login-logo-container">
         <img src={citrusLogo} alt="CITRUS Logo" className="login-logo" />
         <div className="logo-undertitle">Sign in to your CITRUS account</div>
       </div>
       {/* FORMULÁRIO */}
       <div className="loginform-container">
-        <h1 className="login-title">Login</h1>
-        <div className="login-subtitle">Sign-in to your account</div>
+        <div className="login-title-group">
+          <h1 className="login-title">Login</h1>
+          <div className="login-subtitle">Sign-in to your account</div>
+        </div>
         <form className="login-form">
           <div className="login-fields">
             <div className="login-field">
@@ -77,23 +79,25 @@ export default function Login() {
               </button>
             </div>
           </div>
+          <div className="login-forgot-row">
+          <Link className="login-forgot-link" to="/password-reset">
+            Forgot your password?
+          </Link>
+        </div>
           <button className="main-button" type="submit">
             Sign in
           </button>
         </form>
-        <div className="login-forgot-row">
-          <Link className="login-forgot-link" to="/forgot-password">
-            Forgot your password?
-          </Link>
-        </div>
         <div className="login-register-row">
           Don’t have an account yet?{" "}
           <Link className="login-register-link" to="/register">
             Join CITRUS today.
           </Link>
         </div>
-        {/* Dropdown de idioma dentro da coluna do formulário */}
-        <LanguageDropdown language={language} setLanguage={setLanguage} />
+        <div className="login-language-dropdown">
+          {/* Dropdown de idioma dentro da coluna do formulário */}
+          <LanguageDropdown language={language} setLanguage={setLanguage} />
+        </div>
       </div>
     </div>
   );

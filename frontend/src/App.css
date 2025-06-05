@@ -32,6 +32,16 @@
   --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-button: 0 2px 6px rgba(0, 0, 0, 0.2);
 
+  /* Breakpoints */
+  --bp-mobile: 0px;      /* Default: all mobile styles */
+  --bp-tablet: 768px;    /* iPad portrait and larger */
+  --bp-desktop: 1024px;  /* Small laptops and up */
+
+  /* Global spacing system */
+  --padding-sm: 16px;    /* Mobile */
+  --padding-md: 32px;    /* Tablet */
+  --padding-lg: 48px 40px; /* Desktop */
+
 
   
   /* Spacing */
