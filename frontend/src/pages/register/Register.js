@@ -22,7 +22,7 @@ export default function Register() {
     setAnimationClass("auth-slide-out");
     setTimeout(() => {
       navigate("/login");
-    }); // igual à duração da animação
+    },200); // igual à duração da animação
   };
 
   return (
@@ -148,7 +148,7 @@ export default function Register() {
           className="register-logo"
           width={280}
         />
-        <div className="register-logo-container-title hide-on-tablet-mobile">
+        <div className="register-logo-container-title hide-on-tablet">
           Join the CITRUS community!
         </div>
       </div>

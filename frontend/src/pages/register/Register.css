@@ -155,7 +155,7 @@
   font-size: 28px;
   color: #fff;
   text-align: center;
-  margin-top: 24px;
+  margin-top: 20px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -170,6 +170,7 @@
   }
 
   .register-form-container{
+    order:2 ;
     display:flex;
     flex: 2;
     width: 100vw;
@@ -180,12 +181,13 @@
     border-radius: 0;
     box-shadow: none;
     position: static;
-    padding: 32px 16px;
+    padding: 32px 32px;
     align-items: flex-start;
     justify-content: center;
   }
   
   .register-logo-container {
+    order: 1;
     display:flex;
     flex: 1;
     width: 100vw;
@@ -235,7 +237,7 @@
     border-radius: 0;
   }
   .register-logo-container {
-    display: flex;
+    display: block;
     flex:1;
     order: 1;
     /* height: 0 !important; */
@@ -246,7 +248,7 @@
     display: flex;
     width: 100vw;
     min-width: 0;
-    padding: 24px 8px 24px 8px;
+    padding: 0px 8px 0px 32px;
     align-items: flex-start;
     background: #fff;
     height: 100vh !important;
