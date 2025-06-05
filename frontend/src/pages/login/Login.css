@@ -38,8 +38,8 @@
   .login-form,
   .login-field,
   .login-links-row {
-    width: 100%;;
-    max-width: 320px;
+    width: 100%;
+    max-width: 50%;
     min-width: 0;
   }
 
@@ -143,7 +143,7 @@
 
 .login-subtitle {
   color: #969696;
-  font-family: "Khula", sans-serif;
+  font-family: var(--font-family-main);
   font-size: 20px;
   text-align: left;
   margin-bottom: 0px;
@@ -165,6 +165,7 @@
 
 .login-field {
   width: 100%;
+  max-width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -265,7 +266,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 40px;
+  padding: var(--padding-lg);
 }
 
 .login-logo {
@@ -297,7 +298,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 48px 40px;
+  padding: var(--padding-lg);
   justify-content: space-evenly;
 }
 
@@ -328,6 +329,7 @@
   margin-bottom: 24px;
 }
 
+
 .login-fields {
   width: 100%;
   display: flex;
@@ -337,6 +339,7 @@
 
 .login-field {
   width: 100%;
+  max-width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -409,7 +412,6 @@
   margin-top: var(--padding-md);
   align-self: flex-end;
   vertical-align: bottom;
-
 }
 
 /* PASSWORD EYE BUTTON */
