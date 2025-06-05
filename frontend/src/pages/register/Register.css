@@ -31,7 +31,7 @@
   color: #424359;
   font-family: "Istok Web", sans-serif;
   font-weight: bold;
-  font-size: 36px;
+  font-size: var(--font-size-title);
   text-align: left;
   margin-bottom: 8px;
 }
@@ -66,8 +66,8 @@
 
 .register-label {
   color: #424359;
-  font-family: "Catamaran", sans-serif;
-  font-weight: bold;
+  font-family: var(--font-family-secondary);
+  font-weight: var(--font-weight-bold);
   font-size: 16px;
   text-align: left;
   margin-bottom: 8px;
@@ -268,9 +268,7 @@
     position: static !important;
   }
   .register-title {
-    font-size: 28px;
     text-align: left;
-    color: #424359;
   }
   .register-form,
   .register-field,
