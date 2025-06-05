@@ -1,0 +1,9 @@
+const en = {
+    //Login
+    
+
+
+    //Register
+
+
+}
