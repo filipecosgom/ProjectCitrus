@@ -18,12 +18,11 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 32px 32px;
+  padding: 32px 16px;
 }
 
 .login-logo {
-  margin: 30px auto 16px auto;
-  width: 151px;
+  width: 120px;
   height: auto;
 }
 
@@ -43,8 +42,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 32px 32px;
-  justify-content: space-between;
+  padding: 0px 32px 0px 32px;
 }
 
 .login-title-group {
@@ -52,7 +50,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
 }
 
 .login-title {
@@ -67,7 +64,7 @@
   font-family: var(--font-family-main);
   font-size: 20px;
   text-align: left;
-  margin-bottom: 0px;
+  margin-bottom: 32px;
 }
 
 .login-form {
@@ -96,11 +93,11 @@
 
 .login-label {
   color: #424359;
-  font-family: "Catamaran", sans-serif;
-  font-weight: bold;
+  font-family: var(--font-family-secondary);
+  font-weight: var(--font-weight-bold);
   font-size: 16px;
   text-align: left;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .login-input {
@@ -131,12 +128,10 @@
   text-decoration: none;
 }
 
-
-
 .login-register-row {
   color: var(--secondary);
   align-self: flex-end;
-  margin-top: 24px;
+  margin-top: 0px;
   margin-bottom: var(--padding-sm);
 }
 
@@ -166,7 +161,7 @@
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 /*----------TABLET-CONTAINER--------------*/
-@media (min-width: 768px) {
+@media (min-width: 480px) {
   .login-container {
   min-height: 100vh;
   display: flex;
@@ -229,18 +224,9 @@
   gap: 16px;
 }
 
-.login-title {
-  color: var(--blue);
-  font-family: var(--font-family-heading);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-title);
-}
+
 
 .login-subtitle {
-  color: #969696;
-  font-family: var(--font-family-main);
-  font-size: 20px;
-  text-align: left;
   margin-bottom: 0px;
 }
 
@@ -266,14 +252,6 @@
   justify-content: flex-start;
 }
 
-.login-label {
-  color: #424359;
-  font-family: "Catamaran", sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-  text-align: left;
-  margin-bottom: 4px;
-}
 
 .login-input {
   width: 100%;
@@ -394,18 +372,7 @@
   gap: 0px;
 }
 
-.login-title {
-  color: var(--blue);
-  font-family: var(--font-family-heading);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-title);
-}
-
 .login-subtitle {
-  color: #969696;
-  font-family: "Khula", sans-serif;
-  font-size: 20px;
-  text-align: left;
   margin-bottom: 32px;
 }
 
@@ -428,15 +395,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-}
-
-.login-label {
-  color: #424359;
-  font-family: "Catamaran", sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-  text-align: left;
-  margin-bottom: 8px;
 }
 
 .login-input {
