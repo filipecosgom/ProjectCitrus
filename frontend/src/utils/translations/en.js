@@ -1,5 +1,6 @@
 const en = {
     //Login
+  loginLogo: "CITRUS",
   loginTitle: "Login",
   loginSubtitle: "Sign-in to your account",
   loginFieldEmail: "E-mail address",
@@ -11,7 +12,18 @@ const en = {
   loginRegisterPrompt: "Don’t have an account yet?",
   loginRegister: "Join CITRUS today.",
 
-
-}
-
+  // Register Page
+  registerTitle: "Welcome to CITRUS",
+  registerSubtitle: "Register your account",
+  registerFieldEmail: "E-mail address",
+  registerFieldPassword: "Password",
+  registerFieldConfirmPassword: "Confirm Password",
+  registerShowPassword: "Show password",
+  registerHidePassword: "Hide password",
+  registerSubmit: "Create account",
+  registerAlreadyAccount: "Already have an account?",
+  registerLogin: "Log in.",
+  registerLogo: "CITRUS Logo",
+  registerLogoContainerTitle: "Join the CITRUS community!",
+};
 export default en;

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./LanguageDropdown.css";
+import handleLocaleChange from "../../handles/handleLocaleChange";
+import useLocaleStore from "../../stores/useLocaleStore";
 
 const LANGUAGES = [
   { code: "en", label: "English", flag: flagEn },
@@ -9,6 +11,7 @@ const LANGUAGES = [
 ];
 
 export default function LanguageDropdown({ language, setLanguage }) {
+  const locale = useLocaleStore((state) => state.locale);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -19,16 +22,23 @@ export default function LanguageDropdown({ language, setLanguage }) {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
+    setLanguage(locale)
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const selectedLang = LANGUAGES.find(l => l.code === language);
+  const selectedLang = LANGUAGES.find((l) => l.code === language);
+
+const handleChangeLanguage = (newLocale) => {
+  handleLocaleChange(newLocale);
+  setLanguage(newLocale);
+  setShowDropdown(false);
+};
 
   return (
     <div className="language-dropdown" ref={dropdownRef}>
       <div
         className="language-selected"
-        onClick={() => setShowDropdown(v => !v)}
+        onClick={() => setShowDropdown((v) => !v)}
       >
         <img
           src={selectedLang.flag}
@@ -44,14 +54,11 @@ export default function LanguageDropdown({ language, setLanguage }) {
       </div>
       {showDropdown && (
         <div className="language-options">
-          {LANGUAGES.filter(l => l.code !== language).map(lang => (
+          {LANGUAGES.filter((l) => l.code !== language).map((lang) => (
             <div
               key={lang.code}
               className="language-option"
-              onClick={() => {
-                setLanguage(lang.code);
-                setShowDropdown(false);
-              }}
+              onClick={() => handleChangeLanguage(lang.code)} // Pass lang.code directly
             >
               <img
                 src={lang.flag}

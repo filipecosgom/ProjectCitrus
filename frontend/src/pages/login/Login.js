@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
@@ -7,7 +7,6 @@ import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotP
 import "./Login.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
-import useLocaleStore from "../../stores/useLocaleStore";
 
 
 export default function Login() {
@@ -18,8 +17,7 @@ export default function Login() {
   const [showForgot, setShowForgot] = useState(false);
 
   //Internacionalização
-    const intl = useIntl();
-    const locale = useLocaleStore((state) => state.locale);
+  const intl = useIntl();
 
   return (
   <div className="login-container">
