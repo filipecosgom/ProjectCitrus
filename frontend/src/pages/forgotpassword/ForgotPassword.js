@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import LanguageDropdown from "../../components/languages/LanguageDropdown";
 import "./ForgotPassword.css"; // Copia Register.css e adapta o nome
 import "../../styles/AuthTransition.css";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [language, setLanguage] = useState("en");
 
   const handleSubmit = (e) => {
     e.preventDefault();
