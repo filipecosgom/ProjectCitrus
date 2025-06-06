@@ -1,5 +1,6 @@
 package pt.uc.dei.services;
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.Transport;
@@ -11,7 +12,9 @@ import jakarta.mail.Session;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.config.EmailConfig;
+import pt.uc.dei.config.MessageTemplate;
 import pt.uc.dei.controllers.UserController;
+import pt.uc.dei.dtos.ConfigurationDTO;
 
 import java.util.Properties;
 
@@ -39,13 +42,10 @@ public class EmailService {
      */
     private String password = System.getenv("PASSWORD");
 
-    /**
-     * The email template for account activation.
-     * Contains a link that allows users to activate their account.
-     */
-    private final String template = "<h1>Welcome to CITRUS - Critical Training, Review & User System.</h1>"
-            + "<p>Click the link below to activate your account.</p><br>"
-            + "<a href='https://localhost:3000/activate?token={{token}}'>Activate Account</a>";
+
+    @Inject
+    ConfigurationService configurationService;
+
 
     /**
      * Sends an activation email to the specified recipient.
@@ -70,14 +70,11 @@ public class EmailService {
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject("CITRUS - Activate Your Account");
-
-
-            // Replace placeholder with actual activation token
-            String messageBody = template.replace("{{token}}", activationToken);
+            String activationLink = "https://localhost:3000/activate?" + activationToken;
+            ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
+            String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE(activationLink, (configurationDTO.getPasswordResetTime()/60));
             message.setContent(messageBody, "text/html");
-
-            // Send the email
-            //Transport.send(message); ---TO UNCOMMENT!!!
+            Transport.send(message);
             LOGGER.info("Sending activation token: {} to: " + recipientEmail, activationToken);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -104,9 +101,9 @@ public class EmailService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject("CITRUS - Reset your password");
 
-
-            // Replace placeholder with actual activation token
-            String messageBody = template.replace("{{token}}", passwordResetToken);
+            String resetLink = "https://localhost:3000/password-reset?" + passwordResetToken;
+            ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
+            String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE(resetLink, (configurationDTO.getPasswordResetTime()/60));
             message.setContent(messageBody, "text/html");
 
             // Send the email

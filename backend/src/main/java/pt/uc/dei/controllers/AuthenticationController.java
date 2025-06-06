@@ -1,6 +1,7 @@
 package pt.uc.dei.controllers;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -83,7 +84,8 @@ public class AuthenticationController {
     @POST
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
-    public Response requestPasswordReset(String email) {
+    public Response requestPasswordReset(JsonObject emailJSON) {
+        String email = emailJSON.getString("email");
         if (email.isEmpty() || email == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

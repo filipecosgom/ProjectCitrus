@@ -96,6 +96,7 @@ public class ActivationController {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
 
+
             // Step 3: Activate user
             if (!userService.activateUser(userToActivate)) {
                 LOGGER.error("Account activation failed for {}", userToActivate.getEmail());
