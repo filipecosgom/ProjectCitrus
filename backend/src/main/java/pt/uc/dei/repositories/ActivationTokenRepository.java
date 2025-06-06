@@ -6,8 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.entities.ActivationTokenEntity;
+import pt.uc.dei.entities.PasswordResetTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
+
+import java.util.List;
+
 /**
  * Repository class for handling persistence operations for {@link ActivationTokenEntity}.
  * <p>
@@ -72,6 +76,20 @@ public class ActivationTokenRepository extends AbstractRepository<ActivationToke
             return null;
         } catch (Exception e) {
             LOGGER.error("Error retrieving token for token: {}", activationTokenValue, e);
+            return null;
+        }
+    }
+
+    public List<ActivationTokenEntity> getTokensOfUser(TemporaryUserEntity user) {
+        try {
+            return em.createNamedQuery("ActivationToken.findActivationTokensOfUser", ActivationTokenEntity.class)
+                    .setParameter("id", user.getId())
+                    .getResultList();
+        } catch (NoResultException e) {
+            LOGGER.warn("No tokens found for user: {}", user.getEmail());
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error retrieving tokens for user: {}", user.getEmail(), e);
             return null;
         }
     }

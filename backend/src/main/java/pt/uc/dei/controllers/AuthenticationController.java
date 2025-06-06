@@ -13,6 +13,7 @@ import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.LoginDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.services.ConfigurationService;
+import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
 
@@ -35,7 +36,7 @@ import jakarta.inject.Inject;
 public class AuthenticationController {
 
     /** Logger for tracking authentication requests */
-    private final Logger logger = LogManager.getLogger(AuthenticationController.class);
+    private final Logger LOGGER = LogManager.getLogger(AuthenticationController.class);
 
     /** Injected UserService to handle login operations */
     @Inject
@@ -47,6 +48,9 @@ public class AuthenticationController {
 
     @Inject
     private ConfigurationService configurationService;
+
+    @Inject
+    EmailService emailService;
 
     /**
      * Handles user login and returns a JWT authentication token.
@@ -76,45 +80,28 @@ public class AuthenticationController {
         return response.build();
     }
 
-    @GET
+    @POST
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     public Response requestPasswordReset(String email) {
-        if(email.isEmpty() || email == null) {
+        if (email.isEmpty() || email == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        String token =
-        if (token == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+        try {
+            String token = tokenService.createNewPasswordResetToken(email);
+            if (token == null) {
+                LOGGER.error("Invalid reset token request for {}", email);
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+            emailService.sendPassworResetEmail(email, token);
+            return Response.status(Response.Status.CREATED)
+                    .entity("{\"pass-reset token\": \"" + token + "\"}")
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Password reset error for {}: {}", email, e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"Registration failed\"}")
+                    .build();
         }
-        ConfigurationDTO configuration = configurationService.getLatestConfiguration();
-
-        Response.ResponseBuilder response = Response.ok();
-        response.header("Set-Cookie",
-                "jwt=" + token +
-                        "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
-        );
-        return response.build();
-    }
-
-    @POST
-    @Path("/password-reset") // Defines the login endpoint
-    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
-    public Response passwordReset(LoginDTO user) {
-        // Attempt to authenticate user and generate JWT token
-        String token = userService.loginUser(user);
-
-        // If authentication fails, return HTTP 401 (Unauthorized)
-        if (token == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        ConfigurationDTO configuration = configurationService.getLatestConfiguration();
-
-        Response.ResponseBuilder response = Response.ok();
-        response.header("Set-Cookie",
-                "jwt=" + token +
-                        "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
-        );
-        return response.build();
     }
 }

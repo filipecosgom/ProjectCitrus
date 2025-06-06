@@ -8,8 +8,17 @@ import java.time.LocalDateTime;
  * Entity representing a password reset token.
  * Used for securely verifying password reset requests.
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "PasswordResetToken.findPasswordResetTokensOfUser",
+                query = "SELECT t FROM PasswordResetTokenEntity t WHERE t.user.id = :id"
+        )
+})
 @Entity
-@Table(name = "passwordresettoken")
+@Table(name = "passwordresettoken",
+        indexes = @Index(name = "idx_passwordresettoken_tokenvalue",
+                columnList = "tokenValue",
+                unique = true))
 public class PasswordResetTokenEntity implements Serializable {
 
     /**
@@ -76,4 +85,7 @@ public class PasswordResetTokenEntity implements Serializable {
     public void setUser(UserEntity user) {
         this.user = user;
     }
+
+
+
 }
