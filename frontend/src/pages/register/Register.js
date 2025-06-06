@@ -9,6 +9,7 @@ import { useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
 import handleNotification from "../../handles/handleNotification";
 import validator from "validator";
+import AccountActivation from "../landing/AccountActivation";
 
 export default function Register() {
   //Modal de Registo de novo utilizador
@@ -17,6 +18,12 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animationClass, setAnimationClass] = useState("auth-slide-in");
+
+  // as duas linhas abaixo adicionam estado para saber se deve mostrar o formulário ou o AccountActivation.
+  const [showActivation, setShowActivation] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  //
+
   const navigate = useNavigate();
   //Internacionalização
   const intl = useIntl();
@@ -35,166 +42,175 @@ export default function Register() {
     const newUser = {
       email: registerData.email,
       password: registerData.password,
-    }
-    navigate("/account-activation", { state: { email: registerData.email } });
+    };
+    // Aqui podes chamar a API de registo se quiseres
+    setRegisteredEmail(registerData.email);
+    setShowActivation(true);
   };
 
-    // Apresentação de erros ao utilizador
-    const onError = (errors) => {
-      Object.entries(errors).forEach(([errorKey, errorValue]) => {
-        handleNotification(intl, "error", errorValue.message);
-      });
-    };
+  // Apresentação de erros ao utilizador
+  const onError = (errors) => {
+    Object.entries(errors).forEach(([errorKey, errorValue]) => {
+      handleNotification(intl, "error", errorValue.message);
+      console.log(errorKey, errorValue);
+    });
+  };
 
-    return (
-      <div className={`register-container d-flex ${animationClass}`}>
-        {/* Formulário à esquerda */}
-        <div className="register-form-container">
-          <h1 className="register-title">
-            {intl.formatMessage({ id: "registerTitle" })}
-          </h1>
-          <div className="register-subtitle">
-            {intl.formatMessage({ id: "registerSubtitle" })}
-          </div>
-          <form
-            className="register-form"
-            id="register-form"
-            onSubmit={handleSubmit(onSubmit, onError)}
-          >
-            <div className="register-fields">
-              <div className="register-field">
-                <label className="register-label" htmlFor="register-email">
-                  {intl.formatMessage({ id: "registerFieldEmail" })}
-                </label>
-                <input
-                  id="register-email"
-                  type="email"
-                  className="register-input"
-                  {...register("email", {
-                    required: "registerErrorEmail",
-                    validate: (value) =>
-                      validator.isEmail(value) ||
-                      "registerModalErrorInvalidEmail",
-                  })}
-                />
+  return (
+    <div className={`register-container d-flex ${animationClass}`}>
+      {/* Formulário à esquerda */}
+      <div className="register-form-container">
+        {showActivation ? (
+          <AccountActivation email={registeredEmail} />
+        ) : (
+          <>
+            <h1 className="register-title">
+              {intl.formatMessage({ id: "registerTitle" })}
+            </h1>
+            <div className="register-subtitle">
+              {intl.formatMessage({ id: "registerSubtitle" })}
+            </div>
+            <form
+              className="register-form"
+              id="register-form"
+              onSubmit={handleSubmit(onSubmit, onError)}
+            >
+              <div className="register-fields">
+                <div className="register-field">
+                  <label className="register-label" htmlFor="register-email">
+                    {intl.formatMessage({ id: "registerFieldEmail" })}
+                  </label>
+                  <input
+                    id="register-email"
+                    type="email"
+                    className="register-input"
+                    {...register("email", {
+                      required: "registerErrorEmail",
+                      validate: (value) =>
+                        validator.isEmail(value) ||
+                        "registerModalErrorInvalidEmail",
+                    })}
+                  />
+                </div>
+                <div className="register-field" style={{ position: "relative" }}>
+                  <label className="register-label" htmlFor="register-password">
+                    {intl.formatMessage({ id: "registerFieldPassword" })}
+                  </label>
+                  <input
+                    id="register-password"
+                    type={showPassword ? "text" : "password"}
+                    className="register-input"
+                    {...register("password", {
+                      required: "registerModalErrorpassword",
+                    })}
+                  />
+                  <button
+                    type="button"
+                    className="password-eye-btn"
+                    onMouseDown={() => setShowPassword(true)}
+                    onMouseUp={() => setShowPassword(false)}
+                    onMouseLeave={() => setShowPassword(false)}
+                    tabIndex={-1}
+                    aria-label={intl.formatMessage({
+                      id: showPassword
+                        ? "registerHidePassword"
+                        : "registerShowPassword",
+                    })}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 38,
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      outline: "none",
+                    }}
+                  >
+                    {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                  </button>
+                </div>
+                <div className="register-field" style={{ position: "relative" }}>
+                  <label
+                    className="register-label"
+                    htmlFor="register-confirm-password"
+                  >
+                    {intl.formatMessage({ id: "registerFieldConfirmPassword" })}
+                  </label>
+                  <input
+                    id="register-confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="register-input"
+                    {...register("passwordConfirm", {
+                      required: "registerModalErrorpasswordConfirm",
+                      validate: {
+                        isConfirmed: (value) =>
+                          value === watch("password") ||
+                          "registerModalErrorPasswordMismatch",
+                      },
+                    })}
+                  />
+                  <button
+                    type="button"
+                    className="password-eye-btn"
+                    onMouseDown={() => setShowConfirmPassword(true)}
+                    onMouseUp={() => setShowConfirmPassword(false)}
+                    onMouseLeave={() => setShowConfirmPassword(false)}
+                    tabIndex={-1}
+                    aria-label={intl.formatMessage({
+                      id: showConfirmPassword
+                        ? "registerHidePassword"
+                        : "registerShowPassword",
+                    })}
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: 38,
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      outline: "none",
+                    }}
+                  >
+                    {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                  </button>
+                </div>
               </div>
-              <div className="register-field" style={{ position: "relative" }}>
-                <label className="register-label" htmlFor="register-password">
-                  {intl.formatMessage({ id: "registerFieldPassword" })}
-                </label>
-                <input
-                  id="register-password"
-                  type={showPassword ? "text" : "password"}
-                  className="register-input"
-                  {...register("password", {
-                    required: "registerModalErrorpassword"
-                  })}
-                />
-                <button
-                  type="button"
-                  className="password-eye-btn"
-                  onMouseDown={() => setShowPassword(true)}
-                  onMouseUp={() => setShowPassword(false)}
-                  onMouseLeave={() => setShowPassword(false)}
-                  tabIndex={-1}
-                  aria-label={intl.formatMessage({
-                    id: showPassword
-                      ? "registerHidePassword"
-                      : "registerShowPassword",
-                  })}
-                  style={{
-                    position: "absolute",
-                    right: 12,
-                    top: 38,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    outline: "none",
-                  }}
+              <button className="main-button" type="submit">
+                {intl.formatMessage({ id: "registerSubmit" })}
+              </button>
+            </form>
+            <div className="register-bottom-row">
+              <div className="register-already-account">
+                {intl.formatMessage({ id: "registerAlreadyAccount" })}{" "}
+                <Link
+                  className="register-login-link"
+                  to="/login"
+                  onClick={handleLoginClick}
                 >
-                  {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                </button>
+                  {intl.formatMessage({ id: "registerLogin" })}
+                </Link>
               </div>
-              <div className="register-field" style={{ position: "relative" }}>
-                <label
-                  className="register-label"
-                  htmlFor="register-confirm-password"
-                >
-                  {intl.formatMessage({ id: "registerFieldConfirmPassword" })}
-                </label>
-                <input
-                  id="register-confirm-password"
-                  type={showConfirmPassword ? "text" : "password"}
-                  className="register-input"
-                  {...register("passwordConfirm", {
-                    required: "registerModalErrorpasswordConfirm",
-                    validate: {
-                      isConfirmed: (value) =>
-                        value === watch("password") ||
-                        "registerModalErrorPasswordMismatch",
-                    }
-                  })}
-                />
-                <button
-                  type="button"
-                  className="password-eye-btn"
-                  onMouseDown={() => setShowConfirmPassword(true)}
-                  onMouseUp={() => setShowConfirmPassword(false)}
-                  onMouseLeave={() => setShowConfirmPassword(false)}
-                  tabIndex={-1}
-                  aria-label={intl.formatMessage({
-                    id: showConfirmPassword
-                      ? "registerHidePassword"
-                      : "registerShowPassword",
-                  })}
-                  style={{
-                    position: "absolute",
-                    right: 12,
-                    top: 38,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    outline: "none",
-                  }}
-                >
-                  {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                </button>
+              <div className="register-language-dropdown">
+                <LanguageDropdown language={language} setLanguage={setLanguage} />
               </div>
             </div>
-            <button className="main-button" type="submit">
-              {intl.formatMessage({ id: "registerSubmit" })}
-            </button>
-          </form>
-          <div className="register-bottom-row">
-            <div className="register-already-account">
-              {intl.formatMessage({ id: "registerAlreadyAccount" })}{" "}
-              <Link
-                className="register-login-link"
-                to="/login"
-                onClick={handleLoginClick}
-              >
-                {intl.formatMessage({ id: "registerLogin" })}
-              </Link>
-            </div>
-            <div className="register-language-dropdown">
-              <LanguageDropdown language={language} setLanguage={setLanguage} />
-            </div>
-          </div>
-        </div>
-        {/* Branding à direita */}
-        <div className="register-logo-container d-flex flex-grow-1 flex-column align-items-center">
-          <img
-            src={citrusLogo}
-            alt={intl.formatMessage({ id: "registerLogo" })}
-            className="register-logo"
-            width={280}
-          />
-          <div className="register-logo-container-title hide-on-mobile">
-            {intl.formatMessage({ id: "registerLogoContainerTitle" })}
-          </div>
+          </>
+        )}
+      </div>
+      {/* Branding à direita */}
+      <div className="register-logo-container d-flex flex-grow-1 flex-column align-items-center">
+        <img
+          src={citrusLogo}
+          alt={intl.formatMessage({ id: "registerLogo" })}
+          className="register-logo"
+          width={280}
+        />
+        <div className="register-logo-container-title hide-on-mobile">
+          {intl.formatMessage({ id: "registerLogoContainerTitle" })}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+}
