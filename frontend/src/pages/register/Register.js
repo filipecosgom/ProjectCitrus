@@ -36,6 +36,7 @@ export default function Register() {
       email: registerData.email,
       password: registerData.password,
     }
+    navigate("/account-activation", { state: { email: registerData.email } });
   };
 
     // Apresentação de erros ao utilizador
