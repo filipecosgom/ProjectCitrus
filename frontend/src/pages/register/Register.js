@@ -35,7 +35,8 @@ export default function Register() {
     const newUser = {
       email: registerData.email,
       password: registerData.password,
-    };
+    }
+  };
 
     // Apresentação de erros ao utilizador
     const onError = (errors) => {
@@ -85,10 +86,7 @@ export default function Register() {
                   type={showPassword ? "text" : "password"}
                   className="register-input"
                   {...register("password", {
-                    required: "registerModalErrorpassword",
-                    validate: (value) =>
-                      checkIfValidPassword(value) ||
-                      "registerModalErrorInvalidPassword",
+                    required: "registerModalErrorpassword"
                   })}
                 />
                 <button
@@ -131,13 +129,10 @@ export default function Register() {
                   {...register("passwordConfirm", {
                     required: "registerModalErrorpasswordConfirm",
                     validate: {
-                      isValid: (value) =>
-                        checkIfValidPassword(value) ||
-                        "registerModalErrorInvalidPassword",
                       isConfirmed: (value) =>
                         value === watch("password") ||
                         "registerModalErrorPasswordMismatch",
-                    },
+                    }
                   })}
                 />
                 <button
@@ -202,4 +197,3 @@ export default function Register() {
       </div>
     );
   };
-}
