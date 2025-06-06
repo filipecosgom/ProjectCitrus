@@ -116,7 +116,6 @@ public class UserService implements Serializable {
             String token = jwtUtil.generateAuthenticationToken(userDTO);
             return token;
         }
-
         // Return null if authentication fails (invalid credentials)
         return null;
     }
@@ -166,6 +165,7 @@ public class UserService implements Serializable {
             return false;
         }
     }
+
 
     /**
      * Deletes temporary user information, removing associated activation tokens.

@@ -25,6 +25,13 @@ const pt = {
   registerLogin: "Entrar.",
   registerLogo: "Logotipo CITRUS",
   registerLogoContainerTitle: "Junte-se à comunidade CITRUS!",
+
+  // Forgot Password
+  forgotPasswordTitle: "Redefinir senha",
+  forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
+  forgotPasswordFieldEmail: "Endereço de e-mail",
+  forgotPasswordSubmit: "Redefinir senha",
+
 };
 
 export default pt;

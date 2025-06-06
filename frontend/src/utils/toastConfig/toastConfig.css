@@ -1,0 +1,7 @@
+/* Mensagem de sucesso */
+.custom-toast-success {
+  background-color: #ffffff; /* Green background */
+}
+.custom-toast-success-progress {
+  background: #3c410c; /* White progress bar */
+}

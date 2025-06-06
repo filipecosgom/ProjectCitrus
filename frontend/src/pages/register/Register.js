@@ -6,16 +6,19 @@ import LanguageDropdown from "../../components/languages/LanguageDropdown";
 import "./Register.css"; // You can copy Login.css and adjust as needed
 import "../../styles/AuthTransition.css"; // Import the transition styles
 import { useIntl } from "react-intl";
+import { useForm } from "react-hook-form";
+import handleNotification from "../../handles/handleNotification";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  //Modal de Registo de novo utilizador
+  const { register, handleSubmit, watch, reset } = useForm();
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animationClass, setAnimationClass] = useState("auth-slide-in");
   const navigate = useNavigate();
+  //Internacionalização
+  const intl = useIntl();
 
   // Handler para animação de saída
   const handleLoginClick = (e) => {
@@ -26,8 +29,19 @@ export default function Register() {
     },200); // igual à duração da animação
   };
 
-  //Internacionalização
-  const intl = useIntl();
+  //Submissão do formulário (admin é sempre falso)
+  const onSubmit = async (registerData) => {
+    const newUser = {
+      email: registerData.email,
+      password: registerData.password
+    };
+
+  // Apresentação de erros ao utilizador
+  const onError = (errors) => {
+    Object.entries(errors).forEach(([errorKey, errorValue]) => {
+      handleNotification(intl, "error", errorValue.message);
+    });
+  };
 
   return (
   <div className={`register-container d-flex ${animationClass}`}>
@@ -35,7 +49,10 @@ export default function Register() {
     <div className="register-form-container">
       <h1 className="register-title">{intl.formatMessage({ id: "registerTitle" })}</h1>
       <div className="register-subtitle">{intl.formatMessage({ id: "registerSubtitle" })}</div>
-      <form className="register-form">
+      <form 
+        className="register-form"
+        id="register-form"
+        onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="register-fields">
           <div className="register-field">
             <label className="register-label" htmlFor="register-email">
@@ -45,9 +62,11 @@ export default function Register() {
               id="register-email"
               type="email"
               className="register-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="username"
+              {...register("email", {
+                    required: "registerErrorEmail",
+                    validate: (value) =>
+                      value.includes("@") || "registerModalErrorInvalidEmail",
+              })}
             />
           </div>
           <div className="register-field" style={{ position: "relative" }}>
@@ -58,9 +77,12 @@ export default function Register() {
               id="register-password"
               type={showPassword ? "text" : "password"}
               className="register-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
+              {...register("password", {
+                    required: "registerModalErrorpassword",
+                    validate: (value) =>
+                      checkIfValidPassword(value) ||
+                      "registerModalErrorInvalidPassword",
+                })}
             />
             <button
               type="button"
@@ -92,9 +114,17 @@ export default function Register() {
               id="register-confirm-password"
               type={showConfirmPassword ? "text" : "password"}
               className="register-input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
+              {...register("passwordConfirm", {
+                    required: "registerModalErrorpasswordConfirm",
+                    validate: {
+                      isValid: (value) =>
+                        checkIfValidPassword(value) ||
+                        "registerModalErrorInvalidPassword",
+                      isConfirmed: (value) =>
+                        value === watch("password") ||
+                        "registerModalErrorPasswordMismatch",
+                    },
+                  })}
             />
             <button
               type="button"
@@ -154,3 +184,4 @@ export default function Register() {
   </div>
 );
 }
+};

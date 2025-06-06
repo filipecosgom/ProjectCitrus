@@ -8,6 +8,7 @@ import { IntlProvider } from "react-intl";
 import languages from "./utils/translations";
 import useLocaleStore from './stores/useLocaleStore';
 import ForgotPassword from "./pages/forgotpassword/ForgotPassword";
+import { ToastContainer } from 'react-toastify';
 
 function App() {
    const locale = useLocaleStore((state) => state.locale);
@@ -23,6 +24,7 @@ function App() {
         <Route path="*" element={<Login />} /> {/* fallback opcional */}
       </Routes>
     </Router>
+    <ToastContainer limit={3}/>
     </IntlProvider>
   );
 }

@@ -44,7 +44,7 @@ public class JWTUtil {
         // Get latest configuration from database
         ConfigurationEntity latestConfiguration = configurationRepository.getLatestConfiguration();
         Integer expirationTime = latestConfiguration.getLoginTime() * 60 * 1000; // Convert minutes to milliseconds
-
+        System.out.println(SECRET_KEY);
         // Create JWT token with user details (email, isAdmin, isManager)
         return Jwts.builder()
                 .setSubject(user.getEmail()) // Set user's email as subject

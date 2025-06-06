@@ -146,6 +146,16 @@ public class UserDTO {
     public UserDTO() {
     }
 
+    /**
+     * Construtor for basic UserDTO
+     * @return
+     */
+    public UserDTO(String email, Boolean isAdmin, Boolean isManager) {
+        this.email = email;
+        this.isAdmin = isAdmin;
+        this.isManager = isManager;
+    }
+
     // Getters and Setters
 
     public Long getId() {
