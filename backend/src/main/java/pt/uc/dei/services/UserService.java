@@ -23,6 +23,8 @@ import pt.uc.dei.utils.PasswordUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * Service class for managing user-related operations.
  * <p>
@@ -171,16 +173,22 @@ public class UserService implements Serializable {
      * Deletes temporary user information, removing associated activation tokens.
      *
      * @param userToDelete The temporary user DTO to be deleted.
-     * @param activationToken The activation token DTO associated with the user.
      * @return {@code true} if deletion was successful, {@code false} otherwise.
      */
     @Transactional
-    public boolean deleteTemporaryUserInformation(TemporaryUserDTO userToDelete, ActivationTokenDTO activationToken) {
-        if (tokenService.deleteToken(activationToken)) {
-            deleteTemporaryUser(userToDelete);
-            return true;
+    public boolean deleteTemporaryUserInformation(TemporaryUserDTO userToDelete) {
+        TemporaryUserEntity user = temporaryUserRepository.findTemporaryUserByEmail(userToDelete.getEmail());
+        List<ActivationTokenEntity> activationTokens = activationTokenRepository.getTokensOfUser(user);
+        // Delete activation tokens
+        for (ActivationTokenEntity activationToken : activationTokens) {
+            activationTokenRepository.remove(activationToken);
         }
-        return false;
+        activationTokenRepository.flush();
+        // Delete the temporary user
+        deleteTemporaryUser(userToDelete);
+        // Merge user after deletion process
+        temporaryUserRepository.merge(user);
+        return true;
     }
 
     /**

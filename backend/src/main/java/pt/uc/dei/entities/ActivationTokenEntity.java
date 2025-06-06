@@ -16,6 +16,10 @@ import java.time.LocalDateTime;
         @NamedQuery(
                 name = "ActivationToken.findActivationTokenByValue",
                 query = "SELECT t FROM ActivationTokenEntity t WHERE t.tokenValue = :tokenValue"
+        ),
+        @NamedQuery(
+                name = "ActivationToken.findActivationTokensOfUser",
+                query = "SELECT t FROM ActivationTokenEntity t WHERE t.temporaryUser.id = :id"
         )
 })
 @Entity

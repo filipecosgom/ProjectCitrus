@@ -84,4 +84,37 @@ public class EmailService {
             LOGGER.error("Failed to send activation email to {}: {}", recipientEmail, e.getMessage());
         }
     }
+
+
+    public void sendPassworResetEmail(String recipientEmail, String passwordResetToken) {
+        try {
+            // Retrieve SMTP properties for configuring email session
+            Properties properties = EmailConfig.getSMTPProperties();
+
+            // Create a new email session with authentication
+            Session session = Session.getInstance(properties, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(emailAccount, password);
+                }
+            });
+
+            // Construct the email message
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailAccount));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject("CITRUS - Reset your password");
+
+
+            // Replace placeholder with actual activation token
+            String messageBody = template.replace("{{token}}", passwordResetToken);
+            message.setContent(messageBody, "text/html");
+
+            // Send the email
+            Transport.send(message);
+            LOGGER.info("Sending activation token: {} to: " + recipientEmail, passwordResetToken);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to send activation email to {}: {}", recipientEmail, e.getMessage());
+        }
+    }
 }

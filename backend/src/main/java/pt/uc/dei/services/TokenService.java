@@ -8,16 +8,14 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.dtos.PasswordResetTokenDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.entities.ActivationTokenEntity;
-import pt.uc.dei.entities.ConfigurationEntity;
-import pt.uc.dei.entities.TemporaryUserEntity;
-import pt.uc.dei.repositories.ActivationTokenRepository;
-import pt.uc.dei.repositories.ConfigurationRepository;
-import pt.uc.dei.repositories.TemporaryUserRepository;
+import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.entities.*;
+import pt.uc.dei.repositories.*;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * Service class for handling activation token generation and management.
@@ -54,10 +52,16 @@ public class TokenService {
     TemporaryUserRepository temporaryUserRepository;
 
     @EJB
+    UserRepository userRepository;
+
+    @EJB
     ConfigurationRepository configurationRepository;
 
     @EJB
     UserService userService;
+
+    @EJB
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
     /**
      * Creates and persists a new activation token for a temporary user.
@@ -88,6 +92,24 @@ public class TokenService {
         return activationToken.getTokenValue();
     }
 
+    @Transactional
+    public String createNewPasswordResetToken(String email) {
+        UserEntity user = userRepository.findUserByEmail(email);
+        if(user != null) {
+            List<PasswordResetTokenEntity> passwordResetTokens =  passwordResetTokenRepository.getTokensOfUser(user);
+            for(PasswordResetTokenEntity passwordResetToken : passwordResetTokens) {
+                passwordResetTokenRepository.remove(passwordResetToken);
+            }
+            PasswordResetTokenEntity passwordResetToken = new PasswordResetTokenEntity();
+            passwordResetToken.setTokenValue(generateNewToken());
+            passwordResetToken.setCreationDate(LocalDateTime.now());
+            passwordResetToken.setUser(user);
+            passwordResetTokenRepository.persist(passwordResetToken);
+            return passwordResetToken.getTokenValue();
+        }
+        return null;
+    }
+
     /**
      * Renews an existing token by deleting the old one and generating a new activation token.
      * <p>
@@ -99,32 +121,12 @@ public class TokenService {
      */
     public String renewToken(Object user, Object token) {
         if (token instanceof ActivationTokenDTO) {
-            deleteToken(token);
+            ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(((ActivationTokenDTO) token).getTokenValue());
+            activationTokenRepository.remove(activationToken);
             return createNewActivationToken((TemporaryUserDTO) user);
         }
         // Future implementation for renewing password reset tokens.
         return null;
-    }
-
-    /**
-     * Deletes an existing activation token.
-     * <p>
-     * Removes the activation token from the associated temporary user and deletes it from the repository.
-     *
-     * @param token The token to be deleted.
-     * @return {@code true} if the token was successfully deleted, {@code false} otherwise.
-     */
-    public boolean deleteToken(Object token) {
-        if (token instanceof ActivationTokenDTO) {
-            ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(((ActivationTokenDTO) token).getTokenValue());
-            TemporaryUserEntity user = activationToken.getTemporaryUser();
-            user.setActivationToken(null);
-            temporaryUserRepository.merge(user);
-            activationTokenRepository.remove(activationToken);
-            activationTokenRepository.flush();
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -156,6 +158,8 @@ public class TokenService {
         ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(activationTokenDTO.getTokenValue());
         return activationTokenEntityToActivationTokenDTO(activationToken);
     }
+
+
 
     /**
      * Checks whether a given token has expired.
@@ -205,6 +209,13 @@ public class TokenService {
         activationTokenDTO.setTokenValue(activationTokenEntity.getTokenValue());
         activationTokenDTO.setCreationDate(activationTokenEntity.getCreationDate());
         return activationTokenDTO;
+    }
+
+    private PasswordResetTokenDTO passwordResetTokenEntityToPasswordResetTokenDTO(PasswordResetTokenEntity passwordResetTokenEntity) {
+        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO();
+        passwordResetTokenDTO.setTokenValue(passwordResetTokenEntity.getTokenValue());
+        passwordResetTokenDTO.setCreationDate(passwordResetTokenEntity.getCreationDate());
+        return passwordResetTokenDTO;
     }
 
     /**

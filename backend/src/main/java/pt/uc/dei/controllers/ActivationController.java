@@ -103,7 +103,7 @@ public class ActivationController {
             }
 
             // Step 4: Cleanup
-            if (!userService.deleteTemporaryUserInformation(userToActivate, activationToken)) {
+            if (!userService.deleteTemporaryUserInformation(userToActivate)) {
                 LOGGER.error("Temporary data cleanup failed for {}", userToActivate.getEmail());
                 // Still return success as account was activated
             }
