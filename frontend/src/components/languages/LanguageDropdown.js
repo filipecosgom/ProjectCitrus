@@ -24,7 +24,7 @@ export default function LanguageDropdown({ language, setLanguage }) {
     document.addEventListener("mousedown", handleClickOutside);
     setLanguage(locale)
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [locale, setLanguage]);
 
   const selectedLang = LANGUAGES.find((l) => l.code === language);
 

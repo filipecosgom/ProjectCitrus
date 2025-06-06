@@ -13,6 +13,7 @@ export const login = async (email, password) => {
     return response.data;
   } catch (error) {
     handleApiError(error, "login");
+    throw error; // para propagar o erro
   }
 };
 

@@ -1,0 +1,56 @@
+.activation-container {
+  min-height: 100vh;
+  width: 100vw;
+  background: #fafbfc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activation-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  padding: 48px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.activation-check-icon {
+  color: #3cb371;
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.activation-title {
+  font-family: var(--font-family-main);
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+
+.activation-message {
+    font-family: var(--font-secondary);
+  color: var(--text);
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+
+.activation-message strong {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  display: block;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+  .activation-card {
+    padding: 32px 8px;
+    max-width: 98vw;
+  }
+}
