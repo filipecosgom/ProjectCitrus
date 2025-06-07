@@ -13,7 +13,13 @@ import AccountActivation from "../landing/AccountActivation";
 
 export default function Register() {
   //Modal de Registo de novo utilizador
-  const { register, handleSubmit, watch, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -51,7 +57,6 @@ export default function Register() {
   // Apresentação de erros ao utilizador
   const onError = (errors) => {
     Object.entries(errors).forEach(([errorKey, errorValue]) => {
-      handleNotification(intl, "error", errorValue.message);
       console.log(errorKey, errorValue);
     });
   };
@@ -78,21 +83,27 @@ export default function Register() {
               <div className="register-fields">
                 <div className="register-field">
                   <label className="register-label" htmlFor="register-email">
-                    {intl.formatMessage({ id: "registerFieldEmail" })}
+                    Email
                   </label>
                   <input
                     id="register-email"
                     type="email"
                     className="register-input"
                     {...register("email", {
-                      required: "registerErrorEmail",
+                      required: "Email is required.",
                       validate: (value) =>
-                        validator.isEmail(value) ||
-                        "registerModalErrorInvalidEmail",
+                        validator.isEmail(value) || "Invalid email format.",
                     })}
                   />
+                  <span className="error-message">
+                    {errors.email ? errors.email.message : "\u00A0"}
+                  </span>
                 </div>
-                <div className="register-field" style={{ position: "relative" }}>
+
+                <div
+                  className="register-field"
+                  style={{ position: "relative" }}
+                >
                   <label className="register-label" htmlFor="register-password">
                     {intl.formatMessage({ id: "registerFieldPassword" })}
                   </label>
@@ -101,7 +112,7 @@ export default function Register() {
                     type={showPassword ? "text" : "password"}
                     className="register-input"
                     {...register("password", {
-                      required: "registerModalErrorpassword",
+                      required: "Password is required",
                     })}
                   />
                   <button
@@ -129,8 +140,14 @@ export default function Register() {
                   >
                     {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                   </button>
+                  <span className="error-message">
+                    {errors.password ? errors.password.message : "\u00A0"}
+                  </span>
                 </div>
-                <div className="register-field" style={{ position: "relative" }}>
+                <div
+                  className="register-field"
+                  style={{ position: "relative" }}
+                >
                   <label
                     className="register-label"
                     htmlFor="register-confirm-password"
@@ -142,14 +159,17 @@ export default function Register() {
                     type={showConfirmPassword ? "text" : "password"}
                     className="register-input"
                     {...register("passwordConfirm", {
-                      required: "registerModalErrorpasswordConfirm",
+                      required: "Confirm password is required",
                       validate: {
                         isConfirmed: (value) =>
                           value === watch("password") ||
-                          "registerModalErrorPasswordMismatch",
+                          "Password doesn't match",
                       },
                     })}
                   />
+                  <span className="error-message">
+                    {errors.passwordConfirm ? errors.passwordConfirm.message : "\u00A0"}
+                  </span>
                   <button
                     type="button"
                     className="password-eye-btn"
@@ -193,7 +213,10 @@ export default function Register() {
                 </Link>
               </div>
               <div className="register-language-dropdown">
-                <LanguageDropdown language={language} setLanguage={setLanguage} />
+                <LanguageDropdown
+                  language={language}
+                  setLanguage={setLanguage}
+                />
               </div>
             </div>
           </>

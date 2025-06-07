@@ -26,6 +26,16 @@ const en = {
   registerLogo: "CITRUS Logo",
   registerLogoContainerTitle: "Join the CITRUS community!",
 
+
+  registerErrorEmailMissing: "Email is required",
+  registerErrorEmailInvalid: "Invalid email format",
+  registerErrorPasswordMissing: "Password is required",
+  registerErrorConfirmPasswordMissing: "Password confirmation is required",
+  registerErrorPasswordMismatch: "Password's dont match",
+
+
+
+
   // Forgot Password Page
   forgotPasswordTitle: "Password Reset",
   forgotPasswordSubtitle: "Write your email address",

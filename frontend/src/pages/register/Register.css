@@ -286,3 +286,10 @@
     min-width: 0;
   }
 }
+
+.error-message {
+  min-height: 20px; /* Adjust based on expected message size */
+  display: block; /* Ensures it takes up space even when empty */
+  color: red;
+}
+
