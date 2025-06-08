@@ -26,12 +26,21 @@ const en = {
   registerLogo: "CITRUS Logo",
   registerLogoContainerTitle: "Join the CITRUS community!",
 
-
   registerErrorEmailMissing: "Email is required",
   registerErrorEmailInvalid: "Invalid email format",
   registerErrorPasswordMissing: "Password is required",
   registerErrorConfirmPasswordMissing: "Password confirmation is required",
   registerErrorPasswordMismatch: "Password's dont match",
+  registerErrorPasswordWeak: "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
+
+  // Activation Page
+    activationTitle: "Account Activation",
+    activationSuccessMessage: "Account successfully created!",
+    activationEmailConfirmation:
+        "Your account with the email {email} has been created. " +
+        "We have sent a confirmation email with a link to verify your account. " +
+        "Please check your inbox.",
+
 
 
 

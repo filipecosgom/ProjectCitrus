@@ -7,8 +7,7 @@ import "./Register.css"; // You can copy Login.css and adjust as needed
 import "../../styles/AuthTransition.css"; // Import the transition styles
 import { useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
-import handleNotification from "../../handles/handleNotification";
-import validator from "validator";
+import handleRegistration from "../../handles/handleRegistration";
 import AccountActivation from "../landing/AccountActivation";
 
 export default function Register() {
@@ -28,7 +27,8 @@ export default function Register() {
   // as duas linhas abaixo adicionam estado para saber se deve mostrar o formulário ou o AccountActivation.
   const [showActivation, setShowActivation] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
-  //
+  const strongPasswordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
 
   const navigate = useNavigate();
   //Internacionalização
@@ -49,16 +49,11 @@ export default function Register() {
       email: registerData.email,
       password: registerData.password,
     };
+
     // Aqui podes chamar a API de registo se quiseres
     setRegisteredEmail(registerData.email);
     setShowActivation(true);
-  };
-
-  // Apresentação de erros ao utilizador
-  const onError = (errors) => {
-    Object.entries(errors).forEach(([errorKey, errorValue]) => {
-      console.log(errorKey, errorValue);
-    });
+    reset();
   };
 
   return (
@@ -78,7 +73,7 @@ export default function Register() {
             <form
               className="register-form"
               id="register-form"
-              onSubmit={handleSubmit(onSubmit, onError)}
+              onSubmit={handleSubmit(onSubmit)}
             >
               <div className="register-fields">
                 <div className="register-field">
@@ -87,12 +82,17 @@ export default function Register() {
                   </label>
                   <input
                     id="register-email"
-                    type="email"
-                    className="register-input"
+                    className={`register-input`}
                     {...register("email", {
-                      required: "Email is required.",
-                      validate: (value) =>
-                        validator.isEmail(value) || "Invalid email format.",
+                      required: intl.formatMessage({
+                        id: "registerErrorEmailMissing",
+                      }),
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: intl.formatMessage({
+                          id: "registerErrorEmailInvalid",
+                        }),
+                      },
                     })}
                   />
                   <span className="error-message">
@@ -112,7 +112,15 @@ export default function Register() {
                     type={showPassword ? "text" : "password"}
                     className="register-input"
                     {...register("password", {
-                      required: "Password is required",
+                      required: intl.formatMessage({
+                        id: "registerErrorPasswordMissing",
+                      }),
+                      pattern: {
+                        value: strongPasswordPattern,
+                        message: intl.formatMessage({
+                          id: "registerErrorPasswordWeak",
+                        }),
+                      },
                     })}
                   />
                   <button
@@ -159,16 +167,22 @@ export default function Register() {
                     type={showConfirmPassword ? "text" : "password"}
                     className="register-input"
                     {...register("passwordConfirm", {
-                      required: "Confirm password is required",
+                      required: intl.formatMessage({
+                        id: "registerErrorConfirmPasswordMissing",
+                      }),
                       validate: {
                         isConfirmed: (value) =>
                           value === watch("password") ||
-                          "Password doesn't match",
+                          intl.formatMessage({
+                            id: "registerErrorPasswordMismatch",
+                          }),
                       },
                     })}
                   />
                   <span className="error-message">
-                    {errors.passwordConfirm ? errors.passwordConfirm.message : "\u00A0"}
+                    {errors.passwordConfirm
+                      ? errors.passwordConfirm.message
+                      : "\u00A0"}
                   </span>
                   <button
                     type="button"

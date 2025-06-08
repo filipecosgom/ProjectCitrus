@@ -287,9 +287,16 @@
   }
 }
 
-.error-message {
-  min-height: 20px; /* Adjust based on expected message size */
-  display: block; /* Ensures it takes up space even when empty */
-  color: red;
+
+
+.input-error {
+  border: 2px solid red;
+  background-color: #ffcccc;
+  box-shadow: 0 0 5px red;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}

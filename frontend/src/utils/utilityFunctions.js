@@ -1,7 +1,13 @@
-export function checkIfValidName(string) {
-  const pattern = /^[\p{L}]*$/u;
-  return pattern.test(string);
-}
+export const validationRules = {
+  email: {
+    required: "Email is required.",
+    pattern: {
+      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "Invalid email format.",
+    },
+  },
+};
+
 
 export function checkIfValidUsername(string) {
   const pattern = /^[a-zA-Z0-9-_]*$/;

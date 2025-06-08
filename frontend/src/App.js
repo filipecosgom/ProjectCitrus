@@ -3,7 +3,7 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login";
-import Register from "./pages/register/Register"; // importa o Register
+import Register from "./pages/register/Register";
 import { IntlProvider } from "react-intl";
 import languages from "./utils/translations";
 import useLocaleStore from './stores/useLocaleStore';
