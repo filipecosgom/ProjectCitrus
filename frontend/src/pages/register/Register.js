@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { showSuccessToast } from '../../utils/toastConfig/toastConfig';
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
@@ -90,12 +89,15 @@ export default function Register() {
             >
               <div className="register-fields">
                 <div className="register-field">
+                  <div className="register-labelAndError">
                   <label className="register-label" htmlFor="register-email">
                     Email
                   </label>
                    <span className="error-message">
                     {errors.email ? errors.email.message : "\u00A0"}
                   </span>
+                    </div>
+                  </div>
                   <input
                     id="register-email"
                     className={`register-input`}
@@ -118,9 +120,14 @@ export default function Register() {
                   className="register-field"
                   style={{ position: "relative" }}
                 >
+                  <div className="register-labelAndError">
                   <label className="register-label" htmlFor="register-password">
                     {intl.formatMessage({ id: "registerFieldPassword" })}
                   </label>
+                    <span className="error-message">
+                      {errors.password ? errors.password.message : "\u00A0"}
+                    </span>
+                  </div>
                   <input
                     id="register-password"
                     type={showPassword ? "text" : "password"}
@@ -162,20 +169,23 @@ export default function Register() {
                   >
                     {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                   </button>
-                  <span className="error-message">
-                    {errors.password ? errors.password.message : "\u00A0"}
-                  </span>
-                </div>
                 <div
                   className="register-field"
                   style={{ position: "relative" }}
                 >
+                  <div className="register-labelAndError">
                   <label
                     className="register-label"
                     htmlFor="register-confirm-password"
                   >
                     {intl.formatMessage({ id: "registerFieldConfirmPassword" })}
                   </label>
+                  <span className="error-message">
+                    {errors.passwordConfirm
+                      ? errors.passwordConfirm.message
+                      : "\u00A0"}
+                  </span>
+                  </div>
                   <input
                     id="register-confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
@@ -193,11 +203,6 @@ export default function Register() {
                       },
                     })}
                   />
-                  <span className="error-message">
-                    {errors.passwordConfirm
-                      ? errors.passwordConfirm.message
-                      : "\u00A0"}
-                  </span>
                   <button
                     type="button"
                     className="password-eye-btn"
