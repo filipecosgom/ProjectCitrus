@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
 import handleNotification from "../handles/handleNotification";
-import { getGlobalIntl } from "../context/IntlProviderContext";
+import { IntlProvider } from "react-intl";
 
 
 export const api = axios.create({
@@ -21,7 +21,7 @@ api.interceptors.response.use(
       // Call logout function if needed
     }
     // Get global intl instance for translations
-    const intl = getGlobalIntl();
+    const intl = IntlProvider();
     if (intl) {
       handleApiError(error, intl);
     }
