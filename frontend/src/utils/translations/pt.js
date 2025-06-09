@@ -30,26 +30,30 @@ const pt = {
   registerErrorEmailMissing: "O email é necessário",
   registerErrorEmailInvalid: "Formato de email inválido",
   registerErrorPasswordMissing: "A palavra-passe é necessária",
-  registerErrorConfirmPasswordMissing: "A confirmação da palavra-passe é necessária",
+  registerErrorConfirmPasswordMissing:
+    "A confirmação da palavra-passe é necessária",
   registerErrorPasswordMismatch: "As palavras-passe não correspondem",
-  registerErrorPasswordWeak: "A senha deve ter pelo menos 12 caracteres e incluir letras maiúsculas, minúsculas, números e caracteres especiais.",
+  registerErrorPasswordWeak:
+    "A senha deve ter pelo menos 12 caracteres e incluir letras maiúsculas, minúsculas, números e caracteres especiais.",
 
   //Activation
-    activationTitle: "Ativação da Conta",
-    activationSuccessMessage: "Conta criada com sucesso!",
-    activationEmailConfirmation:
-        "A tua conta com o email {email} foi criada. " +
-        "Enviámos um email de confirmação com um link para validares a tua conta. " +
-        "Por favor verifica a tua caixa de entrada.",
-    activationRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
-
+  activationTitle: "Ativação da Conta",
+  activationSuccessMessage: "Conta criada com sucesso!",
+  activationEmailConfirmation:
+    "A tua conta com o email {email} foi criada. " +
+    "Enviámos um email de confirmação com um link para validares a tua conta. " +
+    "Por favor verifica a tua caixa de entrada.",
+  activationRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
+  activatedAccountTitle: "Conta ativada!",
+  activatedAccountMessage: "A sua conta foi activada, pode efetuar login.<br />Bem-vindo ao Citrus.",
+  activatedAccountRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
+  activatedAccountButton: "Voltar ao Login",
 
   // Forgot Password
   forgotPasswordTitle: "Redefinir palavra-passe",
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
-
 
   //ERRORS
   // Erros Gerais
@@ -63,8 +67,6 @@ const pt = {
   errorFailed: "Falha na solicitação. Tenta novamente.",
   errorNetworkError: "Erro de rede. Verifica a tua conexão.",
   errorUnexpected: "Ocorreu um erro inesperado.",
-
-
 };
 
 export default pt;

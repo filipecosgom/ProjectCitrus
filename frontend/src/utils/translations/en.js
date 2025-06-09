@@ -1,5 +1,5 @@
 const en = {
-    //Login
+  //Login
   loginLogo: "CITRUS",
   loginTitle: "Login",
   loginSubtitle: "Sign-in to your account",
@@ -32,26 +32,27 @@ const en = {
   registerErrorPasswordMissing: "Password is required",
   registerErrorConfirmPasswordMissing: "Password confirmation is required",
   registerErrorPasswordMismatch: "Password's dont match",
-  registerErrorPasswordWeak: "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
+  registerErrorPasswordWeak:
+    "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
 
   // Activation Page
-    activationTitle: "Account Activation",
-    activationSuccessMessage: "Account successfully created!",
-    activationEmailConfirmation:
-        "Your account with the email {email} has been created. " +
-        "We have sent a confirmation email with a link to verify your account. " +
-        "Please check your inbox.",
-    activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
-
-
+  activationTitle: "Account Activation",
+  activationSuccessMessage: "Account successfully created!",
+  activationEmailConfirmation:
+    "Your account with the email {email} has been created. " +
+    "We have sent a confirmation email with a link to verify your account. " +
+    "Please check your inbox.",
+  activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
+  activatedAccountTitle: "Account activated!",
+  activatedAccountMessage: "Your account has been activated, you can now log in.<br />Welcome to Citrus.",
+  activatedAccountRedirectMessage: "Redirecting to login in {segundos} seconds.",
+  activatedAccountButton: "Back to Login",
 
   // Forgot Password Page
   forgotPasswordTitle: "Password Reset",
   forgotPasswordSubtitle: "Write your email address",
   forgotPasswordFieldEmail: "E-mail address",
   forgotPasswordSubmit: "Reset my password",
-
-
 
   //ERRORS
   // General Errors
@@ -65,7 +66,5 @@ const en = {
   errorFailed: "Request failed. Please try again.",
   errorNetworkError: "Network error. Check your connection.",
   errorUnexpected: "An unexpected error occurred.",
-
-
 };
 export default en;

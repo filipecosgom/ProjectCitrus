@@ -9,6 +9,7 @@ import useLocaleStore from './stores/useLocaleStore';
 import ForgotPassword from "./pages/forgotpassword/ForgotPassword";
 import { ToastContainer } from 'react-toastify';
 import AccountActivation from "./pages/landing/AccountActivation";
+import ActivatedAccount from './pages/landing/ActivatedAccount';
 
 function App() {
    const locale = useLocaleStore((state) => state.locale);
@@ -22,6 +23,7 @@ function App() {
           {/* <-- esta linha é essencial */}
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/account-activation" element={<AccountActivation />} />
+          <Route path="/activated-account" element={<ActivatedAccount />} />
           <Route path="*" element={<Login />} /> {/* fallback opcional */}
         </Routes>
       </Router>
