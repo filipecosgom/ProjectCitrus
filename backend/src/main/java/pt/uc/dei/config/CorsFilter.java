@@ -7,6 +7,8 @@ import jakarta.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Set;
+
 /**
  * Implements a Cross-Origin Resource Sharing (CORS) filter for HTTP responses.
  * Ensures that requests from allowed origins can access the application's resources.
@@ -30,21 +32,24 @@ public class CorsFilter implements ContainerResponseFilter {
         // Retrieve the request's origin header
         String origin = requestContext.getHeaderString("Origin");
 
-        // Allow requests from specified origins
-        if ("https://127.0.0.1:5502".equals(origin) || "https://localhost:3000".equals(origin)) {
+        // Lista de origins permitidos
+        Set<String> allowedOrigins = Set.of(
+            "https://localhost:3000",
+            "https://127.0.0.1:5502"
+        );
+
+        // Só adiciona o header se o origin for permitido
+        if (origin != null && allowedOrigins.contains(origin)) {
             responseContext.getHeaders().add("Access-Control-Allow-Origin", origin);
+            responseContext.getHeaders().add("Vary", "Origin"); // Importante para proxies/caches
         }
 
-        // Define allowed HTTP methods
+        // Métodos e headers permitidos
         responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-
-        // Define allowed HTTP headers
         responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization, token, password, username");
-
-        // Allow credentials to be included in requests
         responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
 
-        // Handle preflight OPTIONS requests explicitly
+        // Responde imediatamente a preflight requests
         if ("OPTIONS".equalsIgnoreCase(requestContext.getMethod())) {
             responseContext.setStatus(200);
         }
