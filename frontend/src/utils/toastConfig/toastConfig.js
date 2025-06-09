@@ -8,7 +8,7 @@ export const showSuccessToast = (message) => {
     className: "custom-toast-success",
     progressClassName: "custom-toast-success-progress",
     position: 'top-left',
-    autoClose: 3000,
+    autoClose: 10000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -16,7 +16,7 @@ export const showSuccessToast = (message) => {
   });
 };
 
-// Mensagem de erro
+// Mensagem de erro - torná-las permanentes
 export const showErrorToast = (message) => {
   toast.error(message, {
     className: "custom-toast-error",
