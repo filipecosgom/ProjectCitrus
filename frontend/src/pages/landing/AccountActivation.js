@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegCheckCircle } from "react-icons/fa";
 import "./AccountActivation.css";
 import { useIntl } from "react-intl";
@@ -7,15 +7,20 @@ import { useNavigate } from "react-router-dom";
 export default function AccountActivation({ email }) {
   const intl = useIntl();
   const navigate = useNavigate();
-  const segundos = 10; // valor em segundos
+  const segundos = 10; // valor inicial em segundos
+  const [countdown, setCountdown] = useState(segundos);
 
-  // Redireciona para login após X segundos
+  // Countdown e redirecionamento
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (countdown === 0) {
       navigate("/login");
-    }, segundos * 1000);
-    return () => clearTimeout(timer);
-  }, [navigate, segundos]);
+      return;
+    }
+    const interval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [countdown, navigate]);
 
   return (
     <div className="activation-container">
@@ -37,7 +42,7 @@ export default function AccountActivation({ email }) {
           <p style={{ marginTop: 16, color: "#888", fontSize: "0.95em" }}>
             {intl.formatMessage(
               { id: "activationRedirectMessage" },
-              { segundos }
+              { segundos: countdown }
             )}
           </p>
         </div>
