@@ -25,6 +25,7 @@ const en = {
   registerLogin: "Log in.",
   registerLogo: "CITRUS Logo",
   registerLogoContainerTitle: "Join the CITRUS community!",
+  registerButton: "Back to Login",
 
   registerErrorEmailMissing: "Email is required",
   registerErrorEmailInvalid: "Invalid email format",
@@ -40,8 +41,7 @@ const en = {
         "Your account with the email {email} has been created. " +
         "We have sent a confirmation email with a link to verify your account. " +
         "Please check your inbox.",
-
-
+    activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
 
 
 
