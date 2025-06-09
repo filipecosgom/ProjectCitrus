@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { showSuccessToast } from '../../utils/toastConfig/toastConfig';
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
@@ -82,6 +83,18 @@ export default function Register() {
             <div className="register-subtitle">
               {intl.formatMessage({ id: "registerSubtitle" })}
             </div>
+
+
+
+            <button 
+  onClick={() => showSuccessToast('Test toast!')}
+  className="mt-4 p-2 bg-blue-500 text-white rounded"
+>
+  Click to Test Toast
+</button>
+
+
+
             <form
               className="register-form"
               id="register-form"

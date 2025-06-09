@@ -17,8 +17,8 @@
     "react-intl": "^7.1.11",
     "react-router-dom": "^6.30.1",
     "react-scripts": "^5.0.1",
-    "react-toastify": "^9.1.3",
-    "toast-notifications": "^1.0.7",
+    "react-toastify": "^11.0.5",
+    "react-transition-group": "^4.4.5",
     "validator": "^13.15.15",
     "web-vitals": "^2.1.4",
     "zustand": "^5.0.5"

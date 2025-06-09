@@ -1,9 +1,10 @@
 import { showSuccessToast, showErrorToast, showInfoToast } from "../utils/toastConfig/toastConfig";
 
 const handleNotification = (intl, type, messageId, params = {}) => {
-  console.log("lets notify")
+  console.log(messageId)
 
   const translatedMessage = intl.formatMessage({ id: messageId }, params);
+  console.log(translatedMessage);
 
   if (type === "success") {
     showSuccessToast(translatedMessage);
