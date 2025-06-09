@@ -41,7 +41,6 @@ export const handleApiError = (error, intl) => {
       handleNotification(intl, "error", error.response.data.error || "errorUnexpected");
     }
   } else {
-    console.log("Here third")
     handleNotification(intl, "error", "errorNetworkError");
   }
 };
