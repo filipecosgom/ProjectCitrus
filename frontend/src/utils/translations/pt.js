@@ -25,6 +25,7 @@ const pt = {
   registerLogin: "Entrar.",
   registerLogo: "Logotipo CITRUS",
   registerLogoContainerTitle: "Junte-se à comunidade CITRUS!",
+  registerButton: "Voltar ao Login",
 
   registerErrorEmailMissing: "O email é necessário",
   registerErrorEmailInvalid: "Formato de email inválido",
@@ -40,6 +41,7 @@ const pt = {
         "A tua conta com o email {email} foi criada. " +
         "Enviámos um email de confirmação com um link para validares a tua conta. " +
         "Por favor verifica a tua caixa de entrada.",
+    activationRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
 
 
   // Forgot Password
