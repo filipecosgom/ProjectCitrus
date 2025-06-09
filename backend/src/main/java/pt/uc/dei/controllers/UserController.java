@@ -50,7 +50,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO) {
+    public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO, @HeaderParam("lang") String language) {
         if (userService.findIfUserExists(temporaryUserDTO.getEmail())) {
             LOGGER.info("Duplicate email attempt: {}", temporaryUserDTO.getEmail());
             return Response.status(Response.Status.CONFLICT)
@@ -67,7 +67,7 @@ public class UserController {
                         .build();
             }
             // Send email and return response
-            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken);
+            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken, language);
             return Response.status(Response.Status.CREATED)
                     .entity("{\"token\": \"" + activationToken + "\"}")
                     .build();

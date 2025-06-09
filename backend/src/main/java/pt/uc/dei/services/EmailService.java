@@ -53,7 +53,7 @@ public class EmailService {
      * @param recipientEmail  The email address of the recipient.
      * @param activationToken The activation token for the recipient's account.
      */
-    public void sendActivationEmail(String recipientEmail, String activationToken) {
+    public void sendActivationEmail(String recipientEmail, String activationToken, String language) {
         try {
             // Retrieve SMTP properties for configuring email session
             Properties properties = EmailConfig.getSMTPProperties();
@@ -70,7 +70,7 @@ public class EmailService {
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject("CITRUS - Activate Your Account");
-            String activationLink = "https://localhost:3000/activate?" + activationToken;
+            String activationLink = "https://localhost:3000/activate?" + activationToken + "&lang=" + language;
             ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
             String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE(activationLink, (configurationDTO.getPasswordResetTime()/60));
             message.setContent(messageBody, "text/html");
