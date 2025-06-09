@@ -48,6 +48,21 @@ const pt = {
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
 
+
+  //ERRORS
+  // Erros Gerais
+  errorInvalidData: "Dados inválidos fornecidos.",
+  errorWrongUsernamePassword: "Nome de usuário ou senha incorretos.",
+  errorAccountInactive: "A tua conta está inativa.",
+  errorAccountExcluded: "A tua conta foi excluída.",
+  errorForbidden: "Não tens permissão para acessar este recurso.",
+  errorDuplicateEntry: "Este email já está registado.",
+  errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
+  errorFailed: "Falha na solicitação. Tenta novamente.",
+  errorNetworkError: "Erro de rede. Verifica a tua conexão.",
+  errorUnexpected: "Ocorreu um erro inesperado.",
+
+
 };
 
 export default pt;

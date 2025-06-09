@@ -1,5 +1,8 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
+import handleNotification from "../handles/handleNotification";
+import { getGlobalIntl } from "../context/IntlProviderContext";
+
 
 export const api = axios.create({
   baseURL: apiBaseUrl, // Sets the API base URL globally
@@ -17,26 +20,29 @@ api.interceptors.response.use(
       console.log("Session expired, logging out...");
       // Call logout function if needed
     }
+    // Get global intl instance for translations
+    const intl = getGlobalIntl();
+    if (intl) {
+      handleApiError(error, intl);
+    }
     return Promise.reject(error);
   }
 );
 
-// Global Error Handling Function
-export const handleApiError = (error, context) => {
+
+
+export const handleApiError = (error, intl) => {
+  console.error("API Error:", error);
   if (error.response) {
-    const status = error.response.status;
-    const message = error.response.data;
+    const { success, message, errorCode } = error.response.data;
+    console.log("Here first")
 
-    if (status === 400) throw new Error("errorInvalidData");
-    if (status === 401) throw new Error("errorWrongUsernamePassword");
-    if (status === 403) {
-      if (message === "errorForbidden - inactive user") throw new Error("errorAccountInactive");
-      if (message === "errorForbidden - excluded user") throw new Error("errorAccountExcluded");
+    if (!success) {
+      handleNotification(intl, "error", errorCode || "errorUnexpected");
+      console.log("Here second")
     }
-    throw new Error("errorFailed");
+  } else {
+    console.log("Here third")
+    handleNotification(intl, "error", "errorNetworkError");
   }
-  if (error.request) throw new Error("errorNetwork_error");
-  throw new Error("errorUnexpected");
 };
-
-export default api;

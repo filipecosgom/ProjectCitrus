@@ -8,6 +8,7 @@ import "../../styles/AuthTransition.css"; // Import the transition styles
 import { useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
 import handleRegistration from "../../handles/handleRegistration";
+import handleNotification from "../../handles/handleNotification";
 import AccountActivation from "../landing/AccountActivation";
 
 export default function Register() {
@@ -43,18 +44,29 @@ export default function Register() {
     }, 200); // igual à duração da animação
   };
 
-  //Submissão do formulário (admin é sempre falso)
   const onSubmit = async (registerData) => {
-    const newUser = {
-      email: registerData.email,
-      password: registerData.password,
-    };
-
-    // Aqui podes chamar a API de registo se quiseres
-    setRegisteredEmail(registerData.email);
-    setShowActivation(true);
-    reset();
+  const newUser = {
+    email: registerData.email,
+    password: registerData.password,
   };
+
+  try {
+    const success = await handleRegistration(newUser, intl);
+
+    if (success) {
+      setRegisteredEmail(registerData.email);
+      setShowActivation(true);
+      reset();
+    } else {
+      reset();
+      console.warn("Registration failed, not updating UI.");
+      console.log("aqui")
+    }
+  } catch (error) {
+    console.error("Unexpected registration error:", error);
+    handleNotification(intl, "error", "An unexpected error occurred.");
+  }
+};
 
   return (
     <div className={`register-container d-flex ${animationClass}`}>
@@ -80,6 +92,9 @@ export default function Register() {
                   <label className="register-label" htmlFor="register-email">
                     Email
                   </label>
+                   <span className="error-message">
+                    {errors.email ? errors.email.message : "\u00A0"}
+                  </span>
                   <input
                     id="register-email"
                     className={`register-input`}
@@ -95,9 +110,7 @@ export default function Register() {
                       },
                     })}
                   />
-                  <span className="error-message">
-                    {errors.email ? errors.email.message : "\u00A0"}
-                  </span>
+                 
                 </div>
 
                 <div

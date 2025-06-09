@@ -23,7 +23,6 @@ function App() {
           {/* <-- esta linha é essencial */}
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/account-activation" element={<AccountActivation />} />
-          <Route path="*" element={<Login />} /> {/* fallback opcional */}
         </Routes>
       </Router>
       <ToastContainer limit={3} />
@@ -32,7 +31,3 @@ function App() {
 }
 
 export default App;
-
-
-
-

@@ -51,5 +51,21 @@ const en = {
   forgotPasswordFieldEmail: "E-mail address",
   forgotPasswordSubmit: "Reset my password",
 
+
+
+  //ERRORS
+  // General Errors
+  errorInvalidData: "Invalid data provided.",
+  errorWrongUsernamePassword: "Incorrect username or password.",
+  errorAccountInactive: "Your account is inactive.",
+  errorAccountExcluded: "Your account has been excluded.",
+  errorForbidden: "You don't have permission to access this resource.",
+  errorDuplicateEntry: "This email is already registered.",
+  errorServerIssue: "Server error. Please try again later.",
+  errorFailed: "Request failed. Please try again.",
+  errorNetworkError: "Network error. Check your connection.",
+  errorUnexpected: "An unexpected error occurred.",
+
+
 };
 export default en;

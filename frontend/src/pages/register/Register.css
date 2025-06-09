@@ -287,14 +287,6 @@
   }
 }
 
-
-
-.input-error {
-  border: 2px solid red;
-  background-color: #ffcccc;
-  box-shadow: 0 0 5px red;
-}
-
 .error-message {
   color: red;
   font-size: 0.9rem;

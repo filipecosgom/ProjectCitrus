@@ -17,7 +17,10 @@ import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
+import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
+
+import java.util.Map;
 
 /**
  * Handles user registration endpoints.
@@ -52,38 +55,39 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO) {
-        // Check for existing user
         if (userService.findIfUserExists(temporaryUserDTO.getEmail())) {
             LOGGER.info("Duplicate email attempt: {}", temporaryUserDTO.getEmail());
             return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"Email already registered\"}")
+                    .entity(new ApiResponse(false, "Email already registered", "errorDuplicateEntry", null))
                     .build();
         }
+
         try {
-            // Process registration
             String activationToken = userService.registerUser(temporaryUserDTO);
             if (activationToken == null) {
                 LOGGER.error("Token generation failed for {}", temporaryUserDTO.getEmail());
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity("{\"error\": \"Activation token failed\"}")
+                return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                        .entity(new ApiResponse(false, "Activation token failed", "errorActivationFailed", null))
                         .build();
             }
-            // Send email and return response
+
             emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken);
             return Response.status(Response.Status.CREATED)
-                    .entity("{\"token\": \"" + activationToken + "\"}")
+                    .entity(new ApiResponse(true, "Account created successfully", null, Map.of("token", activationToken)))
                     .build();
+
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
+                    .entity(new ApiResponse(false, e.getMessage(), "errorInvalidData", null))
                     .build();
         } catch (Exception e) {
             LOGGER.error("Registration error for {}: {}", temporaryUserDTO.getEmail(), e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\": \"Registration failed\"}")
+                    .entity(new ApiResponse(false, "Registration failed", "errorServerIssue", null))
                     .build();
         }
     }
+
 
     @GET
     @Path("/me")
