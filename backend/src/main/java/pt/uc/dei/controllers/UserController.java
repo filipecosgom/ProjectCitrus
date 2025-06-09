@@ -1,5 +1,6 @@
 package pt.uc.dei.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.inject.Inject;
@@ -13,8 +14,10 @@ import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
+import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -54,55 +57,64 @@ public class UserController {
         if (userService.findIfUserExists(temporaryUserDTO.getEmail())) {
             LOGGER.info("Duplicate email attempt: {}", temporaryUserDTO.getEmail());
             return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"Email already registered\"}")
+                    .entity(new ApiResponse(false, "Email already registered", "errorDuplicateEntry", null))
                     .build();
         }
-
         try {
             String activationToken = userService.registerUser(temporaryUserDTO);
             if (activationToken == null) {
                 LOGGER.error("Token generation failed for {}", temporaryUserDTO.getEmail());
                 return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-                        .entity("{\"error\": \"Activation token failed\"}")
+                        .entity(new ApiResponse(false, "Activation token failed", "errorActivationFailed", null))
                         .build();
             }
             // Send email and return response
             emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken, language);
-            return Response.status(Response.Status.CREATED)
-                    .entity("{\"token\": \"" + activationToken + "\"}")
-                    .build();
-
+            ApiResponse response = new ApiResponse(true, "Account created", null, Map.of("token", activationToken));
+            System.out.println("Response: " + new ObjectMapper().writeValueAsString(response)); // Debug serialization
+            return Response.status(Response.Status.CREATED).entity(response).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
+                    .entity(new ApiResponse(false, e.getMessage(), "errorInvalidData", null))
                     .build();
         } catch (Exception e) {
             LOGGER.error("Registration error for {}: {}", temporaryUserDTO.getEmail(), e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\": \"Registration failed\"}")
+                    .entity(new ApiResponse(false, "Registration failed", "errorServerIssue", null))
                     .build();
         }
     }
-
 
     @GET
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserData(@Context HttpHeaders headers) {
-        Cookie jwtCookie = headers.getCookies().get("jwt");
+        Map<String, Cookie> cookies = headers.getCookies();
+        Cookie jwtCookie = (cookies != null) ? cookies.get("jwt") : null;
         if (jwtCookie == null || jwtCookie.getValue().isEmpty()) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Missing token").build();
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Missing token", "errorMissingToken", null))
+                    .build();
         }
         try {
             Claims claims = JWTUtil.validateToken(jwtCookie.getValue());
+            // Check for token expiration
+            if (claims.getExpiration() != null && claims.getExpiration().before(new Date())) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Token expired", "errorTokenExpired", null))
+                        .build();
+            }
+            // Construct UserDTO from JWT claims
             UserDTO user = new UserDTO(
                     claims.getSubject(),
                     Boolean.TRUE.equals(claims.get("isAdmin")),
                     Boolean.TRUE.equals(claims.get("isManager"))
             );
-            return Response.ok(user).build();
-        } catch (JwtException e) { // Catching JWT-specific exceptions
-            return Response.status(Response.Status.FORBIDDEN).entity("Invalid token").build();
+            return Response.ok(new ApiResponse(true, "User data retrieved", null, user)).build();
+        } catch (JwtException e) {
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity(new ApiResponse(false, "Invalid token", "errorInvalidToken", null))
+                    .build();
         }
     }
 }

@@ -186,8 +186,6 @@ public class UserService implements Serializable {
         activationTokenRepository.flush();
         // Delete the temporary user
         deleteTemporaryUser(userToDelete);
-        // Merge user after deletion process
-        temporaryUserRepository.merge(user);
         return true;
     }
 

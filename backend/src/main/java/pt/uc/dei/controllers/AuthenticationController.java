@@ -24,6 +24,9 @@ import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import jakarta.inject.Inject;
+import pt.uc.dei.utils.ApiResponse;
+
+import java.util.Map;
 
 /**
  * REST controller for handling authentication requests.
@@ -63,46 +66,65 @@ public class AuthenticationController {
     @POST
     @Path("/login") // Defines the login endpoint
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response login(LoginDTO user) {
         // Attempt to authenticate user and generate JWT token
         String token = userService.loginUser(user);
 
-        // If authentication fails, return HTTP 401 (Unauthorized)
+        // If authentication fails, return structured error response
         if (token == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
+                    .build();
         }
+
+        // Retrieve configuration settings
         ConfigurationDTO configuration = configurationService.getLatestConfiguration();
 
-        Response.ResponseBuilder response = Response.ok();
+        // Prepare the response with JWT in headers and structured body
+        Response.ResponseBuilder response = Response.ok(new ApiResponse(true, "Login successful", null, Map.of("token", token)));
+
         response.header("Set-Cookie",
                 "jwt=" + token +
                         "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
         );
+
         return response.build();
     }
 
     @POST
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response requestPasswordReset(JsonObject emailJSON) {
         String email = emailJSON.getString("email");
-        if (email.isEmpty() || email == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        if (email == null || email.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
+                    .build();
         }
+
         try {
             String token = tokenService.createNewPasswordResetToken(email);
+
             if (token == null) {
                 LOGGER.error("Invalid reset token request for {}", email);
-                return Response.status(Response.Status.UNAUTHORIZED).build();
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
+                        .build();
             }
+
             emailService.sendPassworResetEmail(email, token);
+
             return Response.status(Response.Status.CREATED)
-                    .entity("{\"pass-reset token\": \"" + token + "\"}")
+                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
                     .build();
+
         } catch (Exception e) {
             LOGGER.error("Password reset error for {}: {}", email, e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\": \"Registration failed\"}")
+                    .entity(new ApiResponse(false, "Password reset failed", "errorServerIssue", null))
                     .build();
         }
     }

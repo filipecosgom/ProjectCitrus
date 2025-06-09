@@ -1,10 +1,7 @@
 package pt.uc.dei.controllers;
 
 import jakarta.ejb.EJB;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +11,9 @@ import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.repositories.ActivationTokenRepository;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
+import pt.uc.dei.utils.ApiResponse;
+
+import java.util.Map;
 
 /**
  * REST controller for handling account activation requests.
@@ -72,6 +72,7 @@ public class ActivationController {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) // Ensures JSON response
     public Response activateAccount(@HeaderParam("token") String token) {
         try {
             // Step 1: Validate token and get associated user
@@ -81,7 +82,9 @@ public class ActivationController {
 
             if (userToActivate == null) {
                 LOGGER.warn("Activation attempt with invalid token: {}", token);
-                return Response.status(Response.Status.UNAUTHORIZED).build();
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Invalid token", "errorInvalidToken", null))
+                        .build();
             }
 
             // Step 2: Check token expiration
@@ -90,31 +93,41 @@ public class ActivationController {
                 String newToken = tokenService.renewToken(userToActivate, activationToken);
                 if (newToken != null) {
                     LOGGER.warn("Expired token used for {} - New token generated", userToActivate.getEmail());
-                    return Response.status(Response.Status.CONFLICT).entity(newToken).build();
+                    return Response.status(Response.Status.CONFLICT)
+                            .entity(new ApiResponse(false, "Token expired, new token generated", "errorTokenExpired", Map.of("newToken", newToken)))
+                            .build();
                 }
                 LOGGER.error("Token renewal failed for {}", userToActivate.getEmail());
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Token renewal failed", "errorTokenRenewalFailed", null))
+                        .build();
             }
-
 
             // Step 3: Activate user
             if (!userService.activateUser(userToActivate)) {
                 LOGGER.error("Account activation failed for {}", userToActivate.getEmail());
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Account activation failed", "errorAccountActivationFailed", null))
+                        .build();
             }
 
             // Step 4: Cleanup
-            if (!userService.deleteTemporaryUserInformation(userToActivate)) {
+            boolean cleanupSuccess = userService.deleteTemporaryUserInformation(userToActivate);
+            if (!cleanupSuccess) {
                 LOGGER.error("Temporary data cleanup failed for {}", userToActivate.getEmail());
                 // Still return success as account was activated
             }
 
             LOGGER.info("Account successfully activated for {}", userToActivate.getEmail());
-            return Response.status(Response.Status.ACCEPTED).build();
+            return Response.status(Response.Status.ACCEPTED)
+                    .entity(new ApiResponse(true, "Account activated successfully", null, Map.of("email", userToActivate.getEmail())))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error during account activation", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Unexpected error", "errorServerIssue", null))
+                    .build();
         }
     }
 }
