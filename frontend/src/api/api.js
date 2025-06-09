@@ -35,11 +35,10 @@ export const handleApiError = (error, intl) => {
   console.error("API Error:", error);
   if (error.response) {
     const { success, message, errorCode } = error.response.data;
-    console.log("Here first")
+    console.log(error.response.data.error)
 
     if (!success) {
-      handleNotification(intl, "error", errorCode || "errorUnexpected");
-      console.log("Here second")
+      handleNotification(intl, "error", error.response.data.error || "errorUnexpected");
     }
   } else {
     console.log("Here third")

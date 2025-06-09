@@ -83,18 +83,6 @@ export default function Register() {
             <div className="register-subtitle">
               {intl.formatMessage({ id: "registerSubtitle" })}
             </div>
-
-
-
-            <button 
-  onClick={() => showSuccessToast('Test toast!')}
-  className="mt-4 p-2 bg-blue-500 text-white rounded"
->
-  Click to Test Toast
-</button>
-
-
-
             <form
               className="register-form"
               id="register-form"
