@@ -21,6 +21,7 @@ import Header from "./components/header/Header";
 function AppRoutes() {
   const location = useLocation();
   const hideHeaderRoutes = [
+    "/",
     "/login",
     "/register",
     "/password-reset",

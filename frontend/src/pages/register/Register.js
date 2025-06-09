@@ -60,7 +60,7 @@ export default function Register() {
     } else {
       reset();
       console.warn("Registration failed, not updating UI.");
-      console.log("aqui")
+      console.log("Registration failed: No further UI updates will be made.")
     }
   } catch (error) {
     console.error("Unexpected registration error:", error);
@@ -97,7 +97,6 @@ export default function Register() {
                     {errors.email ? errors.email.message : "\u00A0"}
                   </span>
                     </div>
-                  </div>
                   <input
                     id="register-email"
                     className={`register-input`}
@@ -113,7 +112,7 @@ export default function Register() {
                       },
                     })}
                   />
-                 
+                  </div>
                 </div>
 
                 <div
