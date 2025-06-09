@@ -1,6 +1,5 @@
 import React from 'react';  
 import './App.css';
-import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
@@ -23,6 +22,7 @@ function App() {
           {/* <-- esta linha é essencial */}
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/account-activation" element={<AccountActivation />} />
+          <Route path="*" element={<Login />} /> {/* fallback opcional */}
         </Routes>
       </Router>
       <ToastContainer limit={3} />
