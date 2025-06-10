@@ -1,17 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaFileAlt, FaCheckSquare } from "react-icons/fa";
+import { FaAward, FaBook } from "react-icons/fa";
+import { IoMdNotifications } from "react-icons/io";
 import "./NotificationDropdown.css";
 
 // Função para escolher ícone conforme tipo
 function getIcon(type) {
   switch (type) {
     case "appraisal":
-      return <FaFileAlt className="notif-icon" color="#B61B23" />;
+      return <FaAward className="notif-icon" color="#B61B23" />;
     case "course":
-      return <FaCheckSquare className="notif-icon" color="#818488" />;
+      return <FaBook className="notif-icon" color="#818488" />;
     default:
-      return <FaFileAlt className="notif-icon" color="#B61B23" />;
+      return <IoMdNotifications className="notif-icon" color="#B61B23" />;
   }
 }
 
@@ -32,7 +33,7 @@ export default function NotificationDropdown({ notifications = [] }) {
               </div>
               <div className="notification-text-cell">
                 <div className="notification-message">{notif.message}</div>
-                <div className="notification-timestamp">{notif.timestamp}</div>
+                <div className="notification-timestamp">{notif.time}</div>
               </div>
             </div>
           ))

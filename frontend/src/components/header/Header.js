@@ -35,20 +35,58 @@ export default function Header({
   const notifications = [
     {
       id: 1,
+      type: "appraisal",
       message: "Nova mensagem de João",
       time: "2 mins ago",
       read: false,
     },
     {
       id: 2,
+      type: "appraisal",
       message: "Seu relatório foi aprovado",
       time: "1 hour ago",
       read: true,
     },
     {
       id: 3,
+      type: "course",
       message: "Lembrete: Reunião às 15h",
       time: "3 hours ago",
+      read: false,
+    },
+    {
+      id: 4,
+      type: "course",
+      message: "Novo curso disponível: React Avançado",
+      time: "Hoje 14:30",
+      read: false,
+    },
+    {
+      id: 5,
+      type: "appraisal",
+      message: "Avaliação anual disponível",
+      time: "Ontem 17:00",
+      read: false,
+    },
+    {
+      id: 6,
+      type: "course",
+      message: "Curso de UX/UI atualizado",
+      time: "Ontem 15:45",
+      read: true,
+    },
+    {
+      id: 7,
+      type: "appraisal",
+      message: "Feedback recebido do gestor",
+      time: "10/06/2025 09:00",
+      read: false,
+    },
+    {
+      id: 8,
+      type: "course",
+      message: "Novo módulo: Design Systems",
+      time: "09/06/2025 11:30",
       read: false,
     },
   ];

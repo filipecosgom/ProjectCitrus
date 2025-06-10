@@ -48,8 +48,10 @@ const en = {
     "Please check your inbox.",
   activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
   activatedAccountTitle: "Account activated!",
-  activatedAccountMessage: "Your account has been activated, you can now log in.<br />Welcome to Citrus.",
-  activatedAccountRedirectMessage: "Redirecting to login in {segundos} seconds.",
+  activatedAccountMessage:
+    "Your account has been activated, you can now log in.<br />Welcome to Citrus.",
+  activatedAccountRedirectMessage:
+    "Redirecting to login in {segundos} seconds.",
   activatedAccountButton: "Back to Login",
 
   // Forgot Password Page
@@ -70,6 +72,11 @@ const en = {
   errorFailed: "Request failed. Please try again.",
   errorNetworkError: "Network error. Check your connection.",
   errorUnexpected: "An unexpected error occurred.",
-  errorInvalidCredentials: "Email or password are incorrect"
+  errorInvalidCredentials: "Email or password are incorrect",
+
+  // Not Found Page
+  notfoundTitle: "404 Not Found",
+  notfoundPhrase: "When life gives you lemons...",
+  notfoundRedirect: "Redirecting in {segundos} seconds.",
 };
 export default en;

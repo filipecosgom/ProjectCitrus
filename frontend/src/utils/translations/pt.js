@@ -47,10 +47,13 @@ const pt = {
     "A tua conta com o email {email} foi criada. " +
     "Enviámos um email de confirmação com um link para validares a tua conta. " +
     "Por favor verifica a tua caixa de entrada.",
-  activationRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
+  activationRedirectMessage:
+    "Serás redirecionado para o login em {segundos} segundos.",
   activatedAccountTitle: "Conta ativada!",
-  activatedAccountMessage: "A sua conta foi activada, pode efetuar login.<br />Bem-vindo ao Citrus.",
-  activatedAccountRedirectMessage: "Serás redirecionado para o login em {segundos} segundos.",
+  activatedAccountMessage:
+    "A sua conta foi activada, pode efetuar login.<br />Bem-vindo ao Citrus.",
+  activatedAccountRedirectMessage:
+    "Serás redirecionado para o login em {segundos} segundos.",
   activatedAccountButton: "Voltar ao Login",
 
   // Forgot Password
@@ -71,7 +74,12 @@ const pt = {
   errorFailed: "Falha na solicitação. Tenta novamente.",
   errorNetworkError: "Erro de rede. Verifica a tua conexão.",
   errorUnexpected: "Ocorreu um erro inesperado.",
-  errorInvalidCredentials: "Email or password estão erradas"
+  errorInvalidCredentials: "Email or password estão erradas",
+
+  // Not Found
+  notfoundTitle: "404 Não Encontrado",
+  notfoundPhrase: "Quando a vida te dá limões...",
+  notfoundRedirect: "A redirecioná-lo dentro de {segundos} segundos.",
 };
 
 export default pt;
