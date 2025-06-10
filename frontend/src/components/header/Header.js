@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
+import {
+  FaBars,
+  FaRegComments,
+  FaRegBell,
+  FaUserCircle,
+  FaRegEnvelope,
+} from "react-icons/fa";
 import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
+import MessageDropdown from "../dropdowns/MessageDropdown";
 
 export default function Header({
   userName,
@@ -17,20 +24,28 @@ export default function Header({
 
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef();
+  const [showMessages, setShowMessages] = useState(false);
+  const messagesRef = useRef();
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
+      if (messagesRef.current && !messagesRef.current.contains(event.target)) {
+        setShowMessages(false);
+      }
     }
     if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    if (showMessages) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showNotifications]);
+  }, [showNotifications, showMessages]);
 
   const notifications = [
     {
@@ -91,6 +106,18 @@ export default function Header({
     },
   ];
 
+  const messages = [
+    {
+      id: 1,
+      message_content: "Olá! Como estás?",
+      sent_date: "2025-06-10 10:00",
+      is_read: false,
+      sender_id: 2,
+      receiver_id: 1,
+    },
+    // ...mais mensagens
+  ];
+
   return (
     <header className="citrus-header">
       {/* Logotipo + CITRUS (desktop) ou burger menu (tablet/mobile) */}
@@ -106,15 +133,25 @@ export default function Header({
       <div className="header-cell header-empty" />
       {/* Ícones */}
       <div className="header-cell header-icons">
-        <div className="header-icon-wrapper">
-          <FaRegComments />
+        <div className="header-icon-wrapper" ref={messagesRef}>
+          <FaRegComments
+            onClick={() => {
+              setShowMessages((v) => !v);
+              setShowNotifications(false); // Fecha notificações ao abrir mensagens
+            }}
+            style={{ cursor: "pointer" }}
+          />
           {unreadMessages > 0 && (
             <span className="header-badge">{unreadMessages}</span>
           )}
+          {showMessages && <MessageDropdown messages={messages} />}
         </div>
         <div className="header-icon-wrapper" ref={notifRef}>
           <FaRegBell
-            onClick={() => setShowNotifications((v) => !v)}
+            onClick={() => {
+              setShowNotifications((v) => !v);
+              setShowMessages(false); // Fecha mensagens ao abrir notificações
+            }}
             style={{ cursor: "pointer" }}
           />
           {unreadNotifications > 0 && (
