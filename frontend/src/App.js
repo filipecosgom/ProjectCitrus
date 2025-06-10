@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import Header from "./components/header/Header";
+import NotFound404 from "./pages/404/404NotFound";
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
@@ -28,10 +29,25 @@ function AppRoutes() {
     "/offcanvas-forgot-password",
     "/account-activation",
     "/activated-account",
+    "/header",
   ];
-  const showHeader =
-    !hideHeaderRoutes.includes(location.pathname) &&
-    location.pathname !== "/header";
+
+  // Lista de todas as rotas conhecidas (as que tens no <Routes>)
+  const knownRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/password-reset",
+    "/offcanvas-forgot-password",
+    "/account-activation",
+    "/activated-account",
+    "/header",
+  ];
+
+  // Se não for uma rota conhecida, é 404
+  const is404 = !knownRoutes.includes(location.pathname);
+
+  const showHeader = !hideHeaderRoutes.includes(location.pathname) && !is404;
 
   // Dados de exemplo para o Header
   const user = {
@@ -65,7 +81,7 @@ function AppRoutes() {
         <Route path="/account-activation" element={<AccountActivation />} />
         <Route path="/activated-account" element={<ActivatedAccount />} />
         <Route path="/header" element={<div />} /> {/* Só mostra o Header */}
-        <Route path="*" element={<Login />} />
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
     </>
   );
