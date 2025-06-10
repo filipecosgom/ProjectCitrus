@@ -12,7 +12,13 @@ export const register = async (newUser) => {
   }
 };
 
-export const fetchUserInformation = async(token) => {
-  
-  
+export const fetchUserInformation = async() => {
+  console.log("abriu o fetch");
+  try {
+    const response = await api.get(`${userEndpoint}/me`);
+    console.log("API Response:", response); // Debugging log
+    return { success: true, status: response.status, data: response.data };
+  } catch (error) {
+    return { success: false, status: error.response?.status || 500, error };
+  }  
 }

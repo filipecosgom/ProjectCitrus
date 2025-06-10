@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {  useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -8,8 +8,8 @@ import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotP
 import "./Login.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
-import handleNotification from "../../handles/handleNotification";
 import handleLogin from "../../handles/handleLogin";
+import useAuthStore from "../../stores/useAuthStore";
 
 export default function Login() {
   const {
@@ -35,7 +35,6 @@ export default function Login() {
       const success = await handleLogin(user);
       if (success) {
         reset();
-        console.log("sucess! Check the token");
       } else {
         reset();
         console.warn("Registration failed, not updating UI.");
@@ -44,6 +43,7 @@ export default function Login() {
       reset()
     }
   };
+
 
   return (
     <div className="login-container">

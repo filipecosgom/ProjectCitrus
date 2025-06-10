@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
@@ -105,7 +106,7 @@ public class UserController {
                         .build();
             }
             // Construct UserDTO from JWT claims
-            UserDTO user = new UserDTO(
+            UserResponseDTO user = new UserResponseDTO(
                     claims.getSubject(),
                     Boolean.TRUE.equals(claims.get("isAdmin")),
                     Boolean.TRUE.equals(claims.get("isManager"))
