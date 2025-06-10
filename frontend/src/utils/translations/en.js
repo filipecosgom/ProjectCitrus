@@ -70,5 +70,6 @@ const en = {
   errorFailed: "Request failed. Please try again.",
   errorNetworkError: "Network error. Check your connection.",
   errorUnexpected: "An unexpected error occurred.",
+  errorInvalidCredentials: "Email or password are incorrect"
 };
 export default en;

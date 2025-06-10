@@ -21,8 +21,7 @@ export const showErrorToast = (message) => {
   toast.error(message, {
     className: "custom-toast-error",
     position: 'top-left',
-    autoClose: 3000,
-    hideProgressBar: false,
+    autoClose: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: false,

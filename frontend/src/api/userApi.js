@@ -14,4 +14,5 @@ export const register = async (newUser) => {
 
 export const fetchUserInformation = async(token) => {
   
+  
 }

@@ -71,6 +71,7 @@ const pt = {
   errorFailed: "Falha na solicitação. Tenta novamente.",
   errorNetworkError: "Erro de rede. Verifica a tua conexão.",
   errorUnexpected: "Ocorreu um erro inesperado.",
+  errorInvalidCredentials: "Email or password estão erradas"
 };
 
 export default pt;

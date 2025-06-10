@@ -204,7 +204,7 @@ export default function Register() {
                           : "registerShowPassword",
                       })}
                     >
-                      {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                      {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                     </button>
                   </div>
                 </div>
