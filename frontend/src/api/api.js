@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
 import handleNotification from "../handles/handleNotification";
-import { IntlProvider } from "react-intl";
+import { getIntl, getCurrentLocale } from "../utils/Intl";
 
 
 export const api = axios.create({
@@ -20,10 +20,17 @@ api.interceptors.response.use(
       console.log("Session expired, logging out...");
       // Call logout function if needed
     }
+    console.log(error);
+    
+    console.log(error.response);
+    let errorData = error;
     // Get global intl instance for translations
-    const intl = IntlProvider();
+    const currentLocale = getCurrentLocale();
+    const intl = getIntl();
+    console.log('Current locale in interceptor:', currentLocale);
     if (intl) {
-      handleApiError(error, intl);
+      console.log('aqui');
+      handleApiError(errorData, intl);
     }
     return Promise.reject(error);
   }
@@ -32,13 +39,12 @@ api.interceptors.response.use(
 
 
 export const handleApiError = (error, intl) => {
-  console.error("API Error:", error);
   if (error.response) {
     const { success, message, errorCode } = error.response.data;
-    console.log(error.response.data.error)
 
     if (!success) {
-      handleNotification(intl, "error", error.response.data.error || "errorUnexpected");
+      handleNotification(intl, "error", errorCode || "errorUnexpected");
+      console.log("ending")
     }
   } else {
     handleNotification(intl, "error", "errorNetworkError");

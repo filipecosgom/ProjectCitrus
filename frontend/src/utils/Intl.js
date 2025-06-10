@@ -23,6 +23,7 @@ const updateIntl = (locale) => {
     cache
   );
 };
+export const getCurrentLocale = () => useLocaleStore.getState().locale;
 
 // Get current intl instance
 export const getIntl = () => {
@@ -35,6 +36,12 @@ export const getIntl = () => {
 
 // Subscribe to locale changes
 useLocaleStore.subscribe(
-  (state) => state.locale,
-  (newLocale) => updateIntl(newLocale)
+  (state) => {
+    console.log('Locale changed to:', state.locale);
+    return state.locale;
+  },
+  (newLocale) => {
+    console.log('Updating intl to:', newLocale);
+    updateIntl(newLocale);
+  }
 );

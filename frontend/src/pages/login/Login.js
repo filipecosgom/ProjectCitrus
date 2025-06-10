@@ -41,8 +41,7 @@ export default function Login() {
         console.warn("Registration failed, not updating UI.");
       }
     } catch (error) {
-      console.error("Unexpected registration error:", error);
-      handleNotification(intl, "error", "An unexpected error occurred.");
+      reset()
     }
   };
 
