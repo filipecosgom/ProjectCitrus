@@ -22,17 +22,17 @@ export default function LanguageDropdown({ language, setLanguage }) {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    setLanguage(locale)
+    setLanguage(locale);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [locale, setLanguage]);
 
   const selectedLang = LANGUAGES.find((l) => l.code === language);
 
-const handleChangeLanguage = (newLocale) => {
-  handleLocaleChange(newLocale);
-  setLanguage(newLocale);
-  setShowDropdown(false);
-};
+  const handleChangeLanguage = (newLocale) => {
+    handleLocaleChange(newLocale);
+    setLanguage(newLocale);
+    setShowDropdown(false);
+  };
 
   return (
     <div className="language-dropdown" ref={dropdownRef}>
@@ -50,7 +50,12 @@ const handleChangeLanguage = (newLocale) => {
         <span className="language-label" style={{ marginLeft: 8 }}>
           {selectedLang.label}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 16 }}>▼</span>
+        <span
+          className={`dropdown-arrow${showDropdown ? " open" : ""}`}
+          style={{ marginLeft: "auto", fontSize: 16 }}
+        >
+          ▼
+        </span>
       </div>
       {showDropdown && (
         <div className="language-options">

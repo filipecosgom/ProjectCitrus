@@ -1,48 +1,55 @@
 .language-dropdown {
-    position: relative;
-    width: 180px;
-
-  }
-  .language-selected {
-    border: 2px solid #CBB4B4;
-    border-radius: 8px;
-    padding: 4px 12px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    min-height: 32px;
-  }
-  .language-options {
-    position: absolute;
-    background: #fff;
-    border: 2px solid #CBB4B4;
-    border-radius: 8px;
-    margin-top: 4px;
-    z-index: 10;
-    width: 180px;
-    left: 0;
-    box-shadow: 0 2px 8px rgba(203,180,180,0.15);
-  }
-  .language-option {
-    display: flex;
-    align-items: center;
-    padding: 6px 8px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  .language-option:hover {
-    background: #f3eaea;
-  }
-  .language-flag {
-    height: 18px;
-    width: 32px;
-    object-fit: cover;
-  }
-  .language-label {
-    font-family: 'Khula', sans-serif;
-    font-size: 16px;
-    color: #969696;
-
-  }
+  position: relative;
+  width: 180px;
+}
+.language-selected {
+  border: 2px solid #cbb4b4;
+  border-radius: 8px;
+  padding: 4px 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  min-height: 32px;
+}
+.language-options {
+  position: absolute;
+  background: #fff;
+  border: 2px solid #cbb4b4;
+  border-radius: 8px;
+  z-index: 10;
+  width: 180px;
+  left: 0;
+  box-shadow: 0 2px 8px rgba(203, 180, 180, 0.15);
+  bottom: 100%; /* Mostra acima do botão */
+  margin-bottom: 4px; /* Espaço entre botão e opções */
+  /* Remove margin-top se existir */
+}
+.language-option {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.language-option:hover {
+  background: #f3eaea;
+}
+.language-flag {
+  height: 18px;
+  width: 32px;
+  object-fit: cover;
+}
+.language-label {
+  font-family: "Khula", sans-serif;
+  font-size: 16px;
+  color: #969696;
+}
+.dropdown-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
