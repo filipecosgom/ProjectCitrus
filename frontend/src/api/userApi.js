@@ -11,3 +11,7 @@ export const register = async (newUser) => {
     return { success: false, status: error.response?.status || 500, error };
   }
 };
+
+export const fetchUserInformation = async(token) => {
+  
+}

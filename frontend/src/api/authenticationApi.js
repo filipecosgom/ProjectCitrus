@@ -4,16 +4,16 @@ const authenticationEndpoint = "/auth"; // Keep only the relative endpoint
 
 
 // User Login
-export const login = async (email, password) => {
+export const login = async (user) => {
+  console.log(user);
   try {
-    const response = await api.post(`${authenticationEndpoint}/login`, {
-      email,
-      password,
-    });
+    const response = await api.post(`${authenticationEndpoint}/login`, user);
     return response.data;
   } catch (error) {
     handleApiError(error, "login");
     throw error; // para propagar o erro
   }
 };
+
+
 
