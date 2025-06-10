@@ -7,7 +7,7 @@
   grid-template-columns: 220px 1fr 1fr 160px 200px;
   align-items: center;
   height: 72px;
-  background: var(--light-red, #b61b23);
+  background: var(--primary, #9C2F31);
   color: #fff;
   position: sticky;
   top: 0;

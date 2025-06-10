@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
 import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
+import NotificationDropdown from "../dropdowns/NotificationDropdown";
 
 export default function Header({
   userName,
@@ -13,6 +14,44 @@ export default function Header({
   // Divide o nome do user
   const [firstName, ...rest] = userName.split(" ");
   const lastName = rest.join(" ");
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifRef = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    }
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
+
+  const notifications = [
+    {
+      id: 1,
+      message: "Nova mensagem de João",
+      time: "2 mins ago",
+      read: false,
+    },
+    {
+      id: 2,
+      message: "Seu relatório foi aprovado",
+      time: "1 hour ago",
+      read: true,
+    },
+    {
+      id: 3,
+      message: "Lembrete: Reunião às 15h",
+      time: "3 hours ago",
+      read: false,
+    },
+  ];
 
   return (
     <header className="citrus-header">
@@ -35,10 +74,16 @@ export default function Header({
             <span className="header-badge">{unreadMessages}</span>
           )}
         </div>
-        <div className="header-icon-wrapper">
-          <FaRegBell />
+        <div className="header-icon-wrapper" ref={notifRef}>
+          <FaRegBell
+            onClick={() => setShowNotifications((v) => !v)}
+            style={{ cursor: "pointer" }}
+          />
           {unreadNotifications > 0 && (
             <span className="header-badge">{unreadNotifications}</span>
+          )}
+          {showNotifications && (
+            <NotificationDropdown notifications={notifications} />
           )}
         </div>
         <div className="header-icon-wrapper">
