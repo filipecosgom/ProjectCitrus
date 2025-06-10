@@ -108,15 +108,15 @@ public class UserService implements Serializable {
     public String loginUser(LoginDTO loginDTO) {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(loginDTO.getEmail());
-
-        // Verify if the provided password matches the stored hash
-        if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
-            // Convert UserEntity to UserDTO (basic representation)
-            UserDTO userDTO = userMapper.toBasicDto(user);
-
-            // Generate a JWT token for authentication
-            String token = jwtUtil.generateAuthenticationToken(userDTO);
-            return token;
+        if(user != null) {
+            // Verify if the provided password matches the stored hash
+            if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
+                // Convert UserEntity to UserDTO (basic representation)
+                UserDTO userDTO = userMapper.toBasicDto(user);
+                // Generate a JWT token for authentication
+                String token = jwtUtil.generateAuthenticationToken(userDTO);
+                return token;
+            }
         }
         // Return null if authentication fails (invalid credentials)
         return null;

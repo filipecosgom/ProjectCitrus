@@ -4,13 +4,17 @@ const pt = {
   loginTitle: "Entrar",
   loginSubtitle: "Aceda à sua conta",
   loginFieldEmail: "Endereço de e-mail",
-  loginFieldPassword: "palavra-passe",
+  loginFieldPassword: "Palavra-passe",
   loginShowPassword: "Mostrar palavra-passe",
   loginHidePassword: "Esconder palavra-passe",
   loginForgotPassword: "Esqueceu-se da palavra-passe?",
   loginSubmit: "Entrar",
   loginRegisterPrompt: "Ainda não tem uma conta?",
   loginRegister: "Junte-se à CITRUS hoje.",
+
+  loginErrorEmailMissing: "O email é necessário",
+  loginErrorEmailInvalid: "Formato de email inválido",
+  loginErrorPasswordMissing: "A palavra-passe é necessária",
 
   // Register
   registerTitle: "Bem-vindo à CITRUS",

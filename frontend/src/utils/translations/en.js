@@ -12,6 +12,10 @@ const en = {
   loginRegisterPrompt: "Don’t have an account yet?",
   loginRegister: "Join CITRUS today.",
 
+  loginErrorEmailMissing: "Email is required",
+  loginErrorEmailInvalid: "Invalid email format",
+  loginErrorPasswordMissing: "Password is required",
+
   // Register Page
   registerTitle: "Welcome to CITRUS",
   registerSubtitle: "Register your account",

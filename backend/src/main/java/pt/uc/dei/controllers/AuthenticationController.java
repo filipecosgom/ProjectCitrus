@@ -70,25 +70,20 @@ public class AuthenticationController {
     public Response login(LoginDTO user) {
         // Attempt to authenticate user and generate JWT token
         String token = userService.loginUser(user);
-
         // If authentication fails, return structured error response
         if (token == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
                     .build();
         }
-
         // Retrieve configuration settings
         ConfigurationDTO configuration = configurationService.getLatestConfiguration();
-
         // Prepare the response with JWT in headers and structured body
         Response.ResponseBuilder response = Response.ok(new ApiResponse(true, "Login successful", null, Map.of("token", token)));
-
         response.header("Set-Cookie",
                 "jwt=" + token +
                         "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
         );
-
         return response.build();
     }
 

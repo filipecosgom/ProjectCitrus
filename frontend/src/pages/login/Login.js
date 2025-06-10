@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import {  useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
@@ -7,11 +8,17 @@ import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotP
 import "./Login.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
-
+import handleNotification from "../../handles/handleNotification";
+import handleLogin from "../../handles/handleLogin";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
@@ -19,101 +26,156 @@ export default function Login() {
   //Internacionalização
   const intl = useIntl();
 
-  return (
-  <div className="login-container">
-    {/* DIVISÃO DO LOGO */}
-    <div className="login-logo-container">
-      <img src={citrusLogo} alt={intl.formatMessage({ id: "loginLogo" })} className="login-logo" />
-      <div className="logo-undertitle">
-        {intl.formatMessage({ id: "loginSubtitle" })}
-      </div>
-    </div>
+  const onSubmit = async (loginData) => {
+    const user = {
+      email: loginData.email,
+      password: loginData.password,
+    };
+    try {
+      const success = await handleLogin(user);
+      if (success) {
+        reset();
+        console.log("sucess! Check the token");
+      } else {
+        reset();
+        console.warn("Registration failed, not updating UI.");
+      }
+    } catch (error) {
+      console.error("Unexpected registration error:", error);
+      handleNotification(intl, "error", "An unexpected error occurred.");
+    }
+  };
 
-    {/* FORMULÁRIO */}
-    <div className="loginform-container">
-      <div className="login-title-group">
-        <h1 className="login-title">{intl.formatMessage({ id: "loginTitle" })}</h1>
-        <div className="login-subtitle">{intl.formatMessage({ id: "loginSubtitle" })}</div>
+  return (
+    <div className="login-container">
+      {/* DIVISÃO DO LOGO */}
+      <div className="login-logo-container">
+        <img
+          src={citrusLogo}
+          alt={intl.formatMessage({ id: "loginLogo" })}
+          className="login-logo"
+        />
+        <div className="logo-undertitle">
+          {intl.formatMessage({ id: "loginSubtitle" })}
+        </div>
       </div>
-      <form className="login-form">
-        <div className="login-fields">
-          <div className="login-field">
-            <label className="login-label" htmlFor="login-email">
-              {intl.formatMessage({ id: "loginFieldEmail" })}
-            </label>
-            <input
-              id="login-email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="username"
-            />
+
+      {/* FORMULÁRIO */}
+      <div className="loginform-container">
+        <div className="login-title-group">
+          <h1 className="login-title">
+            {intl.formatMessage({ id: "loginTitle" })}
+          </h1>
+          <div className="login-subtitle">
+            {intl.formatMessage({ id: "loginSubtitle" })}
           </div>
-          <div className="login-field" style={{ position: "relative" }}>
-            <label className="login-label" htmlFor="login-password">
-              {intl.formatMessage({ id: "loginFieldPassword" })}
-            </label>
-            <input
-              id="login-password"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+        </div>
+        <form
+          className="login-form"
+          id="login-form"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="login-fields">
+            <div className="login-field">
+              <div className="login-labelAndError">
+                <label className="login-label" htmlFor="login-email">
+                  {intl.formatMessage({ id: "loginFieldEmail" })}
+                </label>
+                <span className="error-message">
+                  {errors.email ? errors.email.message : "\u00A0"}
+                </span>
+              </div>
+
+              <input
+                id="login-email"
+                className={`login-input`}
+                {...register("email", {
+                  required: intl.formatMessage({
+                    id: "loginErrorEmailMissing",
+                  }),
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: intl.formatMessage({
+                      id: "loginErrorEmailInvalid",
+                    }),
+                  },
+                })}
+              />
+            </div>
+
+            <div className="login-field">
+              <div className="login-labelAndError">
+                <label className="login-label" htmlFor="login-password">
+                  {intl.formatMessage({ id: "loginFieldPassword" })}
+                </label>
+                <span className="error-message">
+                  {errors.password ? errors.password.message : "\u00A0"}
+                </span>
+              </div>
+
+              <div className="password-input-wrapper">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  className="login-input"
+                  {...register("password", {
+                    required: intl.formatMessage({
+                      id: "loginErrorPasswordMissing",
+                    }),
+                  })}
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={intl.formatMessage({
+                    id: showPassword
+                      ? "registerHidePassword"
+                      : "registerShowPassword",
+                  })}
+                >
+                  {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="login-forgot-row">
             <button
+              className="login-forgot-link"
               type="button"
-              className="password-eye-btn"
-              onMouseDown={() => setShowPassword(true)}
-              onMouseUp={() => setShowPassword(false)}
-              onMouseLeave={() => setShowPassword(false)}
-              tabIndex={-1}
-              aria-label={intl.formatMessage({ id: showPassword ? "loginHidePassword" : "loginShowPassword" })}
               style={{
-                position: "absolute",
-                right: 12,
-                top: 38,
                 background: "none",
                 border: "none",
-                cursor: "pointer",
                 padding: 0,
-                outline: "none",
+                color: "#424359",
+                cursor: "pointer",
               }}
+              onClick={() => setShowForgot(true)}
             >
-              {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              {intl.formatMessage({ id: "loginForgotPassword" })}
             </button>
           </div>
-        </div>
-        <div className="login-forgot-row">
-          <button
-            className="login-forgot-link"
-            type="button"
-            style={{
-              background: "none",
-              border: "none",
-              padding: 0,
-              color: "#424359",
-              cursor: "pointer",
-            }}
-            onClick={() => setShowForgot(true)}
-          >
-            {intl.formatMessage({ id: "loginForgotPassword" })}
+          <button className="main-button" type="submit">
+            {intl.formatMessage({ id: "loginSubmit" })}
           </button>
+        </form>
+        <div className="login-register-row">
+          {intl.formatMessage({ id: "loginRegisterPrompt" })}{" "}
+          <Link className="login-register-link" to="/register">
+            {intl.formatMessage({ id: "loginRegister" })}
+          </Link>
         </div>
-        <button className="main-button" type="submit">
-          {intl.formatMessage({ id: "loginSubmit" })}
-        </button>
-      </form>
-      <div className="login-register-row">
-        {intl.formatMessage({ id: "loginRegisterPrompt" })}{" "}
-        <Link className="login-register-link" to="/register">
-          {intl.formatMessage({ id: "loginRegister" })}
-        </Link>
+        <div className="login-language-dropdown">
+          {/* Dropdown de idioma dentro da coluna do formulário */}
+          <LanguageDropdown language={language} setLanguage={setLanguage} />
+        </div>
       </div>
-      <div className="login-language-dropdown">
-        {/* Dropdown de idioma dentro da coluna do formulário */}
-        <LanguageDropdown language={language} setLanguage={setLanguage} />
-      </div>
+      <OffcanvasForgotPassword
+        show={showForgot}
+        onClose={() => setShowForgot(false)}
+      />
     </div>
-    <OffcanvasForgotPassword show={showForgot} onClose={() => setShowForgot(false)} />
-  </div>
-);
+  );
 }

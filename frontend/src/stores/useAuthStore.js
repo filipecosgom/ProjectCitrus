@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import api from "./api"; // Import the global API instance
+import { api } from "../api/api"; // Import the global API instance
 
 const useAuthStore = create((set) => ({
   user: null,

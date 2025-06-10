@@ -45,28 +45,27 @@ export default function Register() {
   };
 
   const onSubmit = async (registerData) => {
-  const newUser = {
-    email: registerData.email,
-    password: registerData.password,
-  };
+    const newUser = {
+      email: registerData.email,
+      password: registerData.password,
+    };
 
-  try {
-    const success = await handleRegistration(newUser, intl);
+    try {
+      const success = await handleRegistration(newUser, intl);
 
-    if (success) {
-      setRegisteredEmail(registerData.email);
-      setShowActivation(true);
-      reset();
-    } else {
-      reset();
-      console.warn("Registration failed, not updating UI.");
-      console.log("aqui")
+      if (success) {
+        setRegisteredEmail(registerData.email);
+        setShowActivation(true);
+        reset();
+      } else {
+        reset();
+        console.warn("Registration failed, not updating UI.");
+      }
+    } catch (error) {
+      console.error("Unexpected registration error:", error);
+      handleNotification(intl, "error", "An unexpected error occurred.");
     }
-  } catch (error) {
-    console.error("Unexpected registration error:", error);
-    handleNotification(intl, "error", "An unexpected error occurred.");
-  }
-};
+  };
 
   return (
     <div className={`register-container d-flex ${animationClass}`}>
@@ -87,147 +86,127 @@ export default function Register() {
               id="register-form"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <div className="register-fields">
-                <div className="register-field">
-                  <div className="register-labelAndError">
+              <div className="register-field">
+                <div className="register-labelAndError">
                   <label className="register-label" htmlFor="register-email">
                     Email
                   </label>
-                   <span className="error-message">
+                  <span className="error-message">
                     {errors.email ? errors.email.message : "\u00A0"}
                   </span>
-                    </div>
-                  </div>
-                  <input
-                    id="register-email"
-                    className={`register-input`}
-                    {...register("email", {
-                      required: intl.formatMessage({
-                        id: "registerErrorEmailMissing",
-                      }),
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: intl.formatMessage({
-                          id: "registerErrorEmailInvalid",
-                        }),
-                      },
-                    })}
-                  />
-                 
                 </div>
+              </div>
+              <input
+                id="register-email"
+                className={`register-input`}
+                {...register("email", {
+                  required: intl.formatMessage({
+                    id: "registerErrorEmailMissing",
+                  }),
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: intl.formatMessage({
+                      id: "registerErrorEmailInvalid",
+                    }),
+                  },
+                })}
+              />
 
-                <div
-                  className="register-field"
-                  style={{ position: "relative" }}
-                >
+              <div className="register-field" style={{ position: "relative" }}>
+                <div className="password-input-container">
                   <div className="register-labelAndError">
-                  <label className="register-label" htmlFor="register-password">
-                    {intl.formatMessage({ id: "registerFieldPassword" })}
-                  </label>
+                    <label
+                      className="register-label"
+                      htmlFor="register-password"
+                    >
+                      {intl.formatMessage({ id: "registerFieldPassword" })}
+                    </label>
                     <span className="error-message">
                       {errors.password ? errors.password.message : "\u00A0"}
                     </span>
                   </div>
-                  <input
-                    id="register-password"
-                    type={showPassword ? "text" : "password"}
-                    className="register-input"
-                    {...register("password", {
-                      required: intl.formatMessage({
-                        id: "registerErrorPasswordMissing",
-                      }),
-                      pattern: {
-                        value: strongPasswordPattern,
-                        message: intl.formatMessage({
-                          id: "registerErrorPasswordWeak",
+
+                  <div className="password-input-wrapper">
+                    <input
+                      id="register-password"
+                      type={showPassword ? "text" : "password"}
+                      className="register-input"
+                      {...register("password", {
+                        required: intl.formatMessage({
+                          id: "registerErrorPasswordMissing",
                         }),
-                      },
-                    })}
-                  />
-                  <button
-                    type="button"
-                    className="password-eye-btn"
-                    onMouseDown={() => setShowPassword(true)}
-                    onMouseUp={() => setShowPassword(false)}
-                    onMouseLeave={() => setShowPassword(false)}
-                    tabIndex={-1}
-                    aria-label={intl.formatMessage({
-                      id: showPassword
-                        ? "registerHidePassword"
-                        : "registerShowPassword",
-                    })}
-                    style={{
-                      position: "absolute",
-                      right: 12,
-                      top: 38,
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: 0,
-                      outline: "none",
-                    }}
-                  >
-                    {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                  </button>
-                <div
-                  className="register-field"
-                  style={{ position: "relative" }}
-                >
-                  <div className="register-labelAndError">
-                  <label
-                    className="register-label"
-                    htmlFor="register-confirm-password"
-                  >
-                    {intl.formatMessage({ id: "registerFieldConfirmPassword" })}
-                  </label>
-                  <span className="error-message">
-                    {errors.passwordConfirm
-                      ? errors.passwordConfirm.message
-                      : "\u00A0"}
-                  </span>
-                  </div>
-                  <input
-                    id="register-confirm-password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    className="register-input"
-                    {...register("passwordConfirm", {
-                      required: intl.formatMessage({
-                        id: "registerErrorConfirmPasswordMissing",
-                      }),
-                      validate: {
-                        isConfirmed: (value) =>
-                          value === watch("password") ||
-                          intl.formatMessage({
-                            id: "registerErrorPasswordMismatch",
+                        pattern: {
+                          value: strongPasswordPattern,
+                          message: intl.formatMessage({
+                            id: "registerErrorPasswordWeak",
                           }),
-                      },
-                    })}
-                  />
-                  <button
-                    type="button"
-                    className="password-eye-btn"
-                    onMouseDown={() => setShowConfirmPassword(true)}
-                    onMouseUp={() => setShowConfirmPassword(false)}
-                    onMouseLeave={() => setShowConfirmPassword(false)}
-                    tabIndex={-1}
-                    aria-label={intl.formatMessage({
-                      id: showConfirmPassword
-                        ? "registerHidePassword"
-                        : "registerShowPassword",
-                    })}
-                    style={{
-                      position: "absolute",
-                      right: 12,
-                      top: 38,
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: 0,
-                      outline: "none",
-                    }}
-                  >
-                    {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                  </button>
+                        },
+                      })}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={intl.formatMessage({
+                        id: showPassword
+                          ? "registerHidePassword"
+                          : "registerShowPassword",
+                      })}
+                    >
+                      {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                    </button>
+                  </div>
+                </div>
+                <div className="password-input-container">
+                  <div className="register-labelAndError">
+                    <label
+                      className="register-label"
+                      htmlFor="register-confirm-password"
+                    >
+                      {intl.formatMessage({
+                        id: "registerFieldConfirmPassword",
+                      })}
+                    </label>
+                    <span className="error-message">
+                      {errors.passwordConfirm
+                        ? errors.passwordConfirm.message
+                        : "\u00A0"}
+                    </span>
+                  </div>
+
+                  <div className="password-input-wrapper">
+                    <input
+                      id="register-confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      className="register-input"
+                      {...register("passwordConfirm", {
+                        required: intl.formatMessage({
+                          id: "registerErrorConfirmPasswordMissing",
+                        }),
+                        validate: {
+                          isConfirmed: (value) =>
+                            value === watch("password") ||
+                            intl.formatMessage({
+                              id: "registerErrorPasswordMismatch",
+                            }),
+                        },
+                      })}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={intl.formatMessage({
+                        id: showConfirmPassword
+                          ? "registerHidePassword"
+                          : "registerShowPassword",
+                      })}
+                    >
+                      {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                    </button>
+                  </div>
                 </div>
               </div>
               <button className="main-button" type="submit">
