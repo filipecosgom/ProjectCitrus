@@ -7,6 +7,7 @@ import { MdDarkMode, MdLogout } from "react-icons/md";
 import LanguageDropdown from "../languages/LanguageDropdown";
 import "./Menu.css";
 
+// Lista de itens do menu, com ícones, cores, rotas e flags especiais
 const menuItems = [
   {
     key: "dashboard",
@@ -95,27 +96,27 @@ const menuItems = [
 
 export default function Menu({
   onLogout,
-  language = "en", // valor default
-  setLanguage = () => {},
-  show = false,
-  onClose,
+  language = "en", // idioma atual (default: en)
+  setLanguage = () => {}, // função para mudar idioma
+  show = false, // se o menu está visível (mobile)
+  onClose, // função para fechar menu (mobile)
 }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [expanded, setExpanded] = useState(false); // controla expansão em desktop/tablet
+  const [darkMode, setDarkMode] = useState(false); // estado do toggle dark mode
 
-  // Lê isAdmin do sessionStorage
+  // Lê isAdmin do sessionStorage (true/false)
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
 
-  // Filtra items se não for admin
+  // Filtra itens do menu se não for admin (esconde cycles/settings)
   const filteredItems = isAdmin
     ? menuItems
     : menuItems.filter(
         (item) => item.key !== "cycles" && item.key !== "settings"
       );
 
-  // Expande ao hover (apenas desktop/tablet)
+  // Expande menu ao hover (apenas desktop/tablet)
   const handleMouseEnter = () => {
     if (window.innerWidth > 480) setExpanded(true);
   };
@@ -123,13 +124,14 @@ export default function Menu({
     if (window.innerWidth > 480) setExpanded(false);
   };
 
-  // Navegação ao clicar
+  // Navegação ao clicar num item do menu
   const handleItemClick = (item) => {
-    if (item.route) navigate(item.route);
-    if (window.innerWidth <= 480 && onClose) onClose(); // Fecha menu em mobile ao navegar
+    if (item.route) navigate(item.route); // navega para a rota
+    // Em mobile, fecha o menu ao navegar
+    if (window.innerWidth <= 480 && onClose) onClose();
   };
 
-  // Fecha ao clicar fora (mobile)
+  // Fecha menu ao clicar fora (apenas mobile)
   React.useEffect(() => {
     if (window.innerWidth > 480 || !show) return;
     const handleClick = (e) => {
@@ -139,21 +141,23 @@ export default function Menu({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [show, onClose]);
 
+  // Força menu expandido em mobile quando está visível
+  const isMobile = window.innerWidth <= 480;
+  const menuClass = [
+    "citrus-menu",
+    expanded || (isMobile && show) ? "expanded" : "",
+    show ? "show" : "",
+  ].join(" ");
+
   return (
     <nav
-      className={`citrus-menu${expanded ? " expanded" : ""}${
-        show ? " show" : ""
-      }`}
+      className={menuClass}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={
-        window.innerWidth <= 480
-          ? { pointerEvents: show ? "auto" : "none" }
-          : {}
-      }
+      style={isMobile ? { pointerEvents: show ? "auto" : "none" } : {}}
     >
       {/* Botão fechar só em mobile */}
-      {window.innerWidth <= 480 && show && (
+      {isMobile && show && (
         <button className="menu-close-btn" onClick={onClose} aria-label="Close">
           &times;
         </button>
@@ -168,6 +172,7 @@ export default function Menu({
                 : ""
             }${item.isLogout ? " menu-cell-logout" : ""}`}
             onClick={() => {
+              // Logout chama função onLogout, outros navegam
               if (item.isLogout && onLogout) onLogout();
               else if (!item.isToggle && !item.isLanguage)
                 handleItemClick(item);
@@ -176,6 +181,7 @@ export default function Menu({
               pointerEvents: item.isLanguage ? "none" : "auto",
             }}
           >
+            {/* Ícone do menu */}
             <div
               className="menu-cell-icon"
               style={{
@@ -187,6 +193,7 @@ export default function Menu({
             >
               {item.icon}
             </div>
+            {/* Texto ou componente especial */}
             <div className="menu-cell-label">
               {/* Dark Mode Toggle */}
               {item.isToggle ? (
@@ -204,6 +211,7 @@ export default function Menu({
                   </label>
                 </div>
               ) : item.isLanguage ? (
+                // Dropdown de idioma
                 <div className="menu-language-row">
                   <LanguageDropdown
                     language={language}
@@ -212,6 +220,7 @@ export default function Menu({
                   />
                 </div>
               ) : (
+                // Texto normal
                 item.label
               )}
             </div>
