@@ -1,0 +1,217 @@
+.citrus-menu {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 64px;
+  height: 560px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  overflow: visible;
+}
+
+.citrus-menu.expanded {
+  width: 225px;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.citrus-menu-inner {
+  width: 100%;
+  padding: 16px 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.menu-cell {
+  width: 195px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: "Istok Web", sans-serif;
+  font-size: 14px;
+  color: #000;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.menu-cell.selected {
+  background: #e68385;
+  color: #fff;
+  border: 1px solid #9c2f31;
+}
+
+.menu-cell.selected .menu-cell-icon {
+  color: #fff !important;
+}
+
+.menu-cell-logout {
+  margin-top: auto;
+  border-top: 1px solid #eee;
+}
+
+.menu-cell-icon {
+  min-width: 28px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: color 0.2s;
+}
+
+.menu-cell-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s, width 0.2s;
+}
+
+.citrus-menu.expanded .menu-cell-label {
+  opacity: 1;
+  width: 120px;
+  margin-left: 4px;
+}
+
+.menu-darkmode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-darkmode-beta {
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  color: #818488;
+  vertical-align: super;
+  margin-left: 2px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 18px;
+  transition: 0.2s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+input:checked + .slider {
+  background-color: #e68385;
+}
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+.menu-language-row {
+  width: 175px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .citrus-menu,
+  .citrus-menu.expanded {
+    top: 8px;
+    left: 8px;
+    width: 54px;
+    height: 420px;
+  }
+  .citrus-menu.expanded {
+    width: 180px;
+  }
+  .menu-cell {
+    width: 150px;
+    height: 40px;
+    font-size: 12px;
+  }
+  .menu-language-row {
+    width: 120px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .citrus-menu,
+  .citrus-menu.expanded {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 56px;
+    flex-direction: row;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    padding: 0;
+  }
+  .citrus-menu-inner {
+    flex-direction: row;
+    width: 100vw;
+    height: 56px;
+    padding: 0 4px;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+  .menu-cell,
+  .menu-cell.selected {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 0;
+    justify-content: center;
+    border: none;
+    background: none;
+  }
+  .menu-cell-label,
+  .citrus-menu.expanded .menu-cell-label {
+    display: none;
+  }
+  .menu-language-row {
+    width: 40px;
+    height: 40px;
+  }
+}

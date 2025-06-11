@@ -17,6 +17,7 @@ import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import Header from "./components/header/Header";
 import NotFound404 from "./pages/404/404NotFound";
+import Menu from "./components/menu/Menu";
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
@@ -58,17 +59,23 @@ function AppRoutes() {
     unreadNotifications: 1,
   };
 
+  const locale = useLocaleStore((state) => state.locale);
+  const setLocale = useLocaleStore((state) => state.setLocale);
+
   return (
     <>
       {/* Mostra o Header em todas as páginas exceto as do array acima, mas permite testar em /header */}
       {(showHeader || location.pathname === "/header") && (
-        <Header
-          userName={user.name}
-          userEmail={user.email}
-          avatarUrl={user.avatarUrl}
-          unreadMessages={user.unreadMessages}
-          unreadNotifications={user.unreadNotifications}
-        />
+        <>
+          <Menu language={locale} setLanguage={setLocale} />
+          <Header
+            userName={user.name}
+            userEmail={user.email}
+            avatarUrl={user.avatarUrl}
+            unreadMessages={user.unreadMessages}
+            unreadNotifications={user.unreadNotifications}
+          />
+        </>
       )}
       <Routes>
         <Route path="/" element={<Login />} />
@@ -81,6 +88,16 @@ function AppRoutes() {
         />
         <Route path="/account-activation" element={<AccountActivation />} />
         <Route path="/activated-account" element={<ActivatedAccount />} />
+        <Route
+          path="/menu"
+          element={
+            <Menu
+              language={locale}
+              setLanguage={useLocaleStore((state) => state.setLocale)}
+            />
+          }
+        />{" "}
+        {/* Só mostra o Menu */}
         <Route path="/header" element={<div />} /> {/* Só mostra o Header */}
         <Route path="*" element={<NotFound404 />} />
       </Routes>
