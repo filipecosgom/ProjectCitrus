@@ -44,12 +44,12 @@
   background: #fff;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
   font-family: "Istok Web", sans-serif;
   font-size: 14px;
   color: #000;
   box-sizing: border-box;
   position: relative;
+  transition: background 0.2s, color 0.2s;
 }
 
 .menu-cell.selected {
@@ -91,6 +91,17 @@
   opacity: 1;
   width: 120px;
   margin-left: 4px;
+}
+
+.citrus-menu:not(.expanded) .menu-cell {
+  width: 40px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.citrus-menu:not(.expanded) .menu-cell-label {
+  display: none;
 }
 
 .menu-darkmode-row {
@@ -154,7 +165,8 @@ input:checked + .slider:before {
   align-items: center;
 }
 
-@media (max-width: 900px) {
+/* TABLET: 481px - 1024px */
+@media (max-width: 1024px) {
   .citrus-menu,
   .citrus-menu.expanded {
     top: 8px;
@@ -176,54 +188,12 @@ input:checked + .slider:before {
   }
 }
 
-@media (max-width: 600px) {
-  .citrus-menu,
-  .citrus-menu.expanded {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 56px;
-    flex-direction: row;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    padding: 0;
-  }
-  .citrus-menu-inner {
-    flex-direction: row;
-    width: 100vw;
-    height: 56px;
-    padding: 0 4px;
-    gap: 4px;
-    align-items: center;
-    justify-content: center;
-  }
-  .menu-cell,
-  .menu-cell.selected {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border-radius: 8px;
-    font-size: 0;
-    justify-content: center;
-    border: none;
-    background: none;
-  }
-  .menu-cell-label,
-  .citrus-menu.expanded .menu-cell-label {
-    display: none;
-  }
-  .menu-language-row {
-    width: 40px;
-    height: 40px;
-  }
-}
-
+/* MOBILE: até 480px */
 @media (max-width: 480px) {
   .citrus-menu,
   .citrus-menu.expanded {
     position: fixed;
-    top: 0;
+    top: 56px;
     left: 0;
     width: 80vw;
     max-width: 320px;
@@ -238,10 +208,12 @@ input:checked + .slider:before {
     background: #fff;
     margin-left: 0;
     pointer-events: none;
+    display: none;
   }
   .citrus-menu.show {
     transform: translateX(0);
     pointer-events: auto;
+    display: flex;
   }
   .citrus-menu-inner {
     flex-direction: column;
@@ -290,19 +262,11 @@ input:checked + .slider:before {
   }
 }
 
-/* Esconde o menu em mobile por default */
-@media (max-width: 480px) {
-  .citrus-menu {
-    display: none;
-  }
+/* Esconde o menu mobile (show) fora de mobile */
+@media (min-width: 481px) {
   .citrus-menu.show {
-    display: flex;
+    display: none !important;
+    pointer-events: none !important;
+    transform: none !important;
   }
-}
-
-.citrus-menu:not(.expanded) .menu-cell {
-  width: 40px;
-  justify-content: center;
-  padding: 0;
-  gap: 0;
 }

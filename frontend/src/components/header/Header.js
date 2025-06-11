@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  FaBars,
-  FaRegComments,
-  FaRegBell,
-  FaUserCircle,
-  FaRegEnvelope,
-} from "react-icons/fa";
+import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
 import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
@@ -30,6 +24,15 @@ export default function Header({
   const [showMessages, setShowMessages] = useState(false);
   const messagesRef = useRef();
   const [showMenu, setShowMenu] = useState(false); // Estado para controlar o menu
+
+  // Fecha o menu se deixares de estar em mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 480 && showMenu) setShowMenu(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [showMenu]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -131,7 +134,7 @@ export default function Header({
         <button
           className="header-burger"
           aria-label="Menu"
-          onClick={() => setShowMenu(true)} // Abre o menu ao clicar
+          onClick={() => setShowMenu((prev) => !prev)} // Toggle: abre/fecha
         >
           <FaBars />
         </button>
