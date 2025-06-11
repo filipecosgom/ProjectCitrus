@@ -165,11 +165,18 @@ input:checked + .slider:before {
   align-items: center;
 }
 
+.menu-language-flag {
+  display: block;
+  margin: 0 auto;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
 /* TABLET: 481px - 1024px */
 @media (max-width: 1024px) {
   .citrus-menu,
   .citrus-menu.expanded {
-    top: 8px;
+    top: 72px;
     left: 8px;
     width: 54px;
     height: 420px;
@@ -190,83 +197,76 @@ input:checked + .slider:before {
 
 /* MOBILE: até 480px */
 @media (max-width: 480px) {
-  .citrus-menu,
-  .citrus-menu.expanded {
-    position: fixed;
-    top: 56px;
-    left: 0;
-    width: 80vw;
-    max-width: 320px;
-    height: 100vh;
-    flex-direction: column;
-    border-radius: 0 10px 10px 0;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
-    padding: 0;
-    z-index: 1200;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-    background: #fff;
-    margin-left: 0;
-    pointer-events: none;
-    display: none;
+    .citrus-menu,
+    .citrus-menu.expanded {
+      position: fixed;
+      top: 56px;
+      left: 8px;
+      width: 180px;
+      max-width: none;
+      height: 420px;
+      flex-direction: column;
+      border-radius: 10px 10px 10px 10px;
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
+      padding: 0;
+      z-index: 1200;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      background: #fff;
+      margin-left: 0;
+      pointer-events: none;
+      display: none;
+    }
+    .citrus-menu.show {
+      transform: translateX(0);
+      pointer-events: auto;
+      display: flex;
+    }
+    .citrus-menu-inner {
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 16px 0 12px 0;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .menu-cell,
+    .menu-cell.selected {
+      width: 150px;
+      min-width: 0;
+      max-width: none;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      justify-content: flex-start;
+      border: 1px solid transparent;
+      background: #fff;
+      margin: 0 auto;
+    }
+    /* CORREÇÃO: Força as labels a aparecerem SEMPRE no mobile quando o menu está aberto */
+    .citrus-menu.show .menu-cell-label,
+    .citrus-menu.expanded .menu-cell-label {
+      display: block !important;
+      opacity: 1 !important;
+      width: auto !important;
+      margin-left: 4px;
+      transition: none;
+    }
+    .menu-language-row {
+      width: 120px;
+      height: 24px;
+    }
+    .menu-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      color: #111;
+      cursor: pointer;
+      z-index: 1300;
+    }
   }
-  .citrus-menu.show {
-    transform: translateX(0);
-    pointer-events: auto;
-    display: flex;
-  }
-  .citrus-menu-inner {
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    padding: 16px 0 12px 0;
-    gap: 12px;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .menu-cell,
-  .menu-cell.selected {
-    width: 90%;
-    min-width: 0;
-    max-width: 260px;
-    height: 50px;
-    padding: 0 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    justify-content: flex-start;
-    border: 1px solid transparent;
-    background: #fff;
-    margin: 0 auto;
-  }
-  .menu-cell-label,
-  .citrus-menu.expanded .menu-cell-label {
-    display: block;
-    opacity: 1;
-    width: auto;
-    margin-left: 4px;
-  }
-  .menu-language-row {
-    width: 90%;
-    height: 30px;
-  }
-  .menu-close-btn {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    color: #111;
-    cursor: pointer;
-    z-index: 1300;
-  }
-}
-
-/* Esconde o menu mobile (show) fora de mobile */
-@media (min-width: 481px) {
-  .citrus-menu.show {
-    display: none !important;
-    pointer-events: none !important;
-    transform: none !important;
-  }
-}

@@ -6,6 +6,8 @@ import { IoCalendar, IoSettings } from "react-icons/io5";
 import { MdDarkMode, MdLogout } from "react-icons/md";
 import LanguageDropdown from "../languages/LanguageDropdown";
 import "./Menu.css";
+import flagEn from "../../assets/flags/flag-en.png";
+import flagPt from "../../assets/flags/flag-pt.png";
 
 // Lista de itens do menu, com ícones, cores, rotas e flags especiais
 const menuItems = [
@@ -133,19 +135,22 @@ export default function Menu({
 
   // Fecha menu ao clicar fora (apenas mobile)
   React.useEffect(() => {
-    if (window.innerWidth > 480 || !show) return;
-    const handleClick = (e) => {
-      if (!e.target.closest(".citrus-menu")) onClose && onClose();
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    if (window.innerWidth <= 1024 && show) {
+      const handleClick = (e) => {
+        if (!e.target.closest(".citrus-menu") && onClose) onClose();
+      };
+      document.addEventListener("mousedown", handleClick);
+      return () => document.removeEventListener("mousedown", handleClick);
+    }
   }, [show, onClose]);
 
   // Força menu expandido em mobile quando está visível
   const isMobile = window.innerWidth <= 480;
+  const isTablet = window.innerWidth > 480 && window.innerWidth <= 1024;
+  const forceExpanded = (isMobile || isTablet) && show;
   const menuClass = [
     "citrus-menu",
-    expanded || (isMobile && show) ? "expanded" : "",
+    expanded || forceExpanded ? "expanded" : "",
     show ? "show" : "",
   ].join(" ");
 
@@ -211,14 +216,24 @@ export default function Menu({
                   </label>
                 </div>
               ) : item.isLanguage ? (
-                // Dropdown de idioma
-                <div className="menu-language-row">
-                  <LanguageDropdown
-                    language={language}
-                    setLanguage={setLanguage}
-                    compact={!expanded}
+                expanded || forceExpanded ? (
+                  <div className="menu-language-row">
+                    <LanguageDropdown
+                      language={language}
+                      setLanguage={setLanguage}
+                      compact={!(expanded || forceExpanded)}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={language === "pt" ? flagPt : flagEn}
+                    alt={language === "pt" ? "Português" : "English"}
+                    className="menu-language-flag"
+                    width={28}
+                    height={18}
+                    style={{ margin: "0 auto" }}
                   />
-                </div>
+                )
               ) : (
                 // Texto normal
                 item.label
