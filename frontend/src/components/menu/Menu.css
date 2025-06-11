@@ -1,7 +1,7 @@
 .citrus-menu {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: 72px; /* Ajusta para a altura real do teu header */
+  left: 2px;
   width: 64px;
   height: 560px;
   background: #fff;
@@ -14,6 +14,7 @@
   align-items: center;
   padding: 0;
   overflow: visible;
+  margin-left: 4px; /* Pequeno espaço para evitar flicker */
 }
 
 .citrus-menu.expanded {
@@ -67,8 +68,10 @@
 }
 
 .menu-cell-icon {
-  min-width: 28px;
-  min-height: 28px;
+  opacity: 1;
+  width: 28px;
+  height: 28px;
+  color: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -214,4 +217,11 @@ input:checked + .slider:before {
     width: 40px;
     height: 40px;
   }
+}
+
+.citrus-menu:not(.expanded) .menu-cell {
+  width: 40px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
 }
