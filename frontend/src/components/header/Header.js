@@ -10,6 +10,7 @@ import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
 import MessageDropdown from "../dropdowns/MessageDropdown";
+import Menu from "../menu/Menu"; // Importe o componente Menu
 
 export default function Header({
   userName,
@@ -17,6 +18,8 @@ export default function Header({
   avatarUrl,
   unreadMessages = 0,
   unreadNotifications = 0,
+  language, // Adicionei a prop language
+  setLanguage, // Adicionei a prop setLanguage
 }) {
   // Divide o nome do user
   const [firstName, ...rest] = userName.split(" ");
@@ -26,6 +29,7 @@ export default function Header({
   const notifRef = useRef();
   const [showMessages, setShowMessages] = useState(false);
   const messagesRef = useRef();
+  const [showMenu, setShowMenu] = useState(false); // Estado para controlar o menu
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -124,7 +128,11 @@ export default function Header({
       <div className="header-cell header-logo-cell">
         <img src={logo} alt="Citrus logo" className="header-logo" />
         <span className="header-title">CITRUS</span>
-        <button className="header-burger" aria-label="Menu">
+        <button
+          className="header-burger"
+          aria-label="Menu"
+          onClick={() => setShowMenu(true)} // Abre o menu ao clicar
+        >
           <FaBars />
         </button>
       </div>
@@ -176,6 +184,13 @@ export default function Header({
         </div>
         <div className="header-user-email">{userEmail}</div>
       </div>
+      {/* Renderiza o Menu */}
+      <Menu
+        show={showMenu}
+        onClose={() => setShowMenu(false)}
+        language={language} // deve ser sempre definido
+        setLanguage={setLanguage} // idem
+      />
     </header>
   );
 }

@@ -93,7 +93,13 @@ const menuItems = [
   },
 ];
 
-export default function Menu({ onLogout, language, setLanguage }) {
+export default function Menu({
+  onLogout,
+  language = "en", // valor default
+  setLanguage = () => {},
+  show = false,
+  onClose,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -109,21 +115,49 @@ export default function Menu({ onLogout, language, setLanguage }) {
         (item) => item.key !== "cycles" && item.key !== "settings"
       );
 
-  // Expande ao hover
-  const handleMouseEnter = () => setExpanded(true);
-  const handleMouseLeave = () => setExpanded(false);
+  // Expande ao hover (apenas desktop/tablet)
+  const handleMouseEnter = () => {
+    if (window.innerWidth > 480) setExpanded(true);
+  };
+  const handleMouseLeave = () => {
+    if (window.innerWidth > 480) setExpanded(false);
+  };
 
   // Navegação ao clicar
   const handleItemClick = (item) => {
     if (item.route) navigate(item.route);
+    if (window.innerWidth <= 480 && onClose) onClose(); // Fecha menu em mobile ao navegar
   };
+
+  // Fecha ao clicar fora (mobile)
+  React.useEffect(() => {
+    if (window.innerWidth > 480 || !show) return;
+    const handleClick = (e) => {
+      if (!e.target.closest(".citrus-menu")) onClose && onClose();
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [show, onClose]);
 
   return (
     <nav
-      className={`citrus-menu${expanded ? " expanded" : ""}`}
+      className={`citrus-menu${expanded ? " expanded" : ""}${
+        show ? " show" : ""
+      }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={
+        window.innerWidth <= 480
+          ? { pointerEvents: show ? "auto" : "none" }
+          : {}
+      }
     >
+      {/* Botão fechar só em mobile */}
+      {window.innerWidth <= 480 && show && (
+        <button className="menu-close-btn" onClick={onClose} aria-label="Close">
+          &times;
+        </button>
+      )}
       <div className="citrus-menu-inner">
         {filteredItems.map((item, idx) => (
           <div
@@ -135,7 +169,8 @@ export default function Menu({ onLogout, language, setLanguage }) {
             }${item.isLogout ? " menu-cell-logout" : ""}`}
             onClick={() => {
               if (item.isLogout && onLogout) onLogout();
-              else if (!item.isToggle && !item.isLanguage) handleItemClick(item);
+              else if (!item.isToggle && !item.isLanguage)
+                handleItemClick(item);
             }}
             style={{
               pointerEvents: item.isLanguage ? "none" : "auto",
@@ -157,8 +192,7 @@ export default function Menu({ onLogout, language, setLanguage }) {
               {item.isToggle ? (
                 <div className="menu-darkmode-row">
                   <span>
-                    Dark mode{" "}
-                    <span className="menu-darkmode-beta">Beta</span>
+                    Dark mode <span className="menu-darkmode-beta">Beta</span>
                   </span>
                   <label className="switch">
                     <input
