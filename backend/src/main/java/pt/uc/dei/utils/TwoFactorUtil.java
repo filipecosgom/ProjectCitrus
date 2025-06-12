@@ -1,7 +1,5 @@
 package pt.uc.dei.utils;
 
-package com.yourcompany.security;
-
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 

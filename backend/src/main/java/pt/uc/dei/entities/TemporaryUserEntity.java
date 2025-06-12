@@ -95,4 +95,6 @@ public class TemporaryUserEntity implements Serializable {
     public void setActivationToken(ActivationTokenEntity activationToken) {
         this.activationToken = activationToken;
     }
+
+
 }

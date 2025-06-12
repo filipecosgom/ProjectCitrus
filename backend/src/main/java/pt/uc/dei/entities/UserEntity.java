@@ -120,6 +120,9 @@ public class UserEntity implements Serializable {
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
 
+    @Column(name = "two_factor_secret", nullable = false, updatable = false)
+    private String twoFactorSecret;
+
     /** Manager reference (self-relationship) */
     @ManyToOne
     @JoinColumn(name = "manager_id")
@@ -333,5 +336,13 @@ public class UserEntity implements Serializable {
 
     public void setManagerUser(UserEntity managerUser) {
         this.managerUser = managerUser;
+    }
+
+    public String getTwoFactorSecret() {
+        return twoFactorSecret;
+    }
+
+    public void setTwoFactorSecret(String twoFactorSecret) {
+        this.twoFactorSecret = twoFactorSecret;
     }
 }

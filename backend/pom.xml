@@ -59,6 +59,11 @@
             <artifactId>jersey-media-json-jackson</artifactId>
             <version>3.0.0</version> <!-- Adjust as needed -->
         </dependency>
+        <dependency>
+            <groupId>com.warrenstrange</groupId>
+            <artifactId>googleauth</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 
 
         <dependency>

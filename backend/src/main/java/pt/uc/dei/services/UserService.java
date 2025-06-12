@@ -1,5 +1,6 @@
 package pt.uc.dei.services;
 
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
@@ -17,6 +18,7 @@ import pt.uc.dei.repositories.ActivationTokenRepository;
 import pt.uc.dei.repositories.TemporaryUserRepository;
 import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.utils.PasswordUtils;
+import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -67,6 +69,9 @@ public class UserService implements Serializable {
 
     @Inject
     UserMapper userMapper;
+
+    @Inject
+    TwoFactorUtil twoFactorUtil;
 
     /**
      * Injected repository for activation token persistence.
@@ -146,6 +151,7 @@ public class UserService implements Serializable {
         token.setTemporaryUser(user);
         user.setActivationToken(token);
         temporaryUserRepository.persist(user);
+
         LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
         return token.getTokenValue();
     }
@@ -164,6 +170,9 @@ public class UserService implements Serializable {
             activatedUser.setManager(false);
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());
+            GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
+            String secret = TwoFactorUtil.getSecretKeyString(key);
+            activatedUser.setTwoFactorSecret(secret);
             userRepository.persist(activatedUser);
             LOGGER.info("New activated user: {}", activatedUser.getEmail());
             return true;

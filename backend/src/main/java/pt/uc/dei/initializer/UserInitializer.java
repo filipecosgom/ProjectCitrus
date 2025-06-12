@@ -1,5 +1,6 @@
 package pt.uc.dei.initializer;
 
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import pt.uc.dei.entities.UserEntity;
@@ -9,6 +10,7 @@ import pt.uc.dei.enums.Role;
 import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.PasswordUtils;
+import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.time.LocalDateTime;
 /**
@@ -58,7 +60,9 @@ public class UserInitializer {
             admin.setAccountState(AccountState.COMPLETE);
             admin.setRole(Role.WITHOUT_ROLE);
             admin.setCreationDate(LocalDateTime.now());
-
+            GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
+            String secret = TwoFactorUtil.getSecretKeyString(key);
+            admin.setTwoFactorSecret(secret);
             userRepository.persist(admin);
         }
     }
