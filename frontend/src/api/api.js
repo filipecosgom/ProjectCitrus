@@ -1,7 +1,6 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
 import handleNotification from "../handles/handleNotification";
-import { getIntl, getCurrentLocale } from "../utils/Intl";
 import useAuthStore from "../stores/useAuthStore";
 
 export const api = axios.create({
@@ -36,26 +35,23 @@ api.interceptors.response.use(
 
     // ✅ Respect suppressToast flag
     if (!errorData.suppressToast) {
-      const intl = getIntl();
-      if (intl) {
-        handleApiError(errorData, intl);
-      }
+        handleApiError(errorData)
     }
 
     return Promise.reject(error);
   }
 );
 
-export const handleApiError = (error, intl) => {
+export const handleApiError = (error) => {
   if (error.response) {
     const { success, message, errorCode } = error.response.data;
     console.log(errorCode);
 
     if (!success) {
-      handleNotification(intl, "error", errorCode || "errorUnexpected");
+      handleNotification("error", errorCode || "errorUnexpected");
       console.log("ending");
     }
   } else {
-    handleNotification(intl, "error", "errorNetworkError");
+    handleNotification("error", "errorNetworkError");
   }
 };

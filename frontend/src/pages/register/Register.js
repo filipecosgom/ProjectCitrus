@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import handleRegistration from "../../handles/handleRegistration";
 import handleNotification from "../../handles/handleNotification";
 import AccountActivation from "../landing/AccountActivation";
+import { useLocaleStore } from "../../stores/useLocaleStore";
 
 export default function Register() {
   //Modal de Registo de novo utilizador
@@ -34,6 +35,7 @@ export default function Register() {
   const navigate = useNavigate();
   //Internacionalização
   const intl = useIntl();
+  const lang = useLocaleStore((state) => state.locale);
 
   // Handler para animação de saída
   const handleLoginClick = (e) => {
@@ -49,9 +51,10 @@ export default function Register() {
       email: registerData.email,
       password: registerData.password,
     };
+    
 
     try {
-      const success = await handleRegistration(newUser, intl);
+      const success = await handleRegistration(newUser, lang, intl);
 
       if (success) {
         setRegisteredEmail(registerData.email);

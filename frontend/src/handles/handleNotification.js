@@ -1,7 +1,10 @@
+import { get } from "react-hook-form";
 import { showSuccessToast, showErrorToast, showInfoToast } from "../utils/toastConfig/toastConfig";
+import { getIntl } from "../utils/Intl";
 
-const handleNotification = (intl, type, messageId, params = {}) => {
-  console.log(messageId)
+const handleNotification = (type, messageId, params = {}) => {
+  const intl = getIntl();
+  console.log(intl)
 
   const translatedMessage = intl.formatMessage({ id: messageId }, params);
   console.log(translatedMessage);

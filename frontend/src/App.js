@@ -21,6 +21,8 @@ import Header from "./components/header/Header";
 import NotFound404 from "./pages/404/404NotFound";
 import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
+import Profile from "./pages/profile/Profile";
+import { useNavigate } from "react-router-dom";
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
@@ -28,20 +30,8 @@ function AppRoutes() {
   const location = useLocation();
   const locale = useLocaleStore((state) => state.locale);
   const setLocale = useLocaleStore((state) => state.setLocale);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (!useAuthStore.getState().user) {
-        await useAuthStore.getState().fetchAndSetUserInformation();
-      }
-      setHydrating(false);
-    };
-    fetch();
-  }, []);
-
-  if (hydrating) return <Spinner />;
-
-  
   const hideHeaderRoutes = [
     "/",
     "/login",
@@ -79,6 +69,21 @@ function AppRoutes() {
     unreadNotifications: 1,
   };
 
+  useEffect(() => {
+    const hydrate = async () => {
+      if (!useAuthStore.getState().user) {
+        await useAuthStore.getState().fetchAndSetUserInformation();
+      }
+      // Now, after trying to fetch, check if the user is set
+      if (useAuthStore.getState().user) {
+        navigate("/profile");
+      }
+      setHydrating(false);
+    };
+    hydrate();
+  }, []);
+
+  if (hydrating) return <Spinner />;
 
   return (
     <>
@@ -100,6 +105,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password-reset" element={<ForgotPassword />} />
+        <Route path="/profile" element={<Profile />} />
         <Route
           path="/offcanvas-forgot-password"
           element={<div>OffcanvasForgotPassword</div>}
@@ -108,12 +114,7 @@ function AppRoutes() {
         <Route path="/activated-account" element={<ActivatedAccount />} />
         <Route
           path="/menu"
-          element={
-            <Menu
-              language={locale}
-              setLanguage={useLocaleStore((state) => state.setLocale)}
-            />
-          }
+          element={<Menu language={locale} setLanguage={setLocale} />}
         />{" "}
         {/* Só mostra o Menu */}
         <Route path="/header" element={<div />} /> {/* Só mostra o Header */}

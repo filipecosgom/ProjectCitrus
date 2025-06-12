@@ -64,6 +64,8 @@ const pt = {
 
   //ERRORS
   // Erros Gerais
+  infoAboutToExpire: "A sua sessão está prestes a expirar",
+  infoSessionExpired: "A sua sessão expirou. Por favor, faça login novamente.",
   errorInvalidData: "Dados inválidos fornecidos.",
   errorWrongUsernamePassword: "Nome de usuário ou senha incorretos.",
   errorAccountInactive: "A tua conta está inativa.",

@@ -1,4 +1,4 @@
-import {  useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -9,7 +9,7 @@ import "./Login.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
 import handleLogin from "../../handles/handleLogin";
-import useAuthStore from "../../stores/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const {
@@ -22,7 +22,7 @@ export default function Login() {
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
-
+  const navigate = useNavigate();
   //Internacionalização
   const intl = useIntl();
 
@@ -33,17 +33,18 @@ export default function Login() {
     };
     try {
       const success = await handleLogin(user);
+      console.log("Login attempt:", user);
+      console.log("Login success:", success);
       if (success) {
         reset();
+        navigate("/profile");
       } else {
         reset();
-        console.warn("Registration failed, not updating UI.");
       }
     } catch (error) {
-      reset()
+      reset();
     }
   };
-
 
   return (
     <div className="login-container">
@@ -138,7 +139,6 @@ export default function Login() {
               </div>
             </div>
           </div>
-
 
           <div className="login-forgot-row">
             <button

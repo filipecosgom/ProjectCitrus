@@ -62,6 +62,8 @@ const en = {
 
   //ERRORS
   // General Errors
+  infoAboutToExpire: "Your session is about to expire",
+  inforSessionExpired: "Your session has expired. Please log in again.",
   errorInvalidData: "Invalid data provided.",
   errorWrongUsernamePassword: "Incorrect username or password.",
   errorAccountInactive: "Your account is inactive.",

@@ -54,7 +54,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO, @HeaderParam("lang") String language) {
+    public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO, @HeaderParam("Accept-Language") String language) {
         if (userService.findIfUserExists(temporaryUserDTO.getEmail())) {
             LOGGER.info("Duplicate email attempt: {}", temporaryUserDTO.getEmail());
             return Response.status(Response.Status.CONFLICT)

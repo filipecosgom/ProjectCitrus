@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { api } from "../api/api"; // Import the global API instance
 import { fetchUserInformation } from "../api/userApi"; // Import the function to fetch user information
+import handleNotification from "../handles/handleNotification";
 
 const useAuthStore = create((set, get) => {
   const TIME_TO_WARN = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -20,7 +21,7 @@ const useAuthStore = create((set, get) => {
       // Warn user 5 minutes before expiration
       if (timeUntilLogout > TIME_TO_WARN) {
         warningTimeout = setTimeout(() => {
-          console.log("⚠️ Session expires in 5 minutes!");
+          handleNotification("warn", "infoAboutToExpire");
           // Display a toast/modal here
         }, timeUntilLogout - 5 * 60 * 1000);
       }
@@ -29,6 +30,7 @@ const useAuthStore = create((set, get) => {
       if (timeUntilLogout > 0) {
         logoutTimeout = setTimeout(() => {
           alert("⏳ Your session has expired. Logging out...");
+          handleNotification("warn", "infoSessionExpired");
           get().logout();
         }, timeUntilLogout);
       }
@@ -37,6 +39,7 @@ const useAuthStore = create((set, get) => {
     },
 
     fetchAndSetUserInformation: async () => {
+      console.log("Fetching user information...");
       try {
         const response = await fetchUserInformation();
         if (response.success) {
@@ -44,12 +47,6 @@ const useAuthStore = create((set, get) => {
           const { user, tokenExpiration } = response.data.data || {};
           if (user && tokenExpiration) {
             get().setUserAndExpiration(user, tokenExpiration); // ✅ Pass actual expiration data
-            console.log("User and expiration set successfully.");
-            console.log("Current stored user:", useAuthStore.getState().user);
-            console.log(
-              "Current stored expiration:",
-              useAuthStore.getState().tokenExpiration
-            );
           }
           return { success: true, data: { user: user, tokenExpiration } };
         } else {
