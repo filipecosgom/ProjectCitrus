@@ -51,6 +51,9 @@ public class NotificationEntity implements Serializable {
     @Column(name = "is_read", nullable = false, unique = false, updatable = true)
     private Boolean isRead;
 
+    @Column(name = "is_seen", nullable = false, unique = false, updatable = true)
+    private Boolean isSeen;
+
     /**
      * The number of associated messages.
      * Must always be sent and can be updated.

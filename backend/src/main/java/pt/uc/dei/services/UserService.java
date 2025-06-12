@@ -6,11 +6,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.uc.dei.dtos.*;
 import pt.uc.dei.utils.JWTUtil;
-import pt.uc.dei.dtos.ActivationTokenDTO;
-import pt.uc.dei.dtos.LoginDTO;
-import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
@@ -112,13 +109,21 @@ public class UserService implements Serializable {
             // Verify if the provided password matches the stored hash
             if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
                 // Convert UserEntity to UserDTO (basic representation)
-                UserDTO userDTO = userMapper.toBasicDto(user);
+                UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
                 // Generate a JWT token for authentication
-                String token = jwtUtil.generateAuthenticationToken(userDTO);
+                String token = jwtUtil.generateToken(userResponseDTO);
                 return token;
             }
         }
         // Return null if authentication fails (invalid credentials)
+        return null;
+    }
+
+    public UserResponseDTO getSelfInformation(String email) {
+        UserEntity user = userRepository.findUserByEmail(email);
+        if(user != null) {
+            return userMapper.toUserResponseDto(user);
+        }
         return null;
     }
 
@@ -205,6 +210,13 @@ public class UserService implements Serializable {
             return false;
         }
     }
+
+    public UserResponseDTO getResponseUserByEmail(String email) {
+        UserEntity user = userRepository.findUserByEmail(email);
+        return userMapper.toUserResponseDto(user);
+    }
+
+
 
     //SUPPORT FUNCTIONS
     private UserEntity findUserByEmail(String email) {

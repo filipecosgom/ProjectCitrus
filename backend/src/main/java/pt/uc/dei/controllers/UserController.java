@@ -99,19 +99,25 @@ public class UserController {
         }
         try {
             Claims claims = JWTUtil.validateToken(jwtCookie.getValue());
-            // Check for token expiration
             if (claims.getExpiration() != null && claims.getExpiration().before(new Date())) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity(new ApiResponse(false, "Token expired", "errorTokenExpired", null))
                         .build();
             }
-            // Construct UserDTO from JWT claims
-            UserResponseDTO user = new UserResponseDTO(
-                    claims.getSubject(),
-                    Boolean.TRUE.equals(claims.get("isAdmin")),
-                    Boolean.TRUE.equals(claims.get("isManager"))
-            );
-            return Response.ok(new ApiResponse(true, "User data retrieved", null, user)).build();
+            UserResponseDTO user = userService.getSelfInformation(claims.getSubject());
+            if(user == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity(new ApiResponse(false,
+                        "User not found",
+                        "errorUserNotFound", null))
+                        .build();
+            }
+            return Response.ok(new ApiResponse(true,
+                    "User data retrieved",
+                    null,
+                    Map.of(
+                            "user",user,
+                            "tokenExpiration",claims.getExpiration().getTime())
+                    )).build();
         } catch (JwtException e) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new ApiResponse(false, "Invalid token", "errorInvalidToken", null))

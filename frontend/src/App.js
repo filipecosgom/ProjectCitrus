@@ -1,4 +1,6 @@
-import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import useAuthStore from "./stores/useAuthStore";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -17,10 +19,28 @@ import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import Header from "./components/header/Header";
 import NotFound404 from "./pages/404/404NotFound";
+import Spinner from "./components/spinner/spinner";
+
+
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
+  const [hydrating, setHydrating] = useState(true);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (!useAuthStore.getState().user) {
+        await useAuthStore.getState().fetchAndSetUserInformation();
+      }
+      setHydrating(false);
+    };
+    fetch();
+  }, []);
+
+  if (hydrating) return <Spinner />;
+
+  
   const hideHeaderRoutes = [
     "/",
     "/login",

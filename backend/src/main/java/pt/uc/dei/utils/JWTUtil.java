@@ -6,7 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.ApplicationScoped;
-import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.ConfigurationEntity;
 import pt.uc.dei.repositories.ConfigurationRepository;
 import java.util.Base64;
@@ -40,7 +40,7 @@ public class JWTUtil {
      * @param user The user DTO containing authentication details.
      * @return A signed JWT token containing user authentication claims.
      */
-    public String generateAuthenticationToken(UserDTO user) {
+    public String generateToken(UserResponseDTO user) {
         // Get latest configuration from database
         ConfigurationEntity latestConfiguration = configurationRepository.getLatestConfiguration();
         Integer expirationTime = latestConfiguration.getLoginTime() * 60 * 1000; // Convert minutes to milliseconds
@@ -70,4 +70,9 @@ public class JWTUtil {
                 .parseClaimsJws(token) // Parse JWT
                 .getBody(); // Extract claims
     }
+
+    public static Date getExpiration(String token) {
+        return validateToken(token).getExpiration();
+    }
+
 }

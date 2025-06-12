@@ -71,9 +71,9 @@ const pt = {
   errorForbidden: "Não tens permissão para acessar este recurso.",
   errorDuplicateEntry: "Este email já está registado.",
   errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
-  errorFailed: "Falha na solicitação. Tenta novamente.",
-  errorNetworkError: "Erro de rede. Verifica a tua conexão.",
-  errorUnexpected: "Ocorreu um erro inesperado.",
+  errorFailed: "Falha no pedido. Tenta novamente mais tarde.",
+  errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
+  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde.",
   errorInvalidCredentials: "Email or password estão erradas",
 
   // Not Found

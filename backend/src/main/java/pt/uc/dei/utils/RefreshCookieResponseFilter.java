@@ -11,9 +11,8 @@ public class RefreshCookieResponseFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         NewCookie newCookie = (NewCookie) requestContext.getProperty("newCookie");
-
         if (newCookie != null) {
-            responseContext.getHeaders().add("Set-Cookie", newCookie.toString()); // ✅ Sends the refreshed JWT cookie
+            responseContext.getHeaders().add("Set-Cookie", newCookie.toString());
         }
     }
 }

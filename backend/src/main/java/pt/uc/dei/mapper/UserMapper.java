@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -93,9 +94,9 @@ public interface UserMapper {
      * @param entity The UserEntity.
      * @return The basic UserDTO.
      */
-    @Named("toBasicDto") // Custom mapping for simplified DTO
+    @Named("toResponseDto") // Custom mapping for simplified DTO
     @Mapping(target = "email", source = "email")
     @Mapping(target = "admin", source = "admin")
     @Mapping(target = "manager", source = "manager")
-    UserDTO toBasicDto(UserEntity entity);
+    UserResponseDTO toUserResponseDto(UserEntity entity);
 }

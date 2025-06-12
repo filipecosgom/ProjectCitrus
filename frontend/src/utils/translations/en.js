@@ -69,9 +69,9 @@ const en = {
   errorForbidden: "You don't have permission to access this resource.",
   errorDuplicateEntry: "This email is already registered.",
   errorServerIssue: "Server error. Please try again later.",
-  errorFailed: "Request failed. Please try again.",
-  errorNetworkError: "Network error. Check your connection.",
-  errorUnexpected: "An unexpected error occurred.",
+  errorFailed: "Request failed. Please try again later.",
+  errorNetworkError: "Network error. Please check your connection or try again later.",
+  errorUnexpected: "An unexpected error occurred. Please try again later.",
   errorInvalidCredentials: "Email or password are incorrect",
 
   // Not Found Page

@@ -49,6 +49,9 @@ public class NotificationDTO {
     @NotNull(message = "Read status is required")
     private Boolean isRead;
 
+    @NotNull(message = "Seen status is required")
+    private Boolean isSeen;
+
     /**
      * The number of messages associated with the notification.
      * Must always be sent.
@@ -119,5 +122,13 @@ public class NotificationDTO {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public Boolean getSeen() {
+        return isSeen;
+    }
+
+    public void setSeen(Boolean seen) {
+        isSeen = seen;
     }
 }

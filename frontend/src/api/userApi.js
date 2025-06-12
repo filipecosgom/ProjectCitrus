@@ -13,7 +13,6 @@ export const register = async (newUser) => {
 };
 
 export const fetchUserInformation = async() => {
-  console.log("abriu o fetch");
   try {
     const response = await api.get(`${userEndpoint}/me`);
     console.log("API Response:", response); // Debugging log

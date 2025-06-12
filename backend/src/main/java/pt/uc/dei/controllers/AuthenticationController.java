@@ -2,6 +2,7 @@ package pt.uc.dei.controllers;
 
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -85,6 +86,13 @@ public class AuthenticationController {
                         "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
         );
         return response.build();
+    }
+
+    @POST
+    @Path("/logout")
+    public Response logout(@Context HttpServletResponse response) {
+        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0;");
+        return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
     }
 
     @POST
