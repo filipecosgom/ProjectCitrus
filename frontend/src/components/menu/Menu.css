@@ -1,0 +1,272 @@
+.citrus-menu {
+  position: fixed;
+  top: 72px; /* Ajusta para a altura real do teu header */
+  left: 2px;
+  width: 64px;
+  height: 560px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  overflow: visible;
+  margin-left: 4px; /* Pequeno espaço para evitar flicker */
+}
+
+.citrus-menu.expanded {
+  width: 225px;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.citrus-menu-inner {
+  width: 100%;
+  padding: 16px 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.menu-cell {
+  width: 195px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: "Istok Web", sans-serif;
+  font-size: 14px;
+  color: #000;
+  box-sizing: border-box;
+  position: relative;
+  transition: background 0.2s, color 0.2s;
+}
+
+.menu-cell.selected {
+  background: #e68385;
+  color: #fff;
+  border: 1px solid #9c2f31;
+}
+
+.menu-cell.selected .menu-cell-icon {
+  color: #fff !important;
+}
+
+.menu-cell-logout {
+  margin-top: auto;
+  border-top: 1px solid #eee;
+}
+
+.menu-cell-icon {
+  opacity: 1;
+  width: 28px;
+  height: 28px;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: color 0.2s;
+}
+
+.menu-cell-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s, width 0.2s;
+}
+
+.citrus-menu.expanded .menu-cell-label {
+  opacity: 1;
+  width: 120px;
+  margin-left: 4px;
+}
+
+.citrus-menu:not(.expanded) .menu-cell {
+  width: 40px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.citrus-menu:not(.expanded) .menu-cell-label {
+  display: none;
+}
+
+.menu-darkmode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-darkmode-beta {
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  color: #818488;
+  vertical-align: super;
+  margin-left: 2px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 18px;
+  transition: 0.2s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+input:checked + .slider {
+  background-color: #e68385;
+}
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+.menu-language-row {
+  width: 175px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.menu-language-flag {
+  display: block;
+  margin: 0 auto;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* TABLET: 481px - 1024px */
+@media (max-width: 1024px) {
+  .citrus-menu,
+  .citrus-menu.expanded {
+    top: 72px;
+    left: 8px;
+    width: 54px;
+    height: 420px;
+  }
+  .citrus-menu.expanded {
+    width: 180px;
+  }
+  .menu-cell {
+    width: 150px;
+    height: 40px;
+    font-size: 12px;
+  }
+  .menu-language-row {
+    width: 120px;
+    height: 24px;
+  }
+}
+
+/* MOBILE: até 480px */
+@media (max-width: 480px) {
+    .citrus-menu,
+    .citrus-menu.expanded {
+      position: fixed;
+      top: 56px;
+      left: 8px;
+      width: 180px;
+      max-width: none;
+      height: 420px;
+      flex-direction: column;
+      border-radius: 10px 10px 10px 10px;
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
+      padding: 0;
+      z-index: 1200;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      background: #fff;
+      margin-left: 0;
+      pointer-events: none;
+      display: none;
+    }
+    .citrus-menu.show {
+      transform: translateX(0);
+      pointer-events: auto;
+      display: flex;
+    }
+    .citrus-menu-inner {
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 16px 0 12px 0;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .menu-cell,
+    .menu-cell.selected {
+      width: 150px;
+      min-width: 0;
+      max-width: none;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      justify-content: flex-start;
+      border: 1px solid transparent;
+      background: #fff;
+      margin: 0 auto;
+    }
+    /* CORREÇÃO: Força as labels a aparecerem SEMPRE no mobile quando o menu está aberto */
+    .citrus-menu.show .menu-cell-label,
+    .citrus-menu.expanded .menu-cell-label {
+      display: block !important;
+      opacity: 1 !important;
+      width: auto !important;
+      margin-left: 4px;
+      transition: none;
+    }
+    .menu-language-row {
+      width: 120px;
+      height: 24px;
+    }
+    .menu-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      color: #111;
+      cursor: pointer;
+      z-index: 1300;
+    }
+  }

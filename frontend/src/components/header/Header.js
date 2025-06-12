@@ -3,6 +3,8 @@ import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
 import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
+import MessageDropdown from "../dropdowns/MessageDropdown";
+import Menu from "../menu/Menu"; // Importe o componente Menu
 
 export default function Header({
   userName,
@@ -10,6 +12,8 @@ export default function Header({
   avatarUrl,
   unreadMessages = 0,
   unreadNotifications = 0,
+  language, // Adicionei a prop language
+  setLanguage, // Adicionei a prop setLanguage
 }) {
   // Divide o nome do user
   const [firstName, ...rest] = userName.split(" ");
@@ -17,20 +21,38 @@ export default function Header({
 
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef();
+  const [showMessages, setShowMessages] = useState(false);
+  const messagesRef = useRef();
+  const [showMenu, setShowMenu] = useState(false); // Estado para controlar o menu
+
+  // Fecha o menu se deixares de estar em mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 480 && showMenu) setShowMenu(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [showMenu]);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
+      if (messagesRef.current && !messagesRef.current.contains(event.target)) {
+        setShowMessages(false);
+      }
     }
     if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    if (showMessages) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showNotifications]);
+  }, [showNotifications, showMessages]);
 
   const notifications = [
     {
@@ -91,13 +113,29 @@ export default function Header({
     },
   ];
 
+  const messages = [
+    {
+      id: 1,
+      message_content: "Olá! Como estás?",
+      sent_date: "2025-06-10 10:00",
+      is_read: false,
+      sender_id: 2,
+      receiver_id: 1,
+    },
+    // ...mais mensagens
+  ];
+
   return (
     <header className="citrus-header">
       {/* Logotipo + CITRUS (desktop) ou burger menu (tablet/mobile) */}
       <div className="header-cell header-logo-cell">
         <img src={logo} alt="Citrus logo" className="header-logo" />
         <span className="header-title">CITRUS</span>
-        <button className="header-burger" aria-label="Menu">
+        <button
+          className="header-burger"
+          aria-label="Menu"
+          onClick={() => setShowMenu((prev) => !prev)} // Toggle: abre/fecha
+        >
           <FaBars />
         </button>
       </div>
@@ -106,15 +144,25 @@ export default function Header({
       <div className="header-cell header-empty" />
       {/* Ícones */}
       <div className="header-cell header-icons">
-        <div className="header-icon-wrapper">
-          <FaRegComments />
+        <div className="header-icon-wrapper" ref={messagesRef}>
+          <FaRegComments
+            onClick={() => {
+              setShowMessages((v) => !v);
+              setShowNotifications(false); // Fecha notificações ao abrir mensagens
+            }}
+            style={{ cursor: "pointer" }}
+          />
           {unreadMessages > 0 && (
             <span className="header-badge">{unreadMessages}</span>
           )}
+          {showMessages && <MessageDropdown messages={messages} />}
         </div>
         <div className="header-icon-wrapper" ref={notifRef}>
           <FaRegBell
-            onClick={() => setShowNotifications((v) => !v)}
+            onClick={() => {
+              setShowNotifications((v) => !v);
+              setShowMessages(false); // Fecha mensagens ao abrir notificações
+            }}
             style={{ cursor: "pointer" }}
           />
           {unreadNotifications > 0 && (
@@ -139,6 +187,13 @@ export default function Header({
         </div>
         <div className="header-user-email">{userEmail}</div>
       </div>
+      {/* Renderiza o Menu */}
+      <Menu
+        show={showMenu}
+        onClose={() => setShowMenu(false)}
+        language={language} // deve ser sempre definido
+        setLanguage={setLanguage} // idem
+      />
     </header>
   );
 }
