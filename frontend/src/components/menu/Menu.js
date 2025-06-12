@@ -161,12 +161,6 @@ export default function Menu({
       onMouseLeave={handleMouseLeave}
       style={isMobile ? { pointerEvents: show ? "auto" : "none" } : {}}
     >
-      {/* Botão fechar só em mobile */}
-      {isMobile && show && (
-        <button className="menu-close-btn" onClick={onClose} aria-label="Close">
-          &times;
-        </button>
-      )}
       <div className="citrus-menu-inner">
         {filteredItems.map((item, idx) => (
           <div
