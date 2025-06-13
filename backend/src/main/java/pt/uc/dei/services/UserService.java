@@ -132,6 +132,18 @@ public class UserService implements Serializable {
         return null;
     }
 
+    public String getAuthCode(String email) {
+        UserEntity user = userRepository.findUserByEmail(email);
+        if(user != null) {
+            return user.getTwoFactorSecret();
+        }
+        TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(email);
+        if(temporaryUser != null) {
+            return temporaryUser.getTwoFactorSecret();
+        }
+        return null;
+    }
+
     /**
      * Registers a new temporary user in the system.
      * <p>
@@ -150,6 +162,9 @@ public class UserService implements Serializable {
         token.setCreationDate(LocalDateTime.now());
         token.setTemporaryUser(user);
         user.setActivationToken(token);
+        GoogleAuthenticatorKey googleAuthenticatorKey = TwoFactorUtil.generateSecretKey();
+        String secretKey = TwoFactorUtil.getSecretKeyString(googleAuthenticatorKey);
+        user.setTwoFactorSecret(secretKey);
         temporaryUserRepository.persist(user);
 
         LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
@@ -170,9 +185,7 @@ public class UserService implements Serializable {
             activatedUser.setManager(false);
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());
-            GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
-            String secret = TwoFactorUtil.getSecretKeyString(key);
-            activatedUser.setTwoFactorSecret(secret);
+            activatedUser.setTwoFactorSecret(userToActivate.getTwoFactorSecret());
             userRepository.persist(activatedUser);
             LOGGER.info("New activated user: {}", activatedUser.getEmail());
             return true;

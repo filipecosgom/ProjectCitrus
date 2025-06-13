@@ -69,8 +69,15 @@ public class UserController {
                         .entity(new ApiResponse(false, "Activation token failed", "errorActivationFailed", null))
                         .build();
             }
+            String authCode = userService.getAuthCode(temporaryUserDTO.getEmail());
+            if (authCode == null) {
+                LOGGER.error("Invalid authentication code request for {}", temporaryUserDTO.getEmail());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Operation error", "errorNoAuthCode", null))
+                        .build();
+            }
             // Send email and return response
-            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken, language);
+            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken, authCode, language);
             ApiResponse response = new ApiResponse(true, "Account created", null, Map.of("token", activationToken));
             System.out.println("Response: " + new ObjectMapper().writeValueAsString(response)); // Debug serialization
             return Response.status(Response.Status.CREATED).entity(response).build();

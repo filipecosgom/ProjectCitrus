@@ -53,7 +53,7 @@ public class EmailService {
      * @param recipientEmail  The email address of the recipient.
      * @param activationToken The activation token for the recipient's account.
      */
-    public void sendActivationEmail(String recipientEmail, String activationToken, String language) {
+    public void sendActivationEmail(String recipientEmail, String activationToken, String twoFactorAuth, String language) {
         try {
             // Retrieve SMTP properties for configuring email session
             Properties properties = EmailConfig.getSMTPProperties();
@@ -69,11 +69,22 @@ public class EmailService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("CITRUS - Activate Your Account");
             String activationLink = "https://localhost:3000/activate?" + activationToken + "&lang=" + language;
             ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
-            String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE(activationLink, (configurationDTO.getPasswordResetTime()/60));
-            message.setContent(messageBody, "text/html");
+
+            switch (language) {
+                case "en": {
+                    message.setSubject("CITRUS - Activate Your Account");
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink, (configurationDTO.getPasswordResetTime()/60), twoFactorAuth);
+                    message.setContent(messageBody, "text/html");
+
+                }
+                case "pt": {
+                    message.setSubject("CITRUS - Ative a sua conta");
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink, (configurationDTO.getPasswordResetTime()/60), twoFactorAuth);
+                    message.setContent(messageBody, "text/html");
+                }
+            }
             Transport.send(message);
             LOGGER.info("Sending activation token: {} to: " + recipientEmail, activationToken);
         } catch (MessagingException e) {
@@ -83,7 +94,7 @@ public class EmailService {
     }
 
 
-    public void sendPassworResetEmail(String recipientEmail, String passwordResetToken) {
+    public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken) {
         try {
             // Retrieve SMTP properties for configuring email session
             Properties properties = EmailConfig.getSMTPProperties();

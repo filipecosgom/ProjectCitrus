@@ -137,10 +137,7 @@ export default function Login() {
                   {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div className="login-forgot-row">
+              <div className="login-forgot-row">
             <button
               className="login-forgot-link"
               type="button"
@@ -156,6 +153,53 @@ export default function Login() {
               {intl.formatMessage({ id: "loginForgotPassword" })}
             </button>
           </div>
+            </div>
+            
+
+          <div className="login-field">
+            <div className="login-labelAndError">
+              <label className="login-label" htmlFor="login-TwoFAuth">
+                {intl.formatMessage({ id: "loginFieldTwoFAuth" })}
+              </label>
+              <span className="error-message">
+                {errors.TwoFAuth ? errors.TwoFAuth.message : "\u00A0"}
+              </span>
+            </div>
+            <input
+              id="login-TwoFAuth"
+              className={`login-input`}
+              {...register("TwoFAuth", {
+                required: intl.formatMessage({
+                  id: "loginErrorTwoFAuthMissing",
+                }),
+              })}
+            />
+            
+          <div className="login-forgot-row">
+            <button
+              className="login-forgot-link"
+              type="button"
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                color: "#424359",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowForgot(true)}
+            >
+              {intl.formatMessage({ id: "loginHelpTwoFAuth" })}
+            </button>
+            </div>
+          </div>
+          </div>
+
+          
+          
+
+
+
+          
           <button className="main-button" type="submit">
             {intl.formatMessage({ id: "loginSubmit" })}
           </button>

@@ -16,7 +16,10 @@ import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.services.ConfigurationService;
 import pt.uc.dei.services.UserService;
 
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -34,11 +37,28 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String path = requestContext.getUriInfo().getPath();
+        String method = requestContext.getMethod(); // Get the HTTP method
 
-        // 🔓 Skip unauthenticated endpoints
-        if (path.contains("/login") || path.contains("/logout") || path.contains("/public")) {
+        System.out.println("Request: " + method + " " + path);
+
+        // Define paths that should always be skipped, regardless of method
+        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public");
+
+        // Define method-specific skipped paths
+        Map<String, Set<String>> methodSkippedPaths = Map.of(
+                "POST", Set.of("/user") // Only POST /user bypasses authentication
+        );
+
+        // Check if the path is globally skipped
+        if (generalSkippedPaths.contains(path)) {
             return;
         }
+
+        // Check if the path is skipped for its specific method
+        if (methodSkippedPaths.containsKey(method) && methodSkippedPaths.get(method).contains(path)) {
+            return;
+        }
+
 
         Cookie jwtCookie = requestContext.getCookies().get("jwt");
 

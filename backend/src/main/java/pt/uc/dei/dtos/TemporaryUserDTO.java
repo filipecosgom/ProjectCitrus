@@ -37,6 +37,7 @@ public class TemporaryUserDTO {
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
+    private String twoFactorSecret;
     // Getters and Setters
 
     /**
@@ -91,5 +92,13 @@ public class TemporaryUserDTO {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTwoFactorSecret() {
+        return twoFactorSecret;
+    }
+
+    public void setTwoFactorSecret(String twoFactorSecret) {
+        this.twoFactorSecret = twoFactorSecret;
     }
 }
