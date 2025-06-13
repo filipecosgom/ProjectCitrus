@@ -29,7 +29,6 @@ const useAuthStore = create((set, get) => {
       // Auto logout when expiration is reached
       if (timeUntilLogout > 0) {
         logoutTimeout = setTimeout(() => {
-          alert("⏳ Your session has expired. Logging out...");
           handleNotification("warn", "infoSessionExpired");
           get().logout();
         }, timeUntilLogout);
