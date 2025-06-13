@@ -162,79 +162,125 @@ export default function Menu({
       style={isMobile ? { pointerEvents: show ? "auto" : "none" } : {}}
     >
       <div className="citrus-menu-inner">
-        {filteredItems.map((item, idx) => (
-          <div
-            key={item.key}
-            className={`menu-cell${
-              item.route && location.pathname.startsWith(item.route)
-                ? " selected"
-                : ""
-            }${item.isLogout ? " menu-cell-logout" : ""}`}
-            onClick={() => {
-              // Logout chama função onLogout, outros navegam
-              if (item.isLogout && onLogout) onLogout();
-              else if (!item.isToggle && !item.isLanguage)
-                handleItemClick(item);
-            }}
-            style={{
-              pointerEvents: item.isLanguage ? "none" : "auto",
-            }}
-          >
-            {/* Ícone do menu */}
-            <div
-              className="menu-cell-icon"
-              style={{
-                color:
-                  item.route && location.pathname.startsWith(item.route)
-                    ? "#fff"
-                    : item.color,
-              }}
-            >
-              {item.icon}
-            </div>
-            {/* Texto ou componente especial */}
-            <div className="menu-cell-label">
-              {/* Dark Mode Toggle */}
-              {item.isToggle ? (
-                <div className="menu-darkmode-row">
-                  <span>
-                    Dark mode <span className="menu-darkmode-beta">Beta</span>
-                  </span>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={darkMode}
-                      onChange={() => setDarkMode((v) => !v)}
-                    />
-                    <span className="slider round"></span>
-                  </label>
+        {filteredItems.map((item) => {
+          if (item.isLanguage) {
+            // Menu expandido: só LanguageDropdown
+            if (expanded || forceExpanded) {
+              return (
+                <div
+                  key={item.key}
+                  className="menu-cell"
+                  style={{
+                    padding: 0,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <LanguageDropdown
+                    language={language}
+                    setLanguage={setLanguage}
+                    compact={false}
+                  />
                 </div>
-              ) : item.isLanguage ? (
-                expanded || forceExpanded ? (
-                  <div className="menu-language-row">
-                    <LanguageDropdown
-                      language={language}
-                      setLanguage={setLanguage}
-                      compact={!(expanded || forceExpanded)}
-                    />
-                  </div>
-                ) : (
+              );
+            }
+            // Menu reduzido: só bandeira como ícone
+            return (
+              <div
+                key={item.key}
+                className="menu-cell"
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div className="menu-cell-icon">
                   <img
                     src={language === "pt" ? flagPt : flagEn}
                     alt={language === "pt" ? "Português" : "English"}
                     className="menu-language-flag"
                     width={28}
                     height={18}
-                    style={{ margin: "0 auto" }}
                   />
-                )
-              ) : (
-                // Texto normal
-                item.label
-              )}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={item.key}
+              className={`menu-cell${
+                item.route && location.pathname.startsWith(item.route)
+                  ? " selected"
+                  : ""
+              }${item.isLogout ? " menu-cell-logout" : ""}`}
+              onClick={() => {
+                // Logout chama função onLogout, outros navegam
+                if (item.isLogout && onLogout) onLogout();
+                else if (!item.isToggle && !item.isLanguage)
+                  handleItemClick(item);
+              }}
+              style={{
+                pointerEvents: item.isLanguage ? "none" : "auto",
+              }}
+            >
+              {/* Ícone do menu */}
+              <div
+                className="menu-cell-icon"
+                style={{
+                  color:
+                    item.route && location.pathname.startsWith(item.route)
+                      ? "#fff"
+                      : item.color,
+                }}
+              >
+                {item.icon}
+              </div>
+              {/* Texto ou componente especial */}
+              <div className="menu-cell-label">
+                {/* Dark Mode Toggle */}
+                {item.isToggle ? (
+                  <div className="menu-darkmode-row">
+                    <span>
+                      Dark mode <span className="menu-darkmode-beta">Beta</span>
+                    </span>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={darkMode}
+                        onChange={() => setDarkMode((v) => !v)}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                ) : item.isLanguage ? (
+                  expanded || forceExpanded ? (
+                    <div className="menu-language-row">
+                      <LanguageDropdown
+                        language={language}
+                        setLanguage={setLanguage}
+                        compact={!(expanded || forceExpanded)}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={language === "pt" ? flagPt : flagEn}
+                      alt={language === "pt" ? "Português" : "English"}
+                      className="menu-language-flag"
+                      width={28}
+                      height={18}
+                      style={{ margin: "0 auto" }}
+                    />
+                  )
+                ) : (
+                  // Texto normal
+                  item.label
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </nav>
   );
