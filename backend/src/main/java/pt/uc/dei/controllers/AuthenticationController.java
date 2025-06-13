@@ -117,8 +117,7 @@ public class AuthenticationController {
                         .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
                         .build();
             }
-
-            emailService.sendPassworResetEmail(email, token);
+            emailService.sendPasswordResetEmail(email, token);
 
             return Response.status(Response.Status.CREATED)
                     .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
@@ -131,4 +130,37 @@ public class AuthenticationController {
                     .build();
         }
     }
+/*
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    public Response requestAuthCode(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
+        String email = emailJSON.getString("email");
+        if (email == null || email.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
+                    .build();
+        }
+        try {
+            String authCode = userService.getAuthCode(email);
+
+            if (authCode == null) {
+                LOGGER.error("Invalid code request for {}", email);
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidCodeRequest", null))
+                        .build();
+            }
+            emailService.sendPasswordResetEmail(email, token);
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Password reset error for {}: {}", email, e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Password reset failed", "errorServerIssue", null))
+                    .build();
+        }
+    }*/
 }
