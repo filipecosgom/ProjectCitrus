@@ -74,7 +74,7 @@ public class AuthenticationController {
     @Path("/login") // Defines the login endpoint
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response login(LoginDTO user) {
+    public Response login(@Valid LoginDTO user) {
         // Attempt to authenticate user and generate JWT token
         String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response
@@ -101,8 +101,9 @@ public class AuthenticationController {
 
     @POST
     @Path("/logout")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletResponse response) {
-        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0;");
+        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
         return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
     }
 
@@ -110,7 +111,7 @@ public class AuthenticationController {
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response requestPasswordReset(JsonObject emailJSON) {
+    public Response requestPasswordReset(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
         String email = emailJSON.getString("email");
 
         if (email == null || email.isEmpty()) {
@@ -145,7 +146,7 @@ public class AuthenticationController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response requestAuthCode(LoginDTO requester) {
+    public Response requestAuthCode(@Valid LoginDTO requester) {
         try {
             String authCode = authenticationService.getAuthCode(requester);
             if (authCode == null) {

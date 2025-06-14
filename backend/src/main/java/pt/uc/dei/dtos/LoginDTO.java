@@ -27,7 +27,6 @@ public class LoginDTO {
     private String password;
 
     @NotNull(message = "Authentication Code is required")
-    @NotBlank(message = "Authentication Code missing")
     private Integer authenticationCode;
 
     /**

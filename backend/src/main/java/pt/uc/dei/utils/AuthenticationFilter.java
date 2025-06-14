@@ -79,8 +79,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 return;
             }
 
-            String email = claims.getSubject();
-            UserResponseDTO user = authenticationService.getSelfInformation(email);
+            Long id = Long.parseLong(claims.getSubject());
+            UserResponseDTO user = authenticationService.getSelfInformation(id);
             if (user == null) {
                 abort(requestContext, Response.Status.UNAUTHORIZED, "User not found");
                 return;

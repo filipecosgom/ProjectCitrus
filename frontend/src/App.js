@@ -23,6 +23,7 @@ import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
 import Profile from "./pages/profile/Profile";
 import { useNavigate } from "react-router-dom";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
@@ -105,7 +106,13 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password-reset" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
+       
+          <Route path="/profile" element={
+             <ProtectedRoute>
+              <Profile />
+              </ProtectedRoute>
+            }/>
+        
         <Route
           path="/offcanvas-forgot-password"
           element={<div>OffcanvasForgotPassword</div>}

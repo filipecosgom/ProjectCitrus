@@ -85,6 +85,7 @@ const en = {
 
 
   //ERRORS
+  protectedRoute: "You need to be logged in to access this page",
   // General Errors
   infoAboutToExpire: "Your session is about to expire",
   inforSessionExpired: "Your session has expired. Please log in again",

@@ -98,8 +98,8 @@ public class AuthenticationService implements Serializable {
         return false;
     }
 
-    public UserResponseDTO getSelfInformation(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
+    public UserResponseDTO getSelfInformation(Long id) {
+        UserEntity user = userRepository.findUserById(id);
         if(user != null) {
             return userMapper.toUserResponseDto(user);
         }

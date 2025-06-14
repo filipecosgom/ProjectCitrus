@@ -47,7 +47,7 @@ public class JWTUtil {
         System.out.println(SECRET_KEY);
         // Create JWT token with user details (email, isAdmin, isManager)
         return Jwts.builder()
-                .setSubject(user.getEmail()) // Set user's email as subject
+                .setSubject(String.valueOf(user.getId())) // Set user's email as subject
                 .claim("isAdmin", user.getAdmin()) // Store isAdmin flag
                 .claim("isManager", user.getManager()) // Store isManager flag
                 .setIssuedAt(new Date()) // Token creation time

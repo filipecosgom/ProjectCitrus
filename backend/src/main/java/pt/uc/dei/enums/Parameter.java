@@ -8,8 +8,18 @@ package pt.uc.dei.enums;
  * - DATE: Represents a date-related parameter.
  */
 public enum Parameter {
-    FIRST_NAME,
-    SURNAME,
-    EMAIL,
-    DATE;
+    FIRST_NAME("name"),
+    SURNAME("surname"),
+    EMAIL("email"),
+    DATE("creationDate");
+
+    private final String fieldName;
+
+    Parameter(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
 }

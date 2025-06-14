@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
+import useAuthStore from "../../stores/useAuthStore";
 
 const mockUser = {
   firstName: "Teresa",
@@ -23,10 +25,19 @@ const mockUser = {
 };
 
 export default function Profile() {
+  const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(mockUser);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState(user);
   const [activeTab, setActiveTab] = useState("profile");
+
+  const { remainingTime } = useAuthStore();
+
+const formatTime = (ms) => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +61,10 @@ export default function Profile() {
       {tab.charAt(0).toUpperCase() + tab.slice(1)}
     </button>
   );
+
+  useEffect(() => {
+    console.log("Fetching user information for ID:", userId);
+  }, []);
 
   return (
     <div className="user-profile">
@@ -153,6 +168,7 @@ export default function Profile() {
           <button className="edit-btn" onClick={handleEditToggle}>
             {editMode ? "Save" : "Edit"}
           </button>
+          <p>Session expires in: {formatTime(remainingTime)}</p>;
         </div>
       )}
 

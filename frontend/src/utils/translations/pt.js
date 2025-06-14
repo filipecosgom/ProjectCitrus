@@ -84,6 +84,7 @@ const pt = {
   twofactorErrorEmailInvalid: "Formato de email inválido",
 
   //ERRORS
+  protectedRoute: "Tem de iniciar sessão para aceder a esta página",
   // Erros Gerais
   infoAboutToExpire: "A sua sessão está prestes a expirar",
   infoSessionExpired: "A sua sessão expirou. Por favor, faça login novamente.",

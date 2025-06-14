@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
@@ -19,7 +20,9 @@ import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,18 +30,26 @@ import java.util.Map;
  */
 @Path("/user")
 public class UserController {
-    /** Logger for user registration events */
+    /**
+     * Logger for user registration events
+     */
     private final Logger LOGGER = LogManager.getLogger(UserController.class);
 
-    /** Handles user registration logic */
+    /**
+     * Handles user registration logic
+     */
     @Inject
     UserService userService;
 
-    /** Manages activation token generation */
+    /**
+     * Manages activation token generation
+     */
     @Inject
     AuthenticationService authenticationService;
 
-    /** Sends activation emails */
+    /**
+     * Sends activation emails
+     */
     @Inject
     EmailService emailService;
 
@@ -47,10 +58,10 @@ public class UserController {
      *
      * @param temporaryUserDTO Contains email and password for registration
      * @return HTTP response:
-     *         - 201 (Created) with token if successful
-     *         - 400 (Bad Request) for invalid data
-     *         - 409 (Conflict) if email exists
-     *         - 500 (Error) for server failures
+     * - 201 (Created) with token if successful
+     * - 400 (Bad Request) for invalid data
+     * - 409 (Conflict) if email exists
+     * - 500 (Error) for server failures
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -111,24 +122,48 @@ public class UserController {
                         .entity(new ApiResponse(false, "Token expired", "errorTokenExpired", null))
                         .build();
             }
-            UserResponseDTO user = authenticationService.getSelfInformation(claims.getSubject());
-            if(user == null) {
+            UserResponseDTO user = authenticationService.getSelfInformation(Long.parseLong(claims.getSubject()));
+            if (user == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity(new ApiResponse(false,
-                        "User not found",
-                        "errorUserNotFound", null))
+                                "User not found",
+                                "errorUserNotFound", null))
                         .build();
             }
             return Response.ok(new ApiResponse(true,
                     "User data retrieved",
                     null,
                     Map.of(
-                            "user",user,
-                            "tokenExpiration",claims.getExpiration().getTime())
-                    )).build();
+                            "user", user,
+                            "tokenExpiration", claims.getExpiration().getTime())
+            )).build();
         } catch (JwtException e) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new ApiResponse(false, "Invalid token", "errorInvalidToken", null))
                     .build();
         }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsers(@QueryParam("email") String email,
+                             @QueryParam("name") String name,
+                             @QueryParam("surname") String surname,
+                             @QueryParam("phone") String phone,
+                             @QueryParam("accountState") AccountState accountState,
+                             @QueryParam("role") Role role,
+                             @QueryParam("office") Office office,
+                             @QueryParam("parameter") Parameter parameter,
+                             @QueryParam("order") Order order,
+                             @QueryParam("offset") @DefaultValue("0") int offset,
+                             @QueryParam("limit") @DefaultValue("10") int limit) {
+
+        Map<String, Object> userData = userService.getUsers(email, name, surname, phone,
+                accountState, role, office,
+                parameter, order, offset, limit);
+
+        if (userData.get("users") == null || ((List<?>) userData.get("users")).isEmpty()) {
+            return Response.status(404).entity(new ApiResponse(false, "No users found", "NOT_FOUND", null)).build();
+        }
+        return Response.ok(new ApiResponse(true, "Users retrieved successfully", null, userData)).build();
     }
 }

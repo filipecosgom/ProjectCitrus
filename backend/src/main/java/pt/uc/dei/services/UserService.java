@@ -12,7 +12,7 @@ import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
-import pt.uc.dei.enums.AccountState;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.repositories.ActivationTokenRepository;
 import pt.uc.dei.repositories.TemporaryUserRepository;
@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service class for managing user-related operations.
@@ -125,6 +126,29 @@ public class UserService implements Serializable {
 
         LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
         return codes;
+    }
+
+    public Map<String, Object> getUsers(String email, String name, String surname, String phone,
+                                        AccountState accountState, Role role, Office office,
+                                        Parameter parameter, Order order, int offset, int limit) {
+
+        List<UserEntity> users = userRepository.getUsers(email, name, surname, phone,
+                accountState, role, office,
+                parameter, order, offset, limit);
+
+        long totalUsers = userRepository.getTotalUserCount(email, name, surname, phone,
+                accountState, role, office);
+
+        List<UserDTO> userDtos = users.stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("users", userDtos);
+        responseData.put("totalUsers", totalUsers);
+        responseData.put("offset", offset);
+        responseData.put("limit", limit);
+        return responseData;
     }
 
 

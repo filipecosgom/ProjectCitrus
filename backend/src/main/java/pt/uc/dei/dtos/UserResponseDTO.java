@@ -4,6 +4,7 @@ import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion;
 import jakarta.validation.constraints.NotBlank;
 
 public class UserResponseDTO {
+    private Long id;
     @NotBlank(message = "Email missing")
     private String email;
     private Boolean isAdmin;
@@ -11,10 +12,18 @@ public class UserResponseDTO {
 
     public UserResponseDTO() {}
 
-    public UserResponseDTO(String email, Boolean isAdmin, Boolean isManager) {
+    public UserResponseDTO(Long id, String email, Boolean isAdmin, Boolean isManager) {
+        this.id = id;
         this.email = email;
         this.isAdmin = isAdmin;
         this.isManager = isManager;
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
