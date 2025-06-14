@@ -17,6 +17,8 @@ const pt = {
   loginErrorEmailMissing: "O email é necessário",
   loginErrorEmailInvalid: "Formato de email inválido",
   loginErrorPasswordMissing: "A palavra-passe é necessária",
+  loginErrorAuthenticationCodeMissing: "O código de autenticação de dois fatores é necessário",
+  loginErrorAuthenticationCodeInvalid: "Código de autenticação de dois fatores inválido",
 
   // Register
   registerTitle: "Bem-vindo à CITRUS",
@@ -63,6 +65,23 @@ const pt = {
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
+
+  //Two-Factor Authentication
+  twoFactorTitle: "Configuração da 2FA",
+  twoFactorWhatIsTitle: "O que é Autenticação de Dois Fatores (2FA)?",
+  twoFactorWhatIsDescription: "A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta. Após inserir sua senha, você precisará digitar um código de 6 dígitos gerado por um aplicativo autenticador no seu telefone.",
+  twoFactorSetupTitle: "Como Configurar a Autenticação 2FA",
+  twoFactorSetupStep1: "Abra o Google Authenticator, Microsoft Authenticator ou Authy.",
+  twoFactorSetupStep2: "Toque em 'Adicionar uma nova conta' e escolha 'Entrada Manual'.",
+  twoFactorSetupStep3: "Digite a chave secreta abaixo:",
+  twoFactorSetupStep4: "Salve a configuração e o aplicativo começará a gerar códigos de 6 dígitos a cada 30 segundos.",
+  twoFactorSecretPlaceholder: "CHAVE-SECRETA",
+  twoFactorLoginTitle: "Entrando com 2FA",
+  twoFactorLoginDescription: "Sempre que fizer login, insira o código de 6 dígitos mais recente mostrado no seu aplicativo autenticador. O código muda a cada 30 segundos, então certifique-se de usar o mais recente.",
+  twoFactorCloseButton: "Entendi!",
+  twoFactorRequest: "Solicitar código",
+  twofactorErrorEmailMissing: "O email é necessário",
+  twofactorErrorEmailInvalid: "Formato de email inválido",
 
   //ERRORS
   // Erros Gerais

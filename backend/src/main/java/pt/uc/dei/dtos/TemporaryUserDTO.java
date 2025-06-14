@@ -1,14 +1,7 @@
 package pt.uc.dei.dtos;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
-import at.favre.lib.crypto.bcrypt.BCrypt;
 
 /**
  * Data Transfer Object (DTO) representing a temporary user.
@@ -37,7 +30,7 @@ public class TemporaryUserDTO {
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
-    private String twoFactorSecret;
+    private String secretKey;
     // Getters and Setters
 
     /**
@@ -94,11 +87,11 @@ public class TemporaryUserDTO {
         this.password = password;
     }
 
-    public String getTwoFactorSecret() {
-        return twoFactorSecret;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setTwoFactorSecret(String twoFactorSecret) {
-        this.twoFactorSecret = twoFactorSecret;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

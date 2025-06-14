@@ -13,7 +13,7 @@
   pointer-events: auto;
 }
 
-.offcanvas-forgot {
+.offcanvas-twofactor {
   position: fixed;
   top: 0;
   right: 0;
@@ -26,24 +26,22 @@
   transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: 1100;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.offcanvas-forgot.show {
+.offcanvas-twofactor.show {
   transform: translateX(0);
 }
 @media (max-width: 480px) {
-  .offcanvas-forgot {
+  .offcanvas-twofactor {
     width: 100vw;
     min-width: 0;
     padding: 0;
   }
 }
-.offcanvas-close-btn {
-  position: absolute;
-  top: 24px;
-  right: 32px;
+.offcanvas-twofactor-close-btn {
+    align-self: flex-end;
+    margin: 16px;
   font-size: 2.5rem;
   color: #111;
   background: none;

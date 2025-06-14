@@ -62,23 +62,22 @@ public class UserController {
                     .build();
         }
         try {
-            String activationToken = userService.registerUser(temporaryUserDTO);
-            if (activationToken == null) {
+            Map<String, String> codes = userService.registerUser(temporaryUserDTO);
+            if (codes.get("token") == null) {
                 LOGGER.error("Token generation failed for {}", temporaryUserDTO.getEmail());
                 return Response.status(Response.Status.SERVICE_UNAVAILABLE)
                         .entity(new ApiResponse(false, "Activation token failed", "errorActivationFailed", null))
                         .build();
             }
-            String authCode = userService.getAuthCode(temporaryUserDTO.getEmail());
-            if (authCode == null) {
+            if (codes.get("secretKey") == null) {
                 LOGGER.error("Invalid authentication code request for {}", temporaryUserDTO.getEmail());
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity(new ApiResponse(false, "Operation error", "errorNoAuthCode", null))
                         .build();
             }
             // Send email and return response
-            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), activationToken, authCode, language);
-            ApiResponse response = new ApiResponse(true, "Account created", null, Map.of("token", activationToken));
+            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), codes.get("token"), codes.get("authenticationCode"), language);
+            ApiResponse response = new ApiResponse(true, "Account created", null, codes);
             System.out.println("Response: " + new ObjectMapper().writeValueAsString(response)); // Debug serialization
             return Response.status(Response.Status.CREATED).entity(response).build();
         } catch (IllegalArgumentException e) {

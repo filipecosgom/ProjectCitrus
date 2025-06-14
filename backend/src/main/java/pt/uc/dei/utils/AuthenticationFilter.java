@@ -42,11 +42,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         System.out.println("Request: " + method + " " + path);
 
         // Define paths that should always be skipped, regardless of method
-        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public");
+        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public", "/activate");
 
         // Define method-specific skipped paths
         Map<String, Set<String>> methodSkippedPaths = Map.of(
-                "POST", Set.of("/user") // Only POST /user bypasses authentication
+                "POST", Set.of("/user", "/activate", "/auth", "/auth/login")
         );
 
         // Check if the path is globally skipped

@@ -22,7 +22,9 @@ import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service class for managing user-related operations.
@@ -114,10 +116,12 @@ public class UserService implements Serializable {
             // Verify if the provided password matches the stored hash
             if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
                 // Convert UserEntity to UserDTO (basic representation)
-                UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
-                // Generate a JWT token for authentication
-                String token = jwtUtil.generateToken(userResponseDTO);
-                return token;
+                if(TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
+                    UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
+                    // Generate a JWT token for authentication
+                    String token = jwtUtil.generateToken(userResponseDTO);
+                    return token;
+                }
             }
         }
         // Return null if authentication fails (invalid credentials)
@@ -132,15 +136,17 @@ public class UserService implements Serializable {
         return null;
     }
 
-    public String getAuthCode(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
+    public String getAuthCode(LoginDTO requester) {
+        // Retrieve user entity from the database using their email
+        UserEntity user = findUserByEmail(requester.getEmail());
         if(user != null) {
-            return user.getTwoFactorSecret();
+            // Verify if the provided password matches the stored hash
+            if (PasswordUtils.verify(user.getPassword(), requester.getPassword())) {
+                String authenticationCode = user.getSecretKey();
+                return authenticationCode;
+            }
         }
-        TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(email);
-        if(temporaryUser != null) {
-            return temporaryUser.getTwoFactorSecret();
-        }
+        // Return null if authentication fails (invalid credentials)
         return null;
     }
 
@@ -153,7 +159,7 @@ public class UserService implements Serializable {
      * @return The generated activation token for the new user.
      */
     @Transactional
-    public String registerUser(TemporaryUserDTO newUser) {
+    public Map<String, String> registerUser(TemporaryUserDTO newUser) {
         TemporaryUserEntity user = new TemporaryUserEntity();
         user.setEmail(newUser.getEmail());
         user.setPassword(PasswordUtils.encrypt(newUser.getPassword()));
@@ -164,11 +170,14 @@ public class UserService implements Serializable {
         user.setActivationToken(token);
         GoogleAuthenticatorKey googleAuthenticatorKey = TwoFactorUtil.generateSecretKey();
         String secretKey = TwoFactorUtil.getSecretKeyString(googleAuthenticatorKey);
-        user.setTwoFactorSecret(secretKey);
+        user.setSecretKey(secretKey);
         temporaryUserRepository.persist(user);
+        Map<String, String> codes = new HashMap<>();
+        codes.put("token", token.getTokenValue());
+        codes.put("secretKey", secretKey);
 
         LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
-        return token.getTokenValue();
+        return codes;
     }
 
     /**
@@ -185,7 +194,7 @@ public class UserService implements Serializable {
             activatedUser.setManager(false);
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());
-            activatedUser.setTwoFactorSecret(userToActivate.getTwoFactorSecret());
+            activatedUser.setSecretKey(userToActivate.getSecretKey());
             userRepository.persist(activatedUser);
             LOGGER.info("New activated user: {}", activatedUser.getEmail());
             return true;
@@ -257,6 +266,7 @@ public class UserService implements Serializable {
         temporaryUserDTO.setEmail(temporaryUser.getEmail());
         temporaryUserDTO.setPassword(temporaryUser.getPassword());
         temporaryUserDTO.setId(temporaryUser.getId());
+        temporaryUserDTO.setSecretKey(temporaryUser.getSecretKey());
         return temporaryUserDTO;
     }
 }

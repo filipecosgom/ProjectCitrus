@@ -26,4 +26,16 @@ public class TwoFactorUtil {
     public static String getSecretKeyString(GoogleAuthenticatorKey key) {
         return key.getKey();
     }
+
+    /**
+     * Verifies the provided TOTP code against the stored secret key.
+     *
+     * @param secretKey The user's stored secret key (Base32 encoded).
+     * @param userCode The code entered by the user.
+     * @return true if the code is valid, false otherwise.
+     */
+    public static boolean verifyTwoFactorCode(String secretKey, int userCode) {
+        return gAuth.authorize(secretKey, userCode);
+    }
+
 }

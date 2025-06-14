@@ -47,8 +47,8 @@ public class TemporaryUserEntity implements Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "two_factor_secret", nullable = false, updatable = false)
-    private String twoFactorSecret;
+    @Column(name = "secretKey", nullable = false, updatable = false)
+    private String secretKey;
 
     /**
      * Activation token associated with this temporary account.
@@ -99,11 +99,11 @@ public class TemporaryUserEntity implements Serializable {
         this.activationToken = activationToken;
     }
 
-    public String getTwoFactorSecret() {
-        return twoFactorSecret;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setTwoFactorSecret(String twoFactorSecret) {
-        this.twoFactorSecret = twoFactorSecret;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

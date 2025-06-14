@@ -100,6 +100,7 @@
   font-size: 16px;
   text-align: left;
   margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .login-input {
@@ -428,6 +429,14 @@
 }
 
 .login-forgot-link {
+  font-family: var(--font-family-secondary);
+  font-weight: bold;
+  font-size: 14px;
+  color: #424359;
+  text-decoration: none;
+}
+
+.login-help-link {
   font-family: var(--font-family-secondary);
   font-weight: bold;
   font-size: 14px;

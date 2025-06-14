@@ -62,7 +62,7 @@ public class UserInitializer {
             admin.setCreationDate(LocalDateTime.now());
             GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
             String secret = TwoFactorUtil.getSecretKeyString(key);
-            admin.setTwoFactorSecret(secret);
+            admin.setSecretKey(secret);
             userRepository.persist(admin);
         }
     }
