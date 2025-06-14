@@ -14,7 +14,7 @@
   align-items: center;
   padding: 0;
   overflow: visible;
-  margin-left: 4px; /* Pequeno espaço para evitar flicker */
+  /*margin-left: 4px;*/ /* Pequeno espaço para evitar flicker */
 }
 
 .citrus-menu.expanded {
@@ -50,7 +50,8 @@
   color: #000;
   box-sizing: border-box;
   position: relative;
-  transition: background 0.2s, color 0.2s;
+  /*transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s,
+    color 0.2s; */
 }
 
 .menu-cell.selected {
@@ -77,7 +78,7 @@
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  transition: color 0.2s;
+  transition: color 0.s;
 }
 
 .menu-cell-label {
@@ -85,25 +86,22 @@
   width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: opacity 0.2s, width 0.2s;
+  transition: opacity 0.2s 0.18s,
+    /* delay igual ao tempo da expansão do menu */ width 0.2s 0.28s;
 }
 
 .citrus-menu.expanded .menu-cell-label {
   opacity: 1;
   width: 120px;
-  margin-left: 4px;
+  /*margin-left: 4px;*/
 }
 
 .citrus-menu:not(.expanded) .menu-cell {
   width: 40px;
-  justify-content: center;
+  justify-content: left;
   padding: 0;
   gap: 0;
 }
-
-/*.citrus-menu:not(.expanded) .menu-cell-label {
-  display: none;
-}*/
 
 .menu-darkmode-row {
   display: flex;

@@ -216,6 +216,7 @@ export default function Menu({
                   : ""
               }${item.isLogout ? " menu-cell-logout" : ""}`}
               onClick={() => {
+                if (item.route) navigate(item.route);
                 // Logout chama função onLogout, outros navegam
                 if (item.isLogout && onLogout) onLogout();
                 else if (!item.isToggle && !item.isLanguage)

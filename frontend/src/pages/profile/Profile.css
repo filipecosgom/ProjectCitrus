@@ -1,0 +1,95 @@
+.user-profile {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    background: #eee;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .tab.active {
+    background: #a44;
+    color: white;
+  }
+  
+  .profile-section {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-header {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .profile-card,
+  .manager-card {
+    position: relative;
+    width: 200px;
+  }
+  
+  .manager-card {
+    width: 120px;
+  }
+  
+  .profile-card img,
+  .manager-card img {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .profile-label {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    color: white;
+    text-shadow: 0 0 3px black;
+  }
+  
+  .profile-label.small {
+    font-size: 0.8em;
+  }
+  
+  .form-fields {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+  
+  label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9em;
+  }
+  
+  input, textarea {
+    padding: 6px;
+    font-size: 1em;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .edit-btn {
+    align-self: flex-end;
+    margin-top: 20px;
+    background: #a44;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
