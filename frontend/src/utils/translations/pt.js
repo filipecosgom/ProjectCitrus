@@ -12,7 +12,7 @@ const pt = {
   loginHelpTwoFAuth: "Precisa de ajuda com a autenticação de dois fatores?",
   loginSubmit: "Entrar",
   loginRegisterPrompt: "Ainda não tem uma conta?",
-  loginRegister: "Junte-se à CITRUS hoje.",
+  loginRegister: "Junte-se à CITRUS hoje",
 
   loginErrorEmailMissing: "O email é necessário",
   loginErrorEmailInvalid: "Formato de email inválido",
@@ -30,7 +30,7 @@ const pt = {
   registerHidePassword: "Esconder palavra-passe",
   registerSubmit: "Criar conta",
   registerAlreadyAccount: "Já tem uma conta?",
-  registerLogin: "Entrar.",
+  registerLogin: "Entrar",
   registerLogo: "Logotipo CITRUS",
   registerLogoContainerTitle: "Junte-se à comunidade CITRUS!",
   registerButton: "Voltar ao Login",
@@ -96,8 +96,9 @@ const pt = {
   errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
   errorFailed: "Falha no pedido. Tenta novamente mais tarde.",
   errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
-  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde.",
+  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde",
   errorInvalidCredentials: "Email or password estão erradas",
+  errorInvalidCodeRequest: "Email or password estão erradas",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",
