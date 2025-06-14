@@ -40,23 +40,9 @@ public class AuthenticationService implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected repository for managing permanent users.
-     */
-    @EJB
+    @Inject
     UserRepository userRepository;
 
-    /**
-     * Injected repository for managing temporary users.
-     */
-    @EJB
-    TemporaryUserRepository temporaryUserRepository;
-
-    /**
-     * Injected service for token-related operations.
-     */
-    @EJB
-    TokenService tokenService;
 
     @Inject
     JWTUtil jwtUtil;
@@ -72,21 +58,6 @@ public class AuthenticationService implements Serializable {
      */
     @EJB
     ActivationTokenRepository activationTokenRepository;
-
-    /**
-     * Checks if a user with the given email exists in the system.
-     * <p>
-     * Searches both permanent and temporary repositories to verify whether the email is registered.
-     *
-     * @param email The email address to check for existence.
-     * @return {@code true} if a user (permanent or temporary) exists with the email, {@code false} otherwise.
-     * @throws jakarta.persistence.PersistenceException If an error occurs during database operations.
-     */
-    public boolean findIfUserExists(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(email);
-        return (temporaryUser != null || user != null);
-    }
 
 
     /**
@@ -105,19 +76,26 @@ public class AuthenticationService implements Serializable {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(loginDTO.getEmail());
         if(user != null) {
-            // Verify if the provided password matches the stored hash
-            if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
-                // Convert UserEntity to UserDTO (basic representation)
-                if(TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
-                    UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
-                    // Generate a JWT token for authentication
-                    String token = jwtUtil.generateToken(userResponseDTO);
-                    return token;
-                }
-            }
+            UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
+            // Generate a JWT token for authentication
+            String token = jwtUtil.generateToken(userResponseDTO);
+            return token;
         }
         // Return null if authentication fails (invalid credentials)
         return null;
+    }
+
+    public boolean checkAuthenticationCode(LoginDTO loginDTO) {
+        // Retrieve user entity from the database using their email
+        UserEntity user = findUserByEmail(loginDTO.getEmail());
+        // Verify if the provided password matches the stored hash
+        if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
+            // Convert UserEntity to UserDTO (basic representation)
+            if (TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public UserResponseDTO getSelfInformation(String email) {
@@ -140,36 +118,6 @@ public class AuthenticationService implements Serializable {
         }
         // Return null if authentication fails (invalid credentials)
         return null;
-    }
-
-    /**
-     * Registers a new temporary user in the system.
-     * <p>
-     * Generates an activation token and persists the temporary user in the repository.
-     *
-     * @param newUser The temporary user data transfer object.
-     * @return The generated activation token for the new user.
-     */
-    @Transactional
-    public Map<String, String> registerUser(TemporaryUserDTO newUser) {
-        TemporaryUserEntity user = new TemporaryUserEntity();
-        user.setEmail(newUser.getEmail());
-        user.setPassword(PasswordUtils.encrypt(newUser.getPassword()));
-        ActivationTokenEntity token = new ActivationTokenEntity();
-        token.setTokenValue(tokenService.generateNewToken());
-        token.setCreationDate(LocalDateTime.now());
-        token.setTemporaryUser(user);
-        user.setActivationToken(token);
-        GoogleAuthenticatorKey googleAuthenticatorKey = TwoFactorUtil.generateSecretKey();
-        String secretKey = TwoFactorUtil.getSecretKeyString(googleAuthenticatorKey);
-        user.setSecretKey(secretKey);
-        temporaryUserRepository.persist(user);
-        Map<String, String> codes = new HashMap<>();
-        codes.put("token", token.getTokenValue());
-        codes.put("secretKey", secretKey);
-
-        LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
-        return codes;
     }
 
     /**
@@ -196,69 +144,9 @@ public class AuthenticationService implements Serializable {
         }
     }
 
-
-    /**
-     * Deletes temporary user information, removing associated activation tokens.
-     *
-     * @param userToDelete The temporary user DTO to be deleted.
-     * @return {@code true} if deletion was successful, {@code false} otherwise.
-     */
-    @Transactional
-    public boolean deleteTemporaryUserInformation(TemporaryUserDTO userToDelete) {
-        TemporaryUserEntity user = temporaryUserRepository.findTemporaryUserByEmail(userToDelete.getEmail());
-        List<ActivationTokenEntity> activationTokens = activationTokenRepository.getTokensOfUser(user);
-        // Delete activation tokens
-        for (ActivationTokenEntity activationToken : activationTokens) {
-            activationTokenRepository.remove(activationToken);
-        }
-        activationTokenRepository.flush();
-        // Delete the temporary user
-        deleteTemporaryUser(userToDelete);
-        return true;
-    }
-
-    /**
-     * Deletes a temporary user from the repository.
-     *
-     * @param userToDelete The temporary user DTO to be removed.
-     * @return {@code true} if deletion was successful, {@code false} otherwise.
-     */
-    private boolean deleteTemporaryUser(TemporaryUserDTO userToDelete) {
-        try {
-            TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(userToDelete.getEmail());
-            temporaryUserRepository.remove(temporaryUser);
-            return true;
-        } catch (Exception e) {
-            LOGGER.error("Failed to delete temporary user: {}", userToDelete.getEmail(), e);
-            return false;
-        }
-    }
-
-    public UserResponseDTO getResponseUserByEmail(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        return userMapper.toUserResponseDto(user);
-    }
-
-
-
     //SUPPORT FUNCTIONS
     private UserEntity findUserByEmail(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
         return user;
-    }
-
-    /**
-     * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.
-     *
-     * @param temporaryUser The temporary user entity.
-     * @return A data transfer object representation of the temporary user.
-     */
-    public TemporaryUserDTO temporaryUserEntityToTemporaryUserDTO(TemporaryUserEntity temporaryUser) {
-        TemporaryUserDTO temporaryUserDTO = new TemporaryUserDTO();
-        temporaryUserDTO.setEmail(temporaryUser.getEmail());
-        temporaryUserDTO.setPassword(temporaryUser.getPassword());
-        temporaryUserDTO.setId(temporaryUser.getId());
-        temporaryUserDTO.setSecretKey(temporaryUser.getSecretKey());
-        return temporaryUserDTO;
     }
 }

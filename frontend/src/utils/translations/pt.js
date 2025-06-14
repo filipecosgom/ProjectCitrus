@@ -98,6 +98,7 @@ const pt = {
   errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
   errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde",
   errorInvalidCredentials: "Email or password estão erradas",
+  errorInvalidAuthCode: "Código de autenticação de dois fatores inválido",
   errorInvalidCodeRequest: "Email or password estão erradas",
 
   // Not Found

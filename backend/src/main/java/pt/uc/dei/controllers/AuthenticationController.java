@@ -14,10 +14,7 @@ import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.LoginDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.services.ConfigurationService;
-import pt.uc.dei.services.EmailService;
-import pt.uc.dei.services.TokenService;
-import pt.uc.dei.services.UserService;
+import pt.uc.dei.services.*;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -40,14 +37,23 @@ import java.util.Map;
 @Path("/auth") // Defines the base path for authentication endpoints
 public class AuthenticationController {
 
-    /** Logger for tracking authentication requests */
+    /**
+     * Logger for tracking authentication requests
+     */
     private final Logger LOGGER = LogManager.getLogger(AuthenticationController.class);
 
-    /** Injected UserService to handle login operations */
+    @Inject
+    private AuthenticationService authenticationService;
+
+    /**
+     * Injected UserService to handle login operations
+     */
     @Inject
     private UserService userService;
 
-    /** Injected TokenService for additional token-related operations */
+    /**
+     * Injected TokenService for additional token-related operations
+     */
     @Inject
     private TokenService tokenService;
 
@@ -62,7 +68,7 @@ public class AuthenticationController {
      *
      * @param user The login request containing email and password.
      * @return HTTP 200 (OK) with a JWT token if authentication is successful,
-     *         otherwise HTTP 401 (Unauthorized) if login fails.
+     * otherwise HTTP 401 (Unauthorized) if login fails.
      */
     @POST
     @Path("/login") // Defines the login endpoint
@@ -70,11 +76,16 @@ public class AuthenticationController {
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response login(LoginDTO user) {
         // Attempt to authenticate user and generate JWT token
-        String token = userService.loginUser(user);
+        String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response
         if (token == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
+                    .build();
+        }
+        if(!authenticationService.checkAuthenticationCode(user)) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
                     .build();
         }
         // Retrieve configuration settings
@@ -136,7 +147,7 @@ public class AuthenticationController {
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response requestAuthCode(LoginDTO requester) {
         try {
-            String authCode = userService.getAuthCode(requester);
+            String authCode = authenticationService.getAuthCode(requester);
             if (authCode == null) {
                 LOGGER.error("Invalid code request for {}", requester.getEmail());
                 return Response.status(Response.Status.UNAUTHORIZED)

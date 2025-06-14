@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.EmailService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
@@ -35,7 +36,7 @@ public class UserController {
 
     /** Manages activation token generation */
     @Inject
-    TokenService tokenService;
+    AuthenticationService authenticationService;
 
     /** Sends activation emails */
     @Inject
@@ -110,7 +111,7 @@ public class UserController {
                         .entity(new ApiResponse(false, "Token expired", "errorTokenExpired", null))
                         .build();
             }
-            UserResponseDTO user = userService.getSelfInformation(claims.getSubject());
+            UserResponseDTO user = authenticationService.getSelfInformation(claims.getSubject());
             if(user == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity(new ApiResponse(false,
                         "User not found",

@@ -99,6 +99,7 @@ const en = {
   errorNetworkError: "Network error. Please check your connection or try again later",
   errorUnexpected: "An unexpected error occurred. Please try again later",
   errorInvalidCredentials: "Email or password are incorrect",
+  errorInvalidAuthCode: "Invalid Two-Factor Authentication code",
   errorInvalidCodeRequest: "Email or password are incorrect",
 
   // Not Found Page

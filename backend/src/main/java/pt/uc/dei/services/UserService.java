@@ -98,59 +98,6 @@ public class UserService implements Serializable {
 
 
     /**
-     * Handles user login by validating credentials and generating a JWT authentication token.
-     * <p>
-     * - Retrieves the user from the database based on the provided email.
-     * - Verifies the provided password against the stored hashed password using BCrypt.
-     * - Converts the UserEntity into a UserDTO with basic data.
-     * - Generates a JWT token upon successful authentication.
-     * </p>
-     *
-     * @param loginDTO The login request containing the user's email and password.
-     * @return A JWT token if authentication is successful; otherwise, returns {@code null}.
-     */
-    public String loginUser(LoginDTO loginDTO) {
-        // Retrieve user entity from the database using their email
-        UserEntity user = findUserByEmail(loginDTO.getEmail());
-        if(user != null) {
-            // Verify if the provided password matches the stored hash
-            if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
-                // Convert UserEntity to UserDTO (basic representation)
-                if(TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
-                    UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
-                    // Generate a JWT token for authentication
-                    String token = jwtUtil.generateToken(userResponseDTO);
-                    return token;
-                }
-            }
-        }
-        // Return null if authentication fails (invalid credentials)
-        return null;
-    }
-
-    public UserResponseDTO getSelfInformation(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        if(user != null) {
-            return userMapper.toUserResponseDto(user);
-        }
-        return null;
-    }
-
-    public String getAuthCode(LoginDTO requester) {
-        // Retrieve user entity from the database using their email
-        UserEntity user = findUserByEmail(requester.getEmail());
-        if(user != null) {
-            // Verify if the provided password matches the stored hash
-            if (PasswordUtils.verify(user.getPassword(), requester.getPassword())) {
-                String authenticationCode = user.getSecretKey();
-                return authenticationCode;
-            }
-        }
-        // Return null if authentication fails (invalid credentials)
-        return null;
-    }
-
-    /**
      * Registers a new temporary user in the system.
      * <p>
      * Generates an activation token and persists the temporary user in the repository.
@@ -180,29 +127,6 @@ public class UserService implements Serializable {
         return codes;
     }
 
-    /**
-     * Activates a temporary user, converting them into a permanent user.
-     *
-     * @param userToActivate The temporary user DTO to be activated.
-     * @return {@code true} if activation was successful, {@code false} otherwise.
-     */
-    public boolean activateUser(TemporaryUserDTO userToActivate) {
-        try {
-            UserEntity activatedUser = new UserEntity();
-            activatedUser.setEmail(userToActivate.getEmail());
-            activatedUser.setPassword(userToActivate.getPassword());
-            activatedUser.setManager(false);
-            activatedUser.setAccountState(AccountState.INCOMPLETE);
-            activatedUser.setCreationDate(LocalDateTime.now());
-            activatedUser.setSecretKey(userToActivate.getSecretKey());
-            userRepository.persist(activatedUser);
-            LOGGER.info("New activated user: {}", activatedUser.getEmail());
-            return true;
-        } catch (Exception e) {
-            LOGGER.error("Failed to activate user: {}", userToActivate.getEmail(), e);
-            return false;
-        }
-    }
 
 
     /**
@@ -248,12 +172,6 @@ public class UserService implements Serializable {
     }
 
 
-
-    //SUPPORT FUNCTIONS
-    private UserEntity findUserByEmail(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        return user;
-    }
 
     /**
      * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.
