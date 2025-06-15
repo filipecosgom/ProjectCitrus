@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.inject.Inject;
+import jakarta.persistence.EnumType;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -21,9 +22,7 @@ import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Handles user registration endpoints.
@@ -149,13 +148,18 @@ public class UserController {
                              @QueryParam("name") String name,
                              @QueryParam("surname") String surname,
                              @QueryParam("phone") String phone,
-                             @QueryParam("accountState") AccountState accountState,
-                             @QueryParam("role") Role role,
-                             @QueryParam("office") Office office,
-                             @QueryParam("parameter") Parameter parameter,
-                             @QueryParam("order") Order order,
+                             @QueryParam("accountState") String accountStateStr,
+                             @QueryParam("role") String roleStr,
+                             @QueryParam("office") String officeStr,
+                             @QueryParam("parameter") String parameterStr,
+                             @QueryParam("order") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit) {
+        AccountState accountState = accountStateStr != null ? AccountState.valueOf(accountStateStr) : null;
+        Role role = roleStr != null ? Role.valueOf(roleStr.trim().toUpperCase()) : null;
+        Office office = officeStr != null ? Office.valueOf(officeStr.trim().toUpperCase()) : null;
+        Parameter parameter = parameterStr != null ? Parameter.valueOf(parameterStr.trim().toUpperCase()) : null;
+        Order order = orderStr != null ? Order.valueOf(orderStr.trim().toUpperCase()) : null;
 
         Map<String, Object> userData = userService.getUsers(email, name, surname, phone,
                 accountState, role, office,
