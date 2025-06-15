@@ -144,24 +144,25 @@ public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsers(@QueryParam("email") String email,
+    public Response getUsers(@QueryParam("id") Long id,
+                             @QueryParam("email") String email,
                              @QueryParam("name") String name,
                              @QueryParam("surname") String surname,
                              @QueryParam("phone") String phone,
                              @QueryParam("accountState") String accountStateStr,
                              @QueryParam("role") String roleStr,
                              @QueryParam("office") String officeStr,
-                             @QueryParam("parameter") String parameterStr,
-                             @QueryParam("order") String orderStr,
+                             @QueryParam("parameter") @DefaultValue("name") String parameterStr,
+                             @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit) {
         AccountState accountState = accountStateStr != null ? AccountState.valueOf(accountStateStr) : null;
-        Role role = roleStr != null ? Role.valueOf(roleStr.trim().toUpperCase()) : null;
-        Office office = officeStr != null ? Office.valueOf(officeStr.trim().toUpperCase()) : null;
-        Parameter parameter = parameterStr != null ? Parameter.valueOf(parameterStr.trim().toUpperCase()) : null;
-        Order order = orderStr != null ? Order.valueOf(orderStr.trim().toUpperCase()) : null;
+        Role role = Role.fromFieldName(roleStr);
+        Office office = Office.fromFieldName(officeStr);
+        Parameter parameter = Parameter.fromFieldName(parameterStr);
+        Order order = Order.fromFieldName(orderStr);
 
-        Map<String, Object> userData = userService.getUsers(email, name, surname, phone,
+        Map<String, Object> userData = userService.getUsers(id, email, name, surname, phone,
                 accountState, role, office,
                 parameter, order, offset, limit);
 

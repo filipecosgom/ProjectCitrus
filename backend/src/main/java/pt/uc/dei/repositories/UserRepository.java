@@ -100,7 +100,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         }
     }
 
-    public List<UserEntity> getUsers(String email, String name, String surname, String phone,
+    public List<UserEntity> getUsers(Long id, String email, String name, String surname, String phone,
                                      AccountState accountState, Role role, Office office,
                                      Parameter parameter, Order order, int offset, int limit) {
 
@@ -111,6 +111,9 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         List<Predicate> predicates = new ArrayList<>();
 
         // Dynamic filters
+        if (id != null) {
+            predicates.add(cb.equal(root.get("id"), id));
+        }
         if (email != null && !email.isEmpty()) {
             predicates.add(cb.equal(root.get("email"), email));
         }
@@ -148,7 +151,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         return typedQuery.getResultList();
     }
 
-    public long getTotalUserCount(String email, String name, String surname, String phone,
+    public long getTotalUserCount(Long id, String email, String name, String surname, String phone,
                                   AccountState accountState, Role role, Office office) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -156,7 +159,9 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         Root<UserEntity> root = query.from(UserEntity.class);
 
         List<Predicate> predicates = new ArrayList<>();
-
+        if(id != null) {
+            predicates.add(cb.equal(root.get("id"), id));
+        }
         if (email != null && !email.isEmpty()) {
             predicates.add(cb.equal(root.get("email"), email));
         }

@@ -132,6 +132,7 @@ public class AuthenticationService implements Serializable {
             activatedUser.setEmail(userToActivate.getEmail());
             activatedUser.setPassword(userToActivate.getPassword());
             activatedUser.setManager(false);
+            activatedUser.setAvatar("template.png");
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());
             activatedUser.setSecretKey(userToActivate.getSecretKey());

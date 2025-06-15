@@ -22,4 +22,16 @@ public enum Parameter {
     public String getFieldName() {
         return fieldName;
     }
+
+    public static Parameter fromFieldName(String input) {
+        if (input == null || input.trim().isEmpty()) return null;
+        String trimmed = input.trim();
+        for (Parameter p : values()) {
+            if (p.fieldName.equalsIgnoreCase(trimmed) || (p.toString().equalsIgnoreCase(trimmed))) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
+
 }
