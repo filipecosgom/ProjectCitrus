@@ -12,11 +12,13 @@ const pt = {
   loginHelpTwoFAuth: "Precisa de ajuda com a autenticação de dois fatores?",
   loginSubmit: "Entrar",
   loginRegisterPrompt: "Ainda não tem uma conta?",
-  loginRegister: "Junte-se à CITRUS hoje.",
+  loginRegister: "Junte-se à CITRUS hoje",
 
   loginErrorEmailMissing: "O email é necessário",
   loginErrorEmailInvalid: "Formato de email inválido",
   loginErrorPasswordMissing: "A palavra-passe é necessária",
+  loginErrorAuthenticationCodeMissing: "O código de autenticação de dois fatores é necessário",
+  loginErrorAuthenticationCodeInvalid: "Código de autenticação de dois fatores inválido",
 
   // Register
   registerTitle: "Bem-vindo à CITRUS",
@@ -28,7 +30,7 @@ const pt = {
   registerHidePassword: "Esconder palavra-passe",
   registerSubmit: "Criar conta",
   registerAlreadyAccount: "Já tem uma conta?",
-  registerLogin: "Entrar.",
+  registerLogin: "Entrar",
   registerLogo: "Logotipo CITRUS",
   registerLogoContainerTitle: "Junte-se à comunidade CITRUS!",
   registerButton: "Voltar ao Login",
@@ -64,7 +66,25 @@ const pt = {
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
 
+  //Two-Factor Authentication
+  twoFactorTitle: "Configuração da 2FA",
+  twoFactorWhatIsTitle: "O que é Autenticação de Dois Fatores (2FA)?",
+  twoFactorWhatIsDescription: "A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta. Após inserir sua senha, você precisará digitar um código de 6 dígitos gerado por um aplicativo autenticador no seu telefone.",
+  twoFactorSetupTitle: "Como Configurar a Autenticação 2FA",
+  twoFactorSetupStep1: "Abra o Google Authenticator, Microsoft Authenticator ou Authy.",
+  twoFactorSetupStep2: "Toque em 'Adicionar uma nova conta' e escolha 'Entrada Manual'.",
+  twoFactorSetupStep3: "Digite a chave secreta abaixo:",
+  twoFactorSetupStep4: "Salve a configuração e o aplicativo começará a gerar códigos de 6 dígitos a cada 30 segundos.",
+  twoFactorSecretPlaceholder: "CHAVE-SECRETA",
+  twoFactorLoginTitle: "Entrando com 2FA",
+  twoFactorLoginDescription: "Sempre que fizer login, insira o código de 6 dígitos mais recente mostrado no seu aplicativo autenticador. O código muda a cada 30 segundos, então certifique-se de usar o mais recente.",
+  twoFactorCloseButton: "Entendi!",
+  twoFactorRequest: "Solicitar código",
+  twofactorErrorEmailMissing: "O email é necessário",
+  twofactorErrorEmailInvalid: "Formato de email inválido",
+
   //ERRORS
+  protectedRoute: "Tem de iniciar sessão para aceder a esta página",
   // Erros Gerais
   infoAboutToExpire: "A sua sessão está prestes a expirar",
   infoSessionExpired: "A sua sessão expirou. Por favor, faça login novamente.",
@@ -76,11 +96,12 @@ const pt = {
   errorDuplicateEntry: "Este email já está registado.",
   errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
   errorFailed: "Falha no pedido. Tenta novamente mais tarde.",
-  errorNetworkError:
-    "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
-  errorUnexpected:
-    "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde.",
+  errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
+  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde",
   errorInvalidCredentials: "Email or password estão erradas",
+  errorInvalidAuthCode: "Código de autenticação de dois fatores inválido",
+  errorInvalidCodeRequest: "Email or password estão erradas",
+  errorUserNotFound: "Utilizador não encontrado",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",

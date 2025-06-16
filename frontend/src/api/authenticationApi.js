@@ -15,5 +15,17 @@ export const login = async (loginInformation) => {
   }
 };
 
+// User Login
+export const requestSecretKey = async (userInformation) => {
+  console.log(userInformation);
+  try {
+    const response = await api.post(`${authenticationEndpoint}`, userInformation);
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "auth");
+    throw error;
+  }
+};
+
 
 

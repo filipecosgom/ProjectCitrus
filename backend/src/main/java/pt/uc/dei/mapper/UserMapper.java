@@ -95,8 +95,10 @@ public interface UserMapper {
      * @return The basic UserDTO.
      */
     @Named("toResponseDto") // Custom mapping for simplified DTO
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "admin", source = "admin")
     @Mapping(target = "manager", source = "manager")
+    @Mapping(target = "accountState", source = "accountState")
     UserResponseDTO toUserResponseDto(UserEntity entity);
 }

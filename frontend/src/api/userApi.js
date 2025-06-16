@@ -1,6 +1,6 @@
 import { api } from "./api"; // No need to import handleApiError here
 
-const userEndpoint = "/user";
+const userEndpoint = "/users";
 
 export const register = async (newUser, lang) => {
   try {
@@ -16,11 +16,22 @@ export const register = async (newUser, lang) => {
   }
 };
 
-export const fetchUserInformation = async() => {
+export const fetchSelfInformation = async() => {
   try {
     const response = await api.get(`${userEndpoint}/me`);
     return { success: true, status: response.status, data: response.data };
   } catch (error) {
     return { success: false, status: error.response?.status || 500, error };
-  }  
+  }
 }
+
+export const fetchUserInformation = async (userId) => {
+  try {
+    const response = await api.get(`${userEndpoint}/${userId}`);
+    return { success: true, status: response.status, data: response.data };
+  } catch (error) {
+    return { success: false, status: error.response?.status || 500, error };
+  }
+}
+
+

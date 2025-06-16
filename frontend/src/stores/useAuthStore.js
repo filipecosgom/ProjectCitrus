@@ -1,53 +1,63 @@
 import { create } from "zustand";
 import { api } from "../api/api"; // Import the global API instance
-import { fetchUserInformation } from "../api/userApi"; // Import the function to fetch user information
+import { fetchSelfInformation } from "../api/userApi"; // Import the function to fetch user information
 import handleNotification from "../handles/handleNotification";
 
 const useAuthStore = create((set, get) => {
-  const TIME_TO_WARN = 5 * 60 * 1000; // 5 minutes in milliseconds
-  let logoutTimeout = null;
-  let warningTimeout = null;
+  const TIME_TO_WARN = 5 * 60 * 1000; // 5 minutes
+  let timers = {}; // Object to manage timeouts and interval
+
+  const clearTimers = () => {
+    Object.values(timers).forEach(clearTimeout);
+    clearInterval(timers.trackingInterval);
+  };
 
   return {
     user: null,
     tokenExpiration: null,
+    remainingTime: null,
 
     setUserAndExpiration: (user, tokenExpiration) => {
-      clearTimeout(logoutTimeout);
-      clearTimeout(warningTimeout);
-
-      const timeUntilLogout = tokenExpiration - Date.now();
-
-      // Warn user 5 minutes before expiration
-      if (timeUntilLogout > TIME_TO_WARN) {
-        warningTimeout = setTimeout(() => {
-          handleNotification("warn", "infoAboutToExpire");
-          // Display a toast/modal here
-        }, timeUntilLogout - 5 * 60 * 1000);
-      }
-
-      // Auto logout when expiration is reached
-      if (timeUntilLogout > 0) {
-        logoutTimeout = setTimeout(() => {
-          handleNotification("warn", "infoSessionExpired");
-          get().logout();
-        }, timeUntilLogout);
-      }
-
+      clearTimers();
       set({ user, tokenExpiration });
+
+      const updateRemainingTime = () => {
+        const timeLeft = tokenExpiration - Date.now();
+        set({ remainingTime: timeLeft });
+
+        if (timeLeft <= 0) {
+          clearTimers();
+          get().logout();
+        }
+      };
+
+      updateRemainingTime();
+      timers.trackingInterval = setInterval(updateRemainingTime, 1000);
+
+      if (tokenExpiration - Date.now() > TIME_TO_WARN) {
+        timers.warningTimeout = setTimeout(() => {
+          handleNotification("warn", "infoAboutToExpire");
+        }, tokenExpiration - Date.now() - TIME_TO_WARN);
+      }
+
+      timers.logoutTimeout = setTimeout(() => {
+        handleNotification("warn", "infoSessionExpired");
+        get().logout();
+      }, tokenExpiration - Date.now());
     },
 
     fetchAndSetUserInformation: async () => {
-      console.log("Fetching user information...");
       try {
-        const response = await fetchUserInformation();
+        console.log("Fetching user information...");
+        const response = await fetchSelfInformation();
         if (response.success) {
-          console.log("User information fetched successfully:", response.data);
           const { user, tokenExpiration } = response.data.data || {};
           if (user && tokenExpiration) {
-            get().setUserAndExpiration(user, tokenExpiration); // ✅ Pass actual expiration data
+            console.log("User information fetched successfully:", user);
+
+            get().setUserAndExpiration(user, tokenExpiration);
           }
-          return { success: true, data: { user: user, tokenExpiration } };
+          return { success: true, data: { user, tokenExpiration } };
         } else {
           return { success: false, message: response.message };
         }
@@ -58,10 +68,9 @@ const useAuthStore = create((set, get) => {
     },
 
     logout: async () => {
-      clearTimeout(logoutTimeout);
-      clearTimeout(warningTimeout);
+      clearTimers();
       await api.post("/logout");
-      set({ user: null, expiration: null });
+      set({ user: null, tokenExpiration: null, remainingTime: null });
     },
   };
 });

@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
-import { handleUpdateUser } from "../../handles/handleUpdateUser";
+import useAuthStore from "../../stores/useAuthStore";
+import Spinner from "../../components/spinner/spinner";
+import handleGetUserInformation from "../../handles/handleGetUserInformation";
+import handleNotification from "../../handles/handleNotification";
+import { set } from "react-hook-form";
+import { avatarsUrl } from "../../config";
 
 const mockUser = {
-  firstName: "Teresa",
-  lastName: "Matos",
-  dob: "1990-01-01",
+  name: "Teresa",
+  surname: "Matos",
+  birthdate: "1990-01-01",
   role: "Developer",
-  workplace: "Lisbon Office",
-  address: "Rua das Flores, 123",
+  office: "Lisbon Office",
+  street: "Rua das Flores, 123",
+  municipality: "Coimbra",
+  postalCode: "3000-123",
   biography: "Sou uma programadora dedicada e adoro React!",
-  profileImage: ProfilePhoto,
-  manager: {
+  avatar: ProfilePhoto,
+  managerId: {
     firstName: "José",
     lastName: "Ferreira",
     role: "Manager",
@@ -24,10 +32,14 @@ const mockUser = {
 };
 
 export default function Profile() {
-  const [user, setUser] = useState(mockUser);
+  const userId = new URLSearchParams(useLocation().search).get("id");
+  const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState(user);
   const [activeTab, setActiveTab] = useState("profile");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,8 +48,9 @@ export default function Profile() {
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Chama o handler que envia para o backend e mostra notificações
-      handleUpdateUser(formData, () => setUser(formData));
+      // Mock save
+      //setUser(formData);
+      toast.success("Perfil atualizado com sucesso!");
     }
     setEditMode(!editMode);
   };
@@ -50,6 +63,43 @@ export default function Profile() {
       {tab.charAt(0).toUpperCase() + tab.slice(1)}
     </button>
   );
+
+  useEffect(() => {
+  const fetchUserInformation = async () => {
+    try {
+      const userInfo = await handleGetUserInformation(userId);
+      if (userInfo) {
+        console.log("User Information:", userInfo);
+        setUser(userInfo);
+      } else {
+        console.log("No user information found.");
+      }
+    } catch (error) {
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchUserInformation();
+}, [userId]);
+
+useEffect(() => {
+  if (user) {
+    console.log("User data loaded:", user);
+    setFormData(user);
+  }
+}, [user]);
+
+useEffect(() => {
+  if(formData) {
+    console.log("Form data updated:", formData);
+  }
+}, [formData]);
+
+
+
+
+   if (loading) return <Spinner />;
 
   return (
     <div className="user-profile">
@@ -67,12 +117,12 @@ export default function Profile() {
         <div className="profile-section">
           <div className="profile-header">
             <div className="profile-card">
-              <img src={user.profileImage} alt="Profile" />
+              <img src={`${avatarsUrl}${formData.avatar}`} alt="Profile" />
               <div className="profile-label">
                 <strong>
-                  {user.firstName} {user.lastName}
-                </strong>
-                <span>{user.role}</span>
+                  {formData.name} {formData.surname}
+                              </strong>
+                <span>{formData.role}</span>
               </div>
             </div>
 
@@ -81,7 +131,7 @@ export default function Profile() {
                 First Name
                 <input
                   name="firstName"
-                  value={formData.firstName}
+                  value={formData.name}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -90,7 +140,7 @@ export default function Profile() {
                 Last Name
                 <input
                   name="lastName"
-                  value={formData.lastName}
+                  value={formData.surname}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -100,7 +150,7 @@ export default function Profile() {
                 <input
                   type="date"
                   name="dob"
-                  value={formData.dob}
+                  value={formData.birthdate}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -118,7 +168,7 @@ export default function Profile() {
                 Workplace
                 <input
                   name="workplace"
-                  value={formData.workplace}
+                  value={formData.office}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -127,7 +177,7 @@ export default function Profile() {
                 Address
                 <input
                   name="address"
-                  value={formData.address}
+                  value={formData.street + ", " + formData.municipality + ", " + formData.postalCode}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -144,12 +194,12 @@ export default function Profile() {
             </div>
 
             <div className="manager-card">
-              <img src={user.manager.image} alt="Manager" />
+              <img src={formData.manager.image} alt="Manager" />
               <div className="profile-label small">
                 <strong>
-                  {user.manager.firstName} {user.manager.lastName}
+                  {formData.manager.firstName} {formData.manager.lastName}
                 </strong>
-                <span>{user.manager.role}</span>
+                <span>{formData.manager.role}</span>
               </div>
             </div>
           </div>

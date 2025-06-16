@@ -22,23 +22,44 @@ package pt.uc.dei.enums;
  * - RECRUITER: Focuses on talent acquisition and hiring.
  */
 public enum Role {
-    WITHOUT_ROLE,
-    SOFTWARE_ENGINEER,
-    FRONTEND_DEVELOPER,
-    BACKEND_DEVELOPER,
-    FULL_STACK_DEVELOPER,
-    DATA_SCIENTIST,
-    PRODUCT_MANAGER,
-    UX_UI_DESIGNER,
-    DEVOPS_ENGINEER,
-    SYSTEM_ADMINISTRATOR,
-    SECURITY_ANALYST,
-    QA_ENGINEER,
-    BUSINESS_ANALYST,
-    TECH_LEAD,
-    CTO,
-    CEO,
-    HR_MANAGER,
-    HR_SPECIALIST,
-    RECRUITER;
+    WITHOUT_ROLE("withoutRole"),
+    SOFTWARE_ENGINEER("softwareEngineer"),
+    FRONTEND_DEVELOPER("frontendDeveloper"),
+    BACKEND_DEVELOPER("backendDeveloper"),
+    FULL_STACK_DEVELOPER("fullStackDeveloper"),
+    DATA_SCIENTIST("dataScientist"),
+    PRODUCT_MANAGER("productManager"),
+    UX_UI_DESIGNER("uxUIDesigner"),
+    DEVOPS_ENGINEER("devOpsEngineer"),
+    SYSTEM_ADMINISTRATOR("systemAdministrator"),
+    SECURITY_ANALYST("securityAnalyst"),
+    QA_ENGINEER("qaEngineer"),
+    BUSINESS_ANALYST("businessAnalyst"),
+    TECH_LEAD("techLead"),
+    CTO("cto"),
+    CEO("ceo"),
+    HR_MANAGER("hrManager"),
+    HR_SPECIALIST("hrSpecialist"),
+    RECRUITER("recruiter"),;
+
+    private final String fieldName;
+
+    Role(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public static Role fromFieldName(String input) {
+        if (input == null || input.trim().isEmpty()) return null;
+        String trimmed = input.trim();
+        for (Role r : values()) {
+            if (r.fieldName.equalsIgnoreCase(trimmed) || (r.toString().equalsIgnoreCase(trimmed))) {
+                return r;
+            }
+        }
+        throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
 }

@@ -148,6 +148,15 @@ public class TokenService {
         }
     }
 
+    /*
+    public UserDTO getUserFromPasswordResetToken(PasswordResetTokenDTO passwordResetTokenDTO) {
+        if (passwordResetTokenDTO.getTokenValue() == null) {
+            return null;
+        } else {
+            Pass
+        }
+    }*/
+
     /**
      * Retrieves an activation token entity based on the provided activation token value.
      *

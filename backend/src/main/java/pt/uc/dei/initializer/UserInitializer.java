@@ -12,6 +12,7 @@ import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.PasswordUtils;
 import pt.uc.dei.utils.TwoFactorUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 /**
  * Creates the default administrator account during system startup.
@@ -46,7 +47,7 @@ public class UserInitializer {
             admin.setName("Rick");
             admin.setSurname("Overy");
             admin.setPhone("+351 239 859 900");
-            admin.setBirthdate(LocalDateTime.of(1995, 1, 20, 0, 0));
+            admin.setBirthdate(LocalDate.of(1995, 1, 20));
             admin.setStreet("Paço das Escolas");
             admin.setPostalCode("3004-531");
             admin.setMunicipality("Coimbra");
@@ -62,7 +63,7 @@ public class UserInitializer {
             admin.setCreationDate(LocalDateTime.now());
             GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
             String secret = TwoFactorUtil.getSecretKeyString(key);
-            admin.setTwoFactorSecret(secret);
+            admin.setSecretKey(secret);
             userRepository.persist(admin);
         }
     }

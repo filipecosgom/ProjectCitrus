@@ -12,7 +12,7 @@ import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
-import pt.uc.dei.enums.AccountState;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.repositories.ActivationTokenRepository;
 import pt.uc.dei.repositories.TemporaryUserRepository;
@@ -22,7 +22,10 @@ import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service class for managing user-related operations.
@@ -96,55 +99,6 @@ public class UserService implements Serializable {
 
 
     /**
-     * Handles user login by validating credentials and generating a JWT authentication token.
-     * <p>
-     * - Retrieves the user from the database based on the provided email.
-     * - Verifies the provided password against the stored hashed password using BCrypt.
-     * - Converts the UserEntity into a UserDTO with basic data.
-     * - Generates a JWT token upon successful authentication.
-     * </p>
-     *
-     * @param loginDTO The login request containing the user's email and password.
-     * @return A JWT token if authentication is successful; otherwise, returns {@code null}.
-     */
-    public String loginUser(LoginDTO loginDTO) {
-        // Retrieve user entity from the database using their email
-        UserEntity user = findUserByEmail(loginDTO.getEmail());
-        if(user != null) {
-            // Verify if the provided password matches the stored hash
-            if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
-                // Convert UserEntity to UserDTO (basic representation)
-                UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
-                // Generate a JWT token for authentication
-                String token = jwtUtil.generateToken(userResponseDTO);
-                return token;
-            }
-        }
-        // Return null if authentication fails (invalid credentials)
-        return null;
-    }
-
-    public UserResponseDTO getSelfInformation(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        if(user != null) {
-            return userMapper.toUserResponseDto(user);
-        }
-        return null;
-    }
-
-    public String getAuthCode(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        if(user != null) {
-            return user.getTwoFactorSecret();
-        }
-        TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(email);
-        if(temporaryUser != null) {
-            return temporaryUser.getTwoFactorSecret();
-        }
-        return null;
-    }
-
-    /**
      * Registers a new temporary user in the system.
      * <p>
      * Generates an activation token and persists the temporary user in the repository.
@@ -153,7 +107,7 @@ public class UserService implements Serializable {
      * @return The generated activation token for the new user.
      */
     @Transactional
-    public String registerUser(TemporaryUserDTO newUser) {
+    public Map<String, String> registerUser(TemporaryUserDTO newUser) {
         TemporaryUserEntity user = new TemporaryUserEntity();
         user.setEmail(newUser.getEmail());
         user.setPassword(PasswordUtils.encrypt(newUser.getPassword()));
@@ -164,36 +118,45 @@ public class UserService implements Serializable {
         user.setActivationToken(token);
         GoogleAuthenticatorKey googleAuthenticatorKey = TwoFactorUtil.generateSecretKey();
         String secretKey = TwoFactorUtil.getSecretKeyString(googleAuthenticatorKey);
-        user.setTwoFactorSecret(secretKey);
+        user.setSecretKey(secretKey);
         temporaryUserRepository.persist(user);
+        Map<String, String> codes = new HashMap<>();
+        codes.put("token", token.getTokenValue());
+        codes.put("secretKey", secretKey);
 
         LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
-        return token.getTokenValue();
+        return codes;
     }
 
-    /**
-     * Activates a temporary user, converting them into a permanent user.
-     *
-     * @param userToActivate The temporary user DTO to be activated.
-     * @return {@code true} if activation was successful, {@code false} otherwise.
-     */
-    public boolean activateUser(TemporaryUserDTO userToActivate) {
-        try {
-            UserEntity activatedUser = new UserEntity();
-            activatedUser.setEmail(userToActivate.getEmail());
-            activatedUser.setPassword(userToActivate.getPassword());
-            activatedUser.setManager(false);
-            activatedUser.setAccountState(AccountState.INCOMPLETE);
-            activatedUser.setCreationDate(LocalDateTime.now());
-            activatedUser.setTwoFactorSecret(userToActivate.getTwoFactorSecret());
-            userRepository.persist(activatedUser);
-            LOGGER.info("New activated user: {}", activatedUser.getEmail());
-            return true;
-        } catch (Exception e) {
-            LOGGER.error("Failed to activate user: {}", userToActivate.getEmail(), e);
-            return false;
-        }
+    public UserDTO getUser(Long id) {
+        UserEntity user = userRepository.findUserById(id);
+        UserDTO userDTO = userMapper.toDto(user);
+        return userDTO;
     }
+
+    public Map<String, Object> getUsers(Long id, String email, String name, String surname, String phone,
+                                        AccountState accountState, Role role, Office office,
+                                        Parameter parameter, Order order, int offset, int limit) {
+
+        List<UserEntity> users = userRepository.getUsers(id, email, name, surname, phone,
+                accountState, role, office,
+                parameter, order, offset, limit);
+
+        long totalUsers = userRepository.getTotalUserCount(id, email, name, surname, phone,
+                accountState, role, office);
+
+        List<UserDTO> userDtos = users.stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("users", userDtos);
+        responseData.put("totalUsers", totalUsers);
+        responseData.put("offset", offset);
+        responseData.put("limit", limit);
+        return responseData;
+    }
+
 
 
     /**
@@ -240,12 +203,6 @@ public class UserService implements Serializable {
 
 
 
-    //SUPPORT FUNCTIONS
-    private UserEntity findUserByEmail(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        return user;
-    }
-
     /**
      * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.
      *
@@ -257,6 +214,7 @@ public class UserService implements Serializable {
         temporaryUserDTO.setEmail(temporaryUser.getEmail());
         temporaryUserDTO.setPassword(temporaryUser.getPassword());
         temporaryUserDTO.setId(temporaryUser.getId());
+        temporaryUserDTO.setSecretKey(temporaryUser.getSecretKey());
         return temporaryUserDTO;
     }
 }

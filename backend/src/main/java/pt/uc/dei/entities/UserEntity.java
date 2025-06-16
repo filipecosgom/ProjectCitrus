@@ -5,6 +5,7 @@ import pt.uc.dei.enums.AccountState;
 import pt.uc.dei.enums.Office;
 import pt.uc.dei.enums.Role;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -88,7 +89,7 @@ public class UserEntity implements Serializable {
 
     /** Date of birth */
     @Column(name = "birthdate")
-    private LocalDateTime birthdate;
+    private LocalDate birthdate;
 
     /** Street address */
     @Column(name = "street")
@@ -120,8 +121,8 @@ public class UserEntity implements Serializable {
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
 
-    @Column(name = "two_factor_secret", nullable = false, updatable = false)
-    private String twoFactorSecret;
+    @Column(name = "secretKey", nullable = false, updatable = false)
+    private String secretKey;
 
     /** Manager reference (self-relationship) */
     @ManyToOne
@@ -258,11 +259,11 @@ public class UserEntity implements Serializable {
         this.phone = phone;
     }
 
-    public LocalDateTime getBirthdate() {
+    public LocalDate getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(LocalDateTime birthdate) {
+    public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -338,11 +339,11 @@ public class UserEntity implements Serializable {
         this.managerUser = managerUser;
     }
 
-    public String getTwoFactorSecret() {
-        return twoFactorSecret;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setTwoFactorSecret(String twoFactorSecret) {
-        this.twoFactorSecret = twoFactorSecret;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

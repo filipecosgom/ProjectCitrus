@@ -2,9 +2,16 @@ package pt.uc.dei.repositories;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.UserEntity;
+import pt.uc.dei.enums.*;
+import pt.uc.dei.enums.Order;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Repository class for managing {@link UserEntity} persistence operations.
@@ -91,5 +98,95 @@ public class UserRepository extends AbstractRepository<UserEntity> {
             LOGGER.warn("User not found with ID: " + id);
             return null;
         }
+    }
+
+    public List<UserEntity> getUsers(Long id, String email, String name, String surname, String phone,
+                                     AccountState accountState, Role role, Office office,
+                                     Parameter parameter, Order order, int offset, int limit) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
+        Root<UserEntity> root = query.from(UserEntity.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Dynamic filters
+        if (id != null) {
+            predicates.add(cb.equal(root.get("id"), id));
+        }
+        if (email != null && !email.isEmpty()) {
+            predicates.add(cb.equal(root.get("email"), email));
+        }
+        if (name != null && !name.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (surname != null && !surname.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            predicates.add(cb.equal(root.get("phone"), phone));
+        }
+        if (accountState != null) {
+            predicates.add(cb.equal(root.get("accountState"), accountState));
+        }
+        if (role != null) {
+            predicates.add(cb.equal(root.get("role"), role));
+        }
+        if (office != null) {
+            predicates.add(cb.equal(root.get("office"), office));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
+
+        // Sorting logic
+        if (parameter != null) {
+            Path<Object> sortingField = root.get(parameter.getFieldName());
+            query.orderBy(order == Order.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
+        }
+
+        TypedQuery<UserEntity> typedQuery = em.createQuery(query);
+        typedQuery.setFirstResult(offset);
+        typedQuery.setMaxResults(limit);
+
+        return typedQuery.getResultList();
+    }
+
+    public long getTotalUserCount(Long id, String email, String name, String surname, String phone,
+                                  AccountState accountState, Role role, Office office) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<UserEntity> root = query.from(UserEntity.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if(id != null) {
+            predicates.add(cb.equal(root.get("id"), id));
+        }
+        if (email != null && !email.isEmpty()) {
+            predicates.add(cb.equal(root.get("email"), email));
+        }
+        if (name != null && !name.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (surname != null && !surname.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            predicates.add(cb.equal(root.get("phone"), phone));
+        }
+        if (accountState != null) {
+            predicates.add(cb.equal(root.get("accountState"), accountState));
+        }
+        if (role != null) {
+            predicates.add(cb.equal(root.get("role"), role));
+        }
+        if (office != null) {
+            predicates.add(cb.equal(root.get("office"), office));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
+        query.select(cb.count(root));
+
+        return em.createQuery(query).getSingleResult();
     }
 }

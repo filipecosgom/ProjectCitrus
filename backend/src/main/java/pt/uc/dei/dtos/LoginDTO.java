@@ -26,6 +26,9 @@ public class LoginDTO {
     @NotBlank(message = "Password missing")
     private String password;
 
+    @NotNull(message = "Authentication Code is required")
+    private Integer authenticationCode;
+
     /**
      * Default constructor for `LoginDTO`.
      */
@@ -66,5 +69,13 @@ public class LoginDTO {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getAuthenticationCode() {
+        return authenticationCode;
+    }
+
+    public void setAuthenticationCode(Integer authenticationCode) {
+        this.authenticationCode = authenticationCode;
     }
 }

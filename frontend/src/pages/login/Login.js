@@ -1,43 +1,45 @@
-import { useState, useEffect } from "react";
+import { use, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
 import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotPassword";
+import OffCanvasTwoFactor from "../../components/twoFactorOffCavas/OffCanvasTwoFactor";
 import "./Login.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
 import handleLogin from "../../handles/handleLogin";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/useAuthStore";
 
 export default function Login() {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors },
   } = useForm();
   const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
   //Internacionalização
   const intl = useIntl();
+  const user = useAuthStore((state) => state.user);
 
   const onSubmit = async (loginData) => {
-    const user = {
+    const userData = {
       email: loginData.email,
       password: loginData.password,
+      authenticationCode: loginData.authenticationCode,
     };
     try {
-      const success = await handleLogin(user);
-      console.log("Login attempt:", user);
-      console.log("Login success:", success);
+      const success = await handleLogin(userData);
       if (success) {
         reset();
-        navigate("/profile");
+        navigate("/profile?id=" + user.id);
       } else {
         reset();
       }
@@ -137,69 +139,74 @@ export default function Login() {
                   {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </button>
               </div>
+              <div className="login-password-row">
+                <button
+                  className="login-help-link"
+                  type="button"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    color: "#424359",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setShowForgot(true)}
+                >
+                  {intl.formatMessage({ id: "loginForgotPassword" })}
+                </button>
+              </div>
+            </div>
+
+            <div className="login-field">
+              <div className="login-labelAndError">
+                <label className="login-label" htmlFor="login-TwoFAuth">
+                  {intl.formatMessage({ id: "loginFieldTwoFAuth" })}
+                </label>
+                <span className="error-message">
+                  {errors.authenticationCode ? errors.authenticationCode.message : "\u00A0"}
+                </span>
+              </div>
+              <input
+                id="login-authenticationCode"
+                className="login-input"
+                {...register("authenticationCode", {
+                  required: intl.formatMessage({
+                    id: "loginErrorAuthenticationCodeMissing",
+                  }),
+                  pattern: {
+                    value: /^\d{6}$/, // Ensures exactly 6 digits
+                    message: intl.formatMessage({
+                      id: "loginErrorAuthenticationCodeInvalid",
+                    }),
+                  },
+                })}
+              />
+
               <div className="login-forgot-row">
-            <button
-              className="login-forgot-link"
-              type="button"
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                color: "#424359",
-                cursor: "pointer",
-              }}
-              onClick={() => setShowForgot(true)}
-            >
-              {intl.formatMessage({ id: "loginForgotPassword" })}
-            </button>
-          </div>
-            </div>
-            
-
-          <div className="login-field">
-            <div className="login-labelAndError">
-              <label className="login-label" htmlFor="login-TwoFAuth">
-                {intl.formatMessage({ id: "loginFieldTwoFAuth" })}
-              </label>
-              <span className="error-message">
-                {errors.TwoFAuth ? errors.TwoFAuth.message : "\u00A0"}
-              </span>
-            </div>
-            <input
-              id="login-TwoFAuth"
-              className={`login-input`}
-              {...register("TwoFAuth", {
-                required: intl.formatMessage({
-                  id: "loginErrorTwoFAuthMissing",
-                }),
-              })}
-            />
-            
-          <div className="login-forgot-row">
-            <button
-              className="login-forgot-link"
-              type="button"
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                color: "#424359",
-                cursor: "pointer",
-              }}
-              onClick={() => setShowForgot(true)}
-            >
-              {intl.formatMessage({ id: "loginHelpTwoFAuth" })}
-            </button>
+                <button
+                  className="login-help-link"
+                  type="button"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    color: "#424359",
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    console.log(
+                      "Clicked for 2FA help, setting showAuth to true"
+                    );
+                    setShowAuth(true);
+                  }}
+                >
+                  {intl.formatMessage({ id: "loginHelpTwoFAuth" })}
+                </button>
+              </div>
             </div>
           </div>
-          </div>
 
-          
-          
-
-
-
-          
           <button className="main-button" type="submit">
             {intl.formatMessage({ id: "loginSubmit" })}
           </button>
@@ -219,6 +226,7 @@ export default function Login() {
         show={showForgot}
         onClose={() => setShowForgot(false)}
       />
+      <OffCanvasTwoFactor show={showAuth} onClose={() => setShowAuth(false)} />
     </div>
   );
 }

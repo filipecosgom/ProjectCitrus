@@ -1,4 +1,5 @@
 export const apiBaseUrl = 'https://localhost:8443/projectcitrus/rest';
+export const avatarsUrl = 'https://localhost:8443/projectcitrus/avatars/';
 
 export const httpStatusCodes = {
     success: 200, // OK

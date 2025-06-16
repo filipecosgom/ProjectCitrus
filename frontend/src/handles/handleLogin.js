@@ -6,7 +6,6 @@ export const handleLogin = async (loggingInformation) => {
   console.log(response);
   // Fetch user details after successful login
   if (response.success) {
-    console.log("Login successful:", response);
     // Use getState() and await the async call.
     await useAuthStore.getState().fetchAndSetUserInformation();
     return true; // Success

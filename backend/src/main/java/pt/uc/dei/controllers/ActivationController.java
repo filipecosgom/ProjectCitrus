@@ -1,6 +1,7 @@
 package pt.uc.dei.controllers;
 
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.repositories.ActivationTokenRepository;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.TokenService;
 import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.ApiResponse;
@@ -35,6 +37,9 @@ public class ActivationController {
      * Logger instance for tracking activation process events.
      */
     private static final Logger LOGGER = LogManager.getLogger(ActivationController.class);
+
+    @Inject
+    AuthenticationService authenticationService;
 
     /**
      * Injected service for token-related operations.
@@ -104,7 +109,7 @@ public class ActivationController {
             }
 
             // Step 3: Activate user
-            if (!userService.activateUser(userToActivate)) {
+            if (!authenticationService.activateUser(userToActivate)) {
                 LOGGER.error("Account activation failed for {}", userToActivate.getEmail());
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity(new ApiResponse(false, "Account activation failed", "errorAccountActivationFailed", null))

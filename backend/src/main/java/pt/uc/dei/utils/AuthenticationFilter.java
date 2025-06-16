@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.ConfigurationService;
 import pt.uc.dei.services.UserService;
 
@@ -32,6 +33,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private UserService userService;
 
     @Inject
+    private AuthenticationService authenticationService;
+
+    @Inject
     private ConfigurationService configurationService;
 
     @Override
@@ -42,11 +46,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         System.out.println("Request: " + method + " " + path);
 
         // Define paths that should always be skipped, regardless of method
-        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public");
+        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public", "/activate");
 
         // Define method-specific skipped paths
         Map<String, Set<String>> methodSkippedPaths = Map.of(
-                "POST", Set.of("/user") // Only POST /user bypasses authentication
+                "POST", Set.of("/user", "/activate", "/auth", "/auth/login")
         );
 
         // Check if the path is globally skipped
@@ -75,8 +79,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 return;
             }
 
-            String email = claims.getSubject();
-            UserResponseDTO user = userService.getSelfInformation(email);
+            Long id = Long.parseLong(claims.getSubject());
+            UserResponseDTO user = authenticationService.getSelfInformation(id);
             if (user == null) {
                 abort(requestContext, Response.Status.UNAUTHORIZED, "User not found");
                 return;

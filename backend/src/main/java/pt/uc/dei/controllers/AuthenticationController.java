@@ -14,10 +14,7 @@ import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.LoginDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.services.ConfigurationService;
-import pt.uc.dei.services.EmailService;
-import pt.uc.dei.services.TokenService;
-import pt.uc.dei.services.UserService;
+import pt.uc.dei.services.*;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -40,14 +37,23 @@ import java.util.Map;
 @Path("/auth") // Defines the base path for authentication endpoints
 public class AuthenticationController {
 
-    /** Logger for tracking authentication requests */
+    /**
+     * Logger for tracking authentication requests
+     */
     private final Logger LOGGER = LogManager.getLogger(AuthenticationController.class);
 
-    /** Injected UserService to handle login operations */
+    @Inject
+    private AuthenticationService authenticationService;
+
+    /**
+     * Injected UserService to handle login operations
+     */
     @Inject
     private UserService userService;
 
-    /** Injected TokenService for additional token-related operations */
+    /**
+     * Injected TokenService for additional token-related operations
+     */
     @Inject
     private TokenService tokenService;
 
@@ -62,19 +68,24 @@ public class AuthenticationController {
      *
      * @param user The login request containing email and password.
      * @return HTTP 200 (OK) with a JWT token if authentication is successful,
-     *         otherwise HTTP 401 (Unauthorized) if login fails.
+     * otherwise HTTP 401 (Unauthorized) if login fails.
      */
     @POST
     @Path("/login") // Defines the login endpoint
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response login(LoginDTO user) {
+    public Response login(@Valid LoginDTO user) {
         // Attempt to authenticate user and generate JWT token
-        String token = userService.loginUser(user);
+        String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response
         if (token == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
+                    .build();
+        }
+        if(!authenticationService.checkAuthenticationCode(user)) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
                     .build();
         }
         // Retrieve configuration settings
@@ -90,8 +101,9 @@ public class AuthenticationController {
 
     @POST
     @Path("/logout")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletResponse response) {
-        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0;");
+        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
         return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
     }
 
@@ -99,7 +111,7 @@ public class AuthenticationController {
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response requestPasswordReset(JsonObject emailJSON) {
+    public Response requestPasswordReset(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
         String email = emailJSON.getString("email");
 
         if (email == null || email.isEmpty()) {
@@ -130,24 +142,32 @@ public class AuthenticationController {
                     .build();
         }
     }
-/*
-    @GET
+
+    /*
+    @PATCH
+    @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response requestAuthCode(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
-        String email = emailJSON.getString("email");
-        if (email == null || email.isEmpty()) {
+    public Response updatePassword(@HeaderParam("token") String passwordResetToken, String newPassword) {
+        if(newPassword == null || newPassword.isEmpty()) {
+            LOGGER.error("Password update failed due to missing password");
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
+                    .entity(new ApiResponse(false, "Invalid request: missing password", "errorMissingPassword", null))
+                    .build();
+        }
+        if(passwordResetToken == null || passwordResetToken.isEmpty()) {
+            LOGGER.error("Password update failed due to missing token");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
                     .build();
         }
         try {
-            String authCode = userService.getAuthCode(email);
+            String token = tokenService.createNewPasswordResetToken(email);
 
-            if (authCode == null) {
-                LOGGER.error("Invalid code request for {}", email);
+            if (token == null) {
+                LOGGER.error("Invalid reset token request for {}", email);
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidCodeRequest", null))
+                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
                         .build();
             }
             emailService.sendPasswordResetEmail(email, token);
@@ -163,4 +183,28 @@ public class AuthenticationController {
                     .build();
         }
     }*/
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    public Response requestAuthCode(@Valid LoginDTO requester) {
+        try {
+            String authCode = authenticationService.getAuthCode(requester);
+            if (authCode == null) {
+                LOGGER.error("Invalid code request for {}", requester.getEmail());
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidCodeRequest", null))
+                        .build();
+            }
+            return Response.status(Response.Status.OK)
+                    .entity(new ApiResponse(true, "Authentication code requested sucessfully", null, Map.of("authCode", authCode)))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Authentication request failed for {}: {}", requester.getEmail(), e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Authentication request failed", "errorServerIssue", null))
+                    .build();
+        }
+    }
 }

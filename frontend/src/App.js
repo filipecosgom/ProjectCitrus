@@ -23,6 +23,7 @@ import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
 import Profile from "./pages/profile/Profile";
 import { useNavigate } from "react-router-dom";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 // Componente para gerir o layout e mostrar/esconder o Header
 function AppRoutes() {
@@ -76,7 +77,14 @@ function AppRoutes() {
       }
       // Now, after trying to fetch, check if the user is set
       if (useAuthStore.getState().user) {
-        navigate("/profile");
+        console.log("User is set:", useAuthStore.getState().user);
+        if (useAuthStore.getState().user.accountState === "INCOMPLETE") {
+          console.log(
+            "User account is incomplete, redirecting to profile edit."
+          );
+          // If the user is logged in but their account is incomplete, redirect to profile edit
+          navigate("/profile?id=" + useAuthStore.getState().user.id);
+        }
       }
       setHydrating(false);
     };
@@ -105,7 +113,14 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/password-reset" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/offcanvas-forgot-password"
           element={<div>OffcanvasForgotPassword</div>}
