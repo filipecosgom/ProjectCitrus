@@ -2,7 +2,7 @@ import { register } from "../api/userApi";
 import { handleApiError } from "../api/api";
 
 const handleRegistration = async (newUser, lang, intl) => {
-  console.log("lcoale:", lang);
+  console.log("locale:", lang);
 
   const response = await register(newUser, lang);
 
