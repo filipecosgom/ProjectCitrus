@@ -76,14 +76,20 @@ const pt = {
   errorDuplicateEntry: "Este email já está registado.",
   errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
   errorFailed: "Falha no pedido. Tenta novamente mais tarde.",
-  errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
-  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde.",
+  errorNetworkError:
+    "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
+  errorUnexpected:
+    "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde.",
   errorInvalidCredentials: "Email or password estão erradas",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",
   notfoundPhrase: "Quando a vida te dá limões...",
   notfoundRedirect: "A redirecioná-lo dentro de {segundos} segundos.",
+
+  // PROFILE
+  profileUpdateSuccess: "Perfil atualizado com sucesso",
+  profileUpdateError: "Erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
 };
 
 export default pt;

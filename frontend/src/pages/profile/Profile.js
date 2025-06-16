@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
+import { handleUpdateUser } from "../../handles/handleUpdateUser";
 
 const mockUser = {
   firstName: "Teresa",
@@ -35,9 +36,8 @@ export default function Profile() {
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Mock save
-      setUser(formData);
-      toast.success("Perfil atualizado com sucesso!");
+      // Chama o handler que envia para o backend e mostra notificações
+      handleUpdateUser(formData, () => setUser(formData));
     }
     setEditMode(!editMode);
   };
