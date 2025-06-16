@@ -48,8 +48,8 @@ public class JWTUtil {
         // Create JWT token with user details (email, isAdmin, isManager)
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getId())) // Set user's email as subject
-                .claim("isAdmin", user.getAdmin()) // Store isAdmin flag
-                .claim("isManager", user.getManager()) // Store isManager flag
+                .claim("userIsAdmin", user.getUserIsAdmin()) // Store isAdmin flag
+                .claim("userIsManager", user.getUserIsManager()) // Store isManager flag
                 .claim("accountState", user.getAccountState())
                 .setIssuedAt(new Date()) // Token creation time
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Expiry time

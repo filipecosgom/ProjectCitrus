@@ -31,7 +31,7 @@ public class UserDTO {
     /**
      * The ID of the user's manager.
      */
-    private Long managerId;
+    private ManagerDTO manager;
 
     /**
      * The password of the user.
@@ -60,17 +60,17 @@ public class UserDTO {
     /**
      * Indicates if the user is an administrator.
      */
-    private Boolean isAdmin;
+    private Boolean userIsAdmin;
 
     /**
      * Indicates if the user account has been deleted.
      */
-    private Boolean isDeleted;
+    private Boolean userIsDeleted;
 
     /**
      * Indicates if the user is a manager.
      */
-    private Boolean isManager;
+    private Boolean userIsManager;
 
     /**
      * The office associated with the user.
@@ -154,14 +154,13 @@ public class UserDTO {
      * Construtor for basic UserDTO
      * @return
      */
-    public UserDTO(String email, Boolean isAdmin, Boolean isManager) {
+    public UserDTO(String email, Boolean userIsAdmin, Boolean userIsManager) {
         this.email = email;
-        this.isAdmin = isAdmin;
-        this.isManager = isManager;
+        this.userIsAdmin = userIsAdmin;
+        this.userIsManager = userIsManager;
     }
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -176,6 +175,14 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public ManagerDTO getManager() {
+        return manager;
+    }
+
+    public void setManager(ManagerDTO manager) {
+        this.manager = manager;
     }
 
     public String getPassword() {
@@ -210,28 +217,28 @@ public class UserDTO {
         this.surname = surname;
     }
 
-    public Boolean getAdmin() {
-        return isAdmin;
+    public Boolean getUserIsAdmin() {
+        return userIsAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
+    public void setUserIsAdmin(Boolean userIsAdmin) {
+        this.userIsAdmin = userIsAdmin;
     }
 
-    public Boolean getDeleted() {
-        return isDeleted;
+    public Boolean getUserIsDeleted() {
+        return userIsDeleted;
     }
 
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    public void setUserIsDeleted(Boolean userIsDeleted) {
+        this.userIsDeleted = userIsDeleted;
     }
 
-    public Boolean getManager() {
-        return isManager;
+    public Boolean getUserIsManager() {
+        return userIsManager;
     }
 
-    public void setManager(Boolean manager) {
-        isManager = manager;
+    public void setUserIsManager(Boolean userIsManager) {
+        this.userIsManager = userIsManager;
     }
 
     public Office getOffice() {
@@ -328,14 +335,6 @@ public class UserDTO {
 
     public void setEvaluationsGiven(List<AppraisalDTO> evaluationsGiven) {
         this.evaluationsGiven = evaluationsGiven;
-    }
-
-    public Long getManagerId() {
-        return managerId;
-    }
-
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
     }
 
     public Set<FinishedCourseDTO> getCompletedCourses() {

@@ -10,10 +10,7 @@ import jakarta.ws.rs.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import pt.uc.dei.dtos.ActivationTokenDTO;
-import pt.uc.dei.dtos.ConfigurationDTO;
-import pt.uc.dei.dtos.LoginDTO;
-import pt.uc.dei.dtos.TemporaryUserDTO;
+import pt.uc.dei.dtos.*;
 import pt.uc.dei.services.*;
 
 import jakarta.ws.rs.*;
@@ -187,7 +184,7 @@ public class AuthenticationController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response requestAuthCode(@Valid LoginDTO requester) {
+    public Response requestAuthCode(@Valid RequestAuthCodeDTO requester) {
         try {
             String authCode = authenticationService.getAuthCode(requester);
             if (authCode == null) {

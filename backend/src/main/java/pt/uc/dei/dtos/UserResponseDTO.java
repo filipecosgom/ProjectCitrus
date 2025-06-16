@@ -1,6 +1,5 @@
 package pt.uc.dei.dtos;
 
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion;
 import jakarta.validation.constraints.NotBlank;
 import pt.uc.dei.enums.AccountState;
 
@@ -8,19 +7,20 @@ public class UserResponseDTO {
     private Long id;
     @NotBlank(message = "Email missing")
     private String email;
-    private Boolean isAdmin;
-    private Boolean isManager;
+    private Boolean userIsAdmin;
+    private Boolean userIsManager;
     private AccountState accountState;
 
     public UserResponseDTO() {}
 
-    public UserResponseDTO(Long id, String email, Boolean isAdmin, Boolean isManager, AccountState accountState) {
+    public UserResponseDTO(Long id, String email, Boolean userIsAdmin, Boolean userIsManager, AccountState accountState) {
         this.id = id;
         this.email = email;
-        this.isAdmin = isAdmin;
-        this.isManager = isManager;
+        this.userIsAdmin = userIsAdmin;
+        this.userIsManager = userIsManager;
         this.accountState = accountState;
     }
+
     public Long getId() {
         return id;
     }
@@ -37,20 +37,20 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public Boolean getAdmin() {
-        return isAdmin;
+    public Boolean getUserIsAdmin() {
+        return userIsAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
+    public void setUserIsAdmin(Boolean userIsAdmin) {
+        this.userIsAdmin = userIsAdmin;
     }
 
-    public Boolean getManager() {
-        return isManager;
+    public Boolean getUserIsManager() {
+        return userIsManager;
     }
 
-    public void setManager(Boolean manager) {
-        isManager = manager;
+    public void setUserIsManager(Boolean userIsManager) {
+        this.userIsManager = userIsManager;
     }
 
     public AccountState getAccountState() {
