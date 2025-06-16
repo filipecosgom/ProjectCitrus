@@ -107,6 +107,10 @@ const pt = {
   notfoundTitle: "404 Não Encontrado",
   notfoundPhrase: "Quando a vida te dá limões...",
   notfoundRedirect: "A redirecioná-lo dentro de {segundos} segundos.",
+
+  // PROFILE
+  profileUpdateSuccess: "Perfil atualizado com sucesso",
+  profileUpdateError: "Erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
 };
 
 export default pt;

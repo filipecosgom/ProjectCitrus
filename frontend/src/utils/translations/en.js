@@ -108,5 +108,9 @@ const en = {
   notfoundTitle: "404 Not Found",
   notfoundPhrase: "When life gives you lemons...",
   notfoundRedirect: "Redirecting in {segundos} seconds.",
+
+  // PROFILE
+  profileUpdateSuccess: "Profile updated successfully",
+  profileUpdateError: "Error updating profile. Please try again later.",
 };
 export default en;

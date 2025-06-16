@@ -27,7 +27,7 @@ const mockUser = {
     firstName: "José",
     lastName: "Ferreira",
     role: "Manager",
-    image: "/images/jose.jpg",
+    image: ManagerPhoto,
   },
 };
 
@@ -103,12 +103,16 @@ useEffect(() => {
 
   return (
     <div className="user-profile">
-      <div className="tabs">
-        {renderTab("profile")}
-        {renderTab("appraisals")}
-        {renderTab("training")}
+      <div className="profile-tabs-row">
+        <div className="tabs">
+          {renderTab("profile")}
+          {renderTab("appraisals")}
+          {renderTab("training")}
+        </div>
+        <button className="edit-btn" onClick={handleEditToggle}>
+          {editMode ? "Save" : "Edit"}
+        </button>
       </div>
-
       {activeTab === "profile" && (
         <div className="profile-section">
           <div className="profile-header">
@@ -199,10 +203,6 @@ useEffect(() => {
               </div>
             </div>
           </div>
-
-          <button className="edit-btn" onClick={handleEditToggle}>
-            {editMode ? "Save" : "Edit"}
-          </button>
         </div>
       )}
 
