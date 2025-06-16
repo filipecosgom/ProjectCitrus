@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.LoginDTO;
+import pt.uc.dei.dtos.RequestAuthCodeDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.ActivationTokenEntity;
@@ -50,8 +51,6 @@ public class AuthenticationService implements Serializable {
     @Inject
     UserMapper userMapper;
 
-    @Inject
-    TwoFactorUtil twoFactorUtil;
 
     /**
      * Injected repository for activation token persistence.
@@ -106,7 +105,7 @@ public class AuthenticationService implements Serializable {
         return null;
     }
 
-    public String getAuthCode(LoginDTO requester) {
+    public String getAuthCode(RequestAuthCodeDTO requester) {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(requester.getEmail());
         if(user != null) {
@@ -131,7 +130,7 @@ public class AuthenticationService implements Serializable {
             UserEntity activatedUser = new UserEntity();
             activatedUser.setEmail(userToActivate.getEmail());
             activatedUser.setPassword(userToActivate.getPassword());
-            activatedUser.setManager(false);
+            activatedUser.setUserIsManager(false);
             activatedUser.setAvatar("template.png");
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());

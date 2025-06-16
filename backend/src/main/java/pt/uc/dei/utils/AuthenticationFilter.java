@@ -88,8 +88,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             // Store user and role info for downstream use (e.g., in endpoints or role filters)
             requestContext.setProperty("user", user);
-            requestContext.setProperty("isAdmin", user.getAdmin());
-            requestContext.setProperty("isManager", user.getManager());
+            requestContext.setProperty("userIsAdmin", user.getUserIsAdmin());
+            requestContext.setProperty("userIsManager", user.getUserIsManager());
 
             // ⏳ Check if the token is about to expire (e.g., less than 5 minutes left)
             long timeLeft = claims.getExpiration().getTime() - System.currentTimeMillis();

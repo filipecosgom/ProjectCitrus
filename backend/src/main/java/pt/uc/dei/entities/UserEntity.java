@@ -68,15 +68,15 @@ public class UserEntity implements Serializable {
 
     /** Administrator status flag */
     @Column(name = "is_admin", nullable = false, columnDefinition = "boolean default false")
-    private Boolean isAdmin = false;
+    private Boolean userIsAdmin = false;
 
     /** Soft-delete flag */
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
-    private Boolean isDeleted = false;
+    private Boolean userIsDeleted = false;
 
     /** Managerial status flag */
     @Column(name = "is_manager", nullable = false, columnDefinition = "boolean default false")
-    private Boolean isManager = false;
+    private Boolean userIsManager = false;
 
     /** User's primary office location */
     @Enumerated(EnumType.STRING)
@@ -155,6 +155,7 @@ public class UserEntity implements Serializable {
 
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -179,6 +180,14 @@ public class UserEntity implements Serializable {
         this.password = password;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getName() {
         return name;
     }
@@ -195,52 +204,28 @@ public class UserEntity implements Serializable {
         this.surname = surname;
     }
 
-    public Boolean getAdmin() {
-        return isAdmin;
+    public Boolean getUserIsAdmin() {
+        return userIsAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
+    public void setUserIsAdmin(Boolean userIsAdmin) {
+        this.userIsAdmin = userIsAdmin;
     }
 
-    public Boolean getDeleted() {
-        return isDeleted;
+    public Boolean getUserIsDeleted() {
+        return userIsDeleted;
     }
 
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    public void setUserIsDeleted(Boolean userIsDeleted) {
+        this.userIsDeleted = userIsDeleted;
     }
 
-    public List<AppraisalEntity> getEvaluationsReceived() {
-        return evaluationsReceived;
+    public Boolean getUserIsManager() {
+        return userIsManager;
     }
 
-    public void setEvaluationsReceived(List<AppraisalEntity> evaluationsReceived) {
-        this.evaluationsReceived = evaluationsReceived;
-    }
-
-    public List<AppraisalEntity> getEvaluationsGiven() {
-        return evaluationsGiven;
-    }
-
-    public void setEvaluationsGiven(List<AppraisalEntity> evaluationsGiven) {
-        this.evaluationsGiven = evaluationsGiven;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public Set<FinishedCourseEntity> getCompletedCourses() {
-        return completedCourses;
-    }
-
-    public void setCompletedCourses(Set<FinishedCourseEntity> completedCourses) {
-        this.completedCourses = completedCourses;
+    public void setUserIsManager(Boolean userIsManager) {
+        this.userIsManager = userIsManager;
     }
 
     public Office getOffice() {
@@ -323,12 +308,12 @@ public class UserEntity implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public Boolean getManager() {
-        return isManager;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setManager(Boolean manager) {
-        isManager = manager;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     public UserEntity getManagerUser() {
@@ -339,11 +324,27 @@ public class UserEntity implements Serializable {
         this.managerUser = managerUser;
     }
 
-    public String getSecretKey() {
-        return secretKey;
+    public List<AppraisalEntity> getEvaluationsReceived() {
+        return evaluationsReceived;
     }
 
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
+    public void setEvaluationsReceived(List<AppraisalEntity> evaluationsReceived) {
+        this.evaluationsReceived = evaluationsReceived;
+    }
+
+    public List<AppraisalEntity> getEvaluationsGiven() {
+        return evaluationsGiven;
+    }
+
+    public void setEvaluationsGiven(List<AppraisalEntity> evaluationsGiven) {
+        this.evaluationsGiven = evaluationsGiven;
+    }
+
+    public Set<FinishedCourseEntity> getCompletedCourses() {
+        return completedCourses;
+    }
+
+    public void setCompletedCourses(Set<FinishedCourseEntity> completedCourses) {
+        this.completedCourses = completedCourses;
     }
 }

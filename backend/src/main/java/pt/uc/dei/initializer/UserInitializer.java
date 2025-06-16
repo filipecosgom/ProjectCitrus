@@ -54,9 +54,9 @@ public class UserInitializer {
             admin.setBiography("Default administrator");
 
             // System settings
-            admin.setAdmin(true);
-            admin.setDeleted(false);
-            admin.setManager(false);
+            admin.setUserIsAdmin(true);
+            admin.setUserIsDeleted(false);
+            admin.setUserIsManager(false);
             admin.setOffice(Office.NO_OFFICE);
             admin.setAccountState(AccountState.COMPLETE);
             admin.setRole(Role.WITHOUT_ROLE);

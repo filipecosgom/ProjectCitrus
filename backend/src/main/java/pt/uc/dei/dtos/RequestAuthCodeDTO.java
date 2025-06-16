@@ -1,14 +1,13 @@
 package pt.uc.dei.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
  * Data Transfer Object (DTO) for user login requests.
  * Stores the credentials required for authentication.
  */
-public class LoginDTO {
+public class RequestAuthCodeDTO {
 
     /**
      * The email address of the user.
@@ -26,12 +25,10 @@ public class LoginDTO {
     @NotBlank(message = "Password missing")
     private String password;
 
-    private Integer authenticationCode;
-
     /**
      * Default constructor for `LoginDTO`.
      */
-    public LoginDTO() {
+    public RequestAuthCodeDTO() {
     }
 
     /**
@@ -70,11 +67,4 @@ public class LoginDTO {
         this.password = password;
     }
 
-    public Integer getAuthenticationCode() {
-        return authenticationCode;
-    }
-
-    public void setAuthenticationCode(Integer authenticationCode) {
-        this.authenticationCode = authenticationCode;
-    }
 }
