@@ -128,6 +128,12 @@ public class UserService implements Serializable {
         return codes;
     }
 
+    public UserDTO getUser(Long id) {
+        UserEntity user = userRepository.findUserById(id);
+        UserDTO userDTO = userMapper.toDto(user);
+        return userDTO;
+    }
+
     public Map<String, Object> getUsers(Long id, String email, String name, String surname, String phone,
                                         AccountState accountState, Role role, Office office,
                                         Parameter parameter, Order order, int offset, int limit) {

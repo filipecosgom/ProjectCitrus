@@ -101,6 +101,7 @@ const pt = {
   errorInvalidCredentials: "Email or password estão erradas",
   errorInvalidAuthCode: "Código de autenticação de dois fatores inválido",
   errorInvalidCodeRequest: "Email or password estão erradas",
+  errorUserNotFound: "Utilizador não encontrado",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",

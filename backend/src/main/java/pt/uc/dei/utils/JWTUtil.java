@@ -50,6 +50,7 @@ public class JWTUtil {
                 .setSubject(String.valueOf(user.getId())) // Set user's email as subject
                 .claim("isAdmin", user.getAdmin()) // Store isAdmin flag
                 .claim("isManager", user.getManager()) // Store isManager flag
+                .claim("accountState", user.getAccountState())
                 .setIssuedAt(new Date()) // Token creation time
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Expiry time
                 .signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY)), SignatureAlgorithm.HS256) // Secure signing

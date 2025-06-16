@@ -3,6 +3,7 @@ import pt.uc.dei.enums.AccountState;
 import pt.uc.dei.enums.Office;
 import pt.uc.dei.enums.Role;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,9 @@ public class UserDTO {
      */
     @NotBlank(message = "Password missing")
     private String password;
+
+    @NotBlank(message = "Avatar is missing")
+    private String avatar;
 
     /**
      * The first name of the user.
@@ -83,7 +87,7 @@ public class UserDTO {
     /**
      * The birthdate of the user.
      */
-    private LocalDateTime birthdate;
+    private LocalDate birthdate;
 
     /**
      * The user's street address.
@@ -182,6 +186,14 @@ public class UserDTO {
         this.password = password;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getName() {
         return name;
     }
@@ -238,11 +250,11 @@ public class UserDTO {
         this.phone = phone;
     }
 
-    public LocalDateTime getBirthdate() {
+    public LocalDate getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(LocalDateTime birthdate) {
+    public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
 

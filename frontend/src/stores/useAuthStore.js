@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { api } from "../api/api"; // Import the global API instance
-import { fetchUserInformation } from "../api/userApi"; // Import the function to fetch user information
+import { fetchSelfInformation } from "../api/userApi"; // Import the function to fetch user information
 import handleNotification from "../handles/handleNotification";
 
 const useAuthStore = create((set, get) => {
@@ -49,7 +49,7 @@ const useAuthStore = create((set, get) => {
     fetchAndSetUserInformation: async () => {
       try {
         console.log("Fetching user information...");
-        const response = await fetchUserInformation();
+        const response = await fetchSelfInformation();
         if (response.success) {
           const { user, tokenExpiration } = response.data.data || {};
           if (user && tokenExpiration) {

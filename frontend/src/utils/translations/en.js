@@ -102,6 +102,7 @@ const en = {
   errorInvalidCredentials: "Email or password are incorrect",
   errorInvalidAuthCode: "Invalid Two-Factor Authentication code",
   errorInvalidCodeRequest: "Email or password are incorrect",
+  errorUserNotFound: "User not found",
 
   // Not Found Page
   notfoundTitle: "404 Not Found",

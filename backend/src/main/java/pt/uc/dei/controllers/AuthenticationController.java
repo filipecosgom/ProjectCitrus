@@ -143,6 +143,47 @@ public class AuthenticationController {
         }
     }
 
+    /*
+    @PATCH
+    @Path("/password-reset")
+    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    public Response updatePassword(@HeaderParam("token") String passwordResetToken, String newPassword) {
+        if(newPassword == null || newPassword.isEmpty()) {
+            LOGGER.error("Password update failed due to missing password");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password", "errorMissingPassword", null))
+                    .build();
+        }
+        if(passwordResetToken == null || passwordResetToken.isEmpty()) {
+            LOGGER.error("Password update failed due to missing token");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
+                    .build();
+        }
+        try {
+            String token = tokenService.createNewPasswordResetToken(email);
+
+            if (token == null) {
+                LOGGER.error("Invalid reset token request for {}", email);
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
+                        .build();
+            }
+            emailService.sendPasswordResetEmail(email, token);
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Password reset error for {}: {}", email, e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Password reset failed", "errorServerIssue", null))
+                    .build();
+        }
+    }*/
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON

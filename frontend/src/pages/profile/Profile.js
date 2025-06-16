@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,17 +6,24 @@ import "react-toastify/dist/ReactToastify.css";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import useAuthStore from "../../stores/useAuthStore";
+import Spinner from "../../components/spinner/spinner";
+import handleGetUserInformation from "../../handles/handleGetUserInformation";
+import handleNotification from "../../handles/handleNotification";
+import { set } from "react-hook-form";
+import { avatarsUrl } from "../../config";
 
 const mockUser = {
-  firstName: "Teresa",
-  lastName: "Matos",
-  dob: "1990-01-01",
+  name: "Teresa",
+  surname: "Matos",
+  birthdate: "1990-01-01",
   role: "Developer",
-  workplace: "Lisbon Office",
-  address: "Rua das Flores, 123",
+  office: "Lisbon Office",
+  street: "Rua das Flores, 123",
+  municipality: "Coimbra",
+  postalCode: "3000-123",
   biography: "Sou uma programadora dedicada e adoro React!",
-  profileImage: ProfilePhoto,
-  manager: {
+  avatar: ProfilePhoto,
+  managerId: {
     firstName: "José",
     lastName: "Ferreira",
     role: "Manager",
@@ -26,18 +33,13 @@ const mockUser = {
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
-  const [user, setUser] = useState(mockUser);
+  const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState(user);
   const [activeTab, setActiveTab] = useState("profile");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const { remainingTime } = useAuthStore();
-
-const formatTime = (ms) => {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +49,7 @@ const formatTime = (ms) => {
   const handleEditToggle = () => {
     if (editMode) {
       // Mock save
-      setUser(formData);
+      //setUser(formData);
       toast.success("Perfil atualizado com sucesso!");
     }
     setEditMode(!editMode);
@@ -63,8 +65,41 @@ const formatTime = (ms) => {
   );
 
   useEffect(() => {
-    console.log("Fetching user information for ID:", userId);
-  }, []);
+  const fetchUserInformation = async () => {
+    try {
+      const userInfo = await handleGetUserInformation(userId);
+      if (userInfo) {
+        console.log("User Information:", userInfo);
+        setUser(userInfo);
+      } else {
+        console.log("No user information found.");
+      }
+    } catch (error) {
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchUserInformation();
+}, [userId]);
+
+useEffect(() => {
+  if (user) {
+    console.log("User data loaded:", user);
+    setFormData(user);
+  }
+}, [user]);
+
+useEffect(() => {
+  if(formData) {
+    console.log("Form data updated:", formData);
+  }
+}, [formData]);
+
+
+
+
+   if (loading) return <Spinner />;
 
   return (
     <div className="user-profile">
@@ -78,12 +113,12 @@ const formatTime = (ms) => {
         <div className="profile-section">
           <div className="profile-header">
             <div className="profile-card">
-              <img src={user.profileImage} alt="Profile" />
+              <img src={`${avatarsUrl}${formData.avatar}`} alt="Profile" />
               <div className="profile-label">
                 <strong>
-                  {user.firstName} {user.lastName}
+                  {formData.name} {formData.surname}
                               </strong>
-                <span>{user.role}</span>
+                <span>{formData.role}</span>
               </div>
             </div>
 
@@ -92,7 +127,7 @@ const formatTime = (ms) => {
                 First Name
                 <input
                   name="firstName"
-                  value={formData.firstName}
+                  value={formData.name}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -101,7 +136,7 @@ const formatTime = (ms) => {
                 Last Name
                 <input
                   name="lastName"
-                  value={formData.lastName}
+                  value={formData.surname}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -111,7 +146,7 @@ const formatTime = (ms) => {
                 <input
                   type="date"
                   name="dob"
-                  value={formData.dob}
+                  value={formData.birthdate}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -129,7 +164,7 @@ const formatTime = (ms) => {
                 Workplace
                 <input
                   name="workplace"
-                  value={formData.workplace}
+                  value={formData.office}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -138,7 +173,7 @@ const formatTime = (ms) => {
                 Address
                 <input
                   name="address"
-                  value={formData.address}
+                  value={formData.street + ", " + formData.municipality + ", " + formData.postalCode}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -155,12 +190,12 @@ const formatTime = (ms) => {
             </div>
 
             <div className="manager-card">
-              <img src={user.manager.image} alt="Manager" />
+              <img src={formData.manager.image} alt="Manager" />
               <div className="profile-label small">
                 <strong>
-                  {user.manager.firstName} {user.manager.lastName}
+                  {formData.manager.firstName} {formData.manager.lastName}
                 </strong>
-                <span>{user.manager.role}</span>
+                <span>{formData.manager.role}</span>
               </div>
             </div>
           </div>
@@ -168,7 +203,6 @@ const formatTime = (ms) => {
           <button className="edit-btn" onClick={handleEditToggle}>
             {editMode ? "Save" : "Edit"}
           </button>
-          <p>Session expires in: {formatTime(remainingTime)}</p>;
         </div>
       )}
 

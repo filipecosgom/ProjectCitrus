@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -11,6 +11,7 @@ import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
 import handleLogin from "../../handles/handleLogin";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/useAuthStore";
 
 export default function Login() {
   const {
@@ -26,18 +27,19 @@ export default function Login() {
   const navigate = useNavigate();
   //Internacionalização
   const intl = useIntl();
+  const user = useAuthStore((state) => state.user);
 
   const onSubmit = async (loginData) => {
-    const user = {
+    const userData = {
       email: loginData.email,
       password: loginData.password,
       authenticationCode: loginData.authenticationCode,
     };
     try {
-      const success = await handleLogin(user);
+      const success = await handleLogin(userData);
       if (success) {
         reset();
-        navigate("/profile");
+        navigate("/profile?id=" + user.id);
       } else {
         reset();
       }

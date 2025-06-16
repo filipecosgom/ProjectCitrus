@@ -99,5 +99,6 @@ public interface UserMapper {
     @Mapping(target = "email", source = "email")
     @Mapping(target = "admin", source = "admin")
     @Mapping(target = "manager", source = "manager")
+    @Mapping(target = "accountState", source = "accountState")
     UserResponseDTO toUserResponseDto(UserEntity entity);
 }

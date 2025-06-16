@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * Handles user registration endpoints.
  */
-@Path("/user")
+@Path("/users")
 public class UserController {
     /**
      * Logger for user registration events
@@ -141,6 +141,56 @@ public class UserController {
                     .build();
         }
     }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserById(@PathParam("id") Long id) {
+        try {
+            UserDTO user = userService.getUser(id);
+
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, "User not found with id: " + id, "errorUserNotFound", null))
+                        .build();
+            }
+
+            return Response.ok(new ApiResponse(true, "User retrieved successfully", "successUserRetrieved", user))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to fetch user by id: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Unexpected error fetching user.", "errorInternal", null))
+                    .build();
+        }
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@PathParam("id") Long id, UserDTO updatedUser) {
+        try {
+            UserDTO user = userService.getUser(id);
+
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, "User not found with id: " + id, "errorUserNotFound", null))
+                        .build();
+            }
+
+            return Response.ok(new ApiResponse(true, "User retrieved successfully", "successUserRetrieved", user))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to fetch user by id: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Unexpected error fetching user.", "errorInternal", null))
+                    .build();
+        }
+    }
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
