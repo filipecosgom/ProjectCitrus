@@ -18,7 +18,7 @@ const mockUser = {
     firstName: "José",
     lastName: "Ferreira",
     role: "Manager",
-    image: "/images/jose.jpg",
+    image: ManagerPhoto,
   },
 };
 
@@ -53,12 +53,16 @@ export default function Profile() {
 
   return (
     <div className="user-profile">
-      <div className="tabs">
-        {renderTab("profile")}
-        {renderTab("appraisals")}
-        {renderTab("training")}
+      <div className="profile-tabs-row">
+        <div className="tabs">
+          {renderTab("profile")}
+          {renderTab("appraisals")}
+          {renderTab("training")}
+        </div>
+        <button className="edit-btn" onClick={handleEditToggle}>
+          {editMode ? "Save" : "Edit"}
+        </button>
       </div>
-
       {activeTab === "profile" && (
         <div className="profile-section">
           <div className="profile-header">
@@ -67,7 +71,7 @@ export default function Profile() {
               <div className="profile-label">
                 <strong>
                   {user.firstName} {user.lastName}
-                              </strong>
+                </strong>
                 <span>{user.role}</span>
               </div>
             </div>
@@ -149,10 +153,6 @@ export default function Profile() {
               </div>
             </div>
           </div>
-
-          <button className="edit-btn" onClick={handleEditToggle}>
-            {editMode ? "Save" : "Edit"}
-          </button>
         </div>
       )}
 
