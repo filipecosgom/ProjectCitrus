@@ -53,7 +53,7 @@ public class EmailService {
      * @param recipientEmail  The email address of the recipient.
      * @param activationToken The activation token for the recipient's account.
      */
-    public void sendActivationEmail(String recipientEmail, String activationToken, String twoFactorAuth, String language) {
+    public void sendActivationEmail(String recipientEmail, String activationToken, String secretKey, String language) {
         try {
             // Retrieve SMTP properties for configuring email session
             Properties properties = EmailConfig.getSMTPProperties();
@@ -75,13 +75,13 @@ public class EmailService {
             switch (language) {
                 case "en": {
                     message.setSubject("CITRUS - Activate Your Account");
-                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink, (configurationDTO.getPasswordResetTime()/60), twoFactorAuth);
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink, (configurationDTO.getPasswordResetTime()/60), secretKey);
                     message.setContent(messageBody, "text/html");
 
                 }
                 case "pt": {
                     message.setSubject("CITRUS - Ative a sua conta");
-                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink, (configurationDTO.getPasswordResetTime()/60), twoFactorAuth);
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink, (configurationDTO.getPasswordResetTime()/60), secretKey);
                     message.setContent(messageBody, "text/html");
                 }
             }

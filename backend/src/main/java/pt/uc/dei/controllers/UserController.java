@@ -87,7 +87,7 @@ public class UserController {
                         .build();
             }
             // Send email and return response
-            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), codes.get("token"), codes.get("authenticationCode"), language);
+            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), codes.get("token"), codes.get("secretKey"), language);
             ApiResponse response = new ApiResponse(true, "Account created", null, codes);
             System.out.println("Response: " + new ObjectMapper().writeValueAsString(response)); // Debug serialization
             return Response.status(Response.Status.CREATED).entity(response).build();

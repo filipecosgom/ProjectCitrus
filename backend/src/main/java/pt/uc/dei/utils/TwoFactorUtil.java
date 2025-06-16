@@ -34,8 +34,16 @@ public class TwoFactorUtil {
      * @param userCode The code entered by the user.
      * @return true if the code is valid, false otherwise.
      */
-    public static boolean verifyTwoFactorCode(String secretKey, int userCode) {
-        return gAuth.authorize(secretKey, userCode);
+    public static boolean verifyTwoFactorCode(String secretKey, String userCode) {
+        if(userCode == null || userCode.isEmpty()) {}
+        return gAuth.authorize(secretKey, Integer.parseInt(userCode));
+    }
+
+    public static boolean validateCode(String userCode) {
+        if(userCode.trim().length() == 6){
+            return true;
+        }
+        return false;
     }
 
 }

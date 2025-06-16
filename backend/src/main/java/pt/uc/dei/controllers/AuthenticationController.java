@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import jakarta.inject.Inject;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class AuthenticationController {
                     .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
                     .build();
         }
-        if(!authenticationService.checkAuthenticationCode(user)) {
+        if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
                     .build();

@@ -117,12 +117,12 @@ useEffect(() => {
         <div className="profile-section">
           <div className="profile-header">
             <div className="profile-card">
-              <img src={`${avatarsUrl}${formData.avatar}`} alt="Profile" />
+              <img src={`${avatarsUrl}${user.avatar}`} alt="Profile" />
               <div className="profile-label">
                 <strong>
-                  {formData.name} {formData.surname}
+                  {user.name} {user.surname}
                               </strong>
-                <span>{formData.role}</span>
+                <span>{user.role}</span>
               </div>
             </div>
 
@@ -131,7 +131,7 @@ useEffect(() => {
                 First Name
                 <input
                   name="firstName"
-                  value={formData.name}
+                  value={user.name}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -140,7 +140,7 @@ useEffect(() => {
                 Last Name
                 <input
                   name="lastName"
-                  value={formData.surname}
+                  value={user.surname}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -150,7 +150,7 @@ useEffect(() => {
                 <input
                   type="date"
                   name="dob"
-                  value={formData.birthdate}
+                  value={user.birthdate}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -159,7 +159,7 @@ useEffect(() => {
                 Role
                 <input
                   name="role"
-                  value={formData.role}
+                  value={user.role}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -168,7 +168,7 @@ useEffect(() => {
                 Workplace
                 <input
                   name="workplace"
-                  value={formData.office}
+                  value={user.office}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -177,7 +177,7 @@ useEffect(() => {
                 Address
                 <input
                   name="address"
-                  value={formData.street + ", " + formData.municipality + ", " + formData.postalCode}
+                  value={user.street + ", " + user.municipality + ", " + user.postalCode}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -186,7 +186,7 @@ useEffect(() => {
                 Biography
                 <textarea
                   name="biography"
-                  value={formData.biography}
+                  value={user.biography}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
@@ -194,12 +194,12 @@ useEffect(() => {
             </div>
 
             <div className="manager-card">
-              <img src={formData.manager.image} alt="Manager" />
+              <img src={user.manager.avatar} alt="Manager" />
               <div className="profile-label small">
                 <strong>
-                  {formData.manager.firstName} {formData.manager.lastName}
+                  {user.manager.name} {user.manager.surname}
                 </strong>
-                <span>{formData.manager.role}</span>
+                <span>{user.manager.role}</span>
               </div>
             </div>
           </div>

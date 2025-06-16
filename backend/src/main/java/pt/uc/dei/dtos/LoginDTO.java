@@ -14,7 +14,7 @@ public class LoginDTO {
      * The email address of the user.
      * Must not be blank.
      */
-    @NotNull(message = "Email is required")
+    @NotNull(message = "Email is required!!")
     @NotBlank(message = "Email missing")
     private String email;
 
@@ -27,7 +27,7 @@ public class LoginDTO {
     private String password;
 
     @NotNull(message = "Authentication Code is required")
-    private Integer authenticationCode;
+    private String authenticationCode;
 
     /**
      * Default constructor for `LoginDTO`.
@@ -71,11 +71,11 @@ public class LoginDTO {
         this.password = password;
     }
 
-    public Integer getAuthenticationCode() {
+    public String getAuthenticationCode() {
         return authenticationCode;
     }
 
-    public void setAuthenticationCode(Integer authenticationCode) {
+    public void setAuthenticationCode(String authenticationCode) {
         this.authenticationCode = authenticationCode;
     }
 }

@@ -90,8 +90,10 @@ public class AuthenticationService implements Serializable {
         // Verify if the provided password matches the stored hash
         if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
             // Convert UserEntity to UserDTO (basic representation)
-            if (TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
-                return true;
+            if(TwoFactorUtil.validateCode(loginDTO.getAuthenticationCode())) {
+                if (TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
+                    return true;
+                }
             }
         }
         return false;
