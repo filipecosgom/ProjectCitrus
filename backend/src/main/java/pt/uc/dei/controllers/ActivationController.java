@@ -66,11 +66,10 @@ public class ActivationController {
      *
      * @param token Activation token from email link (in header)
      * @return HTTP Response with appropriate status:
-     *         - 202 (Accepted) for successful activation
-     *         - 401 (Unauthorized) for invalid tokens
-     *         - 409 (Conflict) with new token if original expired
-     *         - 500 (Internal Server Error) for processing failures
-     *
+     * - 202 (Accepted) for successful activation
+     * - 401 (Unauthorized) for invalid tokens
+     * - 409 (Conflict) with new token if original expired
+     * - 500 (Internal Server Error) for processing failures
      * @HTTP 401 If no temporary user is associated with the token
      * @HTTP 409 If token was expired (includes new token in response)
      * @HTTP 500 If activation or cleanup processes fail
@@ -95,19 +94,11 @@ public class ActivationController {
             // Step 2: Check token expiration
             activationToken = tokenService.getActivationTokenByValue(activationToken);
             if (tokenService.isTokenExpired(activationToken)) {
-                String newToken = tokenService.renewToken(userToActivate, activationToken);
-                if (newToken != null) {
-                    LOGGER.warn("Expired token used for {} - New token generated", userToActivate.getEmail());
-                    return Response.status(Response.Status.CONFLICT)
-                            .entity(new ApiResponse(false, "Token expired, new token generated", "errorTokenExpired", Map.of("newToken", newToken)))
-                            .build();
-                }
-                LOGGER.error("Token renewal failed for {}", userToActivate.getEmail());
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(new ApiResponse(false, "Token renewal failed", "errorTokenRenewalFailed", null))
+                LOGGER.warn("Expired token used for {}", userToActivate.getEmail());
+                return Response.status(Response.Status.CONFLICT)
+                        .entity(new ApiResponse(false, "Token expired", "errorTokenExpired", null))
                         .build();
             }
-
             // Step 3: Activate user
             if (!authenticationService.activateUser(userToActivate)) {
                 LOGGER.error("Account activation failed for {}", userToActivate.getEmail());

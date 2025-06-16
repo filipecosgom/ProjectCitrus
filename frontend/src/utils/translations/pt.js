@@ -102,6 +102,7 @@ const pt = {
   errorInvalidAuthCode: "Código de autenticação de dois fatores inválido",
   errorInvalidCodeRequest: "Email or password estão erradas",
   errorUserNotFound: "Utilizador não encontrado",
+  errorTokenExpired: "O seu token expirou. Por favor, registe-se novamente.",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",

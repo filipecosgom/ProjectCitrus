@@ -103,6 +103,7 @@ const en = {
   errorInvalidAuthCode: "Invalid Two-Factor Authentication code",
   errorInvalidCodeRequest: "Email or password are incorrect",
   errorUserNotFound: "User not found",
+  errorTokenExpired: "Your token has expired. Please register again.",
 
   // Not Found Page
   notfoundTitle: "404 Not Found",

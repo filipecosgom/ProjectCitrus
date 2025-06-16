@@ -69,7 +69,7 @@ public class EmailService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            String activationLink = "https://localhost:3000/activate?" + activationToken + "&lang=" + language;
+            String activationLink = "https://localhost:3000/activate?token=" + activationToken + "&lang=" + language;
             ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
 
             switch (language) {

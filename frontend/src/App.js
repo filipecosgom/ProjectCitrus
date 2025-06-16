@@ -126,7 +126,7 @@ function AppRoutes() {
           element={<div>OffcanvasForgotPassword</div>}
         />
         <Route path="/account-activation" element={<AccountActivation />} />
-        <Route path="/activated-account" element={<ActivatedAccount />} />
+        <Route path="/activate" element={<ActivatedAccount />} />
         <Route
           path="/menu"
           element={<Menu language={locale} setLanguage={setLocale} />}

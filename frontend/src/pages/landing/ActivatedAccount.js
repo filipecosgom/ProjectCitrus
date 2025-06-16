@@ -1,14 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { FcApproval } from "react-icons/fc";
 import "./ActivatedAccount.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useIntl } from "react-intl";
+import handleActivateAccount from "../../handles/handleActivateAccount";
+import handleNotification from "../../handles/handleNotification";
 
 export default function ActivatedAccount() {
+  const token = new URLSearchParams(useLocation().search).get("token");
+  const language =
+    new URLSearchParams(useLocation().search).get("lang") || "en";
   const navigate = useNavigate();
   const intl = useIntl();
-  const segundos = 10;
-  const [countdown, setCountdown] = useState(segundos);
+  const segundos = 50;
+  const [countdown, setCountdown] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const activateAccount = async () => {
+      console.log("Token recebido:", token);
+      console.log("Idioma selecionado:", language);
+      if (!token) {
+        console.error("Token não encontrado");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await handleActivateAccount(token);
+        console.log("Resposta de ativação:", response);
+
+        if (response) {
+          setCountdown(segundos);
+          setSuccess(true);
+        } else {
+          handleNotification("error", "errorTokenExpired");
+          navigate("/login");
+        }
+      } catch (error) {
+        handleNotification("error", "unexpectedError");
+        navigate("/login");
+      }
+    };
+
+    activateAccount();
+  }, [token, navigate]);
 
   // Countdown e redirecionamento
   useEffect(() => {
