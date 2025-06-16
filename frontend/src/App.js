@@ -83,7 +83,7 @@ function AppRoutes() {
             "User account is incomplete, redirecting to profile edit."
           );
           // If the user is logged in but their account is incomplete, redirect to profile edit
-          //navigate("/profile?id=" + useAuthStore.getState().user.id);
+          navigate("/profile?id=" + useAuthStore.getState().user.id);
         }
       }
       setHydrating(false);

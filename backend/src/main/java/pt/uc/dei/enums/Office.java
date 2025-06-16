@@ -19,7 +19,7 @@ public enum Office {
     VISEU("viseu"),
     MUNICH("munich"),
     BOSTON("boston"),
-    SOUTHAMPTON("southampton"),;
+    SOUTHAMPTON("southampton");
 
     private final String fieldName;
 
