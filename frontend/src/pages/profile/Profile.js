@@ -121,7 +121,7 @@ useEffect(() => {
               <div className="profile-label">
                 <strong>
                   {user.name} {user.surname}
-                              </strong>
+                </strong>
                 <span>{user.role}</span>
               </div>
             </div>
@@ -156,6 +156,8 @@ useEffect(() => {
                 />
               </label>
               <label>
+                {" "}
+                {/*Tem de ser Dropdown*/}
                 Role
                 <input
                   name="role"
@@ -165,6 +167,8 @@ useEffect(() => {
                 />
               </label>
               <label>
+                {" "}
+                {/*Tem de ser Dropdown*/}
                 Workplace
                 <input
                   name="workplace"
@@ -174,10 +178,16 @@ useEffect(() => {
                 />
               </label>
               <label>
-                Address
+                Address {/*Tem de se dividir em 3 campos*/}
                 <input
                   name="address"
-                  value={user.street + ", " + user.municipality + ", " + user.postalCode}
+                  value={
+                    user.street +
+                    ", " +
+                    user.municipality +
+                    ", " +
+                    user.postalCode
+                  }
                   onChange={handleChange}
                   disabled={!editMode}
                 />

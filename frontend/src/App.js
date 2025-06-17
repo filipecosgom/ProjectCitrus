@@ -55,6 +55,7 @@ function AppRoutes() {
     "/account-activation",
     "/activated-account",
     "/header",
+    "/profile"
   ];
 
   // Se não for uma rota conhecida, é 404
