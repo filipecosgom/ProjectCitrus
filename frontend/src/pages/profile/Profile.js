@@ -170,18 +170,37 @@ export default function Profile() {
               <label>
                 Role
                 {editMode ? (
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select role</option>
-                    {roleOptions.map((role) => (
-                      <option key={role} value={role}>
-                        {role.replace(/_/g, " ")}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="select-wrapper">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select role</option>
+                      {roleOptions.map((role) => (
+                        <option key={role} value={role}>
+                          {role.replace(/_/g, " ")}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="select-arrow">
+                      {/* Seta SVG */}
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M6 8l4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
                 ) : (
                   <input
                     name="role"
@@ -193,18 +212,36 @@ export default function Profile() {
               <label>
                 Workplace
                 {editMode ? (
-                  <select
-                    name="office"
-                    value={formData.office}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select office</option>
-                    {officeOptions.map((office) => (
-                      <option key={office} value={office}>
-                        {office.replace(/_/g, " ")}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="select-wrapper">
+                    <select
+                      name="office"
+                      value={formData.office}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select office</option>
+                      {officeOptions.map((office) => (
+                        <option key={office} value={office}>
+                          {office.replace(/_/g, " ")}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="select-arrow">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M6 8l4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
                 ) : (
                   <input
                     name="office"
