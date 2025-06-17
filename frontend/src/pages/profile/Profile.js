@@ -12,6 +12,7 @@ import handleNotification from "../../handles/handleNotification";
 import { set } from "react-hook-form";
 import { avatarsUrl } from "../../config";
 import axios from "axios";
+import { apiBaseUrl } from "../../config";
 
 const mockUser = {
   name: "Teresa",
@@ -103,10 +104,10 @@ export default function Profile() {
 
   useEffect(() => {
     axios
-      .get("https://localhost:8443/projectcitrus/rest/enums/roles")
+      .get(`${apiBaseUrl}/enums/roles`)
       .then((res) => setRoleOptions(res.data));
     axios
-      .get("https://localhost:8443/projectcitrus/rest/enums/offices")
+      .get(`${apiBaseUrl}/enums/offices`)
       .then((res) => setOfficeOptions(res.data));
   }, []);
 
