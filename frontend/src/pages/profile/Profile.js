@@ -1,4 +1,5 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -9,94 +10,39 @@ import useAuthStore from "../../stores/useAuthStore";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import handleNotification from "../../handles/handleNotification";
-import { set } from "react-hook-form";
-import { avatarsUrl } from "../../config";
+import { avatarsUrl, apiBaseUrl } from "../../config";
 import axios from "axios";
-import { apiBaseUrl } from "../../config";
 import { handleUpdateUser } from "../../handles/handleUpdateUser";
-
-const mockUser = {
-  name: "Teresa",
-  surname: "Matos",
-  birthdate: "1990-01-01",
-  role: "SOFTWARE_ENGINEER", // <-- valor igual ao enum do backend
-  office: "LISBON_OFFICE", // <-- valor igual ao enum do backend
-  street: "Rua das Flores, 123",
-  municipality: "Coimbra",
-  postalCode: "3000-123",
-  biography: "Sou uma programadora dedicada e adoro React!",
-  avatar: ProfilePhoto,
-  managerId: {
-    firstName: "José",
-    lastName: "Ferreira",
-    role: "Manager",
-    image: ManagerPhoto,
-  },
-};
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState(user);
-  const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
   const [officeOptions, setOfficeOptions] = useState([]);
   const [showAddressFields, setShowAddressFields] = useState(false);
+  const [activeTab, setActiveTab] = useState("profile");
+
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // react-hook-form setup
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-  const handleEditToggle = () => {
-    if (editMode) {
-      // Prepara os dados para enviar (garante que todos os campos obrigatórios estão presentes)
-      const updatedData = {
-        ...formData,
-        name: formData.name || "", // não uses firstName
-        surname: formData.surname || "", // não uses lastName
-        birthdate: formData.birthdate || "",
-        street: formData.street || "",
-        postalCode: formData.postalCode || "",
-        municipality: formData.municipality || "",
-        role: formData.role,
-        office: formData.office,
-        biography: formData.biography || "",
-        // Adiciona outros campos obrigatórios conforme necessário
-      };
-      handleUpdateUser(userId, updatedData, (data) => {
-        setUser(updatedData);
-        setShowAddressFields(false);
-      });
-    } else {
-      setShowAddressFields(true);
-    }
-    setEditMode(!editMode);
-  };
-
-  const renderTab = (tab) => (
-    <button
-      className={`tab ${activeTab === tab ? "active" : ""}`}
-      onClick={() => setActiveTab(tab)}
-    >
-      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-    </button>
-  );
-
+  // Carrega dados do utilizador
   useEffect(() => {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
         if (userInfo) {
-          console.log("User Information:", userInfo);
           setUser(userInfo);
-        } else {
-          console.log("No user information found.");
+          reset(userInfo); // Preenche o formulário com os dados do utilizador
         }
       } catch (error) {
         navigate("/");
@@ -105,21 +51,9 @@ export default function Profile() {
       }
     };
     fetchUserInformation();
-  }, [userId]);
+  }, [userId, reset, navigate]);
 
-  useEffect(() => {
-    if (user) {
-      console.log("User data loaded:", user);
-      setFormData(user);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (formData) {
-      console.log("Form data updated:", formData);
-    }
-  }, [formData]);
-
+  // Carrega enums
   useEffect(() => {
     axios
       .get(`${apiBaseUrl}/enums/roles`)
@@ -128,6 +62,26 @@ export default function Profile() {
       .get(`${apiBaseUrl}/enums/offices`)
       .then((res) => setOfficeOptions(res.data));
   }, []);
+
+  // Handler de submit - ao clicar em "Save"
+  const onSubmit = (data) => {
+    handleUpdateUser(userId, data, (updatedUser) => {
+      setUser(updatedUser);
+      setShowAddressFields(false);
+      setEditMode(false);
+      toast.success("Perfil atualizado com sucesso!");
+    });
+  };
+
+  const renderTab = (tab) => (
+    <button
+      className={`tab ${activeTab === tab ? "active" : ""}`}
+      onClick={() => setActiveTab(tab)}
+      type="button"
+    >
+      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+    </button>
+  );
 
   if (loading) return <Spinner />;
 
@@ -139,7 +93,18 @@ export default function Profile() {
           {renderTab("appraisals")}
           {renderTab("training")}
         </div>
-        <button className="edit-btn" onClick={handleEditToggle}>
+        <button
+          className="edit-btn"
+          type={editMode ? "submit" : "button"}
+          onClick={
+            editMode
+              ? handleSubmit(onSubmit)
+              : () => {
+                  setEditMode(true);
+                  setShowAddressFields(true);
+                }
+          }
+        >
           {editMode ? "Save" : "Edit"}
         </button>
       </div>
@@ -147,196 +112,229 @@ export default function Profile() {
         <div className="profile-section">
           <div className="profile-header">
             <div className="profile-card">
-              <img src={`${avatarsUrl}${user.avatar}`} alt="Profile" />
+              <img
+                src={user.avatar ? `${avatarsUrl}${user.avatar}` : ProfilePhoto}
+                alt="Profile"
+              />
               <div className="profile-label">
                 <strong>
                   {user.name} {user.surname}
                 </strong>
-                <span>{user.role}</span>
+                <span>{user.role ? user.role.replace(/_/g, " ") : ""}</span>
               </div>
             </div>
-
-            <div className="form-fields">
-              <label>
-                First Name
-                <input
-                  name="name"
-                  value={user.name}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
-              <label>
-                Last Name
-                <input
-                  name="surname"
-                  value={user.surname}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
-              <label>
-                Date of Birth
-                <input
-                  type="date"
-                  name="birthdate"
-                  value={user.birthdate}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
-              <label>
-                Role
-                {editMode ? (
-                  <div className="select-wrapper">
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select role</option>
-                      {roleOptions.map((role) => (
-                        <option key={role} value={role}>
-                          {role.replace(/_/g, " ")}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="select-arrow">
-                      {/* Seta SVG */}
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                      >
-                        <path
-                          d="M6 8l4 4 4-4"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                ) : (
-                  <input
-                    name="role"
-                    value={user.role ? user.role.replace(/_/g, " ") : ""}
-                    disabled
-                  />
-                )}
-              </label>
-              <label>
-                Workplace
-                {editMode ? (
-                  <div className="select-wrapper">
-                    <select
-                      name="office"
-                      value={formData.office}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select office</option>
-                      {officeOptions.map((office) => (
-                        <option key={office} value={office}>
-                          {office.replace(/_/g, " ")}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="select-arrow">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                      >
-                        <path
-                          d="M6 8l4 4 4-4"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                ) : (
-                  <input
-                    name="office"
-                    value={user.office ? user.office.replace(/_/g, " ") : ""}
-                    disabled
-                  />
-                )}
-              </label>
-              <div className="address-container">
+            <form className="profile-form" onSubmit={handleSubmit(onSubmit)}>
+              <div className="form-fields">
                 <label>
-                  Address
+                  First Name
                   <input
-                    name="address"
-                    value={[user.street, user.postalCode, user.municipality]
-                      .filter(Boolean)
-                      .join(", ")}
-                    disabled
+                    className="profile-input"
+                    {...register("name", {
+                      required: "First name is required",
+                    })}
+                    disabled={!editMode}
+                  />
+                  {errors.name && (
+                    <span className="error-message">{errors.name.message}</span>
+                  )}
+                </label>
+                <label>
+                  Last Name
+                  <input
+                    className="profile-input"
+                    {...register("surname", {
+                      required: "Last name is required",
+                    })}
+                    disabled={!editMode}
+                  />
+                  {errors.surname && (
+                    <span className="error-message">
+                      {errors.surname.message}
+                    </span>
+                  )}
+                </label>
+                <label>
+                  Date of Birth
+                  <input
+                    type="date"
+                    className="profile-input"
+                    {...register("birthdate", {
+                      required: "Birthdate is required",
+                    })}
+                    disabled={!editMode}
+                  />
+                  {errors.birthdate && (
+                    <span className="error-message">
+                      {errors.birthdate.message}
+                    </span>
+                  )}
+                </label>
+                <label>
+                  Role
+                  {editMode ? (
+                    <div className="select-wrapper">
+                      <select
+                        className="profile-input"
+                        {...register("role", { required: "Role is required" })}
+                      >
+                        <option value="">Select role</option>
+                        {roleOptions.map((role) => (
+                          <option key={role} value={role}>
+                            {role.replace(/_/g, " ")}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="select-arrow">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 8l4 4 4-4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  ) : (
+                    <input
+                      className="profile-input"
+                      value={user.role ? user.role.replace(/_/g, " ") : ""}
+                      disabled
+                    />
+                  )}
+                </label>
+                <label>
+                  Workplace
+                  {editMode ? (
+                    <div className="select-wrapper">
+                      <select
+                        className="profile-input"
+                        {...register("office", {
+                          required: "Office is required",
+                        })}
+                      >
+                        <option value="">Select office</option>
+                        {officeOptions.map((office) => (
+                          <option key={office} value={office}>
+                            {office.replace(/_/g, " ")}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="select-arrow">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 8l4 4 4-4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  ) : (
+                    <input
+                      className="profile-input"
+                      value={user.office ? user.office.replace(/_/g, " ") : ""}
+                      disabled
+                    />
+                  )}
+                </label>
+                <div className="address-container">
+                  <label>
+                    Address
+                    <input
+                      className="profile-input"
+                      value={[user.street, user.postalCode, user.municipality]
+                        .filter(Boolean)
+                        .join(", ")}
+                      disabled
+                    />
+                  </label>
+                  {editMode && (
+                    <div
+                      className={`address-edit-fields${
+                        showAddressFields ? " slide-in" : ""
+                      }`}
+                    >
+                      <label>
+                        Street
+                        <input
+                          className="profile-input"
+                          {...register("street", {
+                            required: "Street is required",
+                          })}
+                        />
+                        {errors.street && (
+                          <span className="error-message">
+                            {errors.street.message}
+                          </span>
+                        )}
+                      </label>
+                      <label>
+                        Postal Code
+                        <input
+                          className="profile-input"
+                          {...register("postalCode", {
+                            required: "Postal code is required",
+                          })}
+                        />
+                        {errors.postalCode && (
+                          <span className="error-message">
+                            {errors.postalCode.message}
+                          </span>
+                        )}
+                      </label>
+                      <label>
+                        Municipality
+                        <input
+                          className="profile-input"
+                          {...register("municipality", {
+                            required: "Municipality is required",
+                          })}
+                        />
+                        {errors.municipality && (
+                          <span className="error-message">
+                            {errors.municipality.message}
+                          </span>
+                        )}
+                      </label>
+                    </div>
+                  )}
+                </div>
+                <label>
+                  Biography
+                  <textarea
+                    className="profile-input"
+                    {...register("biography")}
+                    disabled={!editMode}
                   />
                 </label>
-
-                {editMode && (
-                  <div
-                    className={`address-edit-fields${
-                      showAddressFields ? " slide-in" : ""
-                    }`}
-                  >
-                    <label>
-                      Street
-                      <input
-                        name="street"
-                        value={formData.street || ""}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Postal Code
-                      <input
-                        name="postalCode"
-                        value={formData.postalCode || ""}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Municipality
-                      <input
-                        name="municipality"
-                        value={formData.municipality || ""}
-                        onChange={handleChange}
-                      />
-                    </label>
-                  </div>
-                )}
               </div>
-              <label>
-                Biography
-                <textarea
-                  name="biography"
-                  value={user.biography}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
-            </div>
-
+            </form>
             <div className="manager-card">
-              <img src={user.manager.avatar} alt="Manager" />
+              <img src={user.manager?.avatar || ManagerPhoto} alt="Manager" />
               <div className="profile-label small">
                 <strong>
-                  {user.manager.name} {user.manager.surname}
+                  {user.manager?.name} {user.manager?.surname}
                 </strong>
-                <span>{user.manager.role}</span>
+                <span>{user.manager?.role}</span>
               </div>
             </div>
           </div>
         </div>
       )}
-
       <ToastContainer />
     </div>
   );

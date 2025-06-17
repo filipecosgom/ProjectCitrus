@@ -39,10 +39,10 @@
 }
 
 .profile-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr 120px;
   gap: 30px;
   align-items: flex-start;
-  flex-wrap: wrap;
 }
 
 .profile-card,
@@ -73,11 +73,19 @@
   font-size: 0.8em;
 }
 
+.profile-card {
+  grid-column: 1 / 2;
+}
+
+.profile-form {
+  grid-column: 2 / 4;
+  width: 100%;
+}
+
 .form-fields {
-  flex-grow: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
 }
 
 label {
