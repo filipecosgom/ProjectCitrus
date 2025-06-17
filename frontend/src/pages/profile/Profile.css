@@ -115,3 +115,18 @@ textarea {
   width: 100%;
   box-sizing: border-box;
 }
+
+select {
+  padding: 6px;
+  font-size: 1em;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}

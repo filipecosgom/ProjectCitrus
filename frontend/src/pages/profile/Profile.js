@@ -11,13 +11,14 @@ import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import handleNotification from "../../handles/handleNotification";
 import { set } from "react-hook-form";
 import { avatarsUrl } from "../../config";
+import axios from "axios";
 
 const mockUser = {
   name: "Teresa",
   surname: "Matos",
   birthdate: "1990-01-01",
-  role: "Developer",
-  office: "Lisbon Office",
+  role: "SOFTWARE_ENGINEER", // <-- valor igual ao enum do backend
+  office: "LISBON_OFFICE", // <-- valor igual ao enum do backend
   street: "Rua das Flores, 123",
   municipality: "Coimbra",
   postalCode: "3000-123",
@@ -38,19 +39,23 @@ export default function Profile() {
   const [formData, setFormData] = useState(user);
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(true);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [officeOptions, setOfficeOptions] = useState([]);
   const navigate = useNavigate();
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Mock save
-      //setUser(formData);
+      // Simula envio para backend
+      console.log("Dados enviados para atualização:", formData);
       toast.success("Perfil atualizado com sucesso!");
+      setUser(formData);
     }
     setEditMode(!editMode);
   };
@@ -65,41 +70,47 @@ export default function Profile() {
   );
 
   useEffect(() => {
-  const fetchUserInformation = async () => {
-    try {
-      const userInfo = await handleGetUserInformation(userId);
-      if (userInfo) {
-        console.log("User Information:", userInfo);
-        setUser(userInfo);
-      } else {
-        console.log("No user information found.");
+    const fetchUserInformation = async () => {
+      try {
+        const userInfo = await handleGetUserInformation(userId);
+        if (userInfo) {
+          console.log("User Information:", userInfo);
+          setUser(userInfo);
+        } else {
+          console.log("No user information found.");
+        }
+      } catch (error) {
+        navigate("/");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      navigate("/");
-    } finally {
-      setLoading(false);
+    };
+    fetchUserInformation();
+  }, [userId]);
+
+  useEffect(() => {
+    if (user) {
+      console.log("User data loaded:", user);
+      setFormData(user);
     }
-  };
-  fetchUserInformation();
-}, [userId]);
+  }, [user]);
 
-useEffect(() => {
-  if (user) {
-    console.log("User data loaded:", user);
-    setFormData(user);
-  }
-}, [user]);
+  useEffect(() => {
+    if (formData) {
+      console.log("Form data updated:", formData);
+    }
+  }, [formData]);
 
-useEffect(() => {
-  if(formData) {
-    console.log("Form data updated:", formData);
-  }
-}, [formData]);
+  useEffect(() => {
+    axios
+      .get("https://localhost:8443/projectcitrus/rest/enums/roles")
+      .then((res) => setRoleOptions(res.data));
+    axios
+      .get("https://localhost:8443/projectcitrus/rest/enums/offices")
+      .then((res) => setOfficeOptions(res.data));
+  }, []);
 
-
-
-
-   if (loading) return <Spinner />;
+  if (loading) return <Spinner />;
 
   return (
     <div className="user-profile">
@@ -156,26 +167,50 @@ useEffect(() => {
                 />
               </label>
               <label>
-                {" "}
-                {/*Tem de ser Dropdown*/}
                 Role
-                <input
-                  name="role"
-                  value={user.role}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
+                {editMode ? (
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select role</option>
+                    {roleOptions.map((role) => (
+                      <option key={role} value={role}>
+                        {role.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name="role"
+                    value={user.role ? user.role.replace(/_/g, " ") : ""}
+                    disabled
+                  />
+                )}
               </label>
               <label>
-                {" "}
-                {/*Tem de ser Dropdown*/}
                 Workplace
-                <input
-                  name="workplace"
-                  value={user.office}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
+                {editMode ? (
+                  <select
+                    name="office"
+                    value={formData.office}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select office</option>
+                    {officeOptions.map((office) => (
+                      <option key={office} value={office}>
+                        {office.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name="office"
+                    value={user.office ? user.office.replace(/_/g, " ") : ""}
+                    disabled
+                  />
+                )}
               </label>
               <label>
                 Address {/*Tem de se dividir em 3 campos*/}
