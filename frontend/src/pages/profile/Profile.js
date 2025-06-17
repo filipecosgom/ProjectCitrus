@@ -42,6 +42,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
   const [officeOptions, setOfficeOptions] = useState([]);
+  const [showAddressFields, setShowAddressFields] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -53,10 +54,16 @@ export default function Profile() {
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Simula envio para backend
-      console.log("Dados enviados para atualização:", formData);
-      toast.success("Perfil atualizado com sucesso!");
-      setUser(formData);
+      // Atualiza o user e oculta os campos extra
+      setUser({
+        ...formData,
+        address: [formData.street, formData.postalCode, formData.municipality]
+          .filter(Boolean)
+          .join(", "),
+      });
+      setShowAddressFields(false);
+    } else {
+      setShowAddressFields(true);
     }
     setEditMode(!editMode);
   };
@@ -250,21 +257,51 @@ export default function Profile() {
                   />
                 )}
               </label>
-              <label>
-                Address {/*Tem de se dividir em 3 campos*/}
-                <input
-                  name="address"
-                  value={
-                    user.street +
-                    ", " +
-                    user.municipality +
-                    ", " +
-                    user.postalCode
-                  }
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
+              <div className="address-container">
+                <label>
+                  Address
+                  <input
+                    name="address"
+                    value={[user.street, user.postalCode, user.municipality]
+                      .filter(Boolean)
+                      .join(", ")}
+                    disabled
+                  />
+                </label>
+
+                {editMode && (
+                  <div
+                    className={`address-edit-fields${
+                      showAddressFields ? " slide-in" : ""
+                    }`}
+                  >
+                    <label>
+                      Street
+                      <input
+                        name="street"
+                        value={formData.street || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                    <label>
+                      Postal Code
+                      <input
+                        name="postalCode"
+                        value={formData.postalCode || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                    <label>
+                      Municipality
+                      <input
+                        name="municipality"
+                        value={formData.municipality || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
               <label>
                 Biography
                 <textarea

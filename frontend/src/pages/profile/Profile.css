@@ -156,3 +156,31 @@ select {
 .select-wrapper select:hover + .select-arrow {
   color: #d66;
 }
+
+.address-container {
+  position: relative;
+  width: 100%;
+}
+
+.address-edit-fields {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 18px 16px 16px 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.address-edit-fields.slide-in {
+  opacity: 1;
+  pointer-events: auto;
+}
