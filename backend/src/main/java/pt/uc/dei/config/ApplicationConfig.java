@@ -2,6 +2,8 @@ package pt.uc.dei.config;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
+import java.util.Set;
+
 /**
  * Configuration class for the JAX-RS application.
  * Defines the base URI path for RESTful web services.
@@ -14,4 +16,5 @@ public class ApplicationConfig extends Application {
      * Used to reference frontend resources or for cross-origin requests.
      */
     public static final String FRONTEND_URL = "http://localhost:3000";
+
 }

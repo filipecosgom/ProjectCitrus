@@ -31,4 +31,10 @@ public class EnumController {
             .collect(Collectors.toList());
         return Response.ok(offices).build();
     }
+
+    @GET
+    @Path("/test")
+    public String test() {
+        return "ok";
+    }
 }

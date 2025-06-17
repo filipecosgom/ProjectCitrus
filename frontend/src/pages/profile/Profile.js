@@ -11,13 +11,16 @@ import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import handleNotification from "../../handles/handleNotification";
 import { set } from "react-hook-form";
 import { avatarsUrl } from "../../config";
+import axios from "axios";
+import { apiBaseUrl } from "../../config";
+import { handleUpdateUser } from "../../handles/handleUpdateUser";
 
 const mockUser = {
   name: "Teresa",
   surname: "Matos",
   birthdate: "1990-01-01",
-  role: "Developer",
-  office: "Lisbon Office",
+  role: "SOFTWARE_ENGINEER", // <-- valor igual ao enum do backend
+  office: "LISBON_OFFICE", // <-- valor igual ao enum do backend
   street: "Rua das Flores, 123",
   municipality: "Coimbra",
   postalCode: "3000-123",
@@ -38,19 +41,40 @@ export default function Profile() {
   const [formData, setFormData] = useState(user);
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(true);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [officeOptions, setOfficeOptions] = useState([]);
+  const [showAddressFields, setShowAddressFields] = useState(false);
   const navigate = useNavigate();
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Mock save
-      //setUser(formData);
-      toast.success("Perfil atualizado com sucesso!");
+      // Prepara os dados para enviar (garante que todos os campos obrigatórios estão presentes)
+      const updatedData = {
+        ...formData,
+        name: formData.name || "", // não uses firstName
+        surname: formData.surname || "", // não uses lastName
+        birthdate: formData.birthdate || "",
+        street: formData.street || "",
+        postalCode: formData.postalCode || "",
+        municipality: formData.municipality || "",
+        role: formData.role,
+        office: formData.office,
+        biography: formData.biography || "",
+        // Adiciona outros campos obrigatórios conforme necessário
+      };
+      handleUpdateUser(userId, updatedData, (data) => {
+        setUser(updatedData);
+        setShowAddressFields(false);
+      });
+    } else {
+      setShowAddressFields(true);
     }
     setEditMode(!editMode);
   };
@@ -65,41 +89,47 @@ export default function Profile() {
   );
 
   useEffect(() => {
-  const fetchUserInformation = async () => {
-    try {
-      const userInfo = await handleGetUserInformation(userId);
-      if (userInfo) {
-        console.log("User Information:", userInfo);
-        setUser(userInfo);
-      } else {
-        console.log("No user information found.");
+    const fetchUserInformation = async () => {
+      try {
+        const userInfo = await handleGetUserInformation(userId);
+        if (userInfo) {
+          console.log("User Information:", userInfo);
+          setUser(userInfo);
+        } else {
+          console.log("No user information found.");
+        }
+      } catch (error) {
+        navigate("/");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      navigate("/");
-    } finally {
-      setLoading(false);
+    };
+    fetchUserInformation();
+  }, [userId]);
+
+  useEffect(() => {
+    if (user) {
+      console.log("User data loaded:", user);
+      setFormData(user);
     }
-  };
-  fetchUserInformation();
-}, [userId]);
+  }, [user]);
 
-useEffect(() => {
-  if (user) {
-    console.log("User data loaded:", user);
-    setFormData(user);
-  }
-}, [user]);
+  useEffect(() => {
+    if (formData) {
+      console.log("Form data updated:", formData);
+    }
+  }, [formData]);
 
-useEffect(() => {
-  if(formData) {
-    console.log("Form data updated:", formData);
-  }
-}, [formData]);
+  useEffect(() => {
+    axios
+      .get(`${apiBaseUrl}/enums/roles`)
+      .then((res) => setRoleOptions(res.data));
+    axios
+      .get(`${apiBaseUrl}/enums/offices`)
+      .then((res) => setOfficeOptions(res.data));
+  }, []);
 
-
-
-
-   if (loading) return <Spinner />;
+  if (loading) return <Spinner />;
 
   return (
     <div className="user-profile">
@@ -130,7 +160,7 @@ useEffect(() => {
               <label>
                 First Name
                 <input
-                  name="firstName"
+                  name="name"
                   value={user.name}
                   onChange={handleChange}
                   disabled={!editMode}
@@ -139,7 +169,7 @@ useEffect(() => {
               <label>
                 Last Name
                 <input
-                  name="lastName"
+                  name="surname"
                   value={user.surname}
                   onChange={handleChange}
                   disabled={!editMode}
@@ -149,49 +179,140 @@ useEffect(() => {
                 Date of Birth
                 <input
                   type="date"
-                  name="dob"
+                  name="birthdate"
                   value={user.birthdate}
                   onChange={handleChange}
                   disabled={!editMode}
                 />
               </label>
               <label>
-                {" "}
-                {/*Tem de ser Dropdown*/}
                 Role
-                <input
-                  name="role"
-                  value={user.role}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
+                {editMode ? (
+                  <div className="select-wrapper">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select role</option>
+                      {roleOptions.map((role) => (
+                        <option key={role} value={role}>
+                          {role.replace(/_/g, " ")}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="select-arrow">
+                      {/* Seta SVG */}
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M6 8l4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                ) : (
+                  <input
+                    name="role"
+                    value={user.role ? user.role.replace(/_/g, " ") : ""}
+                    disabled
+                  />
+                )}
               </label>
               <label>
-                {" "}
-                {/*Tem de ser Dropdown*/}
                 Workplace
-                <input
-                  name="workplace"
-                  value={user.office}
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
+                {editMode ? (
+                  <div className="select-wrapper">
+                    <select
+                      name="office"
+                      value={formData.office}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select office</option>
+                      {officeOptions.map((office) => (
+                        <option key={office} value={office}>
+                          {office.replace(/_/g, " ")}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="select-arrow">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M6 8l4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                ) : (
+                  <input
+                    name="office"
+                    value={user.office ? user.office.replace(/_/g, " ") : ""}
+                    disabled
+                  />
+                )}
               </label>
-              <label>
-                Address {/*Tem de se dividir em 3 campos*/}
-                <input
-                  name="address"
-                  value={
-                    user.street +
-                    ", " +
-                    user.municipality +
-                    ", " +
-                    user.postalCode
-                  }
-                  onChange={handleChange}
-                  disabled={!editMode}
-                />
-              </label>
+              <div className="address-container">
+                <label>
+                  Address
+                  <input
+                    name="address"
+                    value={[user.street, user.postalCode, user.municipality]
+                      .filter(Boolean)
+                      .join(", ")}
+                    disabled
+                  />
+                </label>
+
+                {editMode && (
+                  <div
+                    className={`address-edit-fields${
+                      showAddressFields ? " slide-in" : ""
+                    }`}
+                  >
+                    <label>
+                      Street
+                      <input
+                        name="street"
+                        value={formData.street || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                    <label>
+                      Postal Code
+                      <input
+                        name="postalCode"
+                        value={formData.postalCode || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                    <label>
+                      Municipality
+                      <input
+                        name="municipality"
+                        value={formData.municipality || ""}
+                        onChange={handleChange}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
               <label>
                 Biography
                 <textarea

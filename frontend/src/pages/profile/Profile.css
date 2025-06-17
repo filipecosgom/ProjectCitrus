@@ -115,3 +115,72 @@ textarea {
   width: 100%;
   box-sizing: border-box;
 }
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+select {
+  padding: 6px 32px 6px 10px; /* espaço à direita para a seta */
+  font-size: 1em;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  pointer-events: none;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #a44;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+}
+
+/* Opcional: seta mais subtil ao passar o rato */
+.select-wrapper select:focus + .select-arrow,
+.select-wrapper select:hover + .select-arrow {
+  color: #d66;
+}
+
+.address-container {
+  position: relative;
+  width: 100%;
+}
+
+.address-edit-fields {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 18px 16px 16px 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.address-edit-fields.slide-in {
+  opacity: 1;
+  pointer-events: auto;
+}
