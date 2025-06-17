@@ -4,16 +4,28 @@ import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
 import handleNotification from "../../handles/handleNotification";
+import handleRequestPasswordReset from "../../handles/handleRequestPasswordReset";
+import useLocaleStore from "../../stores/useLocaleStore";
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ onClose }) {
   const [email, setEmail] = useState("");
-  const { register, handleSubmit, watch, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   //Internacionalização
   const intl = useIntl();
+  const lang = useLocaleStore((state) => state.locale);
 
-  const handleResetPassword = (e) => {
-    e.preventDefault();
+  const resetPassword = async(email) => {
+    console.log("Email for password reset:", email);
+    console.log("Locale for password reset:", lang);
+    await handleRequestPasswordReset(email, lang);
+    reset();
+    onClose(); // Fecha o modal após o reset
     // Aqui podes adicionar lógica para reset de password
   };
 
@@ -33,23 +45,34 @@ export default function ForgotPassword() {
         <div className="forgot-subtitle">
           {intl.formatMessage({ id: "forgotPasswordSubtitle" })}
         </div>
+
         <form
           className="forgot-form"
-          onSubmit={handleSubmit(handleResetPassword, onError)}
+          onSubmit={handleSubmit(resetPassword, onError)}
         >
           <div className="forgot-fields">
             <div className="forgot-field">
               <label className="forgot-label" htmlFor="forgot-email">
                 {intl.formatMessage({ id: "forgotPasswordFieldEmail" })}
               </label>
+              <span className="error-message">
+                {errors.email ? errors.email.message : "\u00A0"}
+              </span>
               <input
                 id="forgot-email"
                 type="email"
                 className="forgot-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
-                required
+                {...register("email", {
+                  required: intl.formatMessage({
+                    id: "forgotPasswordEmailMissing",
+                  }),
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: intl.formatMessage({
+                      id: "forgotPasswordEmailInvalid",
+                    }),
+                  },
+                })}
               />
             </div>
           </div>

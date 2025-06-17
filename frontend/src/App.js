@@ -22,6 +22,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
 import Profile from "./pages/profile/Profile";
+import PasswordReset from "./pages/passwordReset/PasswordReset";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
@@ -113,7 +114,6 @@ function AppRoutes() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/password-reset" element={<ForgotPassword />} />
         <Route
           path="/profile"
           element={
@@ -128,6 +128,7 @@ function AppRoutes() {
         />
         <Route path="/account-activation" element={<AccountActivation />} />
         <Route path="/activate" element={<ActivatedAccount />} />
+        <Route path="/password-reset" element={<PasswordReset />} />
         <Route
           path="/menu"
           element={<Menu language={locale} setLanguage={setLocale} />}

@@ -18,7 +18,7 @@ export default function OffcanvasForgotPassword({ show, onClose }) {
         >
           &times;
         </button>
-        <ForgotPassword />
+        <ForgotPassword onClose={onClose}/>
       </div>
     </>
   );

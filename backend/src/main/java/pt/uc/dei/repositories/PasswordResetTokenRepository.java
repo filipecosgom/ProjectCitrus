@@ -40,4 +40,22 @@ public class PasswordResetTokenRepository extends AbstractRepository<PasswordRes
         }
     }
 
+    public PasswordResetTokenEntity getTokenFromValue(String passwordResetTokenValue) {
+        try {
+            return em.createNamedQuery("ActivationToken.findActivationTokenByValue", PasswordResetTokenEntity.class)
+                    .setParameter("tokenValue", passwordResetTokenValue)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            LOGGER.warn("No token found for token: {}", passwordResetTokenValue);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error retrieving token for token: {}", passwordResetTokenValue, e);
+            return null;
+        }
+    }
+
+
+
+
+
 }

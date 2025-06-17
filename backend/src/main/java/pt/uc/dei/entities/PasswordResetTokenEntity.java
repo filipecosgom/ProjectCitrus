@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
         @NamedQuery(
                 name = "PasswordResetToken.findPasswordResetTokensOfUser",
                 query = "SELECT t FROM PasswordResetTokenEntity t WHERE t.user.id = :id"
+        ),
+        @NamedQuery(
+                name = "PasswordResetToken.findPasswordResetTokenByValue",
+                query = "SELECT t FROM PasswordResetTokenEntity t WHERE t.tokenValue = :tokenValue"
         )
 })
 @Entity

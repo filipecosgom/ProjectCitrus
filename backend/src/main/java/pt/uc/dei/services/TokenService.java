@@ -168,6 +168,11 @@ public class TokenService {
         return activationTokenEntityToActivationTokenDTO(activationToken);
     }
 
+    public PasswordResetTokenDTO getPasswordResetTokenByValue(PasswordResetTokenDTO passwordResetTokenDTO) {
+        PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.getTokenFromValue(passwordResetTokenDTO.getTokenValue());
+        return passwordResetTokenEntityToPasswordResetTokenDTO(passwordResetToken);
+    }
+
 
 
     /**

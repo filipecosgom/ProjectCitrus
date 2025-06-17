@@ -65,6 +65,9 @@ const en = {
   forgotPasswordSubtitle: "Write your email address",
   forgotPasswordFieldEmail: "E-mail address",
   forgotPasswordSubmit: "Reset my password",
+  forgotPasswordEmailSent: "A password reset email has been sent to your inbox.",
+  forgotPasswordEmailMissing: "Email is required",
+  forgotPasswordEmailInvalid: "Invalid email format",
 
   //Two-Factor Authentication
   twoFactorTitle: "Setting Up 2FA",
@@ -82,6 +85,24 @@ const en = {
   twoFactorRequest: "Request Code",
   twofactorErrorEmailMissing: "Email is required",
   twofactorErrorEmailInvalid: "Invalid email format",
+
+  //Password Reset Page
+  passwordResetLogo: "CITRUS",
+  passwordResetTitle: "Reset Your Password",
+  passwordResetSubtitle: "Enter your new password",
+  passwordResetFieldPassword: "New Password",
+  passwordResetFieldConfirmPassword: "Confirm New Password",
+  passwordResetShowPassword: "Show password",
+  passwordResetHidePassword: "Hide password",
+  passwordResetSubmit: "Reset Password",
+  passwordResetErrorPasswordMissing: "Password is required",
+  passwordResetErrorConfirmPasswordMissing: "Password confirmation is required",
+  passwordResetErrorPasswordMismatch: "Passwords do not match",
+  passwordResetErrorPasswordWeak:
+    "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
+  passwordResetSuccess: "Password reset successfully. You can now log in.",
+  passwordResetError: "Error resetting password. Please try again later.",
+
 
 
   //ERRORS

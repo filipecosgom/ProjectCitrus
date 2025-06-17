@@ -28,6 +28,13 @@ public class PasswordResetTokenDTO {
      */
     private UserDTO user;
 
+    public PasswordResetTokenDTO() {
+    }
+
+    public PasswordResetTokenDTO(String tokenValue) {
+        this.tokenValue = tokenValue;
+    }
+
     // Getters and Setters
 
     public Long getId() {
