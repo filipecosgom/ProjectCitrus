@@ -75,13 +75,13 @@ public class EmailService {
             switch (language) {
                 case "en": {
                     message.setSubject("CITRUS - Activate Your Account");
-                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink, (configurationDTO.getPasswordResetTime()/60), secretKey);
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink, (configurationDTO.getVerificationTime()/60), secretKey);
                     message.setContent(messageBody, "text/html");
 
                 }
                 case "pt": {
                     message.setSubject("CITRUS - Ative a sua conta");
-                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink, (configurationDTO.getPasswordResetTime()/60), secretKey);
+                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink, (configurationDTO.getVerificationTime()/60), secretKey);
                     message.setContent(messageBody, "text/html");
                 }
             }
@@ -94,7 +94,7 @@ public class EmailService {
     }
 
 
-    public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken) {
+    public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken, String language) {
         try {
             // Retrieve SMTP properties for configuring email session
             Properties properties = EmailConfig.getSMTPProperties();
@@ -110,19 +110,29 @@ public class EmailService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("CITRUS - Reset your password");
 
-            String resetLink = "https://localhost:3000/password-reset?" + passwordResetToken;
+            String resetLink = "https://localhost:3000/password-reset?token=" + passwordResetToken + "&lang=" + language;
             ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();
-            String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE(resetLink, (configurationDTO.getPasswordResetTime()/60));
-            message.setContent(messageBody, "text/html");
+            switch (language) {
+                case "en": {
+                    message.setSubject("CITRUS - Reset your password");
+                    String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_EN(resetLink, (configurationDTO.getPasswordResetTime()/60));
+                    message.setContent(messageBody, "text/html");
+
+                }
+                case "pt": {
+                    message.setSubject("CITRUS - recupere a sua password");
+                    String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_PT(resetLink, (configurationDTO.getPasswordResetTime()/60));
+                    message.setContent(messageBody, "text/html");
+                }
+            }
 
             // Send the email
             Transport.send(message);
-            LOGGER.info("Sending activation token: {} to: " + recipientEmail, passwordResetToken);
+            LOGGER.info("Sending password reset {} to: " + recipientEmail, passwordResetToken);
         } catch (MessagingException e) {
             e.printStackTrace();
-            LOGGER.error("Failed to send activation email to {}: {}", recipientEmail, e.getMessage());
+            LOGGER.error("Failed to send password reset email to {}: {}", recipientEmail, e.getMessage());
         }
     }
 }

@@ -128,6 +128,8 @@ public class UserService implements Serializable {
         return codes;
     }
 
+
+
     public UserDTO getUser(Long id) {
         UserEntity user = userRepository.findUserById(id);
         UserDTO userDTO = userMapper.toDto(user);

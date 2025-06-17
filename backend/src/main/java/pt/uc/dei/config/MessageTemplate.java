@@ -178,7 +178,7 @@ public class MessageTemplate {
      * The email template for account activation.
      * Contains a link that allows users to activate their account.
      */
-    public static final String PASSWORD_RESET_TEMPLATE(String resetLink, Integer expirationTime) {
+    public static final String PASSWORD_RESET_TEMPLATE_EN(String resetLink, Integer expirationTime) {
         return """
                 <!DOCTYPE html>
                 <html lang="en">
@@ -237,6 +237,72 @@ public class MessageTemplate {
                       <p>Kind regards,<br />The CITRUS Team</p>
                       <div class="footer">
                         ©CITRUS. All rights reserved.
+                      </div>
+                    </div>
+                  </body>
+                </html>
+                """.formatted(resetLink, expirationTime);
+    }
+
+    public static final String PASSWORD_RESET_TEMPLATE_PT(String resetLink, Integer expirationTime) {
+        return """
+                <!DOCTYPE html>
+                <html lang="pt">
+                  <head>
+                    <meta charset="UTF-8" />
+                    <title>Solicitação de Redefinição de Senha</title>
+                    <style>
+                      body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        padding: 20px;
+                        margin: 0;
+                      }
+                      .email-container {
+                        max-width: 600px;
+                        background-color: #ffffff;
+                        margin: auto;
+                        padding: 30px;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+                      }
+                      .button {
+                        display: inline-block;
+                        padding: 12px 24px;
+                        margin: 20px 0;
+                        color: #ffffff;
+                        background-color: #9c2f31;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-weight: bold;
+                      }
+                      .footer {
+                        font-size: 12px;
+                        color: #777777;
+                        margin-top: 30px;
+                        text-align: center;
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="email-container">
+                      <h2>Solicitação de Redefinição de Senha</h2>
+                      <p>Olá,</p>
+                      <p>
+                        Recebemos uma solicitação para redefinir a senha associada à sua conta.  
+                        Se você iniciou esta solicitação, clique no botão abaixo para continuar:
+                      </p>
+                      <p style="text-align: center;">
+                        <a href="%s" class="button" style="color: #ffffff !important; text-decoration: none;">Redefinir sua senha</a>
+                      </p>
+                      <p>Este link será válido por %d horas.</p>
+                      <p>
+                        Se você não solicitou a redefinição de senha, ignore este e-mail.  
+                        Sua conta continuará segura.
+                      </p>
+                      <p>Atenciosamente,<br />Equipe CITRUS</p>
+                      <div class="footer">
+                        ©CITRUS. Todos os direitos reservados.
                       </div>
                     </div>
                   </body>

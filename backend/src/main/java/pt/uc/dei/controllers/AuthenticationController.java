@@ -127,7 +127,7 @@ public class AuthenticationController {
                         .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
                         .build();
             }
-            emailService.sendPasswordResetEmail(email, token);
+            emailService.sendPasswordResetEmail(email, token, language);
 
             return Response.status(Response.Status.CREATED)
                     .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
@@ -141,46 +141,75 @@ public class AuthenticationController {
         }
     }
 
-    /*
-    @PATCH
+    @GET
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
-    public Response updatePassword(@HeaderParam("token") String passwordResetToken, String newPassword) {
-        if(newPassword == null || newPassword.isEmpty()) {
-            LOGGER.error("Password update failed due to missing password");
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Invalid request: missing password", "errorMissingPassword", null))
-                    .build();
-        }
-        if(passwordResetToken == null || passwordResetToken.isEmpty()) {
+    public Response checkPasswordReset(@HeaderParam("token") String passwordResetTokenValue) {
+        if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {
             LOGGER.error("Password update failed due to missing token");
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
                     .build();
         }
-        try {
-            String token = tokenService.createNewPasswordResetToken(email);
+        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);
+        PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);
 
-            if (token == null) {
-                LOGGER.error("Invalid reset token request for {}", email);
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidResetToken", null))
-                        .build();
-            }
-            emailService.sendPasswordResetEmail(email, token);
-
-            return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
-                    .build();
-
-        } catch (Exception e) {
-            LOGGER.error("Password reset error for {}: {}", email, e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ApiResponse(false, "Password reset failed", "errorServerIssue", null))
+        if(tokenService.isTokenExpired(passwordResetToken)){
+            LOGGER.error("Password reset attempt with token {} expired", passwordResetTokenDTO.getTokenValue());
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid request: expired password reset token", "errorExpiredPasswordResetToken", null))
                     .build();
         }
-    }*/
+        else {
+            LOGGER.info("Password reset token {} valid", passwordResetTokenDTO.getTokenValue());
+            return Response.status(Response.Status.OK)
+                    .entity(new ApiResponse(true, "Valid password reset token", "successPasswordResetToken", null))
+                    .build();
+        }
+    }
+
+
+    @PATCH
+    @Path("/password-reset")
+    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    public Response updatePassword(@HeaderParam("token") String passwordResetTokenValue, JsonObject newPasswordJSON) {
+        String newPassword = newPasswordJSON.getString("password");
+        if (newPassword == null || newPassword.isEmpty()) {
+            LOGGER.error("Password update failed due to missing password");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password", "errorMissingPassword", null))
+                    .build();
+        }
+        if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {
+            LOGGER.error("Password update failed due to missing token");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
+                    .build();
+        }
+        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);
+        PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);
+
+        if(tokenService.isTokenExpired(passwordResetToken)){
+            LOGGER.error("Password reset attempt with token {} expired", passwordResetTokenDTO.getTokenValue());
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid request: expired password reset token", "errorExpiredPasswordResetToken", null))
+                    .build();
+        }
+        if (authenticationService.setNewPassword(passwordResetTokenDTO, newPassword)) {
+            LOGGER.info("Password reset successfully");
+            return Response.status(Response.Status.OK)
+                    .entity(new ApiResponse(true, "Password reset sucessfully", "successPasswordResetSuccess", null))
+                    .build();
+        }
+        else {
+            LOGGER.error("Password reset failed");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Password reset failed", "errorPasswordResetFailed", null))
+                    .build();
+        }
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload

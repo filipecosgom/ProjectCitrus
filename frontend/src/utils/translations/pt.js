@@ -65,6 +65,9 @@ const pt = {
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
+  forgotPasswordEmailSent: "Um email de recuperação de password foi enviado o seu email.",
+  forgotPasswordEmailMissing: "O email é necessário",
+  forgotPasswordEmailInvalid: "Formato de email inválido",
 
   //Two-Factor Authentication
   twoFactorTitle: "Configuração da 2FA",
@@ -82,6 +85,24 @@ const pt = {
   twoFactorRequest: "Solicitar código",
   twofactorErrorEmailMissing: "O email é necessário",
   twofactorErrorEmailInvalid: "Formato de email inválido",
+
+  //Password Reset
+  passwordResetLogo: "CITRUS",
+  passwordResetTitle: "Redefinir sua senha",
+  passwordResetSubtitle: "Digite sua nova senha",
+  passwordResetFieldPassword: "Nova senha",
+  passwordResetSubmit: "Redefinir senha",
+  passwordResetFieldConfirmPassword: "Confirmar nova senha",
+  passwordResetShowPassword: "Mostrar senha",
+  passwordResetHidePassword: "Esconder senha",
+  passwordResetErrorPasswordMissing: "A senha é necessária",
+  passwordResetErrorConfirmPasswordMissing: "A confirmação da senha é necessária",
+  passwordResetErrorPasswordMismatch: "As senhas não correspondem",
+  passwordResetErrorPasswordWeak:
+    "A senha deve ter pelo menos 12 caracteres e incluir letras maiúsculas, minúsculas, números e caracteres especiais.",
+  passwordResetSuccess: "Senha redefinida com sucesso. Você pode fazer login agora.",
+  passwordResetError: "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
+
 
   //ERRORS
   protectedRoute: "Tem de iniciar sessão para aceder a esta página",

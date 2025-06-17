@@ -7,16 +7,15 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.dtos.LoginDTO;
-import pt.uc.dei.dtos.RequestAuthCodeDTO;
-import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.dtos.*;
 import pt.uc.dei.entities.ActivationTokenEntity;
+import pt.uc.dei.entities.PasswordResetTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.AccountState;
 import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.repositories.ActivationTokenRepository;
+import pt.uc.dei.repositories.PasswordResetTokenRepository;
 import pt.uc.dei.repositories.TemporaryUserRepository;
 import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.utils.JWTUtil;
@@ -57,6 +56,9 @@ public class AuthenticationService implements Serializable {
      */
     @EJB
     ActivationTokenRepository activationTokenRepository;
+
+    @EJB
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
 
     /**
@@ -142,6 +144,22 @@ public class AuthenticationService implements Serializable {
             return true;
         } catch (Exception e) {
             LOGGER.error("Failed to activate user: {}", userToActivate.getEmail(), e);
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean setNewPassword(PasswordResetTokenDTO passwordResetTokenDTO, String newPassword){
+        try {
+            PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.getTokenFromValue(passwordResetTokenDTO.getTokenValue());
+            UserEntity user = userRepository.findUserById(passwordResetToken.getUser().getId());
+            user.setPassword(PasswordUtils.encrypt(newPassword));
+            userRepository.persist(user);
+            passwordResetTokenRepository.remove(passwordResetToken);
+            return true;
+        }
+        catch (Exception e) {
+            LOGGER.info("Password setting for token {}", passwordResetTokenDTO.getTokenValue());
             return false;
         }
     }
