@@ -13,7 +13,6 @@ import Register from "./pages/register/Register";
 import { IntlProvider } from "react-intl";
 import languages from "./utils/translations";
 import useLocaleStore from "./stores/useLocaleStore";
-import ForgotPassword from "./pages/forgotpassword/ForgotPassword";
 import { ToastContainer } from "react-toastify";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";

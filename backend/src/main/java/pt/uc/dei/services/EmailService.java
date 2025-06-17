@@ -118,12 +118,14 @@ public class EmailService {
                     message.setSubject("CITRUS - Reset your password");
                     String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_EN(resetLink, (configurationDTO.getPasswordResetTime()/60));
                     message.setContent(messageBody, "text/html");
+                    break;
 
                 }
                 case "pt": {
                     message.setSubject("CITRUS - recupere a sua password");
                     String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_PT(resetLink, (configurationDTO.getPasswordResetTime()/60));
                     message.setContent(messageBody, "text/html");
+                    break;
                 }
             }
 

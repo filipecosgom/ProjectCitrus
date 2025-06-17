@@ -42,7 +42,7 @@ public class PasswordResetTokenRepository extends AbstractRepository<PasswordRes
 
     public PasswordResetTokenEntity getTokenFromValue(String passwordResetTokenValue) {
         try {
-            return em.createNamedQuery("ActivationToken.findActivationTokenByValue", PasswordResetTokenEntity.class)
+            return em.createNamedQuery("PasswordResetToken.findPasswordResetTokenByValue", PasswordResetTokenEntity.class)
                     .setParameter("tokenValue", passwordResetTokenValue)
                     .getSingleResult();
         } catch (NoResultException e) {

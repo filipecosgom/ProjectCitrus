@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
@@ -7,7 +7,11 @@ import "./PasswordReset.css";
 import "../../styles/AuthTransition.css";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
-import handleResetPassword from "../../";
+import handleCheckPasswordResetToken from "../../handles/handleCheckPasswordResetToken";
+import handleChangePassword from "../../handles/handleChangePassword";
+import Spinner from "../../components/spinner/spinner";
+import useLocaleStore from "../../stores/useLocaleStore";
+import handleNotification from "../../handles/handleNotification";
 
 export default function PasswordReset() {
   const {
@@ -17,21 +21,55 @@ export default function PasswordReset() {
     reset,
     formState: { errors },
   } = useForm();
-  const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const strongPasswordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
   const navigate = useNavigate();
+  const token = new URLSearchParams(window.location.search).get("token");
+  const lang = new URLSearchParams(window.location.search).get("lang") || "en";
+  const { locale, setLocale } = useLocaleStore();
+  const [loading, setLoading] = useState(true);
   //Internacionalização
   const intl = useIntl();
 
-  const onSubmit = async (newPassword) => {
-    handlePasswordReset(newPassword);
-    console.log(newPassword);
+  useEffect(() => {
+    const checkToken = async () => {
+      console.log("Checking token:", token);
+      console.log("Language:", lang);
+      setLocale(lang);
+      console.log("Locale set to:", locale);
+      try {
+        const response = await handleCheckPasswordResetToken(token);
+        if (!response) {
+          console.error("Invalid or expired token");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error checking token:", error);
+        navigate("/login", { replace: true });
+      }
+    };
+    checkToken();
+    setLoading(false);
+  }, []);
 
-    reset();
+  const onSubmit = async (passwordData) => {
+    console.log(passwordData);
+    const response = await handleChangePassword(token, passwordData.password);
+    if(response) {
+      reset();
+      navigate("/login");
+      handleNotification("success", intl.formatMessage({ id: "passwordResetSuccess" }));
+    }
+    else {
+        handleNotification("error", intl.formatMessage({ id: "passwordResetError" }));
+        reset();
+        navigate("/login");
+    }
   };
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="passwordReset-container">
@@ -65,7 +103,10 @@ export default function PasswordReset() {
           <div className="passwordReset-fields">
             <div className="passwordReset-field">
               <div className="passwordReset-labelAndError">
-                <label className="passwordReset-label" htmlFor="passwordReset-password">
+                <label
+                  className="passwordReset-label"
+                  htmlFor="passwordReset-password"
+                >
                   {intl.formatMessage({ id: "passwordResetFieldPassword" })}
                 </label>
                 <span className="error-message">
@@ -83,12 +124,12 @@ export default function PasswordReset() {
                       id: "passwordResetErrorPasswordMissing",
                     }),
                     pattern: {
-                          value: strongPasswordPattern,
-                          message: intl.formatMessage({
-                            id: "passwordResetErrorPasswordWeak",
-                          }),
-                        },
-                      })}
+                      value: strongPasswordPattern,
+                      message: intl.formatMessage({
+                        id: "passwordResetErrorPasswordWeak",
+                      }),
+                    },
+                  })}
                 />
                 <button
                   type="button"
@@ -105,7 +146,7 @@ export default function PasswordReset() {
               </div>
             </div>
 
-            <div className="password-input-container">
+            <div className="passwordReset-field">
               <div className="passwordReset-labelAndError">
                 <label
                   className="passwordReset-label"
@@ -142,7 +183,7 @@ export default function PasswordReset() {
                 />
                 <button
                   type="button"
-                  className="passwordReset-toggle-btn"
+                  className="password-toggle-btn"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   aria-label={intl.formatMessage({
                     id: showConfirmPassword
@@ -163,7 +204,7 @@ export default function PasswordReset() {
 
         <div className="login-language-dropdown">
           {/* Dropdown de idioma dentro da coluna do formulário */}
-          <LanguageDropdown language={language} setLanguage={setLanguage} />
+          <LanguageDropdown language={locale} setLanguage={setLocale} />
         </div>
       </div>
     </div>

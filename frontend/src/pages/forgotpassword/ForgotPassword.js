@@ -21,12 +21,9 @@ export default function ForgotPassword({ onClose }) {
   const lang = useLocaleStore((state) => state.locale);
 
   const resetPassword = async(email) => {
-    console.log("Email for password reset:", email);
-    console.log("Locale for password reset:", lang);
     await handleRequestPasswordReset(email, lang);
     reset();
-    onClose(); // Fecha o modal após o reset
-    // Aqui podes adicionar lógica para reset de password
+    onClose();
   };
 
   // Apresentação de erros ao utilizador

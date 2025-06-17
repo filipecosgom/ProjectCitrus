@@ -19,6 +19,8 @@ const pt = {
   loginErrorPasswordMissing: "A palavra-passe é necessária",
   loginErrorAuthenticationCodeMissing: "O código de autenticação de dois fatores é necessário",
   loginErrorAuthenticationCodeInvalid: "Código de autenticação de dois fatores inválido",
+  passwordResetRequestFailure: "Falha ao enviar o email de recuperação de palavra-passe. Por favor, tente novamente mais tarde.",
+  passwordResetRequestSuccess: "Um email foi enviado para redefinir a sua palavra-passe.",
 
   // Register
   registerTitle: "Bem-vindo à CITRUS",
@@ -100,7 +102,7 @@ const pt = {
   passwordResetErrorPasswordMismatch: "As senhas não correspondem",
   passwordResetErrorPasswordWeak:
     "A senha deve ter pelo menos 12 caracteres e incluir letras maiúsculas, minúsculas, números e caracteres especiais.",
-  passwordResetSuccess: "Senha redefinida com sucesso. Você pode fazer login agora.",
+  passwordResetSuccess: "Password redefinida. Pode entrar com a nova password.",
   passwordResetError: "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
 
 
@@ -124,6 +126,7 @@ const pt = {
   errorInvalidCodeRequest: "Email or password estão erradas",
   errorUserNotFound: "Utilizador não encontrado",
   errorTokenExpired: "O seu token expirou. Por favor, registe-se novamente.",
+  errorExpiredPasswordResetToken: "O seu token de recuperação de password expirou. Por favor, solicite um novo.",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",

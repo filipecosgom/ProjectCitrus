@@ -15,6 +15,9 @@ const en = {
   loginSubmit: "Sign in",
   loginRegisterPrompt: "Don’t have an account yet?",
   loginRegister: "Join CITRUS today.",
+  passwordResetRequestSuccess: "An email has been sent to reset your password.",
+  passwordResetRequestFailure: "Failed to send password reset email. Please try again later.",
+  
 
   loginErrorEmailMissing: "Email is required",
   loginErrorEmailInvalid: "Invalid email format",
@@ -100,7 +103,7 @@ const en = {
   passwordResetErrorPasswordMismatch: "Passwords do not match",
   passwordResetErrorPasswordWeak:
     "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
-  passwordResetSuccess: "Password reset successfully. You can now log in.",
+  passwordResetSuccess: "Password changed. You log in with the new password.",
   passwordResetError: "Error resetting password. Please try again later.",
 
 
@@ -125,6 +128,7 @@ const en = {
   errorInvalidCodeRequest: "Email or password are incorrect",
   errorUserNotFound: "User not found",
   errorTokenExpired: "Your token has expired. Please register again.",
+  errorExpiredPasswordResetToken: "Your password reset token has expired. Please request a new one.",
 
   // Not Found Page
   notfoundTitle: "404 Not Found",

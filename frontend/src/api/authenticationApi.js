@@ -41,15 +41,51 @@ export const requestPasswordReset = async (email, lang) => {
   }
 };
 
-export const resetPassword = async (newPassword) => {
+export const checkPasswordResetToken = async (token) => {
   try {
-    const response = await api.post(`${authenticationEndpoint}/password-reset`, email, {
+    const response = await api.get(`${authenticationEndpoint}/password-reset`, {
       headers: {
-        "Accept-Language": lang,
+        "token": token,
       },
     });
+    // If response.data is present, assume the successful format
+    if (response.data) {
+      // Normalize to a common format:
+      return {
+        success: response.data.success,
+        status: response.status,
+        data: response.data,
+      };
+    }
+    
+    // Otherwise, assume it's already normalized (error response from interceptor)
+    return response;
+
+  } catch (error) {
+    return { success: false, status: error.response?.status || 500, error };
+  }
+};
+
+export const changePassword = async (passwordResetToken, newPassword) => {
+  try {
+    const response = await api.patch(`${authenticationEndpoint}/password-reset`, newPassword,  {
+      headers: {
+        "token": passwordResetToken,
+      }
+  });
     console.log("API Response:", response); // Debugging log
-    return { success: true, status: response.status, data: response.data };
+    // If response.data is present, assume the successful format
+    if (response.data) {
+      // Normalize to a common format:
+      return {
+        success: response.data.success,
+        status: response.status,
+        data: response.data,
+      };
+    }
+    
+    // Otherwise, assume it's already normalized (error response from interceptor)
+    return response;
   } catch (error) {
     return { success: false, status: error.response?.status || 500, error };
   }

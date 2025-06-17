@@ -14,9 +14,11 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const success = error.response?.data?.success;
     const status = error.response?.status;
     const message = error.response?.data?.message;
     const errorCode = error.response?.data?.errorCode || "errorUnexpected";
+    console.log("Error code:", error);
 
     const isAuthError =
       (status === 401 && message?.includes("Missing token"));
@@ -44,9 +46,16 @@ api.interceptors.response.use(
       status,
       message,
       errorCode,
+      success,
     });
 
-    return Promise.resolve({ errorHandled: true, status, errorCode });
+    return Promise.resolve({
+      success: false,
+      status,
+      errorCode,
+      message,
+      errorHandled: true
+    });
   }
 );
 

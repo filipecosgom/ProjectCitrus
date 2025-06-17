@@ -113,8 +113,15 @@ public class AuthenticationController {
         String email = emailJSON.getString("email");
 
         if (email == null || email.isEmpty()) {
+            LOGGER.error("Email is null or empty");
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
+                    .build();
+        }
+        if(!userService.findIfUserExists(email)) {
+            LOGGER.error("User not found");
+            return Response.status(Response.Status.CREATED)
+                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, null))
                     .build();
         }
 
@@ -130,7 +137,7 @@ public class AuthenticationController {
             emailService.sendPasswordResetEmail(email, token, language);
 
             return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, Map.of("token", token)))
+                    .entity(new ApiResponse(true, "Password reset token generated successfully", null, null))
                     .build();
 
         } catch (Exception e) {
@@ -197,7 +204,7 @@ public class AuthenticationController {
                     .entity(new ApiResponse(false, "Invalid request: expired password reset token", "errorExpiredPasswordResetToken", null))
                     .build();
         }
-        if (authenticationService.setNewPassword(passwordResetTokenDTO, newPassword)) {
+        if (authenticationService.setNewPassword(passwordResetToken, newPassword)) {
             LOGGER.info("Password reset successfully");
             return Response.status(Response.Status.OK)
                     .entity(new ApiResponse(true, "Password reset sucessfully", "successPasswordResetSuccess", null))
