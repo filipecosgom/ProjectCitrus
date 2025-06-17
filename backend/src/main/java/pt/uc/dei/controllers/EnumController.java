@@ -3,9 +3,9 @@ package pt.uc.dei.controllers;
 import pt.uc.dei.enums.Role;
 import pt.uc.dei.enums.Office;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,5 +30,11 @@ public class EnumController {
             .map(Enum::name)
             .collect(Collectors.toList());
         return Response.ok(offices).build();
+    }
+
+    @GET
+    @Path("/test")
+    public String test() {
+        return "ok";
     }
 }
