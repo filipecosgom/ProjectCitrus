@@ -13,6 +13,7 @@ import { set } from "react-hook-form";
 import { avatarsUrl } from "../../config";
 import axios from "axios";
 import { apiBaseUrl } from "../../config";
+import { handleUpdateUser } from "../../handles/handleUpdateUser";
 
 const mockUser = {
   name: "Teresa",
@@ -54,14 +55,24 @@ export default function Profile() {
 
   const handleEditToggle = () => {
     if (editMode) {
-      // Atualiza o user e oculta os campos extra
-      setUser({
+      // Prepara os dados para enviar (garante que todos os campos obrigatórios estão presentes)
+      const updatedData = {
         ...formData,
-        address: [formData.street, formData.postalCode, formData.municipality]
-          .filter(Boolean)
-          .join(", "),
+        name: formData.name || "", // não uses firstName
+        surname: formData.surname || "", // não uses lastName
+        birthdate: formData.birthdate || "",
+        street: formData.street || "",
+        postalCode: formData.postalCode || "",
+        municipality: formData.municipality || "",
+        role: formData.role,
+        office: formData.office,
+        biography: formData.biography || "",
+        // Adiciona outros campos obrigatórios conforme necessário
+      };
+      handleUpdateUser(userId, updatedData, (data) => {
+        setUser(updatedData);
+        setShowAddressFields(false);
       });
-      setShowAddressFields(false);
     } else {
       setShowAddressFields(true);
     }
@@ -149,7 +160,7 @@ export default function Profile() {
               <label>
                 First Name
                 <input
-                  name="firstName"
+                  name="name"
                   value={user.name}
                   onChange={handleChange}
                   disabled={!editMode}
@@ -158,7 +169,7 @@ export default function Profile() {
               <label>
                 Last Name
                 <input
-                  name="lastName"
+                  name="surname"
                   value={user.surname}
                   onChange={handleChange}
                   disabled={!editMode}
@@ -168,7 +179,7 @@ export default function Profile() {
                 Date of Birth
                 <input
                   type="date"
-                  name="dob"
+                  name="birthdate"
                   value={user.birthdate}
                   onChange={handleChange}
                   disabled={!editMode}
