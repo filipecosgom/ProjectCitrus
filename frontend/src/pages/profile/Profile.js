@@ -176,7 +176,7 @@ export default function Profile() {
                       >
                         <option value="">Select role</option>
                         {roleOptions.map((role) => (
-                          <option key={role} value={role}>
+                          <option key={role} value={role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}>
                             {role.replace(/_/g, " ")}
                           </option>
                         ))}

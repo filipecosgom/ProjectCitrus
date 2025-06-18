@@ -5,6 +5,7 @@ import pt.uc.dei.enums.Office;
 import pt.uc.dei.enums.Role;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class UpdateUserDTO {
 
@@ -185,4 +186,6 @@ public class UpdateUserDTO {
     public void setRole(Role role) {
         this.role = role;
     }
+
+
 }
