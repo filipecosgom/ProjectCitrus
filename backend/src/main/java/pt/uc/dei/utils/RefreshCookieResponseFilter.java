@@ -10,6 +10,11 @@ import jakarta.ws.rs.ext.Provider;
 public class RefreshCookieResponseFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+        // Skip refresh if the logout endpoint is called.
+        String path = requestContext.getUriInfo().getPath();
+        if (path != null && path.contains("logout")) {
+            return;
+        }
         NewCookie newCookie = (NewCookie) requestContext.getProperty("newCookie");
         if (newCookie != null) {
             responseContext.getHeaders().add("Set-Cookie", newCookie.toString());

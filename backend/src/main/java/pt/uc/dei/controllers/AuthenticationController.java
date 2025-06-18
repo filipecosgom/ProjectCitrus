@@ -73,17 +73,22 @@ public class AuthenticationController {
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response login(@Valid LoginDTO user) {
+        if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
+                    .build();
+        }
+        if(!authenticationService.checkAuthenticationCode(user)) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Invalid two factor code", "errorInvalidAuthCode", null))
+                    .build();
+        }
         // Attempt to authenticate user and generate JWT token
         String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response
         if (token == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid credentials", "errorInvalidCredentials", null))
-                    .build();
-        }
-        if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
                     .build();
         }
         // Retrieve configuration settings
@@ -101,7 +106,9 @@ public class AuthenticationController {
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletResponse response) {
-        response.addHeader("Set-Cookie", "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
+        // Use response.header to overwrite the previous cookie setting
+        response.setHeader("Set-Cookie",
+                "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
         return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
     }
 
@@ -110,6 +117,12 @@ public class AuthenticationController {
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response requestPasswordReset(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
+        if(language.trim() == "" || language.trim() == null) {
+            LOGGER.error("Language is empty");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing language parameter", "errorMissingLanguage", null))
+                    .build();
+        }
         String email = emailJSON.getString("email");
 
         if (email == null || email.isEmpty()) {
