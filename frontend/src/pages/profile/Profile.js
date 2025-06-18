@@ -130,6 +130,7 @@ export default function Profile() {
                       required: "First name is required",
                     })}
                     disabled={!editMode}
+                    placeholder="N/A"
                   />
                   {errors.name && (
                     <span className="error-message">{errors.name.message}</span>
@@ -143,6 +144,7 @@ export default function Profile() {
                       required: "Last name is required",
                     })}
                     disabled={!editMode}
+                    placeholder="N/A"
                   />
                   {errors.surname && (
                     <span className="error-message">
@@ -257,6 +259,7 @@ export default function Profile() {
                         .filter(Boolean)
                         .join(", ")}
                       disabled
+                      placeholder="N/A"
                     />
                   </label>
                   {editMode && (
@@ -272,6 +275,7 @@ export default function Profile() {
                           {...register("street", {
                             required: "Street is required",
                           })}
+                          placeholder="Street"
                         />
                         {errors.street && (
                           <span className="error-message">
@@ -286,6 +290,7 @@ export default function Profile() {
                           {...register("postalCode", {
                             required: "Postal code is required",
                           })}
+                          placeholder="Postal Code"
                         />
                         {errors.postalCode && (
                           <span className="error-message">
@@ -300,6 +305,7 @@ export default function Profile() {
                           {...register("municipality", {
                             required: "Municipality is required",
                           })}
+                          placeholder="Municipality"
                         />
                         {errors.municipality && (
                           <span className="error-message">
@@ -316,6 +322,7 @@ export default function Profile() {
                     className="profile-input"
                     {...register("biography")}
                     disabled={!editMode}
+                    placeholder="Biography"
                   />
                 </label>
               </div>
