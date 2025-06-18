@@ -3,7 +3,7 @@ import { updateUserInformation } from '../api/userApi';
 // Esta função deve ser chamada no botão Save do Profile.js
 // userData: objeto com os dados do utilizador a atualizar
 // onSuccess: callback a executar em caso de sucesso (ex: atualizar o estado no Profile.js)
-export async function handleUpdateUser(userId, user, updatedData) {
+export async function handleUpdateUserInfo(userId, user, updatedData) {
   const updates = {};
 
   for (const key of Object.keys(updatedData)) {
@@ -41,6 +41,6 @@ export async function handleUpdateUser(userId, user, updatedData) {
 
   console.log("Computed updates:", updates);
 
-  const response = await updateUserInformation(userId, updates);
-  return response;
+  //const response = await updateUserInformation(userId, updates);
+  //return response;
 }

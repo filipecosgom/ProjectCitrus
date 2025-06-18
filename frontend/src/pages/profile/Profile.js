@@ -10,7 +10,7 @@ import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import { avatarsUrl, apiBaseUrl } from "../../config";
 import axios from "axios";
-import { handleUpdateUser } from "../../handles/handleUpdateUser";
+import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 
 export default function Profile() {
@@ -64,7 +64,7 @@ export default function Profile() {
 
   // Handler de submit - ao clicar em "Save"
   const onSubmit = (data) => {
-    handleUpdateUser(userId, user, data);
+    handleUpdateUserInfo(userId, user, data);
     setUser(data);
     setShowAddressFields(false);
     setEditMode(false);
