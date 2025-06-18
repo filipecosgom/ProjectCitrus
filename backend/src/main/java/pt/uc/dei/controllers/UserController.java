@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.TemporaryUserDTO;
+import pt.uc.dei.dtos.UpdateUserDTO;
 import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.enums.*;
@@ -168,28 +169,30 @@ public class UserController {
 
     @PATCH
     @Path("/{id}")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("id") Long id, UserDTO updatedUser) {
+    public Response updateUser(@PathParam("id") Long id, UpdateUserDTO updatedUserDTO) {
         try {
-            UserDTO user = userService.getUser(id);
-
-            if (user == null) {
+            boolean updated = userService.updateUser(id, updatedUserDTO);
+            if (updated) {
+                // Fetch the updated user to return in the response.
+                UserDTO updatedUser = userService.getUser(id);
+                return Response.ok(
+                        new ApiResponse(true, "User updated successfully", "successUserUpdated", updatedUser)
+                ).build();
+            } else {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ApiResponse(false, "User not found with id: " + id, "errorUserNotFound", null))
                         .build();
             }
-
-            return Response.ok(new ApiResponse(true, "User retrieved successfully", "successUserRetrieved", user))
-                    .build();
-
         } catch (Exception e) {
-            LOGGER.error("Failed to fetch user by id: {}", id, e);
+            LOGGER.error("Failed to update user with id: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ApiResponse(false, "Unexpected error fetching user.", "errorInternal", null))
+                    .entity(new ApiResponse(false, "Unexpected error updating user.", "errorInternal", null))
                     .build();
         }
     }
+
 
 
     @GET

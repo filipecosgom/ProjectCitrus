@@ -11,6 +11,7 @@ import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import { avatarsUrl, apiBaseUrl } from "../../config";
 import axios from "axios";
 import { handleUpdateUser } from "../../handles/handleUpdateUser";
+import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -38,7 +39,6 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
-        console.log("User Information:", userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
@@ -54,22 +54,20 @@ export default function Profile() {
 
   // Carrega enums
   useEffect(() => {
-    axios
-      .get(`${apiBaseUrl}/enums/roles`)
-      .then((res) => setRoleOptions(res.data));
-    axios
-      .get(`${apiBaseUrl}/enums/offices`)
-      .then((res) => setOfficeOptions(res.data));
+    const fetchEnums = async () => {
+      setRoleOptions(await handleGetRoles());
+      setOfficeOptions(await handleGetOffices());
+    };
+    fetchEnums();
   }, []);
 
   // Handler de submit - ao clicar em "Save"
   const onSubmit = (data) => {
-    handleUpdateUser(userId, user, (data) => {
-      setUser(data);
-      setShowAddressFields(false);
-      setEditMode(false);
-    });
-  };
+    handleUpdateUser(userId, user, data);
+    setUser(data);
+    setShowAddressFields(false);
+    setEditMode(false);
+    };
 
   const renderTab = (tab) => (
     <button

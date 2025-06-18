@@ -35,11 +35,11 @@ export const fetchUserInformation = async (userId) => {
 }
 
 export const updateUserInformation = async (userId, updatedData) => {
+  console.log(userId);
   try {
     const response = await api.patch(
-      `${userEndpoint}/users/${userId}`,
+      `${userEndpoint}/${userId}`,
       updatedData,
-      { withCredentials: true }
     );
     console.log("API Response:", response); // Debugging logq
     return response;

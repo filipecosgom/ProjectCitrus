@@ -128,7 +128,70 @@ public class UserService implements Serializable {
         return codes;
     }
 
-
+    @Transactional
+    public Boolean updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        // Fetch the user from the repository
+        UserEntity user = userRepository.findUserById(id);
+        if(user == null) {
+            LOGGER.error("Update user - user not found");
+            return false;
+        }
+        // Update only those fields that are non-null in the DTO.
+        if (updateUserDTO.getManager() != null) {
+            UserEntity manager = userRepository.findUserById(updateUserDTO.getManager().getId());
+            if(manager != null) {
+                user.setManagerUser(manager);
+            }
+        }
+        if (updateUserDTO.getAvatar() != null) {
+            user.setAvatar(updateUserDTO.getAvatar());
+        }
+        if (updateUserDTO.getName() != null) {
+            user.setName(updateUserDTO.getName());
+        }
+        if (updateUserDTO.getSurname() != null) {
+            user.setSurname(updateUserDTO.getSurname());
+        }
+        if (updateUserDTO.getUserIsAdmin() != null) {
+            user.setUserIsAdmin(updateUserDTO.getUserIsAdmin());
+        }
+        if (updateUserDTO.getUserIsDeleted() != null) {
+            user.setUserIsDeleted(updateUserDTO.getUserIsDeleted());
+        }
+        if (updateUserDTO.getUserIsManager() != null) {
+            user.setUserIsManager(updateUserDTO.getUserIsManager());
+        }
+        if (updateUserDTO.getOffice() != null) {
+            user.setOffice(updateUserDTO.getOffice());
+        }
+        if (updateUserDTO.getPhone() != null) {
+            user.setPhone(updateUserDTO.getPhone());
+        }
+        if (updateUserDTO.getBirthdate() != null) {
+            user.setBirthdate(updateUserDTO.getBirthdate());
+        }
+        if (updateUserDTO.getStreet() != null) {
+            user.setStreet(updateUserDTO.getStreet());
+        }
+        if (updateUserDTO.getPostalCode() != null) {
+            user.setPostalCode(updateUserDTO.getPostalCode());
+        }
+        if (updateUserDTO.getMunicipality() != null) {
+            user.setMunicipality(updateUserDTO.getMunicipality());
+        }
+        if (updateUserDTO.getBiography() != null) {
+            user.setBiography(updateUserDTO.getBiography());
+        }
+        if (updateUserDTO.getAccountState() != null) {
+            user.setAccountState(updateUserDTO.getAccountState());
+        }
+        if (updateUserDTO.getRole() != null) {
+            user.setRole(updateUserDTO.getRole());
+        }
+        // Persist the changes
+        userRepository.persist(user);
+        return true;
+    }
 
     public UserDTO getUser(Long id) {
         UserEntity user = userRepository.findUserById(id);
