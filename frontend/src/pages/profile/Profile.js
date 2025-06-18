@@ -68,7 +68,7 @@ export default function Profile() {
     setUser(data);
     setShowAddressFields(false);
     setEditMode(false);
-    };
+  };
 
   const renderTab = (tab) => (
     <button
@@ -178,8 +178,15 @@ export default function Profile() {
                       >
                         <option value="">Select role</option>
                         {roleOptions.map((role) => (
-                          <option key={role} value={role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}>
-                            {role.replace(/_/g, " ")}
+                          <option key={role} value={role}>
+                            {role
+                              .toLowerCase()
+                              .split("_")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(" ")}
                           </option>
                         ))}
                       </select>
@@ -221,7 +228,14 @@ export default function Profile() {
                         <option value="">Select office</option>
                         {officeOptions.map((office) => (
                           <option key={office} value={office}>
-                            {office.replace(/_/g, " ")}
+                            {office
+                              .toLowerCase()
+                              .split("_")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(" ")}
                           </option>
                         ))}
                       </select>
