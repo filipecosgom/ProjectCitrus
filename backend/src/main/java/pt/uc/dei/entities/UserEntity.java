@@ -80,7 +80,7 @@ public class UserEntity implements Serializable {
 
     /** User's primary office location */
     @Enumerated(EnumType.STRING)
-    @Column(name = "office", columnDefinition = "VARCHAR(20) DEFAULT 'NO_OFFICE'")
+    @Column(name = "office", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'NO_OFFICE'")
     private Office office = Office.NO_OFFICE;
 
     /** Contact phone number */

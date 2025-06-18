@@ -44,6 +44,7 @@ export default function Profile() {
           reset(userInfo); // Preenche o formulário com os dados do utilizador
         }
       } catch (error) {
+        console.log(error);
         navigate("/");
       } finally {
         setLoading(false);
