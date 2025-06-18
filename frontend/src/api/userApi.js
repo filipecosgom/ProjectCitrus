@@ -36,6 +36,7 @@ export const fetchUserInformation = async (userId) => {
 
 export const updateUserInformation = async (userId, updatedData) => {
   console.log(userId);
+  console.log(updatedData);
   try {
     const response = await api.patch(
       `${userEndpoint}/${userId}`,

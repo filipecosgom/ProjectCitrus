@@ -1,4 +1,5 @@
-import { updateUserInformation } from '../api/userApi';
+import { updateUserInformation } from "../api/userApi";
+import handleNotification from "./handleNotification";
 
 // Esta função deve ser chamada no botão Save do Profile.js
 // userData: objeto com os dados do utilizador a atualizar
@@ -11,7 +12,15 @@ export async function handleUpdateUserInfo(userId, user, updatedData) {
     const updated = updatedData[key];
 
     // Ignore fields that should never be patched
-    if (["id", "evaluationsGiven", "evaluationsReceived", "completedCourses", "creationDate"].includes(key)) {
+    if (
+      [
+        "id",
+        "evaluationsGiven",
+        "evaluationsReceived",
+        "completedCourses",
+        "creationDate",
+      ].includes(key)
+    ) {
       continue;
     }
 
@@ -40,7 +49,16 @@ export async function handleUpdateUserInfo(userId, user, updatedData) {
   }
 
   console.log("Computed updates:", updates);
-
-  //const response = await updateUserInformation(userId, updates);
-  //return response;
+  if (Object.keys(updates).length > 0) {
+    const response = await updateUserInformation(userId, updates);
+    if (response.data.data.success) {
+      handleNotification("success", "profileUserUpdated")
+      return true;
+    }
+    else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 }

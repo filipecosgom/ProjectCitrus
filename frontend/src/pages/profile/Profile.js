@@ -63,9 +63,13 @@ export default function Profile() {
   }, []);
 
   // Handler de submit - ao clicar em "Save"
-  const onSubmit = (data) => {
-    handleUpdateUserInfo(userId, user, data);
-    setUser(data);
+  const onSubmit = async (data) => {
+    const response = await handleUpdateUserInfo(userId, user, data);
+    if (response) {
+      setUser(data);
+      setShowAddressFields(false);
+      setEditMode(false);
+    }
     setShowAddressFields(false);
     setEditMode(false);
   };

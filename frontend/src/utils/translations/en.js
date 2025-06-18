@@ -63,6 +63,9 @@ const en = {
     "Redirecting to login in {segundos} seconds.",
   activatedAccountButton: "Back to Login",
 
+  //Profile
+  profileUserUpdated: "Updated user successfully",
+
   // Forgot Password Page
   forgotPasswordTitle: "Password Reset",
   forgotPasswordSubtitle: "Write your email address",
