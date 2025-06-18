@@ -147,8 +147,8 @@ function App() {
     <IntlProvider locale={locale} messages={languages[locale]}>
       <Router>
         <AppRoutes />
+        <ToastContainer limit={3} />
       </Router>
-      <ToastContainer limit={3} />
     </IntlProvider>
   );
 }

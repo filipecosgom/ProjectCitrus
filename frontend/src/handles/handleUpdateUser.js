@@ -51,7 +51,7 @@ export async function handleUpdateUserInfo(userId, user, updatedData) {
   console.log("Computed updates:", updates);
   if (Object.keys(updates).length > 0) {
     const response = await updateUserInformation(userId, updates);
-    if (response.data.data.success) {
+    if (response.data.success) {
       handleNotification("success", "profileUserUpdated")
       return true;
     }

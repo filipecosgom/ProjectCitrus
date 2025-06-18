@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -12,6 +12,7 @@ import { useIntl } from "react-intl";
 import handleLogin from "../../handles/handleLogin";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/useAuthStore";
+import handleNotification from "../../handles/handleNotification";
 
 export default function Login() {
   const {
@@ -39,7 +40,6 @@ export default function Login() {
       const success = await handleLogin(userData);
       if (success) {
         reset();
-        navigate("/profile?id=" + user.id);
       } else {
         reset();
       }
@@ -47,6 +47,16 @@ export default function Login() {
       reset();
     }
   };
+
+  useEffect(() => {
+    const userIsLogged = () => {
+      if (user) {
+        handleNotification("success", "Welcome back");
+        navigate("/profile?id=" + user.id);
+      }
+    };
+    userIsLogged();
+  }, [user]);
 
   return (
     <div className="login-container">
@@ -163,7 +173,9 @@ export default function Login() {
                   {intl.formatMessage({ id: "loginFieldTwoFAuth" })}
                 </label>
                 <span className="error-message">
-                  {errors.authenticationCode ? errors.authenticationCode.message : "\u00A0"}
+                  {errors.authenticationCode
+                    ? errors.authenticationCode.message
+                    : "\u00A0"}
                 </span>
               </div>
               <input

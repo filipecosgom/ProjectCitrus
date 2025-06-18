@@ -12,6 +12,7 @@ import { avatarsUrl, apiBaseUrl } from "../../config";
 import axios from "axios";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
+import handleNotification from "../../handles/handleNotification";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
