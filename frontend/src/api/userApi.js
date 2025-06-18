@@ -30,8 +30,21 @@ export const fetchUserInformation = async (userId) => {
     const response = await api.get(`${userEndpoint}/${userId}`);
     return { success: true, status: response.status, data: response.data };
   } catch (error) {
-    return { success: false, status: error.response?.status || 500, error };
+    
   }
 }
 
+export const updateUserInformation = async (userId, updatedData) => {
+  try {
+    const response = await api.patch(
+      `${userEndpoint}/users/${userId}`,
+      updatedData,
+      { withCredentials: true }
+    );
+    console.log("API Response:", response); // Debugging logq
+    return response;
+  } catch (error) {
+   return { success: false, status: error.response?.status || 500, error };
+}
+};
 

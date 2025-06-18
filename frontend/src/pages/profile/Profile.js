@@ -6,10 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
-import useAuthStore from "../../stores/useAuthStore";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import handleNotification from "../../handles/handleNotification";
 import { avatarsUrl, apiBaseUrl } from "../../config";
 import axios from "axios";
 import { handleUpdateUser } from "../../handles/handleUpdateUser";
@@ -40,6 +38,7 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
+        console.log("User Information:", userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
@@ -65,11 +64,10 @@ export default function Profile() {
 
   // Handler de submit - ao clicar em "Save"
   const onSubmit = (data) => {
-    handleUpdateUser(userId, data, (updatedUser) => {
-      setUser(updatedUser);
+    handleUpdateUser(userId, user, (data) => {
+      setUser(data);
       setShowAddressFields(false);
       setEditMode(false);
-      toast.success("Perfil atualizado com sucesso!");
     });
   };
 

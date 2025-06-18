@@ -31,11 +31,21 @@ export function checkIfNumeric(string) {
 export function transformArrayDatetoDate(arrayDate){
   const date = new Date(
     arrayDate[0],
-    arrayDate[1] - 1, //ajustado pois o mês é como GregorianCalendar
+    arrayDate[1], //ajustado pois o mês é como GregorianCalendar
     arrayDate[2],
     arrayDate[3],
     arrayDate[4],
     arrayDate[5]
+  );
+  return date;
+}
+
+//Função para transformar datas em array para data de javascript
+export function transformArrayLocalDatetoLocalDate(arrayDate){
+  const date = new Date(
+    arrayDate[0],
+    arrayDate[1] - 1,
+    arrayDate[2]
   );
   return date;
 }
