@@ -35,17 +35,32 @@ export const fetchUserInformation = async (userId) => {
 }
 
 export const updateUserInformation = async (userId, updatedData) => {
-  console.log(userId);
-  console.log(updatedData);
   try {
+    let dataToSend = updatedData;
+    let headers = {};
+
+    // If avatar is a File (from input), use FormData
+    if (updatedData.avatar && updatedData.avatar instanceof File) {
+      const formData = new FormData();
+      Object.entries(updatedData).forEach(([key, value]) => {
+        if (key === "avatar" && value instanceof File) {
+          formData.append("avatar", value);
+        } else {
+          formData.append(key, value);
+        }
+      });
+      dataToSend = formData;
+      headers["Content-Type"] = "multipart/form-data";
+    }
+
     const response = await api.patch(
       `${userEndpoint}/${userId}`,
-      updatedData,
+      dataToSend,
+      { headers }
     );
-    console.log("API Response:", response); // Debugging logq
     return response;
   } catch (error) {
-   return { success: false, status: error.response?.status || 500, error };
-}
+    return { success: false, status: error.response?.status || 500, error };
+  }
 };
 

@@ -192,3 +192,33 @@ select {
   opacity: 1;
   pointer-events: auto;
 }
+
+
+.profile-avatar-edit-label {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #fff;
+  border-radius: 50%;
+  padding: 7px;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.profile-avatar-edit-label:hover {
+  background: #f0f0f0;
+}
+
+.profile-avatar-edit-icon {
+  font-size: 20px;
+  color: #007bff;
+}
+
+/* Hide the file input */
+.profile-avatar-input {
+  display: none;
+}

@@ -1,7 +1,13 @@
-import "./UserIcon";
+import "./UserIcon.css";
+import { useEffect } from "react";
 
-export default function UserIcon(avatar, status) {
+export default function UserIcon({ avatar, status }) {
   const AVATAR_URL = "https://localhost:8443/projectcitrus/avatars/";
+
+  useEffect(() => {
+      console.log(`${AVATAR_URL}${avatar}`);
+    }, []);
+
 
   return (
     <div className="user-icon">

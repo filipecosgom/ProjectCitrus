@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UserIcon from '../../components/userIcon/UserIcon';
+import { FaPen } from "react-icons/fa";
+import UserIcon from "../../components/userIcon/UserIcon";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import { avatarsUrl, apiBaseUrl } from "../../config";
+import { avatarsUrl } from "../../config";
 import axios from "axios";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
-import handleNotification from "../../handles/handleNotification";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -24,6 +24,10 @@ export default function Profile() {
   const [officeOptions, setOfficeOptions] = useState([]);
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+
+  //Avatar
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -66,6 +70,13 @@ export default function Profile() {
 
   // Handler de submit - ao clicar em "Save"
   const onSubmit = async (data) => {
+    // Ensure avatar is a File object if uploaded
+    if (data.avatar && data.avatar.length > 0) {
+      data.avatar = data.avatar[0]; // 👈 get the actual file
+    } else {
+      delete data.avatar; // optional: prevent sending empty file
+    }
+
     const response = await handleUpdateUserInfo(userId, user, data);
     if (response) {
       setUser(data);
@@ -74,6 +85,15 @@ export default function Profile() {
     }
     setShowAddressFields(false);
     setEditMode(false);
+  };
+
+  // Handler para upload de avatar
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
   const renderTab = (tab) => (
@@ -91,7 +111,7 @@ export default function Profile() {
   return (
     <div className="user-profile">
       <div className="profile-tabs-row">
-        <UserIcon avatar={user.avatar} status='check'/>
+        {user ? <UserIcon avatar={user.avatar} status="check" /> : null}
         <div className="tabs">
           {renderTab("profile")}
           {renderTab("appraisals")}
@@ -115,19 +135,51 @@ export default function Profile() {
       {activeTab === "profile" && (
         <div className="profile-section">
           <div className="profile-header">
-            <div className="profile-card">
-              <img
-                src={user.avatar ? `${avatarsUrl}${user.avatar}` : ProfilePhoto}
-                alt="Profile"
-              />
-              <div className="profile-label">
-                <strong>
-                  {user.name} {user.surname}
-                </strong>
-                <span>{user.role ? user.role.replace(/_/g, " ") : ""}</span>
-              </div>
-            </div>
             <form className="profile-form" onSubmit={handleSubmit(onSubmit)}>
+              <div className="profile-card">
+                {editMode && (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="avatar-upload"
+                      {...register("avatar")}
+                      className="profile-avatar-input"
+                      onChange={handleAvatarChange}
+                    />
+                    <label
+                      htmlFor="avatar-upload"
+                      className="profile-avatar-edit-label"
+                    >
+                      <FaPen
+                        className="profile-avatar-edit-icon"
+                        title="Edit avatar"
+                      />
+                    </label>
+                  </>
+                )}
+                <img
+                  src={
+                    avatarPreview
+                      ? avatarPreview
+                      : user.avatar
+                      ? `${avatarsUrl}${user.avatar}`
+                      : ProfilePhoto
+                  }
+                  alt="Profile"
+                  onError={(e) => {
+                    e.target.onerror = null; // prevent infinite loop
+                    e.target.src = ProfilePhoto;
+                  }}
+                />
+                <div className="profile-label">
+                  <strong>
+                    {user.name} {user.surname}
+                  </strong>
+                  <span>{user.role ? user.role.replace(/_/g, " ") : ""}</span>
+                </div>
+              </div>
+
               <div className="form-fields">
                 <label>
                   First Name
