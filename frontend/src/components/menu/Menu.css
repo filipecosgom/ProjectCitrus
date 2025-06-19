@@ -3,10 +3,10 @@
   top: 72px; /* Ajusta para a altura real do teu header */
   left: 2px;
   width: 64px;
-  height: 560px;
+  /*height: 560px; porquê altura fixa? */
   background: #fff;
   border-radius: 10px;
-  box-shadow: none;
+  box-shadow: none; /* porque não sombra? */
   transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 300;
   display: flex;
@@ -14,6 +14,7 @@
   align-items: center;
   padding: 0;
   overflow: visible;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.18);
   /*margin-left: 4px;*/ /* Pequeno espaço para evitar flicker */
 }
 
@@ -54,6 +55,11 @@
     color 0.2s; */
 }
 
+.menu-cell:hover {
+  border: 1px solid #cccccc;
+}
+
+
 .menu-cell.selected {
   background: #e68385;
   color: #fff;
@@ -86,8 +92,9 @@
   width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: opacity 0.2s 0.18s,
-    /* delay igual ao tempo da expansão do menu */ width 0.2s 0.28s;
+  transition: opacity 0.2s 0.18s, width 0s 0s ease;
+
+    /* delay igual ao tempo da expansão do menu  width 0.2s 0.28s;*/
 }
 
 .citrus-menu.expanded .menu-cell-label {
@@ -135,7 +142,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #cccccc;
   border-radius: 18px;
   transition: 0.2s;
 }

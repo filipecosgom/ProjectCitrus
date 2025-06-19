@@ -21,6 +21,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
 import Profile from "./pages/profile/Profile";
+import Users from './pages/users/Users';
 import PasswordReset from "./pages/passwordReset/PasswordReset";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
@@ -54,7 +55,8 @@ function AppRoutes() {
     "/account-activation",
     "/activated-account",
     "/header",
-    "/profile"
+    "/profile",
+    "/users"
   ];
 
   // Se não for uma rota conhecida, é 404
@@ -118,6 +120,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Users />
             </ProtectedRoute>
           }
         />

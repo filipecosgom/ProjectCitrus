@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserIcon from '../../components/userIcon/UserIcon';
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import Spinner from "../../components/spinner/spinner";
@@ -90,6 +91,7 @@ export default function Profile() {
   return (
     <div className="user-profile">
       <div className="profile-tabs-row">
+        <UserIcon avatar={user.avatar} status='check'/>
         <div className="tabs">
           {renderTab("profile")}
           {renderTab("appraisals")}
