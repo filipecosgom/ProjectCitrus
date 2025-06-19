@@ -323,6 +323,24 @@ export default function Profile() {
                     />
                   )}
                 </label>
+                <label>
+                  Phone
+                  <input
+                    className="profile-input"
+                    {...register("phone", {
+                      required: "Phone is required",
+                      pattern: {
+                        value: /^[0-9+\s()-]{6,}$/,
+                        message: "Invalid phone number",
+                      },
+                    })}
+                    disabled={!editMode}
+                    placeholder="N/A"
+                  />
+                  {errors.phone && (
+                    <span className="error-message">{errors.phone.message}</span>
+                  )}
+                </label>
                 <div className="address-container">
                   <label>
                     Address
