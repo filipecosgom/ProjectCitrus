@@ -190,6 +190,9 @@ public class UserService implements Serializable {
         }
         // Persist the changes
         userRepository.persist(user);
+
+        // Chama aqui para atualizar o accountState se necessário
+        checkAndUpdateAccountState(id);
         return true;
     }
 
@@ -282,4 +285,29 @@ public class UserService implements Serializable {
         temporaryUserDTO.setSecretKey(temporaryUser.getSecretKey());
         return temporaryUserDTO;
     }
+
+    @Transactional
+public boolean checkAndUpdateAccountState(Long userId) {
+    UserEntity user = userRepository.findUserById(userId);
+    if (user == null)
+        return false;
+
+    boolean isComplete =
+        user.getAvatar() != null &&
+        user.getBiography() != null &&
+        user.getBirthdate() != null &&
+        user.getMunicipality() != null &&
+        user.getName() != null &&
+        user.getPhone() != null &&
+        user.getPostalCode() != null &&
+        user.getStreet() != null &&
+        user.getSurname() != null;
+
+    if (isComplete && user.getAccountState() == AccountState.INCOMPLETE) {
+        user.setAccountState(AccountState.COMPLETE);
+        userRepository.persist(user);
+    }
+    LOGGER.info("User account state updated for user ID: " + userId + ", new state: " + user.getAccountState());
+    return true;
+}
 }
