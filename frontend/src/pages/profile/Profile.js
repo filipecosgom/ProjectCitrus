@@ -176,7 +176,7 @@ export default function Profile() {
                   <strong>
                     {user.name} {user.surname}
                   </strong>
-                  <span>{user.role ? user.role.replace(/_/g, " ") : ""}</span>
+                  <div>{user.role ? user.role.replace(/_/g, " ") : ""}</div>
                 </div>
               </div>
 
@@ -406,7 +406,7 @@ export default function Profile() {
                 <strong>
                   {user.manager?.name} {user.manager?.surname}
                 </strong>
-                <span>{user.manager?.role}</span>
+                <div>{user.manager?.role}</div>
               </div>
             </div>
           </div>
