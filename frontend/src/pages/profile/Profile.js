@@ -338,7 +338,9 @@ export default function Profile() {
                     placeholder="N/A"
                   />
                   {errors.phone && (
-                    <span className="error-message">{errors.phone.message}</span>
+                    <span className="error-message">
+                      {errors.phone.message}
+                    </span>
                   )}
                 </label>
                 <div className="address-container">
