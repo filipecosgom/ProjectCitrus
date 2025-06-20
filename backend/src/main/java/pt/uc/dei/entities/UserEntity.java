@@ -67,20 +67,24 @@ public class UserEntity implements Serializable {
     private String surname;
 
     /** Administrator status flag */
-    @Column(name = "is_admin", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_admin", nullable = false, columnDefinition = "boolean")
+    @org.hibernate.annotations.ColumnDefault("false")
     private Boolean userIsAdmin = false;
 
     /** Soft-delete flag */
-    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean")
+    @org.hibernate.annotations.ColumnDefault("false")
     private Boolean userIsDeleted = false;
 
     /** Managerial status flag */
-    @Column(name = "is_manager", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_manager", nullable = false, columnDefinition = "boolean")
+    @org.hibernate.annotations.ColumnDefault("false")
     private Boolean userIsManager = false;
 
     /** User's primary office location */
     @Enumerated(EnumType.STRING)
-    @Column(name = "office", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'NO_OFFICE'")
+    @Column(name = "office", nullable = false, columnDefinition = "VARCHAR(20)")
+    @org.hibernate.annotations.ColumnDefault("'NO_OFFICE'")
     private Office office = Office.NO_OFFICE;
 
     /** Contact phone number */
@@ -109,12 +113,14 @@ public class UserEntity implements Serializable {
 
     /** Current account status */
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_state", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'INCOMPLETE'")
+    @Column(name = "account_state", nullable = false, columnDefinition = "VARCHAR(20)")
+    @org.hibernate.annotations.ColumnDefault("'INCOMPLETE'")
     private AccountState accountState = AccountState.INCOMPLETE;
 
     /** System role/permissions */
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'WITHOUT_ROLE'")
+    @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(20)")
+    @org.hibernate.annotations.ColumnDefault("'WITHOUT_ROLE'")
     private Role role = Role.WITHOUT_ROLE;
 
     /** Account creation timestamp (auto-set) */

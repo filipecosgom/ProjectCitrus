@@ -34,33 +34,30 @@ export const fetchUserInformation = async (userId) => {
   }
 }
 
-export const updateUserInformation = async (userId, updatedData) => {
+export const updateUserInformation = async (userId, userData) => {
   try {
-    let dataToSend = updatedData;
-    let headers = {};
-
-    // If avatar is a File (from input), use FormData
-    if (updatedData.avatar && updatedData.avatar instanceof File) {
-      const formData = new FormData();
-      Object.entries(updatedData).forEach(([key, value]) => {
-        if (key === "avatar" && value instanceof File) {
-          formData.append("avatar", value);
-        } else {
-          formData.append(key, value);
-        }
-      });
-      dataToSend = formData;
-      headers["Content-Type"] = "multipart/form-data";
-    }
-
     const response = await api.patch(
       `${userEndpoint}/${userId}`,
-      dataToSend,
-      { headers }
+      userData,
+      { headers: { "Content-Type": "application/json" } }
     );
     return response;
   } catch (error) {
-    return { success: false, status: error.response?.status || 500, error };
+    return { success: false, error };
   }
 };
 
+export const uploadUserAvatar = async (userId, avatarFile) => {
+  try {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+
+    const response = await api.post(
+      `${userEndpoint}/${userId}/avatar`,
+      formData
+    );
+    return response;
+  } catch (error) {
+    return { success: false, error };
+  }
+};

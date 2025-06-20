@@ -4,25 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.inject.Inject;
-import jakarta.persistence.EnumType;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.dtos.TemporaryUserDTO;
-import pt.uc.dei.dtos.UpdateUserDTO;
-import pt.uc.dei.dtos.UserDTO;
-import pt.uc.dei.dtos.UserResponseDTO;
+import org.apache.tika.Tika;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import pt.uc.dei.dtos.*;
 import pt.uc.dei.enums.*;
-import pt.uc.dei.services.AuthenticationService;
-import pt.uc.dei.services.EmailService;
-import pt.uc.dei.services.TokenService;
-import pt.uc.dei.services.UserService;
+import pt.uc.dei.services.*;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 
-import java.time.LocalDate;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -193,6 +190,39 @@ public class UserController {
         }
     }
 
+    @POST
+    @Path("/{id}/avatar")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadAvatar(@PathParam("id") Long id, @MultipartForm FileUploadDTO form) {
+        InputStream avatarStream = form.getFileStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            avatarStream.transferTo(baos);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Unsupported file type", "errorInvalidType", null))
+                    .build();
+        }
+        byte[] fileBytes = baos.toByteArray();
+        InputStream forMimeType = new ByteArrayInputStream(fileBytes);
+        InputStream forSaving = new ByteArrayInputStream(fileBytes);
+        String filename = FileService.getFilename(id, fileBytes);
+        if (!FileService.isValidMimeType(forMimeType)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Unsupported file type", "errorInvalidType", null))
+                    .build();
+        }
+        boolean saved = FileService.saveFileWithSizeLimit(forSaving, filename);
+        if (!saved) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "File too large", "errorFileTooLarge", null))
+                    .build();
+        }
+        return Response.status(Response.Status.OK)
+                .entity(new ApiResponse(true, "File uploaded successfully", "successFileUploaded", filename))
+                .build();
+    }
 
 
     @GET
