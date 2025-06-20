@@ -131,10 +131,9 @@ export default function Profile() {
           style={{
             color: color,
             fontSize: "1.2em",
-            marginRight: "6px",
           }}
         />
-        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+        <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
       </button>
     );
   };
