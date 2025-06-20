@@ -10,10 +10,6 @@ public class FileUploadDTO {
     @PartType("application/octet-stream")
     private InputStream fileStream;
 
-    @FormParam("fileName")
-    @PartType("text/plain")
-    private String fileName;
-
     public InputStream getFileStream() {
         return fileStream;
     }
@@ -22,11 +18,4 @@ public class FileUploadDTO {
         this.fileStream = fileStream;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
 }
