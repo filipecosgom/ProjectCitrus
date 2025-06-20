@@ -14,8 +14,7 @@ export default function Header({
   setLanguage,
 }) {
   // Lê o user do store global
-  const user = useAuthStore((state) => state.user);
-  const avatar = useAuthStore(state => state.avatar);
+  const { user, avatar } = useAuthStore();
 
   // Protege contra user null
   const firstName = user?.name || "";
@@ -36,9 +35,10 @@ export default function Header({
     return () => window.removeEventListener("resize", handleResize);
   }, [showMenu]);
 
-  useEffect(() => {
-    console.log(avatar);
-  }, [])
+  // Temporarily modify your Header component
+useEffect(() => {
+  console.log("Current auth store state:", useAuthStore.getState());
+}, []);
 
   useEffect(() => {
     function handleClickOutside(event) {

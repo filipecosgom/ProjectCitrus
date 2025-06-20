@@ -1,10 +1,7 @@
 import "./UserIcon.css";
-import { useEffect } from "react";
 import template_backup from '../../assets/photos/template_backup.png';
 
 export default function UserIcon({ avatar, status }) {
-
-
 
   return (
     <div className="user-icon">
