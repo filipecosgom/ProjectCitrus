@@ -83,7 +83,6 @@ export default function Profile() {
 
     const response = await handleUpdateUserInfo(userId, user, data);
 
-
     if (response) {
       setUser(data); // Atualiza o local state
       // Atualiza o global store (mantém o tokenExpiration atual)
@@ -226,6 +225,10 @@ export default function Profile() {
 
               {/* Manager card compacto mobile */}
               <div className="manager-compact-card show-mobile">
+                <span className="manager-compact-role">
+                  Manager
+                  <br />
+                </span>
                 <div className="manager-compact-avatar">
                   <img
                     src={user.manager?.avatar || ManagerPhoto}
