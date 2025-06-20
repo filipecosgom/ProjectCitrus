@@ -7,6 +7,7 @@ import org.apache.tika.Tika;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
+import java.util.Optional;
 
 public class FileService {
     private static final Logger LOGGER = LogManager.getLogger(FileService.class);
@@ -111,4 +112,32 @@ public class FileService {
             return false;
         }
     }
+
+    public static InputStream getFileInputStream(Long id) {
+        Path avatarDir = getAvatarStoragePath();
+        List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
+
+        for (String ext : extensions) {
+            Path filePath = avatarDir.resolve(id + ext);
+            if (Files.exists(filePath)) {
+                try {
+                    return Files.newInputStream(filePath);
+                } catch (IOException e) {
+                    LOGGER.warn("Failed to open stream for avatar {}: {}", id, e.getMessage());
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getMimeType(Path filePath) {
+        try {
+            return Files.probeContentType(filePath);
+        } catch (IOException e) {
+            LOGGER.warn("Could not detect MIME type for {}: {}", filePath, e.getMessage());
+            return null;
+        }
+    }
+
 }

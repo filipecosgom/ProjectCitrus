@@ -19,7 +19,9 @@ import pt.uc.dei.utils.JWTUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -224,6 +226,31 @@ public class UserController {
                 .build();
     }
 
+    @GET
+    @Path("/{id}/avatar")
+    @Produces({"image/jpeg", "image/png", "image/webp"})
+    public Response getAvatar(@PathParam("id") Long id) {
+        java.nio.file.Path avatarDir = FileService.getAvatarStoragePath();
+        List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
+
+        for (String ext : extensions) {
+            java.nio.file.Path filePath = avatarDir.resolve(id + ext);
+            if (Files.exists(filePath)) {
+                InputStream stream = FileService.getFileInputStream(id);
+                String mime = FileService.getMimeType(filePath);
+                if (stream != null && mime != null) {
+                    return Response.ok(stream)
+                            .type(mime)
+                            .header("Content-Disposition", "inline")
+                            .build();
+                }
+            }
+        }
+
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Avatar not found for user id: " + id)
+                .build();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
