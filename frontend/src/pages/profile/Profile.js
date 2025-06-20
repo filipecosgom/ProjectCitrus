@@ -14,6 +14,7 @@ import { avatarsUrl } from "../../config";
 import axios from "axios";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
+import template_backup from '../../assets/photos/template_backup.png';
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -138,6 +139,7 @@ export default function Profile() {
     <div className="user-profile">
       {/* Tabs */}
       <div className="profile-tabs-row">
+        {user ? <UserIcon avatar={user.avatar} status="check"/> : <UserIcon avatar={template_backup} status="check"/>}
         <div className="tabs">
           <button
             className={`tab${activeTab === "profile" ? " active" : ""}`}

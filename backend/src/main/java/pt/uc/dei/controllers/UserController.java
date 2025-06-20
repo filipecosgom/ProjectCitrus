@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -39,6 +40,8 @@ public class UserController {
      */
     @Inject
     UserService userService;
+
+    @Context Request request;
 
     /**
      * Manages activation token generation
@@ -228,28 +231,68 @@ public class UserController {
 
     @GET
     @Path("/{id}/avatar")
-    @Produces({"image/jpeg", "image/png", "image/webp"})
-    public Response getAvatar(@PathParam("id") Long id) {
-        java.nio.file.Path avatarDir = FileService.getAvatarStoragePath();
-        List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
+    @Produces({MediaType.APPLICATION_JSON, "image/jpeg", "image/png", "image/webp"})
+    public Response getAvatar(
+            @PathParam("id") Long id,
+            @Context Request request,
+            @Context HttpHeaders headers) {
 
-        for (String ext : extensions) {
-            java.nio.file.Path filePath = avatarDir.resolve(id + ext);
-            if (Files.exists(filePath)) {
-                InputStream stream = FileService.getFileInputStream(id);
-                String mime = FileService.getMimeType(filePath);
-                if (stream != null && mime != null) {
-                    return Response.ok(stream)
-                            .type(mime)
-                            .header("Content-Disposition", "inline")
-                            .build();
-                }
+        try {
+            java.nio.file.Path avatarPath = FileService.resolveAvatarPath(id);
+            if (avatarPath == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .type(MediaType.APPLICATION_JSON)
+                        .entity(new ApiResponse(false, "Avatar not found", "avatarNotFound", null))
+                        .build();
             }
-        }
 
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Avatar not found for user id: " + id)
-                .build();
+            // Get cache metadata
+            FileService.CacheData cacheData = FileService.getCacheData(avatarPath);
+
+            // Create ETag
+            EntityTag etag = new EntityTag(cacheData.lastModified + "-" + cacheData.fileSize);
+
+            // Check preconditions
+            Response.ResponseBuilder builder = request.evaluatePreconditions(
+                    new Date(cacheData.lastModified),
+                    etag
+            );
+
+            if (builder != null) {
+                return builder.build();
+            }
+
+            // Check if client accepts JSON (for error cases)
+            boolean acceptsJson = headers.getAcceptableMediaTypes().stream()
+                    .anyMatch(m -> m.isCompatible(MediaType.APPLICATION_JSON_TYPE));
+
+            // Build streaming response
+            StreamingOutput stream = output -> {
+                try (InputStream in = Files.newInputStream(avatarPath)) {
+                    in.transferTo(output);
+                } catch (IOException e) {
+                    if (acceptsJson) {
+                        // If streaming fails and client accepts JSON
+                        output.write(new ObjectMapper().writeValueAsBytes(
+                                new ApiResponse(false, "Stream error", "streamError", null)
+                        ));
+                    }
+                }
+            };
+
+            return Response.ok(stream)
+                    .type(cacheData.mimeType)
+                    .header("Cache-Control", "public, max-age=86400")
+                    .header("ETag", etag.toString())
+                    .lastModified(new Date(cacheData.lastModified))
+                    .build();
+
+        } catch (IOException e) {
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(new ApiResponse(false, "Failed to load avatar", "avatarLoadError", null))
+                    .build();
+        }
     }
 
     @GET

@@ -113,19 +113,28 @@ public class FileService {
         }
     }
 
-    public static InputStream getFileInputStream(Long id) {
+    public static Path resolveAvatarPath(Long id) {
         Path avatarDir = getAvatarStoragePath();
         List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
 
         for (String ext : extensions) {
-            Path filePath = avatarDir.resolve(id + ext);
-            if (Files.exists(filePath)) {
-                try {
-                    return Files.newInputStream(filePath);
-                } catch (IOException e) {
-                    LOGGER.warn("Failed to open stream for avatar {}: {}", id, e.getMessage());
-                    return null;
-                }
+            Path candidate = avatarDir.resolve(id + ext);
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+
+    public static InputStream getFileInputStream(Long id) {
+        Path path = resolveAvatarPath(id);
+        if (path != null) {
+            try {
+                return Files.newInputStream(path);
+            } catch (IOException e) {
+                LOGGER.warn("Failed to open input stream for avatar {}: {}", id, e.getMessage());
             }
         }
         return null;
@@ -138,6 +147,34 @@ public class FileService {
             LOGGER.warn("Could not detect MIME type for {}: {}", filePath, e.getMessage());
             return null;
         }
+    }
+
+    public static String getMimeTypeForUser(Long id) {
+        Path path = resolveAvatarPath(id);
+        if (path != null) {
+            return getMimeType(path);
+        }
+        return null;
+    }
+
+    public static class CacheData {
+        public final long lastModified;
+        public final long fileSize;
+        public final String mimeType;
+
+        public CacheData(long lastModified, long fileSize, String mimeType) {
+            this.lastModified = lastModified;
+            this.fileSize = fileSize;
+            this.mimeType = mimeType;
+        }
+    }
+
+    public static CacheData getCacheData(Path filePath) throws IOException {
+        return new CacheData(
+                Files.getLastModifiedTime(filePath).toMillis(),
+                Files.size(filePath),
+                Files.probeContentType(filePath)
+        );
     }
 
 }

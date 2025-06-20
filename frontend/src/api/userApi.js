@@ -61,3 +61,20 @@ export const uploadUserAvatar = async (userId, avatarFile) => {
     return { success: false, error };
   }
 };
+
+export const fetchUserAvatar = async (userId) => {
+  const response = await api.get(`${userEndpoint}/${userId}/avatar`, {
+    responseType: 'blob', // Required for binary image responses
+    headers: {
+      'Accept': 'image/jpeg, image/png, image/webp' // Match backend @Produces
+    }
+  });
+
+  
+  return {
+    success: true,
+    status: response.status,
+    contentType: response.headers['content-type'],
+    blob: response.data // Return the blob in case you need it
+  };
+};

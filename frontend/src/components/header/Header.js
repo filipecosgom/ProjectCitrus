@@ -6,8 +6,7 @@ import NotificationDropdown from "../dropdowns/NotificationDropdown";
 import MessageDropdown from "../dropdowns/MessageDropdown";
 import Menu from "../menu/Menu";
 import useAuthStore from "../../stores/useAuthStore"; // <-- Importa o store
-import { avatarsUrl } from "../../config"; // Se usares um prefixo para o avatar
-
+import UserIcon from "../userIcon/UserIcon";
 export default function Header({
   unreadMessages = 0,
   unreadNotifications = 0,
@@ -16,17 +15,12 @@ export default function Header({
 }) {
   // Lê o user do store global
   const user = useAuthStore((state) => state.user);
+  const avatar = useAuthStore(state => state.avatar);
 
   // Protege contra user null
   const firstName = user?.name || "";
   const lastName = user?.surname || "";
   const userEmail = user?.email || "";
-  const avatarUrl = user?.avatar
-    ? user.avatar.startsWith("http")
-      ? user.avatar
-      : `${avatarsUrl}${user.avatar}`
-    : null;
-
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef();
   const [showMessages, setShowMessages] = useState(false);
@@ -41,6 +35,10 @@ export default function Header({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [showMenu]);
+
+  useEffect(() => {
+    console.log(avatar);
+  }, [])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -180,13 +178,7 @@ export default function Header({
             <NotificationDropdown notifications={notifications} />
           )}
         </div>
-        <div className="header-icon-wrapper">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="header-avatar" />
-          ) : (
-            <FaUserCircle />
-          )}
-        </div>
+       <UserIcon avatar={avatar} status="check"/>
       </div>
       {/* Nome e email do user (desktop apenas) */}
       <div className="header-cell header-user">
