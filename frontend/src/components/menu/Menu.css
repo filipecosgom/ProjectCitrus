@@ -197,10 +197,10 @@ input:checked + .slider:before {
     height: 420px;
   }
   .citrus-menu.expanded {
-    width: 180px;
+    width: 225px;
   }
   .menu-cell {
-    width: 150px;
+    width: 195px;
     height: 40px;
     font-size: 12px;
   }
@@ -217,7 +217,7 @@ input:checked + .slider:before {
     position: fixed;
     top: 56px;
     left: 8px;
-    width: 180px;
+    width: 225px;
     max-width: none;
     height: 420px;
     flex-direction: column;
@@ -239,7 +239,7 @@ input:checked + .slider:before {
   }
   .citrus-menu-inner {
     flex-direction: column;
-    width: 100%;
+    width: 225px;
     height: 100%;
     padding: 16px 0 12px 0;
     gap: 12px;
@@ -248,7 +248,7 @@ input:checked + .slider:before {
   }
   .menu-cell,
   .menu-cell.selected {
-    width: 150px;
+    width: 195px;
     min-width: 0;
     max-width: none;
     height: 40px;
