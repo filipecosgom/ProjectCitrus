@@ -4,26 +4,34 @@ import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
 import MessageDropdown from "../dropdowns/MessageDropdown";
-import Menu from "../menu/Menu"; // Importe o componente Menu
+import Menu from "../menu/Menu";
+import useAuthStore from "../../stores/useAuthStore"; // <-- Importa o store
+import { avatarsUrl } from "../../config"; // Se usares um prefixo para o avatar
 
 export default function Header({
-  userName,
-  userEmail,
-  avatarUrl,
   unreadMessages = 0,
   unreadNotifications = 0,
-  language, // Adicionei a prop language
-  setLanguage, // Adicionei a prop setLanguage
+  language,
+  setLanguage,
 }) {
-  // Divide o nome do user
-  const [firstName, ...rest] = userName.split(" ");
-  const lastName = rest.join(" ");
+  // Lê o user do store global
+  const user = useAuthStore((state) => state.user);
+
+  // Protege contra user null
+  const firstName = user?.name || "";
+  const lastName = user?.surname || "";
+  const userEmail = user?.email || "";
+  const avatarUrl = user?.avatar
+    ? user.avatar.startsWith("http")
+      ? user.avatar
+      : `${avatarsUrl}${user.avatar}`
+    : null;
 
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef();
   const [showMessages, setShowMessages] = useState(false);
   const messagesRef = useRef();
-  const [showMenu, setShowMenu] = useState(false); // Estado para controlar o menu
+  const [showMenu, setShowMenu] = useState(false);
 
   // Fecha o menu se deixares de estar em mobile
   useEffect(() => {
@@ -174,7 +182,7 @@ export default function Header({
         </div>
         <div className="header-icon-wrapper">
           {avatarUrl ? (
-            <img src={avatarUrl} alt="User avatar" className="header-avatar" />
+            <img src={avatarUrl} alt="" className="header-avatar" />
           ) : (
             <FaUserCircle />
           )}

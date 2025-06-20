@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaUserCircle, FaAward, FaBook } from "react-icons/fa";
 import UserIcon from "../../components/userIcon/UserIcon";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
@@ -96,15 +96,41 @@ export default function Profile() {
     }
   };
 
-  const renderTab = (tab) => (
-    <button
-      className={`tab ${activeTab === tab ? "active" : ""}`}
-      onClick={() => setActiveTab(tab)}
-      type="button"
-    >
-      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-    </button>
-  );
+  // Define as cores dos ícones conforme Menu.js
+  const tabIcons = {
+    profile: {
+      icon: FaUserCircle,
+      color: "#000000",
+    },
+    appraisals: {
+      icon: FaAward,
+      color: "#FDD835",
+    },
+    training: {
+      icon: FaBook,
+      color: "#FF5900",
+    },
+  };
+
+  const renderTab = (tab) => {
+    const { icon: Icon, color } = tabIcons[tab];
+    return (
+      <button
+        className={`tab${activeTab === tab ? " active" : ""}`}
+        onClick={() => setActiveTab(tab)}
+        type="button"
+      >
+        <Icon
+          style={{
+            color: color,
+            fontSize: "1.2em",
+            marginRight: "6px",
+          }}
+        />
+        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+      </button>
+    );
+  };
 
   if (loading) return <Spinner />;
 
@@ -137,6 +163,26 @@ export default function Profile() {
           <div className="profile-header">
             <form className="profile-form" onSubmit={handleSubmit(onSubmit)}>
               <div className="profile-card">
+                <img
+                  src={
+                    avatarPreview
+                      ? avatarPreview
+                      : user.avatar
+                      ? `${avatarsUrl}${user.avatar}`
+                      : ProfilePhoto
+                  }
+                  alt="Profile"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = ProfilePhoto;
+                  }}
+                />
+                <div className="profile-label">
+                  <strong>
+                    {user.name} {user.surname}
+                  </strong>
+                  <div>{user.role ? user.role.replace(/_/g, " ") : ""}</div>
+                </div>
                 {editMode && (
                   <>
                     <input
@@ -158,28 +204,16 @@ export default function Profile() {
                     </label>
                   </>
                 )}
-                <img
-                  src={
-                    avatarPreview
-                      ? avatarPreview
-                      : user.avatar
-                      ? `${avatarsUrl}${user.avatar}`
-                      : ProfilePhoto
-                  }
-                  alt="Profile"
-                  onError={(e) => {
-                    e.target.onerror = null; // prevent infinite loop
-                    e.target.src = ProfilePhoto;
-                  }}
-                />
-                <div className="profile-label">
+              </div>
+              <div className="manager-card">
+                <img src={user.manager?.avatar || ManagerPhoto} alt="Manager" />
+                <div className="profile-label small">
                   <strong>
-                    {user.name} {user.surname}
+                    {user.manager?.name} {user.manager?.surname}
                   </strong>
-                  <span>{user.role ? user.role.replace(/_/g, " ") : ""}</span>
+                  <div>{user.manager?.role}</div>
                 </div>
               </div>
-
               <div className="form-fields">
                 <label>
                   First Name
@@ -323,6 +357,26 @@ export default function Profile() {
                     />
                   )}
                 </label>
+                <label>
+                  Phone
+                  <input
+                    className="profile-input"
+                    {...register("phone", {
+                      required: "Phone is required",
+                      pattern: {
+                        value: /^[0-9+\s()-]{6,}$/,
+                        message: "Invalid phone number",
+                      },
+                    })}
+                    disabled={!editMode}
+                    placeholder="N/A"
+                  />
+                  {errors.phone && (
+                    <span className="error-message">
+                      {errors.phone.message}
+                    </span>
+                  )}
+                </label>
                 <div className="address-container">
                   <label>
                     Address
@@ -400,15 +454,6 @@ export default function Profile() {
                 </label>
               </div>
             </form>
-            <div className="manager-card">
-              <img src={user.manager?.avatar || ManagerPhoto} alt="Manager" />
-              <div className="profile-label small">
-                <strong>
-                  {user.manager?.name} {user.manager?.surname}
-                </strong>
-                <span>{user.manager?.role}</span>
-              </div>
-            </div>
           </div>
         </div>
       )}
