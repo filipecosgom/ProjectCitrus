@@ -7,7 +7,7 @@
   grid-template-columns: 220px 1fr 1fr 160px 200px;
   align-items: center;
   height: 72px;
-  background: var(--primary, #9C2F31);
+  background: var(--primary, #9c2f31);
   color: #fff;
   position: sticky;
   top: 0;
@@ -114,7 +114,7 @@
 /* RESPONSIVE TABLET */
 @media (max-width: 1024px) {
   .citrus-header {
-    grid-template-columns: 72px 1fr;
+    grid-template-columns: 56px 1fr auto;
     padding: 0 8px;
   }
   .header-logo-cell {
@@ -127,8 +127,7 @@
   .header-burger {
     display: flex;
   }
-  .header-empty,
-  .header-user {
+  .header-empty {
     display: none !important;
   }
   .header-icons {
@@ -158,5 +157,9 @@
   .header-avatar {
     width: 28px;
     height: 28px;
+  }
+
+  .header-user {
+    display: none !important;
   }
 }

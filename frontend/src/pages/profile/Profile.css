@@ -349,8 +349,7 @@ select {
   .edit-btn {
     position: static;
     align-self: flex-end;
-    margin-bottom: 12px;
-    margin-top: 0;
+    margin: 0;
     transform: none;
   }
 
@@ -358,6 +357,7 @@ select {
     gap: 8px;
   }
   .tab {
+    
     padding: 8px 10px;
     font-size: 1.1em;
     gap: 0;
