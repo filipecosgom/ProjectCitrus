@@ -213,13 +213,33 @@ export default function Profile() {
                   </>
                 )}
               </div>
-              <div className="manager-card">
+              {/* Manager card desktop/tablet */}
+              <div className="manager-card show-desktop">
                 <img src={user.manager?.avatar || ManagerPhoto} alt="Manager" />
                 <div className="profile-label small">
                   <strong>
                     {user.manager?.name} {user.manager?.surname}
                   </strong>
                   <div>{user.manager?.role}</div>
+                </div>
+              </div>
+
+              {/* Manager card compacto mobile */}
+              <div className="manager-compact-card show-mobile">
+                <div className="manager-compact-avatar">
+                  <img
+                    src={user.manager?.avatar || ManagerPhoto}
+                    alt="Manager"
+                    className="manager-avatar"
+                  />
+                </div>
+                <div className="manager-compact-info">
+                  <div className="manager-compact-name">
+                    {user.manager?.name} {user.manager?.surname}
+                  </div>
+                  <div className="manager-compact-email">
+                    {user.manager?.email}
+                  </div>
                 </div>
               </div>
               <div className="form-fields">
