@@ -33,8 +33,6 @@ export const showInfoToast = (message) => {
   toast.info(message, {
     className: "custom-toast-info",
     position: 'top-left',
-    autoClose: 3000,
-    hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: false,
