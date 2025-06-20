@@ -8,20 +8,30 @@ public class ManagerDTO {
     private String surname;
     private Role role;
     private String avatar;
+    private String email;
 
     public ManagerDTO() {
     }
 
-    public ManagerDTO(Long id, String name, String surname, Role role, String avatar) {
+    public ManagerDTO(Long id, String name, String surname, Role role, String avatar, String email) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.role = role;
         this.avatar = avatar;
+        this.email = email;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setId(Long id) {

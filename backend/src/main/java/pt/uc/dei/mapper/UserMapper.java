@@ -69,6 +69,7 @@ public interface UserMapper {
     @Mapping(source = "surname", target = "surname")
     @Mapping(source = "role", target = "role")
     @Mapping(source = "avatar", target = "avatar")
+    @Mapping(source = "email", target = "email")
     ManagerDTO toManagerDto(UserEntity managerUser);
 
     @Named("toManagerEntity")

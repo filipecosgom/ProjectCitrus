@@ -1,203 +1,147 @@
-/* MOBILE FIRST */
 .user-profile {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: var(--padding-sm);
-  margin: 0;
-  font-family: var(--font-family-main, Arial, sans-serif);
-  background: var(--background-color, #fff);
+  padding: 20px;
+  margin-top: 0px;
+  /*margin-left: 70px;
+  margin-right: 16px;*/
+  font-family: Arial, sans-serif;
 }
 
-/* Tabs: só ícone no mobile */
 .profile-tabs-row {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   margin-bottom: 20px;
-  width: 100%;
 }
+
 .tabs {
   display: flex;
-  gap: 12px;
+  gap: 15px;
   justify-content: center;
   flex: 1;
 }
+
 .tab {
   background: none;
   border: none;
-  padding: 10px 12px;
+  padding: 10px 20px;
   cursor: pointer;
   border-radius: 10px;
-  font-size: 1.2em;
+  font-size: 1em;
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 8px;
   transition: background 0.2s, color 0.2s;
 }
-.tab span {
-  display: none;
-}
-.tab svg {
-  font-size: 1.5em;
-}
+
 .tab.active {
   background: #a44;
   color: white;
 }
+
 .tab:not(.active) {
   background: none;
   color: #222;
 }
 
-/* Cards em coluna */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+}
+
 .profile-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
   width: 100%;
-}
-
-/* Profile card ocupa 100% */
-.profile-card {
-  width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: var(--shadow-card, 0 4px 8px rgba(0, 0, 0, 0.08));
-  overflow: hidden;
-  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.profile-card img {
-  width: 100%;
-  aspect-ratio: 1.6/1;
-  object-fit: cover;
-  border-radius: 0 0 0 0;
-}
-.profile-card-info {
-  width: 100%;
-  padding: 16px 0 8px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.profile-card-name {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #222;
-}
-.profile-card-role {
-  font-size: 1rem;
-  color: var(--secondary, #88909f);
-  margin-bottom: 4px;
-}
-.profile-card-email {
-  font-size: 1rem;
-  color: #969696;
-  margin-bottom: 0;
-  text-align: center;
-  word-break: break-all;
-}
-
-/* Manager card mobile: layout especial */
-.manager-card {
-  width: 100%;
-  max-width: 320px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: var(--shadow-card, 0 4px 8px rgba(0, 0, 0, 0.08));
-  padding: 16px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-.manager-card-title {
-  font-weight: bold;
-  color: var(--blue, #424359);
-  margin-bottom: 8px;
-  font-size: 1rem;
-}
-.manager-card-content {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-.manager-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary, #9c2f31);
-}
-.manager-info {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
 }
-.manager-name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #222;
-}
-.manager-email {
-  font-size: 0.92rem;
-  color: var(--secondary, #88909f);
-  opacity: 0.9;
+
+.profile-card,
+.manager-card {
+  position: relative;
+  width: 200px;
 }
 
-/* Form fields ocupam 100% */
-.profile-form {
+.manager-card {
+  width: 120px;
+}
+
+.profile-card img,
+.manager-card img {
   width: 100%;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  border-radius: 10px;
+}
+
+.profile-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+
+.profile-label.small {
+  font-size: 0.8em;
+}
+
+.profile-avatar-edit-label {
+  width: fit-content;
+  height: fit-content;
+}
+
+.profile-card {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  justify-self: center;
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: 350px 350px;
+  grid-template-rows: auto 1fr;
+  gap: 30px 40px;
+  justify-content: center;
+  align-items: end;
   margin: 0 auto;
   background: transparent;
 }
-.form-fields {
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+
+.manager-card {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  justify-self: center;
 }
+
+.form-fields {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  justify-items: center;
+}
+
 .form-fields label {
   width: 100%;
   max-width: 450px;
 }
+
 label {
   display: flex;
   flex-direction: column;
   font-size: 0.9em;
   width: 100%;
 }
+
 input,
-textarea,
-select {
-  padding: 8px 12px;
+textarea {
+  padding: 6px;
   font-size: 1em;
   margin-top: 4px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #fff;
-  box-sizing: border-box;
+  border-radius: 5px;
+  box-shadow: var(--shadow-text);
 }
-textarea {
-  min-height: 80px;
-  resize: vertical;
-  width: 100%;
-}
+
 .edit-btn {
   position: absolute;
   right: 0;
@@ -211,52 +155,386 @@ textarea {
   border-radius: 5px;
 }
 
-/* TABS: mostrar texto só em tablet/desktop */
-@media (min-width: 480px) {
-  .tab span {
-    display: inline;
-    margin-left: 6px;
-  }
+/* Biography textarea melhorada */
+.form-fields textarea {
+  min-height: 80px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-text);
 }
 
-/* TABLET: cards e form lado a lado */
-@media (min-width: 768px) {
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+select {
+  padding: 6px 32px 6px 10px; /* espaço à direita para a seta */
+  font-size: 1em;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  pointer-events: none;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #a44;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+}
+
+/* Opcional: seta mais subtil ao passar o rato */
+.select-wrapper select:focus + .select-arrow,
+.select-wrapper select:hover + .select-arrow {
+  color: #d66;
+}
+
+.address-container {
+  position: relative;
+  width: 100%;
+}
+
+.address-edit-fields {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 18px 16px 16px 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.address-edit-fields.slide-in {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.profile-avatar-edit-label {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #fff;
+  border-radius: 50%;
+  padding: 7px;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.profile-avatar-edit-label:hover {
+  background: #f0f0f0;
+}
+
+.profile-avatar-edit-icon {
+  font-size: 20px;
+  color: #007bff;
+}
+
+/* Hide the file input */
+.profile-avatar-input {
+  display: none;
+}
+
+/*---------------------------*/
+/*---------------------------*/
+/* --- RESPONSIVE TABLET --- */
+/*---------------------------*/
+/*---------------------------*/
+@media (max-width: 767px) {
   .user-profile {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 40px;
-    padding: var(--padding-md);
+    flex-direction: column;
+    padding: var(--padding-sm, 16px);
+    margin: 0;
+    gap: 20px;
   }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .profile-header {
     flex-direction: column;
-    align-items: flex-end;
-    gap: 24px;
-    min-width: 320px;
-    max-width: 340px;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
   }
-  .profile-form,
+
+  .profile-card,
+  .manager-card {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .profile-card img,
+  .manager-card img {
+    border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .profile-label {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    color: white;
+    text-shadow: 0 0 3px black;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 2;
+  }
+
+  .profile-tabs-row {
+    margin-top: 20px;
+  }
+
   .form-fields {
-    max-width: 540px;
-    gap: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .address-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edit-btn {
+    position: static;
+    align-self: flex-end;
+    margin-bottom: 12px;
+    margin-top: 0;
+    transform: none;
+  }
+
+  .tabs {
+    gap: 8px;
+  }
+  .tab {
+    padding: 8px 10px;
+    font-size: 1.1em;
+    gap: 0;
+  }
+  .tab span {
+    display: none;
+  }
+
+  .manager-card {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .manager-card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .manager-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  .manager-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary, #9c2f31);
+  }
+  .manager-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .manager-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #222;
+  }
+  .manager-email {
+    font-size: 0.92rem;
+    color: var(--secondary, #88909f);
+    opacity: 0.9;
+  }
+
+  .manager-compact-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card, 0 4px 8px rgba(0, 0, 0, 0.08));
+    padding: 10px 18px;
+    margin: 16px auto 8px auto;
+    min-width: 0;
+    max-width: 340px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .manager-compact-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .manager-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    background: #fff;
+  }
+
+  .manager-compact-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .manager-compact-name {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #222;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .manager-compact-email {
+    font-size: 0.92rem;
+    color: var(--secondary, #88909f);
+    opacity: 0.9;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
-/* DESKTOP: cards à esquerda, form à direita */
-@media (min-width: 1024px) {
-  .user-profile {
+/* Esconde/mostra cards conforme o ecrã */
+.show-mobile {
+  display: none;
+}
+.show-desktop {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .show-mobile {
+    display: flex !important;
+  }
+  .show-desktop {
+    display: none !important;
+  }
+
+  .manager-compact-card {
+    display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    gap: 64px;
-    padding: var(--padding-lg);
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card, 0 4px 8px rgba(0, 0, 0, 0.08));
+    padding: 10px 18px;
+    margin: 16px auto 8px auto;
+    min-width: 0;
+    max-width: 340px;
+    width: 100%;
+    justify-content: center;
   }
-  .profile-header {
-    min-width: 340px;
-    max-width: 380px;
-    gap: 32px;
+  .manager-compact-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .profile-form,
-  .form-fields {
-    max-width: 600px;
-    gap: 24px;
+  .manager-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    background: #fff;
+  }
+  .manager-compact-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+  .manager-compact-name {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #222;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .manager-compact-email {
+    font-size: 0.92rem;
+    color: var(--secondary, #88909f);
+    opacity: 0.9;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
