@@ -1,8 +1,8 @@
 .user-profile {
   padding: 20px;
   margin-top: 0px;
-  margin-left: 70px;
-  margin-right: 16px;
+  /*margin-left: 70px;
+  margin-right: 16px;*/
   font-family: Arial, sans-serif;
 }
 
@@ -139,6 +139,7 @@ textarea {
   margin-top: 4px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-shadow: var(--shadow-text);
 }
 
 .edit-btn {
@@ -160,6 +161,7 @@ textarea {
   resize: vertical;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: var(--shadow-text);
 }
 
 .select-wrapper {
@@ -260,7 +262,12 @@ select {
   display: none;
 }
 
-/* --- RESPONSIVE MOBILE --- */
+
+/*---------------------------*/
+/*---------------------------*/
+/* --- RESPONSIVE TABLET --- */
+/*---------------------------*/
+/*---------------------------*/
 @media (max-width: 767px) {
   .user-profile {
     flex-direction: column;
@@ -286,7 +293,7 @@ select {
     width: 100%;
     max-width: 320px;
     margin: 0 auto;
-    position: static;
+    position: relative;
   }
 
   .profile-card img,
@@ -305,12 +312,40 @@ select {
     margin: 0 auto;
   }
 
+  .profile-label {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    color: white;
+    text-shadow: 0 0 3px black;
+    background: rgba(0,0,0,0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 2;
+  }
+
+  .profile-tabs-row{
+    margin-top: 20px;
+
+  }
+
   .form-fields {
     display: flex;
     flex-direction: column;
     gap: 16px;
     width: 100%;
     max-width: 100%;
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .address-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
   }
 
   .edit-btn {
