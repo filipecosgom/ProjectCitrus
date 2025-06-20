@@ -10,8 +10,8 @@ import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import { avatarsUrl } from "../../config";
-import axios from "axios";
+import handleGetUserAvatar from '../../handles/handleGetUserAvatar';
+import template_backup from '../../assets/photos/template_backup.png';
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
@@ -19,6 +19,7 @@ import useAuthStore from "../../stores/useAuthStore";
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
+  const [userAvatar, setUserAvatar] = useState(null)
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -49,9 +50,13 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
+        const userAvatar = await handleGetUserAvatar(userId);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
+        }
+        if(userAvatar){
+          setUserAvatar(userAvatar.avatar);
         }
       } catch (error) {
         console.log(error);
@@ -143,7 +148,7 @@ export default function Profile() {
   return (
     <div className="user-profile">
       <div className="profile-tabs-row">
-        {user ? <UserIcon avatar={user.avatar} status="check" /> : null}
+        {user ? <UserIcon avatar={userAvatar} status="check" /> : null}
         <div className="tabs">
           {renderTab("profile")}
           {renderTab("appraisals")}
@@ -173,9 +178,9 @@ export default function Profile() {
                   src={
                     avatarPreview
                       ? avatarPreview
-                      : user.avatar
-                      ? `${avatarsUrl}${user.avatar}`
-                      : ProfilePhoto
+                      : userAvatar
+                      ? userAvatar
+                      : template_backup
                   }
                   alt="Profile"
                   onError={(e) => {

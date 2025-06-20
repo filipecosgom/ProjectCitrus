@@ -78,6 +78,9 @@ function AppRoutes() {
       if (!useAuthStore.getState().user) {
         await useAuthStore.getState().fetchAndSetUserInformation();
       }
+      if(!useAuthStore.getState().avatar) {
+         await useAuthStore.getState().fetchAndSetUserAvatar();
+      }
       // Now, after trying to fetch, check if the user is set
       if (useAuthStore.getState().user) {
         console.log("User is set:", useAuthStore.getState().user);
