@@ -7,18 +7,18 @@ public class ManagerDTO {
     private String name;
     private String surname;
     private Role role;
-    private String avatar;
+    private Boolean hasAvatar;
     private String email;
 
     public ManagerDTO() {
     }
 
-    public ManagerDTO(Long id, String name, String surname, Role role, String avatar, String email) {
+    public ManagerDTO(Long id, String name, String surname, Role role, Boolean hasAvatar, String email) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.role = role;
-        this.avatar = avatar;
+        this.hasAvatar = hasAvatar;
         this.email = email;
     }
 
@@ -62,11 +62,11 @@ public class ManagerDTO {
         this.role = role;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public Boolean getHasAvatar() {
+        return hasAvatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 }

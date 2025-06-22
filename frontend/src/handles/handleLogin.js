@@ -7,12 +7,12 @@ export const handleLogin = async (loggingInformation) => {
   console.log(response)
   if (response.success) {
     // Fetch user details after successful login
-    const userResponse = await useAuthStore.getState().fetchAndSetUserInformation();
-    console.log(userResponse);
-    if (userResponse.success) {
+    const response = await useAuthStore.getState().fetchAndSetUserInformation();
+    console.log(response);
+    if (response.success) {
       const userId = useAuthStore.getState().user?.id; // Get userId from store
       console.log(userId);
-      if (userId) {
+      if (response.data.user.hasAvatar) {
         const response = useAuthStore.getState().fetchAndSetUserAvatar();
         if (response?.success) {
           return true;

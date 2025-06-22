@@ -48,13 +48,23 @@ export const updateUserInformation = async (userId, userData) => {
 };
 
 export const uploadUserAvatar = async (userId, avatarFile) => {
+  // Extract file extension from original filename
+    const fileExtension = avatarFile.name.split('.').pop();
+    // Create custom filename: "2.jpg" (for userId=2)
+    const fileName = `${userId}.${fileExtension}`;
   try {
     const formData = new FormData();
-    formData.append("avatar", avatarFile);
+    formData.append("file", avatarFile, fileName);
+    console.log(formData);
 
     const response = await api.post(
       `${userEndpoint}/${userId}/avatar`,
-      formData
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
     );
     return response;
   } catch (error) {

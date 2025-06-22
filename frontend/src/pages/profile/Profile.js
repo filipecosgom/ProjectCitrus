@@ -10,16 +10,17 @@ import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import handleGetUserAvatar from '../../handles/handleGetUserAvatar';
-import template_backup from '../../assets/photos/template_backup.png';
+import handleGetUserAvatar from "../../handles/handleGetUserAvatar";
+import template_backup from "../../assets/photos/template_backup.png";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
+import handleNotification from "../../handles/handleNotification";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
-  const [userAvatar, setUserAvatar] = useState(null)
+  const [userAvatar, setUserAvatar] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -40,7 +41,6 @@ export default function Profile() {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm();
@@ -50,13 +50,16 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
-        const userAvatar = await handleGetUserAvatar(userId);
+        console.log(userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
         }
-        if(userAvatar){
-          setUserAvatar(userAvatar.avatar);
+        if (userInfo.hasAvatar) {
+          const userAvatar = await handleGetUserAvatar(userId);
+          if (userAvatar) {
+            setUserAvatar(userAvatar.avatar);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -77,35 +80,64 @@ export default function Profile() {
     fetchEnums();
   }, []);
 
-  // Handler de submit - ao clicar em "Save"
   const onSubmit = async (data) => {
-    // Ensure avatar is a File object if uploaded
-    if (data.avatar && data.avatar.length > 0) {
-      data.avatar = data.avatar[0]; // 👈 get the actual file
-    } else {
-      delete data.avatar; // optional: prevent sending empty file
-    }
+  setLoading(true);
+  
+  try {
+    const response = await handleUpdateUserInfo(
+      userId, 
+      user, 
+      data, 
+      avatarFile // Pass the avatar file separately
+    );
 
-    const response = await handleUpdateUserInfo(userId, user, data);
-
-    if (response) {
-      setUser(data); // Atualiza o local state
-      // Atualiza o global store (mantém o tokenExpiration atual)
-      setUserAndExpiration(data, useAuthStore.getState().tokenExpiration);
-      setShowAddressFields(false);
+    if (response?.success) {
+      // Update local state
+      const updatedUser = { ...user, ...data };
+      if (response.avatar) {
+        updatedUser.hasAvatar = true;
+        setUserAvatar(response.avatar);
+        setAvatarPreview(null);
+        setAvatarFile(null);
+      }
+      
+      setUser(updatedUser);
+      setUserAndExpiration(
+        updatedUser, 
+        useAuthStore.getState().tokenExpiration
+      );
+      
       setEditMode(false);
+      setShowAddressFields(false);
     }
-    setShowAddressFields(false);
-    setEditMode(false);
-  };
+  } catch (error) {
+    console.error("Update error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  // Handler para upload de avatar
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
+    console.log(file);
+    if (!file) return;
+
+    // Validate file type and size
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    const maxSize = 5 * 1024 * 1024; // 5mb
+
+    if (!validTypes.includes(file.type)) {
+      handleNotification("error", "invalidImageType");
+      return;
     }
+
+    if (file.size > maxSize) {
+      handleNotification("error", "imageTooLarge");
+      return;
+    }
+
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
   };
 
   // Define as cores dos ícones conforme Menu.js
@@ -200,7 +232,6 @@ export default function Profile() {
                       type="file"
                       accept="image/*"
                       id="avatar-upload"
-                      {...register("avatar")}
                       className="profile-avatar-input"
                       onChange={handleAvatarChange}
                     />

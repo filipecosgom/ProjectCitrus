@@ -52,6 +52,7 @@ public class UserInitializer {
             admin.setPostalCode("3004-531");
             admin.setMunicipality("Coimbra");
             admin.setBiography("Default administrator");
+            admin.setHasAvatar(true);
 
             // System settings
             admin.setUserIsAdmin(true);

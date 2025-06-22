@@ -11,6 +11,16 @@ export const api = axios.create({
   },
 });
 
+// Add a request interceptor to preserve FormData headers
+api.interceptors.request.use(config => {
+  if (config.data instanceof FormData) {
+    Object.assign(config.headers, {
+      'Content-Type': 'multipart/form-data'
+    });
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

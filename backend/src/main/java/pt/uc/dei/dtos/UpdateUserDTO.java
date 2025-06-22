@@ -13,7 +13,7 @@ public class UpdateUserDTO {
     private ManagerDTO manager;
 
     // The user's avatar URL or identifier.
-    private String avatar;
+    private Boolean hasAvatar;
 
     // The user's first name.
     private String name;
@@ -67,12 +67,12 @@ public class UpdateUserDTO {
         this.manager = manager;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public Boolean getHasAvatar() {
+        return hasAvatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 
     public String getName() {

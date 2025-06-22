@@ -73,16 +73,16 @@ public class AuthenticationController {
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response login(@Valid LoginDTO user) {
-        if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
+        /*if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
                     .build();
-        }
-        if(!authenticationService.checkAuthenticationCode(user)) {
+        }*/
+        /*if(!authenticationService.checkAuthenticationCode(user)) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(new ApiResponse(false, "Invalid two factor code", "errorInvalidAuthCode", null))
                     .build();
-        }
+        }*/
         // Attempt to authenticate user and generate JWT token
         String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response

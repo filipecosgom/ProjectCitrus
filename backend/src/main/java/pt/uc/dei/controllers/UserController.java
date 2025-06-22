@@ -224,6 +224,9 @@ public class UserController {
                     .entity(new ApiResponse(false, "File too large", "errorFileTooLarge", null))
                     .build();
         }
+        UpdateUserDTO user = new UpdateUserDTO();
+        user.setHasAvatar(true);
+        userService.updateUser(id, user);
         return Response.status(Response.Status.OK)
                 .entity(new ApiResponse(true, "File uploaded successfully", "successFileUploaded", filename))
                 .build();
@@ -279,7 +282,6 @@ public class UserController {
                     }
                 }
             };
-
             return Response.ok(stream)
                     .type(cacheData.mimeType)
                     .header("Cache-Control", "public, max-age=86400")

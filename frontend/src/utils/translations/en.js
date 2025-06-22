@@ -22,8 +22,8 @@ const en = {
   loginErrorEmailMissing: "Email is required",
   loginErrorEmailInvalid: "Invalid email format",
   loginErrorPasswordMissing: "Password is required",
-  loginErrorAuthenticationCodeMissing: "Two-Factor Authentication code is required",
-  loginErrorAuthenticationCodeInvalid: "Invalid Two-Factor Authentication code",
+  loginErrorAuthenticationCodeMissing: "2FA code is required",
+  loginErrorAuthenticationCodeInvalid: "Invalid 2FA code",
 
   // Register Page
   registerTitle: "Welcome to CITRUS",

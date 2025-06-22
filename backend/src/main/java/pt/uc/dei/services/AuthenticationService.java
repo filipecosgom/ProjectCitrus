@@ -77,13 +77,11 @@ public class AuthenticationService implements Serializable {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(loginDTO.getEmail());
         if(user != null) {
-            if(PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
-                if(TwoFactorUtil.verifyTwoFactorCode(user.getSecretKey(), loginDTO.getAuthenticationCode())) {
-                    UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
-                    // Generate a JWT token for authentication
-                    String token = jwtUtil.generateToken(userResponseDTO);
-                    return token;
-                }
+            if (PasswordUtils.verify(user.getPassword(), loginDTO.getPassword())) {
+                UserResponseDTO userResponseDTO = userMapper.toUserResponseDto(user);
+                // Generate a JWT token for authentication
+                String token = jwtUtil.generateToken(userResponseDTO);
+                return token;
             }
         }
         // Return null if authentication fails (invalid credentials)
@@ -136,7 +134,7 @@ public class AuthenticationService implements Serializable {
             activatedUser.setEmail(userToActivate.getEmail());
             activatedUser.setPassword(userToActivate.getPassword());
             activatedUser.setUserIsManager(false);
-            activatedUser.setAvatar("template.png");
+            activatedUser.setHasAvatar(false);
             activatedUser.setAccountState(AccountState.INCOMPLETE);
             activatedUser.setCreationDate(LocalDateTime.now());
             activatedUser.setSecretKey(userToActivate.getSecretKey());

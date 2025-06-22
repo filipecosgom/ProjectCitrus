@@ -56,7 +56,7 @@ public class UserEntity implements Serializable {
 
     /** URL or path to user's profile picture */
     @Column(name = "avatar")
-    private String avatar;
+    private Boolean hasAvatar;
 
     /** User's first name */
     @Column(name = "name")
@@ -186,12 +186,12 @@ public class UserEntity implements Serializable {
         this.password = password;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public Boolean getHasAvatar() {
+        return hasAvatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 
     public String getName() {

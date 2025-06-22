@@ -21,7 +21,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import Spinner from "./components/spinner/spinner";
 import Menu from "./components/menu/Menu";
 import Profile from "./pages/profile/Profile";
-import Users from './pages/users/Users';
+import Users from "./pages/users/Users";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
@@ -56,7 +56,7 @@ function AppRoutes() {
     "/activated-account",
     "/header",
     "/profile",
-    "/users"
+    "/users",
   ];
 
   // Se não for uma rota conhecida, é 404
@@ -76,10 +76,15 @@ function AppRoutes() {
   useEffect(() => {
     const hydrate = async () => {
       if (!useAuthStore.getState().user) {
-        await useAuthStore.getState().fetchAndSetUserInformation();
-      }
-      if(!useAuthStore.getState().avatar) {
-         await useAuthStore.getState().fetchAndSetUserAvatar();
+        const response = await useAuthStore
+          .getState()
+          .fetchAndSetUserInformation();
+        console.log(response);
+        if (!useAuthStore.getState().avatar && response.data) {
+          if (response.data.user.hasAvatar) {
+            await useAuthStore.getState().fetchAndSetUserAvatar();
+          }
+        }
       }
       // Now, after trying to fetch, check if the user is set
       if (useAuthStore.getState().user) {

@@ -11,7 +11,7 @@ public class UserResponseDTO {
     private Boolean userIsManager;
     private String name;
     private String surname;
-    private String avatar;
+    private Boolean hasAvatar;
     private AccountState accountState;
 
     public UserResponseDTO() {}
@@ -80,11 +80,11 @@ public class UserResponseDTO {
         this.surname = surname;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public Boolean getHasAvatar() {
+        return hasAvatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 }

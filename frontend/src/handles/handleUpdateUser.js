@@ -1,30 +1,49 @@
-import { updateUserInformation, uploadUserAvatar } from "../api/userApi";
+import { updateUserInformation } from "../api/userApi";
+import handleUpdateAvatar from "./handleUpdateAvatar";
 import handleNotification from "./handleNotification";
 
 // Esta função deve ser chamada no botão Save do Profile.js
 // userData: objeto com os dados do utilizador a atualizar
 // onSuccess: callback a executar em caso de sucesso (ex: atualizar o estado no Profile.js)
-export async function handleUpdateUserInfo(userId, user, updatedData) {
+// Main update function
+export async function handleUpdateUserInfo(
+  userId,
+  user,
+  updatedData,
+  avatarFile
+) {
   const updates = {};
-  let avatarUploadSuccess = true;
+  let avatarResult = { success: true };
+
+  // 1. Handle avatar update first if file exists
+  if (avatarFile) {
+    avatarResult = await handleUpdateAvatar(userId, avatarFile);
+    if (!avatarResult.success) {
+      handleNotification("error", avatarResult.error || "avatarUploadFailed");
+      return false;
+    }
+  }
 
   for (const key of Object.keys(updatedData)) {
     const original = user[key];
     const updated = updatedData[key];
-
     if (
-      ["id", "evaluationsGiven", "evaluationsReceived", "completedCourses", "creationDate"].includes(key)
+      [
+        "id",
+        "evaluationsGiven",
+        "evaluationsReceived",
+        "completedCourses",
+        "creationDate",
+      ].includes(key)
     ) {
       continue;
     }
-
     if (key === "manager") {
       if (!original?.id || !updated?.id || original.id !== updated.id) {
         updates[key] = updated;
       }
       continue;
     }
-
     if (Array.isArray(original) && Array.isArray(updated)) {
       const originalStr = new Date(...original).toISOString();
       const updatedStr = new Date(...updated).toISOString();
@@ -33,35 +52,26 @@ export async function handleUpdateUserInfo(userId, user, updatedData) {
       }
       continue;
     }
-
     if (updated !== original) {
       updates[key] = updated;
     }
   }
-
-  console.log("Computed updates:", updates);
-
-  // 🖼️ Step 1: Upload avatar separately if present
-  if (updatedData.avatar && updatedData.avatar[0] instanceof File) {
-    const avatarResponse = await uploadUserAvatar(userId, updatedData.avatar[0]);
-    avatarUploadSuccess = avatarResponse?.data?.success;
-
-    if (avatarUploadSuccess && avatarResponse.data.avatar) {
-      updates.avatar = avatarResponse.data.avatar; // server-provided filename
-    } else {
-      handleNotification("error", "avatarUploadFailed");
-      return false;
-    }
+  if (avatarResult.avatar) {
+    updates.avatar = avatarResult.avatar;
+    updates.hasAvatar = true;
   }
 
-  // 📝 Step 2: Send updates if there are any
+  // 4. Send other updates if any exist
   if (Object.keys(updates).length > 0) {
     const response = await updateUserInformation(userId, updates);
     if (response?.data?.success) {
       handleNotification("success", "profileUserUpdated");
-      return true;
+      return { 
+        ...response.data,
+        avatar: avatarResult.avatar // Return new avatar info
+      };
     }
   }
 
-  return false;
+  return { success: true }; // Case where only avatar was updated
 }

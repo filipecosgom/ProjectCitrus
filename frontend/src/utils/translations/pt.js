@@ -17,8 +17,8 @@ const pt = {
   loginErrorEmailMissing: "O email é necessário",
   loginErrorEmailInvalid: "Formato de email inválido",
   loginErrorPasswordMissing: "A palavra-passe é necessária",
-  loginErrorAuthenticationCodeMissing: "O código de autenticação de dois fatores é necessário",
-  loginErrorAuthenticationCodeInvalid: "Código de autenticação de dois fatores inválido",
+  loginErrorAuthenticationCodeMissing: "O código 2FA é necessário",
+  loginErrorAuthenticationCodeInvalid: "Código 2FA inválido",
   passwordResetRequestFailure: "Falha ao enviar o email de recuperação de palavra-passe. Por favor, tente novamente mais tarde.",
   passwordResetRequestSuccess: "Um email foi enviado para redefinir a sua palavra-passe.",
 

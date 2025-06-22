@@ -143,8 +143,8 @@ public class UserService implements Serializable {
                 user.setManagerUser(manager);
             }
         }
-        if (updateUserDTO.getAvatar() != null) {
-            user.setAvatar(updateUserDTO.getAvatar());
+        if (updateUserDTO.getHasAvatar() != null) {
+            user.setHasAvatar(updateUserDTO.getHasAvatar());
         }
         if (updateUserDTO.getName() != null) {
             user.setName(updateUserDTO.getName());
@@ -188,11 +188,10 @@ public class UserService implements Serializable {
         if (updateUserDTO.getRole() != null) {
             user.setRole(updateUserDTO.getRole());
         }
-        // Persist the changes
-        userRepository.persist(user);
-
         // Chama aqui para atualizar o accountState se necessário
         checkAndUpdateAccountState(id);
+        // Persist the changes
+        userRepository.persist(user);
         return true;
     }
 
@@ -293,7 +292,7 @@ public boolean checkAndUpdateAccountState(Long userId) {
         return false;
 
     boolean isComplete =
-        user.getAvatar() != null &&
+        user.getHasAvatar() &&
         user.getBiography() != null &&
         user.getBirthdate() != null &&
         user.getMunicipality() != null &&

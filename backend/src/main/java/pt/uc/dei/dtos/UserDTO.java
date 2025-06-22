@@ -40,8 +40,7 @@ public class UserDTO {
     @NotBlank(message = "Password missing")
     private String password;
 
-    @NotBlank(message = "Avatar is missing")
-    private String avatar;
+    private Boolean hasAvatar;
 
     /**
      * The first name of the user.
@@ -193,12 +192,12 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public Boolean getHasAvatar() {
+        return hasAvatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 
     public String getName() {

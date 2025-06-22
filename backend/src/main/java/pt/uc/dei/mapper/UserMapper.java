@@ -60,7 +60,7 @@ public interface UserMapper {
     @Mapping(target = "accountState", source = "accountState")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "surname", source = "surname")
-    @Mapping(target = "avatar", source = "avatar")
+    @Mapping(target = "hasAvatar", source = "hasAvatar")
     UserResponseDTO toUserResponseDto(UserEntity entity);
 
     @Named("toManagerDto")
@@ -68,7 +68,7 @@ public interface UserMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "surname", target = "surname")
     @Mapping(source = "role", target = "role")
-    @Mapping(source = "avatar", target = "avatar")
+    @Mapping(source = "hasAvatar", target = "hasAvatar")
     @Mapping(source = "email", target = "email")
     ManagerDTO toManagerDto(UserEntity managerUser);
 
