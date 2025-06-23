@@ -180,6 +180,12 @@ const pt = {
   profileErrorAddressPostalCodeRequired: "O código postal é obrigatório",
   profileErrorAddressMunicipalityRequired: "A cidade é obrigatória",
   profileErrorBiographyRequired: "A biografia é obrigatória",
+
+  // Profile Tabs
+  profileTabProfile: "Perfil",
+  profileTabTraining: "Formação",
+  profileTabAppraisals: "Avaliações",
+
 };
 
 export default pt;

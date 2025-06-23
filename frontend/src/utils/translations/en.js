@@ -137,7 +137,7 @@ const en = {
   errorTokenExpired: "Your token has expired. Please register again.",
   errorExpiredPasswordResetToken:
     "Your password reset token has expired. Please request a new one.",
-  
+
   // Validation
   errorPhoneNumberInvalid: "Invalid phone number format",
   errorEmailInvalid: "Invalid email format",
@@ -177,5 +177,10 @@ const en = {
   profileErrorAddressPostalCodeRequired: "Postal code is required",
   profileErrorAddressMunicipalityRequired: "Municipality is required",
   profileErrorBiographyRequired: "Biography is required",
+
+  // Profile Tabs
+  profileTabProfile: "Profile",
+  profileTabTraining: "Training",
+  profileTabAppraisals: "Appraisals",
 };
 export default en;

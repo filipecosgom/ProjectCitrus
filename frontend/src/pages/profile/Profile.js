@@ -31,7 +31,9 @@ export default function Profile() {
   const setUserAndExpiration = useAuthStore(
     (state) => state.setUserAndExpiration
   );
-  const setStoreAvatar = useAuthStore((state) => state.setAvatar);
+  const setStoreAvatar = useAuthStore(
+    (state) => state.setAvatar
+  );
 
   //Avatar
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -52,7 +54,6 @@ export default function Profile() {
 
   // Carrega dados do utilizador
   useEffect(() => {
-    if (!userId) return;
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
@@ -88,42 +89,41 @@ export default function Profile() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
 
     try {
       const response = await handleUpdateUserInfo(
         userId,
         user,
         data,
-        avatarFile
+        avatarFile // Pass the avatar file separately
       );
 
+    if (response?.success) {
+      // Update local state
+      const updatedUser = { ...user, ...data };
       if (response?.success) {
-        // Update local state
-        const updatedUser = { ...user, ...data };
-        if (avatarFile && avatarPreview) {
-          updatedUser.hasAvatar = true;
-          setUserAvatar(avatarPreview);
-          setStoreAvatar(avatarPreview, avatarFile);
-          setAvatarPreview(null);
-          setAvatarFile(null);
-        }
-
-        setUser(updatedUser);
-        setUserAndExpiration(
-          updatedUser,
-          useAuthStore.getState().tokenExpiration
-        );
-
-        setEditMode(false);
-        setShowAddressFields(false);
+        updatedUser.hasAvatar = true;
+        setUserAvatar(avatarPreview);
+        setStoreAvatar(avatarPreview, avatarFile);
+        setAvatarPreview(null);
+        setAvatarFile(null);
       }
-    } catch (error) {
-      console.error("Update error:", error);
-    } finally {
-      setLoading(false);
+      
+      setUser(updatedUser);
+      setUserAndExpiration(
+        updatedUser, 
+        useAuthStore.getState().tokenExpiration
+      );
+      
+      setEditMode(false);
+      setShowAddressFields(false);
     }
-  };
+  } catch (error) {
+    console.error("Update error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -178,7 +178,16 @@ export default function Profile() {
             fontSize: "1.2em",
           }}
         />
-        <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+        <span>
+          {intl.formatMessage({
+            id:
+              tab === "profile"
+                ? "profileTabProfile"
+                : tab === "appraisals"
+                ? "profileTabAppraisals"
+                : "profileTabTraining",
+          })}
+        </span>
       </button>
     );
   };
