@@ -157,7 +157,8 @@ textarea {
 
 /* Biography textarea melhorada */
 .form-fields textarea {
-  min-height: 80px;
+  min-height: 40px;
+  height:40px;
   resize: vertical;
   width: 100%;
   box-sizing: border-box;

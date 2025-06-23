@@ -16,6 +16,7 @@ import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
+import { useIntl } from "react-intl";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -36,6 +37,9 @@ export default function Profile() {
   const [avatarFile, setAvatarFile] = useState(null);
 
   const navigate = useNavigate();
+
+  // Internacionalização
+  const intl = useIntl();
 
   // react-hook-form setup
   const {
@@ -81,41 +85,41 @@ export default function Profile() {
   }, []);
 
   const onSubmit = async (data) => {
-  setLoading(true);
-  
-  try {
-    const response = await handleUpdateUserInfo(
-      userId, 
-      user, 
-      data, 
-      avatarFile // Pass the avatar file separately
-    );
+    setLoading(true);
 
-    if (response?.success) {
-      // Update local state
-      const updatedUser = { ...user, ...data };
-      if (response.avatar) {
-        updatedUser.hasAvatar = true;
-        setUserAvatar(response.avatar);
-        setAvatarPreview(null);
-        setAvatarFile(null);
-      }
-      
-      setUser(updatedUser);
-      setUserAndExpiration(
-        updatedUser, 
-        useAuthStore.getState().tokenExpiration
+    try {
+      const response = await handleUpdateUserInfo(
+        userId,
+        user,
+        data,
+        avatarFile // Pass the avatar file separately
       );
-      
-      setEditMode(false);
-      setShowAddressFields(false);
+
+      if (response?.success) {
+        // Update local state
+        const updatedUser = { ...user, ...data };
+        if (response.avatar) {
+          updatedUser.hasAvatar = true;
+          setUserAvatar(response.avatar);
+          setAvatarPreview(null);
+          setAvatarFile(null);
+        }
+
+        setUser(updatedUser);
+        setUserAndExpiration(
+          updatedUser,
+          useAuthStore.getState().tokenExpiration
+        );
+
+        setEditMode(false);
+        setShowAddressFields(false);
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Update error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -198,7 +202,9 @@ export default function Profile() {
                 }
           }
         >
-          {editMode ? "Save" : "Edit"}
+          {editMode
+            ? intl.formatMessage({ id: "profileSave" })
+            : intl.formatMessage({ id: "profileEdit" })}
         </button>
       </div>
       {activeTab === "profile" && (
@@ -282,28 +288,30 @@ export default function Profile() {
               </div>
               <div className="form-fields">
                 <label>
-                  First Name
+                  {intl.formatMessage({ id: "profileFirstName" })}
                   <input
                     className="profile-input"
                     {...register("name", {
-                      required: "First name is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorFirstNameRequired",
+                      }),
                     })}
                     disabled={!editMode}
-                    placeholder="N/A"
+                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
                   />
                   {errors.name && (
                     <span className="error-message">{errors.name.message}</span>
                   )}
                 </label>
                 <label>
-                  Last Name
+                  {intl.formatMessage({ id: "profileLastName" })}
                   <input
                     className="profile-input"
                     {...register("surname", {
                       required: "Last name is required",
                     })}
                     disabled={!editMode}
-                    placeholder="N/A"
+                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
                   />
                   {errors.surname && (
                     <span className="error-message">
@@ -435,7 +443,7 @@ export default function Profile() {
                       },
                     })}
                     disabled={!editMode}
-                    placeholder="N/A"
+                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
                   />
                   {errors.phone && (
                     <span className="error-message">
@@ -452,7 +460,7 @@ export default function Profile() {
                         .filter(Boolean)
                         .join(", ")}
                       disabled
-                      placeholder="N/A"
+                      placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
                     />
                   </label>
                   {editMode && (
