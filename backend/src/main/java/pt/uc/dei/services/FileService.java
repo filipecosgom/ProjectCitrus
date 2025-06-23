@@ -73,9 +73,7 @@ public class FileService {
             Path uploadDir = getAvatarStoragePath();
             Files.createDirectories(uploadDir);
             filePath = uploadDir.resolve(filename);
-
             LOGGER.info("Attempting to save avatar to: {}", filePath);
-
             try (InputStream in = new BufferedInputStream(inputStream);
                  OutputStream out = Files.newOutputStream(filePath,
                          StandardOpenOption.CREATE,
@@ -128,16 +126,21 @@ public class FileService {
     }
 
 
-    public static InputStream getFileInputStream(Long id) {
-        Path path = resolveAvatarPath(id);
-        if (path != null) {
-            try {
-                return Files.newInputStream(path);
-            } catch (IOException e) {
-                LOGGER.warn("Failed to open input stream for avatar {}: {}", id, e.getMessage());
+    public static boolean removeExistingFiles(Long id) {
+        try {
+            Path avatarDir = getAvatarStoragePath();
+            List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
+            for (String ext : extensions) {
+                Path candidate = avatarDir.resolve(id + ext);
+                if (Files.exists(candidate)) {
+                    Files.deleteIfExists(candidate);
+                }
             }
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Failed to remove existing file: {}", e.getMessage());
+            return false;
         }
-        return null;
     }
 
     public static String getMimeType(Path filePath) {

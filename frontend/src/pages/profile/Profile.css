@@ -1,8 +1,6 @@
 .user-profile {
-  padding: 20px;
+  padding: var(--padding-lg);
   margin-top: 0px;
-  /*margin-left: 70px;
-  margin-right: 16px;*/
   font-family: Arial, sans-serif;
 }
 

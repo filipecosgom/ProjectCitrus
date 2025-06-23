@@ -226,7 +226,7 @@
     display: flex;
     width: 100vw;
     min-width: 0;
-    padding: 0px 32px 0px 32px;
+    padding: var(--paddingLanding-sm);
     align-items: flex-start;
     background: #fff;
     height: 100vh !important;
