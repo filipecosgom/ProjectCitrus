@@ -143,7 +143,7 @@ const pt = {
   // Validação
   errorPhoneNumberInvalid: "Formato de número de telefone inválido",
   errorEmailInvalid: "Formato de email inválido",
-  
+
   // Not Found
   notfoundTitle: "404 Não Encontrado",
   notfoundPhrase: "Quando a vida te dá limões...",
@@ -167,6 +167,7 @@ const pt = {
   profilePlaceholderNA: "N/A",
   profileSave: "Guardar",
   profileEdit: "Editar",
+  profileCancel: "Cancelar",
 
   // Profile Errors
   profileErrorFirstNameRequired: "O primeiro nome é obrigatório",
@@ -185,7 +186,6 @@ const pt = {
   profileTabProfile: "Perfil",
   profileTabTraining: "Formação",
   profileTabAppraisals: "Avaliações",
-
 };
 
 export default pt;

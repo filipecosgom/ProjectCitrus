@@ -31,9 +31,7 @@ export default function Profile() {
   const setUserAndExpiration = useAuthStore(
     (state) => state.setUserAndExpiration
   );
-  const setStoreAvatar = useAuthStore(
-    (state) => state.setAvatar
-  );
+  const setStoreAvatar = useAuthStore((state) => state.setAvatar);
 
   //Avatar
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -98,32 +96,32 @@ export default function Profile() {
         avatarFile // Pass the avatar file separately
       );
 
-    if (response?.success) {
-      // Update local state
-      const updatedUser = { ...user, ...data };
       if (response?.success) {
-        updatedUser.hasAvatar = true;
-        setUserAvatar(avatarPreview);
-        setStoreAvatar(avatarPreview, avatarFile);
-        setAvatarPreview(null);
-        setAvatarFile(null);
+        // Update local state
+        const updatedUser = { ...user, ...data };
+        if (response?.success) {
+          updatedUser.hasAvatar = true;
+          setUserAvatar(avatarPreview);
+          setStoreAvatar(avatarPreview, avatarFile);
+          setAvatarPreview(null);
+          setAvatarFile(null);
+        }
+
+        setUser(updatedUser);
+        setUserAndExpiration(
+          updatedUser,
+          useAuthStore.getState().tokenExpiration
+        );
+
+        setEditMode(false);
+        setShowAddressFields(false);
       }
-      
-      setUser(updatedUser);
-      setUserAndExpiration(
-        updatedUser, 
-        useAuthStore.getState().tokenExpiration
-      );
-      
-      setEditMode(false);
-      setShowAddressFields(false);
+    } catch (error) {
+      console.error("Update error:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Update error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -203,6 +201,22 @@ export default function Profile() {
           {renderTab("appraisals")}
           {renderTab("training")}
         </div>
+        {editMode && (
+          <button
+            className="edit-btn"
+            type="button"
+            style={{ background: "#888", marginRight: "80px" }}
+            onClick={() => {
+              setEditMode(false);
+              setShowAddressFields(false);
+              reset(user);
+              setAvatarPreview(null);
+              setAvatarFile(null);
+            }}
+          >
+            {intl.formatMessage({ id: "profileCancel" })}
+          </button>
+        )}
         <button
           className="edit-btn"
           type={editMode ? "submit" : "button"}

@@ -164,6 +164,7 @@ const en = {
   profilePlaceholderNA: "N/A",
   profileSave: "Save",
   profileEdit: "Edit",
+  profileCancel: "Cancel",
 
   // Profile Errors
   profileErrorFirstNameRequired: "First name is required",
