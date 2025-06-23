@@ -52,7 +52,6 @@ export default function Profile() {
 
   // Carrega dados do utilizador
   useEffect(() => {
-    if (!userId) return;
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
@@ -88,20 +87,19 @@ export default function Profile() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
 
     try {
       const response = await handleUpdateUserInfo(
         userId,
         user,
         data,
-        avatarFile
+        avatarFile // Pass the avatar file separately
       );
 
       if (response?.success) {
         // Update local state
         const updatedUser = { ...user, ...data };
-        if (avatarFile && avatarPreview) {
+        if (response?.success) {
           updatedUser.hasAvatar = true;
           setUserAvatar(avatarPreview);
           setStoreAvatar(avatarPreview, avatarFile);
@@ -178,7 +176,16 @@ export default function Profile() {
             fontSize: "1.2em",
           }}
         />
-        <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+        <span>
+          {intl.formatMessage({
+            id:
+              tab === "profile"
+                ? "profileTabProfile"
+                : tab === "appraisals"
+                ? "profileTabAppraisals"
+                : "profileTabTraining",
+          })}
+        </span>
       </button>
     );
   };
@@ -194,6 +201,22 @@ export default function Profile() {
           {renderTab("appraisals")}
           {renderTab("training")}
         </div>
+        {editMode && (
+          <button
+            className="edit-btn"
+            type="button"
+            style={{ background: "#888", marginRight: "80px" }}
+            onClick={() => {
+              setEditMode(false);
+              setShowAddressFields(false);
+              reset(user);
+              setAvatarPreview(null);
+              setAvatarFile(null);
+            }}
+          >
+            {intl.formatMessage({ id: "profileCancel" })}
+          </button>
+        )}
         <button
           className="edit-btn"
           type={editMode ? "submit" : "button"}
@@ -314,7 +337,9 @@ export default function Profile() {
                   <input
                     className="profile-input"
                     {...register("surname", {
-                      required: "Last name is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorLastNameRequired",
+                      }),
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
@@ -328,12 +353,14 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Date of Birth
+                  {intl.formatMessage({ id: "profileBirthDate" })}
                   <input
                     type="date"
                     className="profile-input"
                     {...register("birthdate", {
-                      required: "Birthdate is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorBirthDateRequired",
+                      }),
                     })}
                     disabled={!editMode}
                   />
@@ -344,12 +371,16 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Role
+                  {intl.formatMessage({ id: "profileRole" })}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
                         className="profile-input"
-                        {...register("role", { required: "Role is required" })}
+                        {...register("role", {
+                          required: intl.formatMessage({
+                            id: "profileErrorRoleRequired",
+                          }),
+                        })}
                       >
                         <option value="">Select role</option>
                         {roleOptions.map((role) => (
@@ -391,13 +422,15 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Workplace
+                  {intl.formatMessage({ id: "profileWorkplace" })}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
                         className="profile-input"
                         {...register("office", {
-                          required: "Office is required",
+                          required: intl.formatMessage({
+                            id: "profileErrorWorkplaceRequired",
+                          }),
                         })}
                       >
                         <option value="">Select office</option>
@@ -440,14 +473,18 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Phone
+                  {intl.formatMessage({ id: "profilePhone" })}
                   <input
                     className="profile-input"
                     {...register("phone", {
-                      required: "Phone is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorPhoneRequired",
+                      }),
                       pattern: {
                         value: /^[0-9+\s()-]{6,}$/,
-                        message: "Invalid phone number",
+                        message: intl.formatMessage({
+                          id: "errorPhoneNumberInvalid",
+                        }),
                       },
                     })}
                     disabled={!editMode}
@@ -463,7 +500,7 @@ export default function Profile() {
                 </label>
                 <div className="address-container">
                   <label>
-                    Address
+                    {intl.formatMessage({ id: "profileAddress" })}
                     <input
                       className="profile-input"
                       value={[user.street, user.postalCode, user.municipality]
@@ -482,13 +519,17 @@ export default function Profile() {
                       }`}
                     >
                       <label>
-                        Street
+                        {intl.formatMessage({ id: "profileAddressStreet" })}
                         <input
                           className="profile-input"
                           {...register("street", {
-                            required: "Street is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressStreetRequired",
+                            }),
                           })}
-                          placeholder="Street"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressStreet",
+                          })}
                         />
                         {errors.street && (
                           <span className="error-message">
@@ -497,13 +538,17 @@ export default function Profile() {
                         )}
                       </label>
                       <label>
-                        Postal Code
+                        {intl.formatMessage({ id: "profileAddressPostalCode" })}
                         <input
                           className="profile-input"
                           {...register("postalCode", {
-                            required: "Postal code is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressPostalCodeRequired",
+                            }),
                           })}
-                          placeholder="Postal Code"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressPostalCode",
+                          })}
                         />
                         {errors.postalCode && (
                           <span className="error-message">
@@ -512,13 +557,19 @@ export default function Profile() {
                         )}
                       </label>
                       <label>
-                        Municipality
+                        {intl.formatMessage({
+                          id: "profileAddressMunicipality",
+                        })}
                         <input
                           className="profile-input"
                           {...register("municipality", {
-                            required: "Municipality is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressMunicipalityRequired",
+                            }),
                           })}
-                          placeholder="Municipality"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressMunicipality",
+                          })}
                         />
                         {errors.municipality && (
                           <span className="error-message">
@@ -530,12 +581,12 @@ export default function Profile() {
                   )}
                 </div>
                 <label>
-                  Biography
+                  {intl.formatMessage({ id: "profileBiography" })}
                   <textarea
                     className="profile-input"
                     {...register("biography")}
                     disabled={!editMode}
-                    placeholder="Biography"
+                    placeholder={intl.formatMessage({ id: "profileBiography" })}
                   />
                 </label>
               </div>

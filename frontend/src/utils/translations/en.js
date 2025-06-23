@@ -138,6 +138,10 @@ const en = {
   errorExpiredPasswordResetToken:
     "Your password reset token has expired. Please request a new one.",
 
+  // Validation
+  errorPhoneNumberInvalid: "Invalid phone number format",
+  errorEmailInvalid: "Invalid email format",
+
   // Not Found Page
   notfoundTitle: "404 Not Found",
   notfoundPhrase: "When life gives you lemons...",
@@ -153,10 +157,14 @@ const en = {
   profileWorkplace: "Workplace",
   profilePhone: "Phone",
   profileAddress: "Address",
+  profileAddressStreet: "Street",
+  profileAddressPostalCode: "Postal Code",
+  profileAddressMunicipality: "Municipality",
   profileBiography: "Biography",
   profilePlaceholderNA: "N/A",
   profileSave: "Save",
   profileEdit: "Edit",
+  profileCancel: "Cancel",
 
   // Profile Errors
   profileErrorFirstNameRequired: "First name is required",
@@ -166,5 +174,14 @@ const en = {
   profileErrorWorkplaceRequired: "Workplace is required",
   profileErrorPhoneRequired: "Phone is required",
   profileErrorAddressRequired: "Address is required",
+  profileErrorAddressStreetRequired: "Street is required",
+  profileErrorAddressPostalCodeRequired: "Postal code is required",
+  profileErrorAddressMunicipalityRequired: "Municipality is required",
+  profileErrorBiographyRequired: "Biography is required",
+
+  // Profile Tabs
+  profileTabProfile: "Profile",
+  profileTabTraining: "Training",
+  profileTabAppraisals: "Appraisals",
 };
 export default en;

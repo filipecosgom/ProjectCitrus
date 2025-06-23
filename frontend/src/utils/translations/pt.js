@@ -19,8 +19,10 @@ const pt = {
   loginErrorPasswordMissing: "A palavra-passe é necessária",
   loginErrorAuthenticationCodeMissing: "O código 2FA é necessário",
   loginErrorAuthenticationCodeInvalid: "Código 2FA inválido",
-  passwordResetRequestFailure: "Falha ao enviar o email de recuperação de palavra-passe. Por favor, tente novamente mais tarde.",
-  passwordResetRequestSuccess: "Um email foi enviado para redefinir a sua palavra-passe.",
+  passwordResetRequestFailure:
+    "Falha ao enviar o email de recuperação de palavra-passe. Por favor, tente novamente mais tarde.",
+  passwordResetRequestSuccess:
+    "Um email foi enviado para redefinir a sua palavra-passe.",
 
   // Register
   registerTitle: "Bem-vindo à CITRUS",
@@ -67,22 +69,28 @@ const pt = {
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
   forgotPasswordFieldEmail: "Endereço de e-mail",
   forgotPasswordSubmit: "Redefinir palavra-passe",
-  forgotPasswordEmailSent: "Um email de recuperação de password foi enviado o seu email.",
+  forgotPasswordEmailSent:
+    "Um email de recuperação de password foi enviado o seu email.",
   forgotPasswordEmailMissing: "O email é necessário",
   forgotPasswordEmailInvalid: "Formato de email inválido",
 
   //Two-Factor Authentication
   twoFactorTitle: "Configuração da 2FA",
   twoFactorWhatIsTitle: "O que é Autenticação de Dois Fatores (2FA)?",
-  twoFactorWhatIsDescription: "A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta. Após inserir sua senha, você precisará digitar um código de 6 dígitos gerado por um aplicativo autenticador no seu telefone.",
+  twoFactorWhatIsDescription:
+    "A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta. Após inserir sua senha, você precisará digitar um código de 6 dígitos gerado por um aplicativo autenticador no seu telefone.",
   twoFactorSetupTitle: "Como Configurar a Autenticação 2FA",
-  twoFactorSetupStep1: "Abra o Google Authenticator, Microsoft Authenticator ou Authy.",
-  twoFactorSetupStep2: "Toque em 'Adicionar uma nova conta' e escolha 'Entrada Manual'.",
+  twoFactorSetupStep1:
+    "Abra o Google Authenticator, Microsoft Authenticator ou Authy.",
+  twoFactorSetupStep2:
+    "Toque em 'Adicionar uma nova conta' e escolha 'Entrada Manual'.",
   twoFactorSetupStep3: "Digite a chave secreta abaixo:",
-  twoFactorSetupStep4: "Salve a configuração e o aplicativo começará a gerar códigos de 6 dígitos a cada 30 segundos.",
+  twoFactorSetupStep4:
+    "Salve a configuração e o aplicativo começará a gerar códigos de 6 dígitos a cada 30 segundos.",
   twoFactorSecretPlaceholder: "CHAVE-SECRETA",
   twoFactorLoginTitle: "Entrando com 2FA",
-  twoFactorLoginDescription: "Sempre que fizer login, insira o código de 6 dígitos mais recente mostrado no seu aplicativo autenticador. O código muda a cada 30 segundos, então certifique-se de usar o mais recente.",
+  twoFactorLoginDescription:
+    "Sempre que fizer login, insira o código de 6 dígitos mais recente mostrado no seu aplicativo autenticador. O código muda a cada 30 segundos, então certifique-se de usar o mais recente.",
   twoFactorCloseButton: "Entendi!",
   twoFactorRequest: "Solicitar código",
   twofactorErrorEmailMissing: "O email é necessário",
@@ -98,13 +106,14 @@ const pt = {
   passwordResetShowPassword: "Mostrar senha",
   passwordResetHidePassword: "Esconder senha",
   passwordResetErrorPasswordMissing: "A senha é necessária",
-  passwordResetErrorConfirmPasswordMissing: "A confirmação da senha é necessária",
+  passwordResetErrorConfirmPasswordMissing:
+    "A confirmação da senha é necessária",
   passwordResetErrorPasswordMismatch: "As senhas não correspondem",
   passwordResetErrorPasswordWeak:
     "A senha deve ter pelo menos 12 caracteres e incluir letras maiúsculas, minúsculas, números e caracteres especiais.",
   passwordResetSuccess: "Password redefinida. Pode entrar com a nova password.",
-  passwordResetError: "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
-
+  passwordResetError:
+    "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
 
   //ERRORS
   protectedRoute: "Tem de iniciar sessão para aceder a esta página",
@@ -119,14 +128,21 @@ const pt = {
   errorDuplicateEntry: "Este email já está registado.",
   errorServerIssue: "Erro no servidor. Tenta novamente mais tarde.",
   errorFailed: "Falha no pedido. Tenta novamente mais tarde.",
-  errorNetworkError: "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
-  errorUnexpected: "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde",
+  errorNetworkError:
+    "Erro de rede. Verifica a tua conexão ou tenta mais tarde.",
+  errorUnexpected:
+    "Ocorreu um erro inesperado. Por favor, tenta novamente mais tarde",
   errorInvalidCredentials: "Email or password estão erradas",
   errorInvalidAuthCode: "Código de autenticação de dois fatores inválido",
   errorInvalidCodeRequest: "Email or password estão erradas",
   errorUserNotFound: "Utilizador não encontrado",
   errorTokenExpired: "O seu token expirou. Por favor, registe-se novamente.",
-  errorExpiredPasswordResetToken: "O seu token de recuperação de password expirou. Por favor, solicite um novo.",
+  errorExpiredPasswordResetToken:
+    "O seu token de recuperação de password expirou. Por favor, solicite um novo.",
+
+  // Validação
+  errorPhoneNumberInvalid: "Formato de número de telefone inválido",
+  errorEmailInvalid: "Formato de email inválido",
 
   // Not Found
   notfoundTitle: "404 Não Encontrado",
@@ -135,7 +151,8 @@ const pt = {
 
   // PROFILE
   profileUpdateSuccess: "Perfil atualizado com sucesso",
-  profileUpdateError: "Erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
+  profileUpdateError:
+    "Erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
   profileFirstName: "Primeiro Nome",
   profileLastName: "Último Nome",
   profileBirthDate: "Data de Nascimento",
@@ -143,10 +160,14 @@ const pt = {
   profileWorkplace: "Escritório",
   profilePhone: "Telefone",
   profileAddress: "Morada",
+  profileAddressStreet: "Rua",
+  profileAddressPostalCode: "Código Postal",
+  profileAddressMunicipality: "Cidade",
   profileBiography: "Biografia",
   profilePlaceholderNA: "N/A",
   profileSave: "Guardar",
   profileEdit: "Editar",
+  profileCancel: "Cancelar",
 
   // Profile Errors
   profileErrorFirstNameRequired: "O primeiro nome é obrigatório",
@@ -156,7 +177,15 @@ const pt = {
   profileErrorWorkplaceRequired: "O escritório é obrigatório",
   profileErrorPhoneRequired: "O telefone é obrigatório",
   profileErrorAddressRequired: "A morada é obrigatória",
+  profileErrorAddressStreetRequired: "A rua é obrigatória",
+  profileErrorAddressPostalCodeRequired: "O código postal é obrigatório",
+  profileErrorAddressMunicipalityRequired: "A cidade é obrigatória",
   profileErrorBiographyRequired: "A biografia é obrigatória",
+
+  // Profile Tabs
+  profileTabProfile: "Perfil",
+  profileTabTraining: "Formação",
+  profileTabAppraisals: "Avaliações",
 };
 
 export default pt;
