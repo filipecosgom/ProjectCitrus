@@ -1,0 +1,54 @@
+.avatarContainer {
+  margin-right: 1rem;
+  position: relative;
+}
+
+.avatarError {
+  color: #dc3545;
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.user-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid white;
+}
+
+.user-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 0 0 2px #f8f9fa;
+}
+
+/* Status badge colors */
+.status-badge[data-status="check"] {
+  color: #28a745;
+}
+
+.status-badge[data-status="cross"] {
+  color: #dc3545;
+}
+
+.status-badge[data-status="stroke"] {
+  color: #ffc107;
+}
