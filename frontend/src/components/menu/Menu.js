@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { FaUserCircle, FaUsers, FaBook, FaAward } from "react-icons/fa";
@@ -8,93 +8,7 @@ import LanguageDropdown from "../languages/LanguageDropdown";
 import "./Menu.css";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
-
-// Lista de itens do menu, com ícones, cores, rotas e flags especiais
-const menuItems = [
-  {
-    key: "dashboard",
-    label: "Dashboard",
-    icon: <TbLayoutDashboardFilled />,
-    color: "#B61B23",
-    route: "/dashboard",
-    admin: true,
-  },
-  {
-    key: "profile",
-    label: "Profile",
-    icon: <FaUserCircle />,
-    color: "#9747FF",
-    route: "/profile",
-    admin: true,
-  },
-  {
-    key: "users",
-    label: "Users",
-    icon: <FaUsers />,
-    color: "#3F861E",
-    route: "/users",
-    admin: true,
-  },
-  {
-    key: "training",
-    label: "Training",
-    icon: <FaBook />,
-    color: "#FF5900",
-    route: "/training",
-    admin: true,
-  },
-  {
-    key: "appraisal",
-    label: "Appraisal",
-    icon: <FaAward />,
-    color: "#FDD835",
-    route: "/appraisal",
-    admin: true,
-  },
-  {
-    key: "cycles",
-    label: "Cycles",
-    icon: <IoCalendar />,
-    color: "#00B9CD",
-    route: "/cycles",
-    admin: true, // só admin
-  },
-  {
-    key: "settings",
-    label: "Settings",
-    icon: <IoSettings />,
-    color: "#1976d2",
-    route: "/settings",
-    admin: true, // só admin
-  },
-  {
-    key: "darkmode",
-    label: "Dark Mode",
-    icon: <MdDarkMode />,
-    color: "#818488",
-    route: null,
-    admin: true,
-    isToggle: true,
-  },
-  {
-    key: "language",
-    label: "Language",
-    icon: null,
-    color: null,
-    route: null,
-    admin: true,
-    isLanguage: true,
-  },
-  {
-    key: "logout",
-    label: "Logout",
-    icon: <MdLogout />,
-    color: "#818488",
-    route: null,
-    admin: true,
-    isLogout: true,
-  },
-];
+import useAuthStore from "../../stores/useAuthStore";
 
 export default function Menu({
   onLogout,
@@ -103,10 +17,102 @@ export default function Menu({
   show = false, // se o menu está visível (mobile)
   onClose, // função para fechar menu (mobile)
 }) {
+  const userId = useAuthStore((state) => state.user?.id);
+  // Lista de itens do menu, com ícones, cores, rotas e flags especiais
+  const menuItems = [
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: <TbLayoutDashboardFilled />,
+      color: "#B61B23",
+      route: "/dashboard",
+      admin: true,
+    },
+    {
+      key: "profile",
+      label: "Profile",
+      icon: <FaUserCircle />,
+      color: "#9747FF",
+      route: userId ? `/profile?id=${userId}` : "/profile",
+      admin: true,
+    },
+    {
+      key: "users",
+      label: "Users",
+      icon: <FaUsers />,
+      color: "#3F861E",
+      route: "/users",
+      admin: true,
+    },
+    {
+      key: "training",
+      label: "Training",
+      icon: <FaBook />,
+      color: "#FF5900",
+      route: "/training",
+      admin: true,
+    },
+    {
+      key: "appraisal",
+      label: "Appraisal",
+      icon: <FaAward />,
+      color: "#FDD835",
+      route: "/appraisal",
+      admin: true,
+    },
+    {
+      key: "cycles",
+      label: "Cycles",
+      icon: <IoCalendar />,
+      color: "#00B9CD",
+      route: "/cycles",
+      admin: true, // só admin
+    },
+    {
+      key: "settings",
+      label: "Settings",
+      icon: <IoSettings />,
+      color: "#1976d2",
+      route: "/settings",
+      admin: true, // só admin
+    },
+    {
+      key: "darkmode",
+      label: "Dark Mode",
+      icon: <MdDarkMode />,
+      color: "#818488",
+      route: null,
+      admin: true,
+      isToggle: true,
+    },
+    {
+      key: "language",
+      label: "Language",
+      icon: null,
+      color: null,
+      route: null,
+      admin: true,
+      isLanguage: true,
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      icon: <MdLogout />,
+      color: "#818488",
+      route: null,
+      admin: true,
+      isLogout: true,
+    },
+  ];
   const location = useLocation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false); // controla expansão em desktop/tablet
   const [darkMode, setDarkMode] = useState(false); // estado do toggle dark mode
+
+  useEffect(() => {
+    console.log("MENU");
+    console.log(userId);
+  }, []);
 
   // Lê isAdmin do sessionStorage (true/false)
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
