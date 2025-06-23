@@ -195,7 +195,7 @@ public class UserController {
         }
     }
 
-    @POST
+    @PATCH
     @Path("/{id}/avatar")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
