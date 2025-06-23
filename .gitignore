@@ -13,4 +13,5 @@ target/
 .target/
 pom.xml.versionsBackup
 pom.xml.releaseBackup
+#Pasta de avatars
 backend/uploads/avatars/

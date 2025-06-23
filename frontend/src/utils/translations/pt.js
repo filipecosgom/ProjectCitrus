@@ -136,6 +136,27 @@ const pt = {
   // PROFILE
   profileUpdateSuccess: "Perfil atualizado com sucesso",
   profileUpdateError: "Erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
+  profileFirstName: "Primeiro Nome",
+  profileLastName: "Último Nome",
+  profileBirthDate: "Data de Nascimento",
+  profileRole: "Cargo",
+  profileWorkplace: "Escritório",
+  profilePhone: "Telefone",
+  profileAddress: "Morada",
+  profileBiography: "Biografia",
+  profilePlaceholderNA: "N/A",
+  profileSave: "Guardar",
+  profileEdit: "Editar",
+
+  // Profile Errors
+  profileErrorFirstNameRequired: "O primeiro nome é obrigatório",
+  profileErrorLastNameRequired: "O último nome é obrigatório",
+  profileErrorBirthDateRequired: "A data de nascimento é obrigatória",
+  profileErrorRoleRequired: "O cargo é obrigatório",
+  profileErrorWorkplaceRequired: "O escritório é obrigatório",
+  profileErrorPhoneRequired: "O telefone é obrigatório",
+  profileErrorAddressRequired: "A morada é obrigatória",
+  profileErrorBiographyRequired: "A biografia é obrigatória",
 };
 
 export default pt;
