@@ -69,6 +69,11 @@
   border-radius: 10px;
 }
 
+.profile-actions{
+  display: flex;
+  gap: 5px;
+}
+
 .profile-label {
   position: absolute;
   bottom: 8px;
@@ -141,22 +146,33 @@ textarea {
 }
 
 .edit-btn {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static; /* Remove absolute para os botões individuais */
   background: #a44;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 8px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8em;
+  transition: background 0.2s, color 0.2s;
+}
+
+.edit-btn.edit-save-btn {
+  background: #a44;
+  color: #fff;
+}
+
+.edit-btn.edit-cancel-btn {
+  background: #888;
+  color: #fff;
 }
 
 /* Biography textarea melhorada */
 .form-fields textarea {
   min-height: 40px;
-  height:40px;
+  height: 40px;
   resize: vertical;
   width: 100%;
   box-sizing: border-box;
@@ -210,7 +226,7 @@ select {
 }
 
 .address-edit-fields {
-  position: absolute;
+  position: static !important;
   top: 0;
   left: 0;
   width: 100%;
@@ -223,8 +239,9 @@ select {
   flex-direction: column;
   gap: 12px;
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto !important;
   transition: opacity 0.3s;
+  align-items: center;
 }
 
 .address-edit-fields.slide-in {
@@ -259,6 +276,49 @@ select {
 /* Hide the file input */
 .profile-avatar-input {
   display: none;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #a44;
+  font-size: 2em;
+  padding: 6px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.icon-btn:active,
+.icon-btn:focus {
+  background: #f5eaea;
+  outline: none;
+}
+.edit-save-btn {
+  color: #a44;
+}
+.edit-cancel-btn {
+  color: #888;
+}
+@media (min-width: 767px) {
+  .icon-btn {
+    display: none !important;
+  }
+  .edit-btn {
+    display: inline-block !important;
+  }
+}
+@media (max-width: 767px) {
+  /* Em mobile, mostra só os icon-btn e esconde os botões normais */
+  .edit-btn {
+    display: none !important;
+  }
+  .icon-btn {
+    display: flex !important;
+  }
 }
 
 /*---------------------------*/
@@ -339,10 +399,15 @@ select {
 
   .address-container {
     display: flex;
-    position: relative;
-    width: 100%;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .address-edit-fields {
+    width: 100%;
+    margin-top: 8px;
   }
 
   .edit-btn {
@@ -356,7 +421,6 @@ select {
     gap: 8px;
   }
   .tab {
-    
     padding: 8px 10px;
     font-size: 1.1em;
     gap: 0;
