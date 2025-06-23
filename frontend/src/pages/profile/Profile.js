@@ -30,6 +30,9 @@ export default function Profile() {
   const setUserAndExpiration = useAuthStore(
     (state) => state.setUserAndExpiration
   );
+  const setStoreAvatar = useAuthStore(
+    (state) => state.setAvatar
+  );
 
   //Avatar
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -94,9 +97,10 @@ export default function Profile() {
     if (response?.success) {
       // Update local state
       const updatedUser = { ...user, ...data };
-      if (response.avatar) {
+      if (response?.success) {
         updatedUser.hasAvatar = true;
-        setUserAvatar(response.avatar);
+        setUserAvatar(avatarPreview);
+        setStoreAvatar(avatarPreview, avatarFile);
         setAvatarPreview(null);
         setAvatarFile(null);
       }

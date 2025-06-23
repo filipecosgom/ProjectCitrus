@@ -8,6 +8,7 @@ package pt.uc.dei.enums;
  * - DATE: Represents a date-related parameter.
  */
 public enum Parameter {
+    ID("id"),
     FIRST_NAME("name"),
     SURNAME("surname"),
     EMAIL("email"),
