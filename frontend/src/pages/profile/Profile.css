@@ -156,7 +156,7 @@ textarea {
 /* Biography textarea melhorada */
 .form-fields textarea {
   min-height: 40px;
-  height:40px;
+  height: 40px;
   resize: vertical;
   width: 100%;
   box-sizing: border-box;
@@ -261,6 +261,50 @@ select {
   display: none;
 }
 
+.icon-btn {
+  background: none;
+  border: none;
+  color: #a44;
+  font-size: 2em;
+  padding: 6px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.icon-btn:active,
+.icon-btn:focus {
+  background: #f5eaea;
+  outline: none;
+}
+.edit-save-btn {
+  color: #a44;
+}
+.edit-cancel-btn {
+  color: #888;
+}
+@media (min-width: 768px) {
+  /* Em desktop/tablet, esconde os icon-btn e mostra os botões normais */
+  .icon-btn {
+    display: none !important;
+  }
+  .edit-btn {
+    display: inline-block !important;
+  }
+}
+@media (max-width: 767px) {
+  /* Em mobile, mostra só os icon-btn e esconde os botões normais */
+  .edit-btn {
+    display: none !important;
+  }
+  .icon-btn {
+    display: flex !important;
+  }
+}
+
 /*---------------------------*/
 /*---------------------------*/
 /* --- RESPONSIVE TABLET --- */
@@ -356,7 +400,6 @@ select {
     gap: 8px;
   }
   .tab {
-    
     padding: 8px 10px;
     font-size: 1.1em;
     gap: 0;

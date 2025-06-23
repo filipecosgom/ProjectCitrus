@@ -4,7 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaPen, FaUserCircle, FaAward, FaBook } from "react-icons/fa";
+import {
+  FaPen,
+  FaUserCircle,
+  FaAward,
+  FaBook,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
 import UserIcon from "../../components/userIcon/UserIcon";
 import ProfilePhoto from "../../assets/photos/teresamatos.png";
 import ManagerPhoto from "../../assets/photos/joseferreira.png";
@@ -203,9 +210,9 @@ export default function Profile() {
         </div>
         {editMode && (
           <button
-            className="edit-btn"
+            className="icon-btn edit-cancel-btn"
             type="button"
-            style={{ background: "#888", marginRight: "80px" }}
+            title={intl.formatMessage({ id: "profileCancel" })}
             onClick={() => {
               setEditMode(false);
               setShowAddressFields(false);
@@ -214,12 +221,17 @@ export default function Profile() {
               setAvatarFile(null);
             }}
           >
-            {intl.formatMessage({ id: "profileCancel" })}
+            <FaTimes />
           </button>
         )}
         <button
-          className="edit-btn"
+          className="icon-btn edit-save-btn"
           type={editMode ? "submit" : "button"}
+          title={
+            editMode
+              ? intl.formatMessage({ id: "profileSave" })
+              : intl.formatMessage({ id: "profileEdit" })
+          }
           onClick={
             editMode
               ? handleSubmit(onSubmit)
@@ -229,9 +241,7 @@ export default function Profile() {
                 }
           }
         >
-          {editMode
-            ? intl.formatMessage({ id: "profileSave" })
-            : intl.formatMessage({ id: "profileEdit" })}
+          {editMode ? <FaCheck /> : <FaPen />}
         </button>
       </div>
       {activeTab === "profile" && (
