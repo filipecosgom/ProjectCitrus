@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.enums.Order;
+import pt.uc.dei.utils.NormalizeStrings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  * database interactions related to user management.
  *
  * @Stateless Marks this class as a stateless EJB, making it eligible for
- *            dependency injection and transaction management by the EJB container.
+ * dependency injection and transaction management by the EJB container.
  */
 @Stateless
 public class UserRepository extends AbstractRepository<UserEntity> {
@@ -53,19 +54,16 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      *
      * @param email The email address to search for (case-sensitive)
      * @return The {@link UserEntity} matching the email address, or
-     *         null if no user is found
-     * @throws jakarta.persistence.PersistenceException If an error occurs
-     *         during the database operation
+     * null if no user is found
+     * @throws jakarta.persistence.PersistenceException     If an error occurs
+     *                                                      during the database operation
      * @throws jakarta.persistence.NonUniqueResultException If multiple users
-     *         are found with the same email (should not occur if email is unique)
-     *
+     *                                                      are found with the same email (should not occur if email is unique)
      * @see UserEntity
      */
     public UserEntity findUserByEmail(String email) {
         try {
-            return em.createNamedQuery("User.findUserByEmail", UserEntity.class)
-                    .setParameter("email", email)
-                    .getSingleResult();
+            return em.createNamedQuery("User.findUserByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             LOGGER.warn("User not found with email: " + email);
             return null;
@@ -81,28 +79,23 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      *
      * @param id The unique identifier to search for
      * @return The {@link UserEntity} matching the ID, or
-     *         null if no user is found
-     * @throws jakarta.persistence.PersistenceException If an error occurs
-     *         during the database operation
+     * null if no user is found
+     * @throws jakarta.persistence.PersistenceException     If an error occurs
+     *                                                      during the database operation
      * @throws jakarta.persistence.NonUniqueResultException If multiple users
-     *         are found with the same ID (should not occur as ID is unique)
-     *
+     *                                                      are found with the same ID (should not occur as ID is unique)
      * @see UserEntity
      */
     public UserEntity findUserById(Long id) {
         try {
-            return em.createNamedQuery("User.findUserById", UserEntity.class)
-                    .setParameter("id", id)
-                    .getSingleResult();
+            return em.createNamedQuery("User.findUserById", UserEntity.class).setParameter("id", id).getSingleResult();
         } catch (NoResultException e) {
             LOGGER.warn("User not found with ID: " + id);
             return null;
         }
     }
 
-    public List<UserEntity> getUsers(Long id, String email, String name, String surname, String phone,
-                                     AccountState accountState, Role role, Office office,
-                                     Parameter parameter, Order order, int offset, int limit) {
+    public List<UserEntity> getUsers(Long id, String email, String name, String phone, AccountState accountState, Role role, Office office, Parameter parameter, Order order, int offset, int limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
@@ -115,13 +108,32 @@ public class UserRepository extends AbstractRepository<UserEntity> {
             predicates.add(cb.equal(root.get("id"), id));
         }
         if (email != null && !email.isEmpty()) {
-            predicates.add(cb.equal(root.get("email"), email));
+            predicates.add(cb.like(cb.lower(root.get("email")), "%" + email + "%"));
         }
         if (name != null && !name.isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
-        }
-        if (surname != null && !surname.isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+            boolean isStrict = name.startsWith("\"") && name.endsWith("\"");
+
+            if (isStrict) {
+                String exact = name.substring(1, name.length() - 1).toLowerCase();
+
+                Expression<String> fullName = cb.concat(
+                        cb.concat(cb.lower(cb.function("unaccent", String.class, root.get("name"))), " "),
+                        cb.lower(cb.function("unaccent", String.class, root.get("surname")))
+                );
+
+                predicates.add(cb.equal(fullName, exact));
+        } else {
+                name = name != null ? NormalizeStrings.normalizeString(name) : null;
+                // Flexible tokenized search
+                String[] terms = name.toLowerCase().split("\\s+");
+                for (String term : terms) {
+                    Expression<String> unaccentedName = cb.function("unaccent", String.class, cb.lower(root.get("name")));
+                    Expression<String> unaccentedSurname = cb.function("unaccent", String.class, cb.lower(root.get("surname")));
+                    Predicate nameMatch = cb.like(unaccentedName, "%" + term + "%");
+                    Predicate surnameMatch = cb.like(unaccentedSurname, "%" + term + "%");
+                    predicates.add(cb.or(nameMatch, surnameMatch));
+                }
+            }
         }
         if (phone != null && !phone.isEmpty()) {
             predicates.add(cb.equal(root.get("phone"), phone));
@@ -151,25 +163,26 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         return typedQuery.getResultList();
     }
 
-    public long getTotalUserCount(Long id, String email, String name, String surname, String phone,
-                                  AccountState accountState, Role role, Office office) {
+    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState, Role role, Office office) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<UserEntity> root = query.from(UserEntity.class);
 
         List<Predicate> predicates = new ArrayList<>();
-        if(id != null) {
+        if (id != null) {
             predicates.add(cb.equal(root.get("id"), id));
         }
         if (email != null && !email.isEmpty()) {
             predicates.add(cb.equal(root.get("email"), email));
         }
         if (name != null && !name.isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
-        }
-        if (surname != null && !surname.isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+            String[] terms = name.toLowerCase().split("\\s+");
+            for (String term : terms) {
+                Predicate matchName = cb.like(cb.lower(root.get("name")), "%" + term + "%");
+                Predicate matchSurname = cb.like(cb.lower(root.get("surname")), "%" + term + "%");
+                predicates.add(cb.or(matchName, matchSurname));
+            }
         }
         if (phone != null && !phone.isEmpty()) {
             predicates.add(cb.equal(root.get("phone"), phone));

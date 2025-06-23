@@ -17,6 +17,7 @@ import pt.uc.dei.enums.*;
 import pt.uc.dei.services.*;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
+import pt.uc.dei.utils.NormalizeStrings;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -303,7 +304,6 @@ public class UserController {
     public Response getUsers(@QueryParam("id") Long id,
                              @QueryParam("email") String email,
                              @QueryParam("name") String name,
-                             @QueryParam("surname") String surname,
                              @QueryParam("phone") String phone,
                              @QueryParam("accountState") String accountStateStr,
                              @QueryParam("role") String roleStr,
@@ -312,13 +312,13 @@ public class UserController {
                              @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit) {
-        AccountState accountState = accountStateStr != null ? AccountState.valueOf(accountStateStr) : null;
-        Role role = Role.fromFieldName(roleStr);
-        Office office = Office.fromFieldName(officeStr);
-        Parameter parameter = Parameter.fromFieldName(parameterStr);
-        Order order = Order.fromFieldName(orderStr);
+        AccountState accountState = accountStateStr != null ? AccountState.valueOf(NormalizeStrings.normalizeString(accountStateStr)) : null;
+        Role role = roleStr != null ? Role.fromFieldName(NormalizeStrings.normalizeString(roleStr)) : null;
+        Office office = officeStr != null ? Office.fromFieldName(NormalizeStrings.normalizeString(officeStr)) : null;
+        Parameter parameter = Parameter.fromFieldName(NormalizeStrings.normalizeString(parameterStr));
+        Order order = Order.fromFieldName(NormalizeStrings.normalizeString(orderStr));
 
-        Map<String, Object> userData = userService.getUsers(id, email, name, surname, phone,
+        Map<String, Object> userData = userService.getUsers(id, email, name, phone,
                 accountState, role, office,
                 parameter, order, offset, limit);
 

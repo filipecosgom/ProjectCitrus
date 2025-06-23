@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
-import './Searchbar.css'
-import { FiSearch, FiFilter, FiChevronDown } from 'react-icons/fi';
+import React, { useState } from "react";
+import "./Searchbar.css";
+import { FiSearch, FiFilter, FiChevronDown } from "react-icons/fi";
 
-const SearchBar = ({ onSearch, onFilterChange, onResultsPerPageChange }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchBar = ({ onSearch, onFilterChange, onResultsPerPageChange, context }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('name');
+  const [selectedFilter, setSelectedFilter] = useState("name");
   const [resultsPerPage, setResultsPerPage] = useState(5);
 
   const handleSearch = () => {
-    onSearch(searchQuery, selectedFilter);
+    if (searchQuery.trim()) {
+      onSearch(searchQuery);
+    }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
 
   const handleFilterSelect = (filter) => {
+    console.log(filter);
     setSelectedFilter(filter);
     setShowFilters(false);
     onFilterChange(filter);
@@ -34,7 +37,7 @@ const SearchBar = ({ onSearch, onFilterChange, onResultsPerPageChange }) => {
       <button className="search-button" onClick={handleSearch}>
         <FiSearch className="search-icon" />
       </button>
-      
+
       <input
         type="text"
         className="search-input"
@@ -43,24 +46,53 @@ const SearchBar = ({ onSearch, onFilterChange, onResultsPerPageChange }) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyPress={handleKeyPress}
       />
-      
+
       <div className="filter-container">
-        <button className="filter-button" onClick={() => setShowFilters(!showFilters)}>
+        <button
+          className="filter-button"
+          onClick={() => setShowFilters(!showFilters)}
+        >
           <FiFilter className="filter-icon" />
-          <span className="filter-text">Filter</span>
+          <span className="filter-text">Filter by {selectedFilter}</span>{" "}
+          {/* Show active filter */}
         </button>
-        
+
         {showFilters && (
           <div className="filter-dropdown">
-            <div className="filter-option" onClick={() => handleFilterSelect('name')}>Name</div>
-            <div className="filter-option" onClick={() => handleFilterSelect('email')}>Email</div>
-            <div className="filter-option" onClick={() => handleFilterSelect('role')}>Role</div>
-            <div className="filter-option" onClick={() => handleFilterSelect('workplace')}>Workplace</div>
-            <div className="filter-option" onClick={() => handleFilterSelect('manager')}>Manager</div>
+            <div
+              className="filter-option"
+              onClick={() => handleFilterSelect("name")}
+            >
+              Name
+            </div>
+            <div
+              className="filter-option"
+              onClick={() => handleFilterSelect("email")}
+            >
+              Email
+            </div>
+            <div
+              className="filter-option"
+              onClick={() => handleFilterSelect("role")}
+            >
+              Role
+            </div>
+            <div
+              className="filter-option"
+              onClick={() => handleFilterSelect("workplace")}
+            >
+              Workplace
+            </div>
+            <div
+              className="filter-option"
+              onClick={() => handleFilterSelect("manager")}
+            >
+              Manager
+            </div>
           </div>
         )}
       </div>
-      
+
       <div className="results-per-page">
         <select
           value={resultsPerPage}

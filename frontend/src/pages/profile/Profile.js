@@ -100,13 +100,14 @@ export default function Profile() {
         // Update local state
         const updatedUser = { ...user, ...data };
         if (response?.success) {
-          updatedUser.hasAvatar = true;
-          setUserAvatar(avatarPreview);
-          setStoreAvatar(avatarPreview, avatarFile);
-          setAvatarPreview(null);
-          setAvatarFile(null);
+          if (avatarFile && avatarPreview) {
+            updatedUser.hasAvatar = true;
+            setUserAvatar(avatarPreview);
+            setStoreAvatar(avatarPreview, avatarFile);
+            setAvatarPreview(null);
+            setAvatarFile(null);
+          }
         }
-
         setUser(updatedUser);
         setUserAndExpiration(
           updatedUser,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styles from './UserCard.module.css';
-import UserIcon from '../../components/UserIcon/UserIcon';
+import styles from './UserCard.css';
+import UserIcon from '../userIcon/UserIcon';
 import { handleGetUserAvatar } from '../../handles/handleGetUserAvatar';
 
 const UserCard = ({ user }) => {

@@ -201,15 +201,15 @@ public class UserService implements Serializable {
         return userDTO;
     }
 
-    public Map<String, Object> getUsers(Long id, String email, String name, String surname, String phone,
+    public Map<String, Object> getUsers(Long id, String email, String name, String phone,
                                         AccountState accountState, Role role, Office office,
                                         Parameter parameter, Order order, int offset, int limit) {
 
-        List<UserEntity> users = userRepository.getUsers(id, email, name, surname, phone,
+        List<UserEntity> users = userRepository.getUsers(id, email, name, phone,
                 accountState, role, office,
                 parameter, order, offset, limit);
 
-        long totalUsers = userRepository.getTotalUserCount(id, email, name, surname, phone,
+        long totalUsers = userRepository.getTotalUserCount(id, email, name, phone,
                 accountState, role, office);
 
         List<UserDTO> userDtos = users.stream()

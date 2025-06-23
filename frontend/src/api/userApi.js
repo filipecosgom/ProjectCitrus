@@ -57,7 +57,7 @@ export const uploadUserAvatar = async (userId, avatarFile) => {
     formData.append("file", avatarFile, fileName);
     console.log(formData);
 
-    const response = await api.post(
+    const response = await api.patch(
       `${userEndpoint}/${userId}/avatar`,
       formData,
       {
@@ -94,7 +94,6 @@ export const fetchPaginatedUsers = async (
     id = null,
     email = null,
     name = null,
-    surname = null,
     phone = null,
     accountState = null,
     role = null,
@@ -112,7 +111,6 @@ export const fetchPaginatedUsers = async (
     if (id) params.append('id', id);
     if (email) params.append('email', email);
     if (name) params.append('name', name);
-    if (surname) params.append('surname', surname);
     if (phone) params.append('phone', phone);
     if (accountState) params.append('accountState', accountState);
     if (role) params.append('role', role);
