@@ -218,6 +218,7 @@ public class UserController {
                     .entity(new ApiResponse(false, "Unsupported file type", "errorInvalidType", null))
                     .build();
         }
+        FileService.removeExistingFiles(id);
         boolean saved = FileService.saveFileWithSizeLimit(forSaving, filename);
         if (!saved) {
             return Response.status(Response.Status.BAD_REQUEST)

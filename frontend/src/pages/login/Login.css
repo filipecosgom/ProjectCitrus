@@ -42,7 +42,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 0px 32px 0px 32px;
+  padding: var(--paddingLanding-sm);
 }
 
 .login-title-group {
@@ -136,14 +136,14 @@
   color: var(--secondary);
   align-self: flex-start;
   margin-top: 0px;
-  margin-bottom: var(--padding-sm);
+  margin-bottom: var(--paddingLanding-sm);
 }
 
 .login-register-row {
   color: var(--secondary);
   align-self: flex-end;
   margin-top: 0px;
-  margin-bottom: var(--padding-sm);
+  margin-bottom: var(--paddingLanding-sm);
 }
 
 .login-register-link {
@@ -154,7 +154,7 @@
 }
 
 .login-language-dropdown {
-  margin-top: var(--padding-md);
+  margin-top: var(--paddingLanding-md);
   align-self: flex-end;
   vertical-align: bottom;
 
@@ -296,7 +296,7 @@
   color: var(--secondary);
   align-self: flex-end;
   margin-top: 24px;
-  margin-bottom: var(--padding-sm);
+  margin-bottom: var(--paddingLanding-sm);
 }
 
 .login-register-link {
@@ -307,7 +307,7 @@
 }
 
 .login-language-dropdown {
-  margin-top: var(--padding-md);
+  margin-top: var(--paddingLanding-md);
   align-self: flex-end;
   vertical-align: bottom;
 
@@ -449,7 +449,7 @@
   color: var(--secondary);
   align-self: flex-start;
   margin-top: 0px;
-  margin-bottom: var(--padding-sm);
+  margin-bottom: var(--paddingLanding-sm);
 }
 
 
@@ -457,7 +457,7 @@
   color: var(--secondary);
   align-self: flex-end;
   margin-top: 24px;
-  margin-bottom: var(--padding-sm);
+  margin-bottom: var(--paddingLanding-sm);
 }
 
 .login-register-link {
@@ -468,7 +468,7 @@
 }
 
 .login-language-dropdown {
-  margin-top: var(--padding-md);
+  margin-top: var(--paddingLanding-md);
   align-self: flex-end;
   vertical-align: bottom;
 }
