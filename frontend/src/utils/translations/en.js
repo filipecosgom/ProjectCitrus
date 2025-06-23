@@ -137,6 +137,10 @@ const en = {
   errorTokenExpired: "Your token has expired. Please register again.",
   errorExpiredPasswordResetToken:
     "Your password reset token has expired. Please request a new one.",
+  
+  // Validation
+  errorPhoneNumberInvalid: "Invalid phone number format",
+  errorEmailInvalid: "Invalid email format",
 
   // Not Found Page
   notfoundTitle: "404 Not Found",
@@ -153,6 +157,9 @@ const en = {
   profileWorkplace: "Workplace",
   profilePhone: "Phone",
   profileAddress: "Address",
+  profileAddressStreet: "Street",
+  profileAddressPostalCode: "Postal Code",
+  profileAddressMunicipality: "Municipality",
   profileBiography: "Biography",
   profilePlaceholderNA: "N/A",
   profileSave: "Save",
@@ -166,5 +173,9 @@ const en = {
   profileErrorWorkplaceRequired: "Workplace is required",
   profileErrorPhoneRequired: "Phone is required",
   profileErrorAddressRequired: "Address is required",
+  profileErrorAddressStreetRequired: "Street is required",
+  profileErrorAddressPostalCodeRequired: "Postal code is required",
+  profileErrorAddressMunicipalityRequired: "Municipality is required",
+  profileErrorBiographyRequired: "Biography is required",
 };
 export default en;

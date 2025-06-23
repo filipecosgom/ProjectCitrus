@@ -301,7 +301,9 @@ export default function Profile() {
                       }),
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
+                    placeholder={intl.formatMessage({
+                      id: "profilePlaceholderNA",
+                    })}
                   />
                   {errors.name && (
                     <span className="error-message">{errors.name.message}</span>
@@ -312,10 +314,14 @@ export default function Profile() {
                   <input
                     className="profile-input"
                     {...register("surname", {
-                      required: "Last name is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorLastNameRequired",
+                      }),
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
+                    placeholder={intl.formatMessage({
+                      id: "profilePlaceholderNA",
+                    })}
                   />
                   {errors.surname && (
                     <span className="error-message">
@@ -324,12 +330,14 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Date of Birth
+                  {intl.formatMessage({ id: "profileBirthDate" })}
                   <input
                     type="date"
                     className="profile-input"
                     {...register("birthdate", {
-                      required: "Birthdate is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorBirthDateRequired",
+                      }),
                     })}
                     disabled={!editMode}
                   />
@@ -340,12 +348,16 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Role
+                  {intl.formatMessage({ id: "profileRole" })}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
                         className="profile-input"
-                        {...register("role", { required: "Role is required" })}
+                        {...register("role", {
+                          required: intl.formatMessage({
+                            id: "profileErrorRoleRequired",
+                          }),
+                        })}
                       >
                         <option value="">Select role</option>
                         {roleOptions.map((role) => (
@@ -387,13 +399,15 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Workplace
+                  {intl.formatMessage({ id: "profileWorkplace" })}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
                         className="profile-input"
                         {...register("office", {
-                          required: "Office is required",
+                          required: intl.formatMessage({
+                            id: "profileErrorWorkplaceRequired",
+                          }),
                         })}
                       >
                         <option value="">Select office</option>
@@ -436,18 +450,24 @@ export default function Profile() {
                   )}
                 </label>
                 <label>
-                  Phone
+                  {intl.formatMessage({ id: "profilePhone" })}
                   <input
                     className="profile-input"
                     {...register("phone", {
-                      required: "Phone is required",
+                      required: intl.formatMessage({
+                        id: "profileErrorPhoneRequired",
+                      }),
                       pattern: {
                         value: /^[0-9+\s()-]{6,}$/,
-                        message: "Invalid phone number",
+                        message: intl.formatMessage({
+                          id: "errorPhoneNumberInvalid",
+                        }),
                       },
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
+                    placeholder={intl.formatMessage({
+                      id: "profilePlaceholderNA",
+                    })}
                   />
                   {errors.phone && (
                     <span className="error-message">
@@ -457,14 +477,16 @@ export default function Profile() {
                 </label>
                 <div className="address-container">
                   <label>
-                    Address
+                    {intl.formatMessage({ id: "profileAddress" })}
                     <input
                       className="profile-input"
                       value={[user.street, user.postalCode, user.municipality]
                         .filter(Boolean)
                         .join(", ")}
                       disabled
-                      placeholder={intl.formatMessage({ id: "profilePlaceholderNA" })}
+                      placeholder={intl.formatMessage({
+                        id: "profilePlaceholderNA",
+                      })}
                     />
                   </label>
                   {editMode && (
@@ -474,13 +496,17 @@ export default function Profile() {
                       }`}
                     >
                       <label>
-                        Street
+                        {intl.formatMessage({ id: "profileAddressStreet" })}
                         <input
                           className="profile-input"
                           {...register("street", {
-                            required: "Street is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressStreetRequired",
+                            }),
                           })}
-                          placeholder="Street"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressStreet",
+                          })}
                         />
                         {errors.street && (
                           <span className="error-message">
@@ -489,13 +515,17 @@ export default function Profile() {
                         )}
                       </label>
                       <label>
-                        Postal Code
+                        {intl.formatMessage({ id: "profileAddressPostalCode" })}
                         <input
                           className="profile-input"
                           {...register("postalCode", {
-                            required: "Postal code is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressPostalCodeRequired",
+                            }),
                           })}
-                          placeholder="Postal Code"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressPostalCode",
+                          })}
                         />
                         {errors.postalCode && (
                           <span className="error-message">
@@ -504,13 +534,19 @@ export default function Profile() {
                         )}
                       </label>
                       <label>
-                        Municipality
+                        {intl.formatMessage({
+                          id: "profileAddressMunicipality",
+                        })}
                         <input
                           className="profile-input"
                           {...register("municipality", {
-                            required: "Municipality is required",
+                            required: intl.formatMessage({
+                              id: "profileErrorAddressMunicipalityRequired",
+                            }),
                           })}
-                          placeholder="Municipality"
+                          placeholder={intl.formatMessage({
+                            id: "profileAddressMunicipality",
+                          })}
                         />
                         {errors.municipality && (
                           <span className="error-message">
@@ -522,12 +558,12 @@ export default function Profile() {
                   )}
                 </div>
                 <label>
-                  Biography
+                  {intl.formatMessage({ id: "profileBiography" })}
                   <textarea
                     className="profile-input"
                     {...register("biography")}
                     disabled={!editMode}
-                    placeholder="Biography"
+                    placeholder={intl.formatMessage({ id: "profileBiography" })}
                   />
                 </label>
               </div>
