@@ -4,20 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tika.Tika;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.services.*;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
-import pt.uc.dei.utils.NormalizeStrings;
+import pt.uc.dei.utils.SearchUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -312,14 +310,13 @@ public class UserController {
                              @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit) {
-        AccountState accountState = accountStateStr != null ? AccountState.valueOf(NormalizeStrings.normalizeString(accountStateStr)) : null;
-        Role role = roleStr != null ? Role.fromFieldName(NormalizeStrings.normalizeString(roleStr)) : null;
-        Office office = officeStr != null ? Office.fromFieldName(NormalizeStrings.normalizeString(officeStr)) : null;
-        Parameter parameter = Parameter.fromFieldName(NormalizeStrings.normalizeString(parameterStr));
-        Order order = Order.fromFieldName(NormalizeStrings.normalizeString(orderStr));
+        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;
+        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;
+        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+        Order order = Order.fromFieldName(SearchUtils.normalizeString(orderStr));
 
         Map<String, Object> userData = userService.getUsers(id, email, name, phone,
-                accountState, role, office,
+                accountState, roleStr, office,
                 parameter, order, offset, limit);
 
         if (userData.get("users") == null || ((List<?>) userData.get("users")).isEmpty()) {

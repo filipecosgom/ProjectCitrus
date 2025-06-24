@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.enums.Order;
-import pt.uc.dei.utils.NormalizeStrings;
+import pt.uc.dei.utils.SearchUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +95,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         }
     }
 
-    public List<UserEntity> getUsers(Long id, String email, String name, String phone, AccountState accountState, Role role, Office office, Parameter parameter, Order order, int offset, int limit) {
+    public List<UserEntity> getUsers(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office, Parameter parameter, Order order, int offset, int limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
@@ -107,42 +107,50 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (id != null) {
             predicates.add(cb.equal(root.get("id"), id));
         }
-        if (email != null && !email.isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("email")), "%" + email + "%"));
+        if (SearchUtils.isNotBlank(email)) {
+            if (SearchUtils.isQuoted(email)) {
+                String exact = SearchUtils.stripQuotes(email);
+                predicates.add(cb.like(root.get("email"), "%" + exact + "%")); // Full, strict match
+            } else {
+                String normalized = SearchUtils.normalizeString(email.toLowerCase());
+                Expression<String> unaccentedEmail = cb.function(" ", String.class, cb.lower(root.get("email")));
+                predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
+            }
         }
-        if (name != null && !name.isEmpty()) {
-            boolean isStrict = name.startsWith("\"") && name.endsWith("\"");
-
-            if (isStrict) {
-                String exact = name.substring(1, name.length() - 1).toLowerCase();
-
-                Expression<String> fullName = cb.concat(
-                        cb.concat(cb.lower(cb.function("unaccent", String.class, root.get("name"))), " "),
-                        cb.lower(cb.function("unaccent", String.class, root.get("surname")))
-                );
-
-                predicates.add(cb.equal(fullName, exact));
-        } else {
-                name = name != null ? NormalizeStrings.normalizeString(name) : null;
-                // Flexible tokenized search
+        if (SearchUtils.isNotBlank(name)) {
+            if (SearchUtils.isQuoted(name)) {
+                String exact = SearchUtils.stripQuotes(name);
+                Predicate nameMatch = cb.like(root.get("name"), "%" + exact + "%");
+                Predicate surnameMatch = cb.like(root.get("surname"), "%" + exact + "%");
+                predicates.add(cb.or(nameMatch, surnameMatch));
+            } else {
+                name = SearchUtils.normalizeString(name);
                 String[] terms = name.toLowerCase().split("\\s+");
                 for (String term : terms) {
                     Expression<String> unaccentedName = cb.function("unaccent", String.class, cb.lower(root.get("name")));
                     Expression<String> unaccentedSurname = cb.function("unaccent", String.class, cb.lower(root.get("surname")));
-                    Predicate nameMatch = cb.like(unaccentedName, "%" + term + "%");
-                    Predicate surnameMatch = cb.like(unaccentedSurname, "%" + term + "%");
-                    predicates.add(cb.or(nameMatch, surnameMatch));
+                    predicates.add(cb.or(
+                            cb.like(unaccentedName, "%" + term + "%"),
+                            cb.like(unaccentedSurname, "%" + term + "%")
+                    ));
                 }
             }
         }
-        if (phone != null && !phone.isEmpty()) {
+        if (SearchUtils.isNotBlank(phone)) {
             predicates.add(cb.equal(root.get("phone"), phone));
         }
         if (accountState != null) {
             predicates.add(cb.equal(root.get("accountState"), accountState));
         }
-        if (role != null) {
-            predicates.add(cb.equal(root.get("role"), role));
+        if (SearchUtils.isNotBlank(roleStr)) {
+            if (SearchUtils.isQuoted(roleStr)) {
+                String exact = SearchUtils.stripQuotes(roleStr);
+                predicates.add(cb.equal(root.get("role"), exact)); // Full, strict match
+            } else {
+                String normalizedRole = SearchUtils.normalizeString(roleStr.toLowerCase());
+                Expression<String> unaccentedRole = cb.function("unaccent", String.class, cb.lower(root.get("role")));
+                predicates.add(cb.like(unaccentedRole, "%" + normalizedRole + "%"));
+            }
         }
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));
@@ -163,7 +171,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         return typedQuery.getResultList();
     }
 
-    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState, Role role, Office office) {
+    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
@@ -173,15 +181,33 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (id != null) {
             predicates.add(cb.equal(root.get("id"), id));
         }
-        if (email != null && !email.isEmpty()) {
-            predicates.add(cb.equal(root.get("email"), email));
+        if (SearchUtils.isNotBlank(email)) {
+            if (SearchUtils.isQuoted(email)) {
+                String exact = SearchUtils.stripQuotes(email);
+                predicates.add(cb.equal(root.get("email"), exact)); // Full, strict match
+            } else {
+                String normalized = SearchUtils.normalizeString(email.toLowerCase());
+                Expression<String> unaccentedEmail = cb.function("unaccent", String.class, cb.lower(root.get("email")));
+                predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
+            }
         }
-        if (name != null && !name.isEmpty()) {
-            String[] terms = name.toLowerCase().split("\\s+");
-            for (String term : terms) {
-                Predicate matchName = cb.like(cb.lower(root.get("name")), "%" + term + "%");
-                Predicate matchSurname = cb.like(cb.lower(root.get("surname")), "%" + term + "%");
-                predicates.add(cb.or(matchName, matchSurname));
+        if (SearchUtils.isNotBlank(name)) {
+            if (SearchUtils.isQuoted(name)) {
+                String exact = SearchUtils.stripQuotes(name);
+                Predicate nameMatch = cb.like(root.get("name"), "%" + exact + "%");
+                Predicate surnameMatch = cb.like(root.get("surname"), "%" + exact + "%");
+                predicates.add(cb.or(nameMatch, surnameMatch));
+            } else {
+                name = SearchUtils.normalizeString(name);
+                String[] terms = name.toLowerCase().split("\\s+");
+                for (String term : terms) {
+                    Expression<String> unaccentedName = cb.function("unaccent", String.class, cb.lower(root.get("name")));
+                    Expression<String> unaccentedSurname = cb.function("unaccent", String.class, cb.lower(root.get("surname")));
+                    predicates.add(cb.or(
+                            cb.like(unaccentedName, "%" + term + "%"),
+                            cb.like(unaccentedSurname, "%" + term + "%")
+                    ));
+                }
             }
         }
         if (phone != null && !phone.isEmpty()) {
@@ -190,8 +216,15 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (accountState != null) {
             predicates.add(cb.equal(root.get("accountState"), accountState));
         }
-        if (role != null) {
-            predicates.add(cb.equal(root.get("role"), role));
+        if (SearchUtils.isNotBlank(roleStr)) {
+            if (SearchUtils.isQuoted(roleStr)) {
+                String exact = SearchUtils.stripQuotes(roleStr);
+                predicates.add(cb.equal(root.get("role"), exact)); // Full, strict match
+            } else {
+                String normalizedRole = SearchUtils.normalizeString(roleStr.toLowerCase());
+                Expression<String> unaccentedRole = cb.function("unaccent", String.class, cb.lower(root.get("role")));
+                predicates.add(cb.like(unaccentedRole, "%" + normalizedRole + "%"));
+            }
         }
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));

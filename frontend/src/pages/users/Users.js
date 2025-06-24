@@ -6,6 +6,7 @@ import UserCard from "../../components/userCard/UserCard";
 import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
+import { handleGetOffices } from "../../handles/handleGetEnums";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -16,94 +17,57 @@ export default function Users() {
     limit: 5,
     total: 0,
   });
-  const [searchQuery, setSearchQuery] = useState(""); // Input text
-  const [searchFilter, setSearchFilter] = useState("name"); // Dropdown selection
-  const [accountState, setAccountState] = useState(""); // Account status filter
+  const [pageLoading, setPageLoading] = useState(true);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [offices, setOffices] = useState([]);
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    setError(null);
+  const handleSearch = async (query, filter, limit) => {
+    console.log(query);
+    console.log(filter);
+    console.log(limit);
+    setResultsLoading(true);
+    const result = await handleGetUsers({
+      [filter]: query,
+      offset: 0, // Reset to page 1
+      limit: limit || pagination.limit,
+    });
 
-    try {
-      const params = {
-        ...(searchQuery && { [searchFilter]: searchQuery }), // Only include if query exists
-        ...(accountState && { accountState }), // Optional status filter
-        offset: pagination.offset,
-        limit: pagination.limit,
-      };
-
-      const result = await handleGetUsers(params);
-
-      if (result.success) {
-        setUsers(result.users);
-        setPagination((prev) => ({
-          ...prev,
-          total: result.pagination.totalUsers,
-        }));
-      } else {
-        setError(result.error || "Failed to load users");
-      }
-    } catch (err) {
-      setError(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch users ONLY when:
-  // - searchQuery changes (user presses search button/Enter)
-  // - accountState changes (optional status dropdown)
-  // - pagination changes
-  useEffect(() => {
-    fetchUsers();
-  }, [searchQuery, accountState, pagination.offset, pagination.limit]);
-  // ✅ searchFilter NOT included here!
-
-  // In Users.jsx
-  const handleSearch = (query) => {
-    setSearchQuery(query); // This triggers the fetch
-    setPagination((prev) => ({ ...prev, offset: 0 })); // Reset to page 1
-  };
-
-  const handleFilterChange = (filter) => {
-    setSearchFilter(filter); // ✅ Doesn’t trigger fetch
-  };
-
-  const handleResultsPerPageChange = (perPage) => {
-    setPagination((prev) => ({ ...prev, limit: perPage, offset: 0 }));
+    setUsers(result.users);
+    setPagination({
+      offset: 0,
+      limit: limit || pagination.limit,
+      total: result.pagination.totalUsers,
+    });
+    setResultsLoading(false);
   };
 
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
+  // Carrega enums
+  useEffect(() => {
+    const fetchEnums = async () => {
+      const offices = await handleGetOffices();
+      setOffices(offices)
+    };
+    setPageLoading(true);
+    fetchEnums();
+    setPageLoading(false);
+  }, []);
+
+  if (pageLoading) return <Spinner />;
+
   return (
     <div className="users-container">
       <div className="users-header">
         <SearchBar
-          onSearch={handleSearch}
-          onFilterChange={handleFilterChange}
-          onResultsPerPageChange={handleResultsPerPageChange}
-        />
+        onSearch={handleSearch}
+        offices={offices} />
       </div>
-      <div className="users-filters">
-        <select
-          value={accountState.accountState}
-          onChange={(e) => handleFilterChange("accountState", e.target.value)}
-        >
-          <option value="">All states</option>
-          <option value="COMPLETE">Complete</option>
-          <option value="INCOMPLETE">Incomplete</option>
-        </select>
-      </div>
-      {loading ? (
+      {pageLoading ? (
         <div className="users-loading">
           <Spinner />
-        </div>
-      ) : error ? (
-        <div className="users-error">
-          <p>Error: {error}</p>
-          <button onClick={fetchUsers}>Retry</button>
         </div>
       ) : users.length === 0 ? (
         <div className="users-empty">
