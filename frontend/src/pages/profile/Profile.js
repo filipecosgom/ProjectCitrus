@@ -379,6 +379,18 @@ export default function Profile() {
                       required: intl.formatMessage({
                         id: "profileErrorFirstNameRequired",
                       }),
+                      minLength: {
+                        value: 2,
+                        message: intl.formatMessage({
+                          id: "profileErrorFirstNameRequired",
+                        }),
+                      },
+                      pattern: {
+                        value: /^[A-Za-zÀ-ÿ\s'-]+$/,
+                        message: intl.formatMessage({
+                          id: "profileErrorFirstNameInvalid",
+                        }), // NOVO ID
+                      },
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
@@ -397,6 +409,18 @@ export default function Profile() {
                       required: intl.formatMessage({
                         id: "profileErrorLastNameRequired",
                       }),
+                      minLength: {
+                        value: 2,
+                        message: intl.formatMessage({
+                          id: "profileErrorLastNameRequired",
+                        }),
+                      },
+                      pattern: {
+                        value: /^[A-Za-zÀ-ÿ\s'-]+$/,
+                        message: intl.formatMessage({
+                          id: "profileErrorLastNameInvalid",
+                        }), // NOVO ID
+                      },
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
@@ -418,6 +442,22 @@ export default function Profile() {
                       required: intl.formatMessage({
                         id: "profileErrorBirthDateRequired",
                       }),
+                      validate: (value) => {
+                        const today = new Date().toISOString().split("T")[0];
+                        if (value > today) {
+                          return intl.formatMessage({
+                            id: "profileErrorBirthDateFuture",
+                          }); // NOVO ID
+                        }
+                        const minDate = new Date();
+                        minDate.setFullYear(minDate.getFullYear() - 16);
+                        if (value > minDate.toISOString().split("T")[0]) {
+                          return intl.formatMessage({
+                            id: "profileErrorBirthDateTooYoung",
+                          }); // NOVO ID
+                        }
+                        return true;
+                      },
                     })}
                     disabled={!editMode}
                   />
@@ -538,10 +578,10 @@ export default function Profile() {
                         id: "profileErrorPhoneRequired",
                       }),
                       pattern: {
-                        value: /^[0-9+\s()-]{6,}$/,
+                        value: /^[0-9]{9}$/,
                         message: intl.formatMessage({
                           id: "errorPhoneNumberInvalid",
-                        }),
+                        }), // JÁ EXISTE
                       },
                     })}
                     disabled={!editMode}
@@ -583,6 +623,18 @@ export default function Profile() {
                             required: intl.formatMessage({
                               id: "profileErrorAddressStreetRequired",
                             }),
+                            minLength: {
+                              value: 3,
+                              message: intl.formatMessage({
+                                id: "profileErrorAddressStreetRequired",
+                              }),
+                            },
+                            pattern: {
+                              value: /^[A-Za-zÀ-ÿ0-9\s'-,.]+$/,
+                              message: intl.formatMessage({
+                                id: "profileErrorAddressStreetInvalid",
+                              }), // NOVO ID
+                            },
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressStreet",
@@ -602,6 +654,12 @@ export default function Profile() {
                             required: intl.formatMessage({
                               id: "profileErrorAddressPostalCodeRequired",
                             }),
+                            pattern: {
+                              value: /^[0-9]{4}-[0-9]{3}$/,
+                              message: intl.formatMessage({
+                                id: "errorPostalCodeInvalid",
+                              }), // NOVO ID
+                            },
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressPostalCode",
@@ -623,6 +681,18 @@ export default function Profile() {
                             required: intl.formatMessage({
                               id: "profileErrorAddressMunicipalityRequired",
                             }),
+                            minLength: {
+                              value: 2,
+                              message: intl.formatMessage({
+                                id: "profileErrorAddressMunicipalityRequired",
+                              }),
+                            },
+                            pattern: {
+                              value: /^[A-Za-zÀ-ÿ\s'-]+$/,
+                              message: intl.formatMessage({
+                                id: "profileErrorAddressMunicipalityInvalid",
+                              }), // NOVO ID
+                            },
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressMunicipality",

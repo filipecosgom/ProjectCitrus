@@ -64,6 +64,9 @@ const pt = {
     "Serás redirecionado para o login em {segundos} segundos.",
   activatedAccountButton: "Voltar ao Login",
 
+  //Profile
+  profileUserUpdated: "Utilizador atualizado com sucesso",
+
   // Forgot Password
   forgotPasswordTitle: "Redefinir palavra-passe",
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",
@@ -181,6 +184,17 @@ const pt = {
   profileErrorAddressPostalCodeRequired: "O código postal é obrigatório",
   profileErrorAddressMunicipalityRequired: "A cidade é obrigatória",
   profileErrorBiographyRequired: "A biografia é obrigatória",
+
+  // Profile Invalid Characters
+  profileErrorFirstNameInvalid: "O primeiro nome contém caracteres inválidos",
+  profileErrorLastNameInvalid: "O último nome contém caracteres inválidos",
+  profileErrorBirthDateFuture: "A data de nascimento não pode ser futura",
+  profileErrorBirthDateTooYoung: "Deve ter pelo menos 16 anos",
+  errorPhoneNumberInvalid: "Formato de número de telefone inválido",
+  errorPostalCodeInvalid: "Formato de código postal inválido (ex: 1234-567)",
+  profileErrorAddressStreetInvalid: "A rua contém caracteres inválidos",
+  profileErrorAddressMunicipalityInvalid:
+    "A cidade contém caracteres inválidos",
 
   // Profile Tabs
   profileTabProfile: "Perfil",
