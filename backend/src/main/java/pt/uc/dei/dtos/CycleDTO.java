@@ -38,6 +38,11 @@ public class CycleDTO {
     @NotNull(message = "Status missing")
     private CycleState status;
 
+    /**
+     * The ID of the administrator responsible for managing the cycle.
+     */
+    private Long adminId;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -69,5 +74,13 @@ public class CycleDTO {
 
     public void setStatus(CycleState status) {
         this.status = status;
+    }
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 }

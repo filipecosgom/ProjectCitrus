@@ -24,14 +24,61 @@ import java.util.List;
         componentModel = "jakarta",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface AppraisalMapper {
-
-    /**
+public interface AppraisalMapper {    /**
      * Converts an AppraisalEntity object to an AppraisalDTO object.
      *
      * @param appraisalEntity the entity to convert
      * @return the mapped DTO
      */
+    @Mapping(source = "appraisedUser.id", target = "appraisedUserId")
+    @Mapping(source = "appraisingUser.id", target = "appraisingUserId")
+    @Mapping(source = "cycle.id", target = "cycleId")
+    AppraisalDTO toDto(AppraisalEntity appraisalEntity);
+
+    /**
+     * Converts an AppraisalDTO object to an AppraisalEntity object.
+     * Note: This mapping ignores the user and cycle relationships to prevent issues.
+     * These should be set separately in the service layer.
+     *
+     * @param appraisalDTO the DTO to convert
+     * @return the mapped entity
+     */
+    @Mapping(target = "appraisedUser", ignore = true)
+    @Mapping(target = "appraisingUser", ignore = true)
+    @Mapping(target = "cycle", ignore = true)
+    @Mapping(target = "editedDate", ignore = true)
+    AppraisalEntity toEntity(AppraisalDTO appraisalDTO);
+
+    /**
+     * Converts a list of AppraisalEntity objects into a list of AppraisalDTO objects.
+     *
+     * @param appraisals the list of entities to convert
+     * @return the mapped list of DTOs
+     */
+    List<AppraisalDTO> toDtoList(List<AppraisalEntity> appraisals);
+
+    /**
+     * Converts a list of AppraisalDTO objects into a list of AppraisalEntity objects.
+     *
+     * @param appraisalDTOs the list of DTOs to convert
+     * @return the mapped list of entities
+     */
+    List<AppraisalEntity> toEntityList(List<AppraisalDTO> appraisalDTOs);
+
+    /**
+     * Updates an existing AppraisalEntity with values from an AppraisalDTO.
+     * Useful for partial updates while preserving existing relationships.
+     *
+     * @param appraisalDTO the DTO containing the new values
+     * @param appraisalEntity the existing entity to update
+     */
+    @Mapping(target = "appraisedUser", ignore = true)
+    @Mapping(target = "appraisingUser", ignore = true)
+    @Mapping(target = "cycle", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "editedDate", ignore = true)
+    void updateEntityFromDto(AppraisalDTO appraisalDTO, @MappingTarget AppraisalEntity appraisalEntity);
     @Mapping(source = "appraisedUser.id", target = "appraisedUserId") // Maps appraised user ID
     @Mapping(source = "appraisingUser.id", target = "appraisingUserId") // Maps appraising user ID
     AppraisalDTO toDto(AppraisalEntity appraisalEntity);
