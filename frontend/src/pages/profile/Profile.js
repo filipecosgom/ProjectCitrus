@@ -24,6 +24,8 @@ import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
 import { useIntl } from "react-intl";
+import AppraisalsTab from "./AppraisalsTab";
+import TrainingTab from "./TrainingTab";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -718,11 +720,13 @@ export default function Profile() {
                 </label>
               </div>
             </form>
-            <button onClick={handleNotification("success", "sucess")} ></button>
+            <button onClick={handleNotification("success", "sucess")}></button>
           </div>
         </div>
       )}
-      <ToastContainer/>
+      {activeTab === "appraisals" && <AppraisalsTab userId={userId} />}
+      {activeTab === "training" && <TrainingTab userId={userId} />}
+      <ToastContainer />
     </div>
   );
 }
