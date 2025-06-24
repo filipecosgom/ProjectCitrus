@@ -51,7 +51,7 @@ export default function Login() {
   useEffect(() => {
     const userIsLogged = () => {
       if (user) {
-        handleNotification("success", "Welcome back");
+        handleNotification("success", "welcomeMessage", {name: user.name});
         navigate("/profile?id=" + user.id);
       }
     };

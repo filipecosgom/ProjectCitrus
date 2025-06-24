@@ -1,6 +1,7 @@
 import { login } from "../../api/authenticationApi";
 
 const en = {
+  welcomeMessage: "Welcome {name}",
   //Login
   loginLogo: "CITRUS",
   loginTitle: "Login",

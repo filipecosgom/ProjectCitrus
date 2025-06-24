@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext  } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FaPen,
@@ -24,8 +23,6 @@ import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
 import { useIntl } from "react-intl";
-
-import { toast } from "react-toastify";
 
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
@@ -58,6 +55,10 @@ export default function Profile() {
     reset,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    console.log(intl);
+  }, [intl]);
 
   // Carrega dados do utilizador
   useEffect(() => {
@@ -391,7 +392,7 @@ export default function Profile() {
                         value: /^[A-Za-zÀ-ÿ\s'-]+$/,
                         message: intl.formatMessage({
                           id: "profileErrorFirstNameInvalid",
-                        }), // NOVO ID
+                        }),
                       },
                     })}
                     disabled={!editMode}
@@ -400,7 +401,9 @@ export default function Profile() {
                     })}
                   />
                   {errors.name && (
-                    <span className="error-message">{errors.name.message}</span>
+                    <span className="error-message">
+                      {intl.formatMessage({ id: errors.name.message })}
+                    </span>
                   )}
                 </label>
                 <label>
