@@ -378,102 +378,126 @@ export default function Profile() {
                 </div>
               </div>
               <div className="form-fields">
+                {/* First Name */}
                 <label>
                   {intl.formatMessage({ id: "profileFirstName" })}
                   <input
                     className="profile-input"
                     {...register("name", {
-                      required: intl.formatMessage({
-                        id: "profileErrorFirstNameRequired",
-                      }),
-                      minLength: {
-                        value: 2,
-                        message: intl.formatMessage({
-                          id: "profileErrorFirstNameRequired",
-                        }),
-                      },
-                      pattern: {
-                        value: /^[A-Za-zÀ-ÿ\s'-]+$/,
-                        message: intl.formatMessage({
-                          id: "profileErrorFirstNameInvalid",
-                        }), // NOVO ID
-                      },
+                      required: true,
+                      minLength: 2,
+                      pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
                       id: "profilePlaceholderNA",
                     })}
                   />
-                  {errors.name && (
-                    <span className="error-message">{errors.name.message}</span>
+                  {errors.name?.type === "required" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorFirstNameRequired",
+                      })}
+                    </span>
+                  )}
+                  {errors.name?.type === "minLength" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorFirstNameRequired",
+                      })}
+                    </span>
+                  )}
+                  {errors.name?.type === "pattern" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorFirstNameInvalid",
+                      })}
+                    </span>
                   )}
                 </label>
+                {/* Last Name */}
                 <label>
                   {intl.formatMessage({ id: "profileLastName" })}
                   <input
                     className="profile-input"
                     {...register("surname", {
-                      required: intl.formatMessage({
-                        id: "profileErrorLastNameRequired",
-                      }),
-                      minLength: {
-                        value: 2,
-                        message: intl.formatMessage({
-                          id: "profileErrorLastNameRequired",
-                        }),
-                      },
-                      pattern: {
-                        value: /^[A-Za-zÀ-ÿ\s'-]+$/,
-                        message: intl.formatMessage({
-                          id: "profileErrorLastNameInvalid",
-                        }), // NOVO ID
-                      },
+                      required: true,
+                      minLength: 2,
+                      pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
                       id: "profilePlaceholderNA",
                     })}
                   />
-                  {errors.surname && (
+                  {errors.surname?.type === "required" && (
                     <span className="error-message">
-                      {errors.surname.message}
+                      {intl.formatMessage({
+                        id: "profileErrorLastNameRequired",
+                      })}
+                    </span>
+                  )}
+                  {errors.surname?.type === "minLength" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorLastNameRequired",
+                      })}
+                    </span>
+                  )}
+                  {errors.surname?.type === "pattern" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorLastNameInvalid",
+                      })}
                     </span>
                   )}
                 </label>
+                {/* Birth Date */}
                 <label>
                   {intl.formatMessage({ id: "profileBirthDate" })}
                   <input
                     type="date"
                     className="profile-input"
                     {...register("birthdate", {
-                      required: intl.formatMessage({
-                        id: "profileErrorBirthDateRequired",
-                      }),
+                      required: true,
                       validate: (value) => {
                         const today = new Date().toISOString().split("T")[0];
                         if (value > today) {
-                          return intl.formatMessage({
-                            id: "profileErrorBirthDateFuture",
-                          }); // NOVO ID
+                          return "future";
                         }
                         const minDate = new Date();
                         minDate.setFullYear(minDate.getFullYear() - 16);
                         if (value > minDate.toISOString().split("T")[0]) {
-                          return intl.formatMessage({
-                            id: "profileErrorBirthDateTooYoung",
-                          }); // NOVO ID
+                          return "tooyoung";
                         }
                         return true;
                       },
                     })}
                     disabled={!editMode}
                   />
-                  {errors.birthdate && (
+                  {errors.birthdate?.type === "required" && (
                     <span className="error-message">
-                      {errors.birthdate.message}
+                      {intl.formatMessage({
+                        id: "profileErrorBirthDateRequired",
+                      })}
+                    </span>
+                  )}
+                  {errors.birthdate?.message === "future" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorBirthDateFuture",
+                      })}
+                    </span>
+                  )}
+                  {errors.birthdate?.message === "tooyoung" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorBirthDateTooYoung",
+                      })}
                     </span>
                   )}
                 </label>
+                {/* Role */}
                 <label>
                   {intl.formatMessage({ id: "profileRole" })}
                   {editMode ? (
@@ -481,9 +505,7 @@ export default function Profile() {
                       <select
                         className="profile-input"
                         {...register("role", {
-                          required: intl.formatMessage({
-                            id: "profileErrorRoleRequired",
-                          }),
+                          required: true,
                         })}
                       >
                         <option value="">Select role</option>
@@ -524,7 +546,13 @@ export default function Profile() {
                       disabled
                     />
                   )}
+                  {errors.role?.type === "required" && (
+                    <span className="error-message">
+                      {intl.formatMessage({ id: "profileErrorRoleRequired" })}
+                    </span>
+                  )}
                 </label>
+                {/* Workplace */}
                 <label>
                   {intl.formatMessage({ id: "profileWorkplace" })}
                   {editMode ? (
@@ -532,9 +560,7 @@ export default function Profile() {
                       <select
                         className="profile-input"
                         {...register("office", {
-                          required: intl.formatMessage({
-                            id: "profileErrorWorkplaceRequired",
-                          }),
+                          required: true,
                         })}
                       >
                         <option value="">Select office</option>
@@ -575,33 +601,40 @@ export default function Profile() {
                       disabled
                     />
                   )}
+                  {errors.office?.type === "required" && (
+                    <span className="error-message">
+                      {intl.formatMessage({
+                        id: "profileErrorWorkplaceRequired",
+                      })}
+                    </span>
+                  )}
                 </label>
+                {/* Phone */}
                 <label>
                   {intl.formatMessage({ id: "profilePhone" })}
                   <input
                     className="profile-input"
                     {...register("phone", {
-                      required: intl.formatMessage({
-                        id: "profileErrorPhoneRequired",
-                      }),
-                      pattern: {
-                        value: /^[0-9]{9}$/,
-                        message: intl.formatMessage({
-                          id: "errorPhoneNumberInvalid",
-                        }), // JÁ EXISTE
-                      },
+                      required: true,
+                      pattern: /^[0-9]{9}$/,
                     })}
                     disabled={!editMode}
                     placeholder={intl.formatMessage({
                       id: "profilePlaceholderNA",
                     })}
                   />
-                  {errors.phone && (
+                  {errors.phone?.type === "required" && (
                     <span className="error-message">
-                      {errors.phone.message}
+                      {intl.formatMessage({ id: "profileErrorPhoneRequired" })}
+                    </span>
+                  )}
+                  {errors.phone?.type === "pattern" && (
+                    <span className="error-message">
+                      {intl.formatMessage({ id: "errorPhoneNumberInvalid" })}
                     </span>
                   )}
                 </label>
+                {/* Address fields */}
                 <div className="address-container">
                   <label>
                     {intl.formatMessage({ id: "profileAddress" })}
@@ -622,62 +655,71 @@ export default function Profile() {
                         showAddressFields ? " slide-in" : ""
                       }`}
                     >
+                      {/* Street */}
                       <label>
                         {intl.formatMessage({ id: "profileAddressStreet" })}
                         <input
                           className="profile-input"
                           {...register("street", {
-                            required: intl.formatMessage({
-                              id: "profileErrorAddressStreetRequired",
-                            }),
-                            minLength: {
-                              value: 3,
-                              message: intl.formatMessage({
-                                id: "profileErrorAddressStreetRequired",
-                              }),
-                            },
-                            pattern: {
-                              value: /^[A-Za-zÀ-ÿ0-9\s'-,.]+$/,
-                              message: intl.formatMessage({
-                                id: "profileErrorAddressStreetInvalid",
-                              }), // NOVO ID
-                            },
+                            required: true,
+                            minLength: 3,
+                            pattern: /^[A-Za-zÀ-ÿ0-9\s'-,.]+$/,
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressStreet",
                           })}
                         />
-                        {errors.street && (
+                        {errors.street?.type === "required" && (
                           <span className="error-message">
-                            {errors.street.message}
+                            {intl.formatMessage({
+                              id: "profileErrorAddressStreetRequired",
+                            })}
+                          </span>
+                        )}
+                        {errors.street?.type === "minLength" && (
+                          <span className="error-message">
+                            {intl.formatMessage({
+                              id: "profileErrorAddressStreetRequired",
+                            })}
+                          </span>
+                        )}
+                        {errors.street?.type === "pattern" && (
+                          <span className="error-message">
+                            {intl.formatMessage({
+                              id: "profileErrorAddressStreetInvalid",
+                            })}
                           </span>
                         )}
                       </label>
+                      {/* Postal Code */}
                       <label>
                         {intl.formatMessage({ id: "profileAddressPostalCode" })}
                         <input
                           className="profile-input"
                           {...register("postalCode", {
-                            required: intl.formatMessage({
-                              id: "profileErrorAddressPostalCodeRequired",
-                            }),
-                            pattern: {
-                              value: /^[0-9]{4}-[0-9]{3}$/,
-                              message: intl.formatMessage({
-                                id: "errorPostalCodeInvalid",
-                              }), // NOVO ID
-                            },
+                            required: true,
+                            pattern: /^[0-9]{4}-[0-9]{3}$/,
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressPostalCode",
                           })}
                         />
-                        {errors.postalCode && (
+                        {errors.postalCode?.type === "required" && (
                           <span className="error-message">
-                            {errors.postalCode.message}
+                            {intl.formatMessage({
+                              id: "profileErrorAddressPostalCodeRequired",
+                            })}
+                          </span>
+                        )}
+                        {errors.postalCode?.type === "pattern" && (
+                          <span className="error-message">
+                            {intl.formatMessage({
+                              id: "errorPostalCodeInvalid",
+                            })}
                           </span>
                         )}
                       </label>
+                      {/* Municipality */}
                       <label>
                         {intl.formatMessage({
                           id: "profileAddressMunicipality",
@@ -685,35 +727,40 @@ export default function Profile() {
                         <input
                           className="profile-input"
                           {...register("municipality", {
-                            required: intl.formatMessage({
-                              id: "profileErrorAddressMunicipalityRequired",
-                            }),
-                            minLength: {
-                              value: 2,
-                              message: intl.formatMessage({
-                                id: "profileErrorAddressMunicipalityRequired",
-                              }),
-                            },
-                            pattern: {
-                              value: /^[A-Za-zÀ-ÿ\s'-]+$/,
-                              message: intl.formatMessage({
-                                id: "profileErrorAddressMunicipalityInvalid",
-                              }), // NOVO ID
-                            },
+                            required: true,
+                            minLength: 2,
+                            pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                           })}
                           placeholder={intl.formatMessage({
                             id: "profileAddressMunicipality",
                           })}
                         />
-                        {errors.municipality && (
+                        {errors.municipality?.type === "required" && (
                           <span className="error-message">
-                            {errors.municipality.message}
+                            {intl.formatMessage({
+                              id: "profileErrorAddressMunicipalityRequired",
+                            })}
+                          </span>
+                        )}
+                        {errors.municipality?.type === "minLength" && (
+                          <span className="error-message">
+                            {intl.formatMessage({
+                              id: "profileErrorAddressMunicipalityRequired",
+                            })}
+                          </span>
+                        )}
+                        {errors.municipality?.type === "pattern" && (
+                          <span className="error-message">
+                            {intl.formatMessage({
+                              id: "profileErrorAddressMunicipalityInvalid",
+                            })}
                           </span>
                         )}
                       </label>
                     </div>
                   )}
                 </div>
+                {/* Biography */}
                 <label>
                   {intl.formatMessage({ id: "profileBiography" })}
                   <textarea
