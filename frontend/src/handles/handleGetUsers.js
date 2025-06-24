@@ -48,18 +48,3 @@ export const handleGetUsers = async (params = {}) => {
     };
   }
 };
-
-// Example usage:
-/*
-const result = await handleGetUsers({
-  role: "BACKEND_DEVELOPER",
-  offset: 0,
-  limit: 5
-});
-
-if (result.success) {
-  // Use result.users and result.pagination
-} else if (result.shouldNotify) {
-  handleNotification('error', result.error.message);
-}
-*/

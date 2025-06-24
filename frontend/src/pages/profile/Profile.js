@@ -25,6 +25,8 @@ import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
 import { useIntl } from "react-intl";
 
+import { toast } from "react-toastify";
+
 export default function Profile() {
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
@@ -718,11 +720,9 @@ export default function Profile() {
                 </label>
               </div>
             </form>
-            <button onClick={handleNotification("success", "sucess")} ></button>
           </div>
         </div>
       )}
-      <ToastContainer/>
     </div>
   );
 }
