@@ -64,6 +64,9 @@ const pt = {
     "Serás redirecionado para o login em {segundos} segundos.",
   activatedAccountButton: "Voltar ao Login",
 
+  //Profile
+  profileUserUpdated: "Utilizador atualizado com sucesso",
+
   // Forgot Password
   forgotPasswordTitle: "Redefinir palavra-passe",
   forgotPasswordSubtitle: "Escreva o seu endereço de e-mail",

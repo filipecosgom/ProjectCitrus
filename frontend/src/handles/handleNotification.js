@@ -6,6 +6,7 @@ const handleNotification = (type, messageId, params = {}) => {
   const intl = getIntl();
 
   const translatedMessage = intl.formatMessage({ id: messageId }, params);
+  console.log(intl);
   console.log(translatedMessage);
 
   if (type === "success") {
