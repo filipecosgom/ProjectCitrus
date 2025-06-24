@@ -14,6 +14,7 @@ import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
 import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
 
 function AppRoutes() {
   const [hydrating, setHydrating] = useState(true);
@@ -49,17 +50,7 @@ function AppRoutes() {
 
   // Se não for uma rota conhecida, é 404
   const is404 = !knownRoutes.includes(location.pathname);
-
   const showHeader = !hideHeaderRoutes.includes(location.pathname) && !is404;
-
-  // Dados de exemplo para o Header
-  const user = {
-    name: "Teresa Matos",
-    email: "teresa.matos@gmail.com",
-    avatarUrl: "",
-    unreadMessages: 2,
-    unreadNotifications: 1,
-  };
 
   useEffect(() => {
     const hydrate = async () => {
@@ -83,7 +74,6 @@ function AppRoutes() {
       setHydrating(false);
     };
     hydrate();
-    // eslint-disable-next-line
   }, []);
 
   if (hydrating) return <Spinner />;
@@ -95,11 +85,6 @@ function AppRoutes() {
         <>
           <Menu language={locale} setLanguage={setLocale} />
           <Header
-            userName={user.name}
-            userEmail={user.email}
-            avatarUrl={user.avatarUrl}
-            unreadMessages={user.unreadMessages}
-            unreadNotifications={user.unreadNotifications}
           />
         </>
       )}
@@ -138,6 +123,7 @@ function AppRoutes() {
         <Route path="/header" element={<div />} /> {/* Só mostra o Header */}
         <Route path="*" element={<NotFound404 />} />
       </Routes>
+      <ToastContainer limit={3} />
     </>
   );
 }

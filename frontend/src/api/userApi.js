@@ -136,14 +136,3 @@ export const fetchPaginatedUsers = async (
     };
   }
 };
-
-// Example usage:
-/*
-const result = await fetchPaginatedUsers({
-  name: "John",
-  role: "BACKEND_DEVELOPER",
-  offset: 0,
-  limit: 5,
-  order: "DESCENDING"
-});
-*/

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext  } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FaPen,
@@ -58,6 +57,10 @@ export default function Profile() {
     reset,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    console.log(intl);
+  }, [intl]);
 
   // Carrega dados do utilizador
   useEffect(() => {
