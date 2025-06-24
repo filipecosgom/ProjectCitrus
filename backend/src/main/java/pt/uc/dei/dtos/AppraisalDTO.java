@@ -10,13 +10,10 @@ import java.time.LocalDateTime;
  * Data Transfer Object (DTO) representing an appraisal.
  * Stores information related to user feedback and scoring within a cycle.
  */
-public class AppraisalDTO {
-
-    /**
+public class AppraisalDTO {    /**
      * The unique identifier for the appraisal.
-     * Must always be sent.
+     * Auto-generated, not required for creation.
      */
-    @NotNull(message = "Appraisal ID missing")
     private Long id;
 
     /**

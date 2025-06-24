@@ -35,7 +35,7 @@ public interface CycleMapper {
      * @return the mapped DTO
      */
     @Mapping(source = "admin.id", target = "adminId")
-    @Mapping(source = "state", target = "status")
+    @Mapping(source = "state", target = "state")
     CycleDTO toDto(CycleEntity cycleEntity);
 
     /**
@@ -47,7 +47,7 @@ public interface CycleMapper {
      * @return the mapped entity
      */
     @Mapping(target = "admin", ignore = true)
-    @Mapping(source = "status", target = "state")
+    @Mapping(target = "state", ignore = true)
     @Mapping(target = "id", ignore = true) // ID should be auto-generated
     CycleEntity toEntity(CycleDTO cycleDTO);
 
@@ -76,6 +76,6 @@ public interface CycleMapper {
      */
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "status", target = "state")
+    @Mapping(source = "state", target = "state")
     void updateEntityFromDto(CycleDTO cycleDTO, @MappingTarget CycleEntity cycleEntity);
 }

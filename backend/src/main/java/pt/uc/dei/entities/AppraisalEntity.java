@@ -51,107 +51,68 @@ public class AppraisalEntity implements Serializable {
     private String feedback;
 
     /**
-     * The current status of the appraisal.
-     * Stored as a string representation of the `appraisalStatus` enum.
+     * The user being appraised.
+     * Many-to-one relationship with UserEntity.
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, unique = false, updatable = true)
-    private AppraisalState state;
-
-    /**
-     * The cycle in which the appraisal occurs.
-     * Many-to-one relationship with `CycleEntity`.
-     */
-    @ManyToOne
-    @JoinColumn(name = "cycle_id", nullable = false, updatable = false)
-    private CycleEntity cycle;
-
-    /**
-     * The user being evaluated.
-     * Many-to-one relationship with `UserEntity`.
-     */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appraised_user_id", nullable = false)
     private UserEntity appraisedUser;
 
     /**
-     * The user performing the appraisal.
-     * Many-to-one relationship with `UserEntity`.
+     * The user performing the appraisal (manager).
+     * Many-to-one relationship with UserEntity.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appraising_user_id", nullable = false)
     private UserEntity appraisingUser;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    /**
+     * The cycle in which this appraisal occurs.
+     * Many-to-one relationship with CycleEntity.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cycle_id", nullable = false)
+    private CycleEntity cycle;
+
+    /**
+     * The current state of the appraisal.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false)
+    private AppraisalState state;
+
+    // Construtor padrão
+    public AppraisalEntity() {
+        this.creationDate = LocalDateTime.now();
+        this.editedDate = LocalDateTime.now();
+        this.state = AppraisalState.IN_PROGRESS;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // Getters e Setters completos
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
+    public LocalDateTime getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
+    public LocalDateTime getEditedDate() { return editedDate; }
+    public void setEditedDate(LocalDateTime editedDate) { this.editedDate = editedDate; }
 
-    public LocalDateTime getEditedDate() {
-        return editedDate;
-    }
+    public Integer getScore() { return score; }
+    public void setScore(Integer score) { this.score = score; }
 
-    public void setEditedDate(LocalDateTime editedDate) {
-        this.editedDate = editedDate;
-    }
+    public String getFeedback() { return feedback; }
+    public void setFeedback(String feedback) { this.feedback = feedback; }
 
-    public Integer getScore() {
-        return score;
-    }
+    public AppraisalState getState() { return state; }
+    public void setState(AppraisalState state) { this.state = state; }
 
-    public void setScore(Integer score) {
-        this.score = score;
-    }
+    public UserEntity getAppraisedUser() { return appraisedUser; }
+    public void setAppraisedUser(UserEntity appraisedUser) { this.appraisedUser = appraisedUser; }
 
-    public String getFeedback() {
-        return feedback;
-    }
+    public UserEntity getAppraisingUser() { return appraisingUser; }
+    public void setAppraisingUser(UserEntity appraisingUser) { this.appraisingUser = appraisingUser; }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
-    }
-
-    public AppraisalState getState() {
-        return state;
-    }
-
-    public void setState(AppraisalState state) {
-        this.state = state;
-    }
-
-    public CycleEntity getCycle() {
-        return cycle;
-    }
-
-    public void setCycle(CycleEntity cycle) {
-        this.cycle = cycle;
-    }
-
-    public UserEntity getAppraisedUser() {
-        return appraisedUser;
-    }
-
-    public void setAppraisedUser(UserEntity evaluatedUser) {
-        this.appraisedUser = evaluatedUser;
-    }
-
-    public UserEntity getAppraisingUser() {
-        return appraisingUser;
-    }
-
-    public void setAppraisingUser(UserEntity evaluatingUser) {
-        this.appraisingUser = evaluatingUser;
-    }
+    public CycleEntity getCycle() { return cycle; }
+    public void setCycle(CycleEntity cycle) { this.cycle = cycle; }
 }
