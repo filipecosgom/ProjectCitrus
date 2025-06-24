@@ -718,10 +718,11 @@ export default function Profile() {
                 </label>
               </div>
             </form>
+            <button onClick={handleNotification("success", "sucess")} ></button>
           </div>
         </div>
       )}
-      <ToastContainer />
+      <ToastContainer/>
     </div>
   );
 }

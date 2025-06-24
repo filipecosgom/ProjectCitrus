@@ -1,8 +1,8 @@
-
 import { showSuccessToast, showErrorToast, showInfoToast } from "../utils/toastConfig/toastConfig";
 import { getIntl } from "../utils/Intl";
 
 const handleNotification = (type, messageId, params = {}) => {
+  console.log(type);
   const intl = getIntl();
 
   const translatedMessage = intl.formatMessage({ id: messageId }, params);
