@@ -781,7 +781,6 @@ export default function Profile() {
       )}
       {activeTab === "appraisals" && <AppraisalsTab userId={userId} />}
       {activeTab === "training" && <TrainingTab userId={userId} />}
-      <ToastContainer />
     </div>
   );
 }
