@@ -179,6 +179,17 @@ const en = {
   profileErrorAddressMunicipalityRequired: "Municipality is required",
   profileErrorBiographyRequired: "Biography is required",
 
+  // Profile Invalid Characters
+  profileErrorFirstNameInvalid: "First name contains invalid characters",
+  profileErrorLastNameInvalid: "Last name contains invalid characters",
+  profileErrorBirthDateFuture: "Birth date cannot be in the future",
+  profileErrorBirthDateTooYoung: "You must be at least 16 years old",
+  errorPhoneNumberInvalid: "Invalid phone number format",
+  errorPostalCodeInvalid: "Invalid postal code format (e.g. 1234-567)",
+  profileErrorAddressStreetInvalid: "Street contains invalid characters",
+  profileErrorAddressMunicipalityInvalid:
+    "Municipality contains invalid characters",
+
   // Profile Tabs
   profileTabProfile: "Profile",
   profileTabTraining: "Training",
