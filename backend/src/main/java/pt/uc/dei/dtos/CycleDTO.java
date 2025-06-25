@@ -8,13 +8,10 @@ import java.time.LocalDateTime;
  * Data Transfer Object (DTO) representing a cycle.
  * Stores essential information related to a specific cycle.
  */
-public class CycleDTO {
-
-    /**
+public class CycleDTO {    /**
      * The unique identifier for the cycle.
-     * Must always be sent.
+     * Auto-generated, not required for creation.
      */
-    @NotNull(message = "Cycle ID missing")
     private Long id;
 
     /**
@@ -32,11 +29,16 @@ public class CycleDTO {
     private LocalDateTime endDate;
 
     /**
-     * The current status of the cycle.
+     * The current state of the cycle.
      * Must not be null.
      */
-    @NotNull(message = "Status missing")
-    private CycleState status;
+    @NotNull(message = "State missing")
+    private CycleState state;
+
+    /**
+     * The ID of the administrator responsible for managing the cycle.
+     */
+    private Long adminId;
 
     // Getters and Setters
     public Long getId() {
@@ -63,11 +65,19 @@ public class CycleDTO {
         this.endDate = endDate;
     }
 
-    public CycleState getStatus() {
-        return status;
+    public CycleState getState() {
+        return state;
     }
 
-    public void setStatus(CycleState status) {
-        this.status = status;
+    public void setState(CycleState state) {
+        this.state = state;
+    }
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 }

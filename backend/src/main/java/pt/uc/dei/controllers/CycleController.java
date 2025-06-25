@@ -1,0 +1,419 @@
+package pt.uc.dei.controllers;
+
+import jakarta.ejb.EJB;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.enums.CycleState;
+import pt.uc.dei.services.CycleService;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
+/**
+ * REST Controller for managing cycle-related operations.
+ * <p>
+ * Provides endpoints for CRUD operations on cycles, including
+ * creation, retrieval, updating, and filtering functionality.
+ */
+@Path("/cycles")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class CycleController {
+
+    /**
+     * Logger instance for logging operations within this controller.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(CycleController.class);
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    @EJB
+    private CycleService cycleService;
+
+    /**
+     * Creates a new cycle.
+     *
+     * @param cycleDTO The cycle creation data
+     * @return Response with the created cycle DTO
+     */
+    @POST
+    public Response createCycle(@Valid CycleDTO cycleDTO) {
+        try {
+            LOGGER.info("Creating new cycle from {} to {} with admin {}", 
+                       cycleDTO.getStartDate(), 
+                       cycleDTO.getEndDate(),
+                       cycleDTO.getAdminId());
+
+            CycleDTO createdCycle = cycleService.createCycle(cycleDTO);
+            return Response.status(Response.Status.CREATED).entity(createdCycle).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Invalid request for cycle creation: {}", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Business rule violation for cycle creation: {}", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error creating cycle", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Updates an existing cycle.
+     *
+     * @param cycleDTO The cycle update data
+     * @return Response with the updated cycle DTO
+     */
+    @PUT
+    public Response updateCycle(@Valid CycleDTO cycleDTO) {
+        try {
+            LOGGER.info("Updating cycle with ID: {}", cycleDTO.getId());
+
+            CycleDTO updatedCycle = cycleService.updateCycle(cycleDTO);
+            return Response.ok(updatedCycle).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Invalid request for cycle update: {}", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Business rule violation for cycle update: {}", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error updating cycle", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Retrieves a cycle by its ID.
+     *
+     * @param id The cycle ID
+     * @return Response with the cycle DTO
+     */
+    @GET
+    @Path("/{id}")
+    public Response getCycleById(@PathParam("id") Long id) {
+        try {
+            LOGGER.debug("Retrieving cycle with ID: {}", id);
+
+            CycleDTO cycle = cycleService.getCycleById(id);
+            return Response.ok(cycle).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error retrieving cycle with ID: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Retrieves all cycles or cycles with filtering options.
+     *
+     * @param state Optional filter by cycle state
+     * @param adminId Optional filter by administrator ID
+     * @param startDateFrom Optional filter for cycles starting after this date (ISO format)
+     * @param startDateTo Optional filter for cycles starting before this date (ISO format)
+     * @param limit Maximum number of results
+     * @param offset Starting position for pagination
+     * @return Response with list of filtered cycle DTOs
+     */
+    @GET
+    public Response getCyclesWithFilters(@QueryParam("state") CycleState state,
+                                        @QueryParam("adminId") Long adminId,
+                                        @QueryParam("startDateFrom") String startDateFrom,
+                                        @QueryParam("startDateTo") String startDateTo,
+                                        @QueryParam("limit") @DefaultValue("50") Integer limit,
+                                        @QueryParam("offset") @DefaultValue("0") Integer offset) {
+        try {
+            LOGGER.debug("Retrieving cycles with filters");
+
+            LocalDateTime startDateFromParsed = null;
+            LocalDateTime startDateToParsed = null;
+
+            // Parse date strings if provided
+            if (startDateFrom != null && !startDateFrom.isEmpty()) {
+                try {
+                    startDateFromParsed = LocalDateTime.parse(startDateFrom, DATE_TIME_FORMATTER);
+                } catch (DateTimeParseException e) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                                  .entity(new ErrorResponse("Invalid startDateFrom format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();
+                }
+            }
+
+            if (startDateTo != null && !startDateTo.isEmpty()) {
+                try {
+                    startDateToParsed = LocalDateTime.parse(startDateTo, DATE_TIME_FORMATTER);
+                } catch (DateTimeParseException e) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                                  .entity(new ErrorResponse("Invalid startDateTo format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();
+                }
+            }
+
+            List<CycleDTO> cycles;
+            
+            // If no filters are provided, return all cycles
+            if (state == null && adminId == null && startDateFromParsed == null && startDateToParsed == null) {
+                cycles = cycleService.getAllCycles();
+            } else {
+                cycles = cycleService.getCyclesWithFilters(
+                    state, adminId, startDateFromParsed, startDateToParsed, limit, offset
+                );
+            }
+            
+            return Response.ok(cycles).build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error retrieving cycles with filters", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Retrieves the current active cycle.
+     *
+     * @return Response with the current active cycle DTO or 404 if none exists
+     */
+    @GET
+    @Path("/current")
+    public Response getCurrentActiveCycle() {
+        try {
+            LOGGER.debug("Retrieving current active cycle");
+
+            CycleDTO currentCycle = cycleService.getCurrentActiveCycle();
+            if (currentCycle == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                              .entity(new ErrorResponse("No active cycle found")).build();
+            }
+            
+            return Response.ok(currentCycle).build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error retrieving current active cycle", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Retrieves upcoming cycles.
+     *
+     * @return Response with list of upcoming cycle DTOs
+     */
+    @GET
+    @Path("/upcoming")
+    public Response getUpcomingCycles() {
+        try {
+            LOGGER.debug("Retrieving upcoming cycles");
+
+            List<CycleDTO> upcomingCycles = cycleService.getUpcomingCycles();
+            return Response.ok(upcomingCycles).build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error retrieving upcoming cycles", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Retrieves cycles managed by a specific administrator.
+     *
+     * @param adminId The administrator ID
+     * @return Response with list of cycle DTOs
+     */
+    @GET
+    @Path("/admin/{adminId}")
+    public Response getCyclesByAdmin(@PathParam("adminId") Long adminId) {
+        try {
+            LOGGER.debug("Retrieving cycles for admin ID: {}", adminId);
+
+            List<CycleDTO> cycles = cycleService.getCyclesByAdmin(adminId);
+            return Response.ok(cycles).build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error retrieving cycles for admin ID: {}", adminId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Closes a cycle.
+     *
+     * @param id The cycle ID
+     * @return Response with the updated cycle DTO
+     */
+    @POST
+    @Path("/{id}/close")
+    public Response closeCycle(@PathParam("id") Long id) {
+        try {
+            LOGGER.info("Closing cycle with ID: {}", id);
+
+            CycleDTO closedCycle = cycleService.closeCycle(id);
+            return Response.ok(closedCycle).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot close cycle with ID {}: {}", id, e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing cycle with ID: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Reopens a cycle.
+     *
+     * @param id The cycle ID
+     * @return Response with the updated cycle DTO
+     */
+    @POST
+    @Path("/{id}/reopen")
+    public Response reopenCycle(@PathParam("id") Long id) {
+        try {
+            LOGGER.info("Reopening cycle with ID: {}", id);
+
+            CycleDTO reopenedCycle = cycleService.reopenCycle(id);
+            return Response.ok(reopenedCycle).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot reopen cycle with ID {}: {}", id, e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error reopening cycle with ID: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Deletes a cycle.
+     *
+     * @param id The cycle ID
+     * @return Response indicating success or failure
+     */
+    @DELETE
+    @Path("/{id}")
+    public Response deleteCycle(@PathParam("id") Long id) {
+        try {
+            LOGGER.info("Deleting cycle with ID: {}", id);
+
+            cycleService.deleteCycle(id);
+            return Response.noContent().build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot delete cycle with ID {}: {}", id, e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                          .entity(new ErrorResponse(e.getMessage())).build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error deleting cycle with ID: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Automatically closes expired cycles.
+     * This endpoint can be called by a scheduled job or admin to automatically close
+     * cycles that have passed their end date.
+     *
+     * @return Response with the number of cycles that were closed
+     */
+    @POST
+    @Path("/close-expired")
+    public Response closeExpiredCycles() {
+        try {
+            LOGGER.info("Closing expired cycles");
+
+            int closedCount = cycleService.closeExpiredCycles();
+            return Response.ok(new CountResponse(closedCount, "cycles closed")).build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing expired cycles", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity(new ErrorResponse("Internal server error")).build();
+        }
+    }
+
+    /**
+     * Error response wrapper class.
+     */
+    public static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    /**
+     * Count response wrapper class.
+     */
+    public static class CountResponse {
+        private int count;
+        private String description;
+
+        public CountResponse(int count, String description) {
+            this.count = count;
+            this.description = description;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
+}

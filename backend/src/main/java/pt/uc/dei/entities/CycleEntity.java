@@ -82,8 +82,8 @@ public class CycleEntity implements Serializable {
         return state;
     }
 
-    public void setState(CycleState status) {
-        this.state = status;
+    public void setState(CycleState state) {
+        this.state = state;
     }
 
     public UserEntity getAdmin() {

@@ -51,7 +51,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         // Define method-specific skipped paths
         Map<String, Set<String>> methodSkippedPaths = Map.of(
                 "POST", Set.of("/users", "/activate", "/auth", "/auth/login", "/auth/password-reset"),
-                "GET", Set.of("/enums", "/enums/roles", "/enums/offices", "/auth/password-reset"),
+                "GET", Set.of("/enums", "/enums/roles", "/enums/offices", "/auth/password-reset", "/enums/appraisal-states", "/enums/cycle-states"),
                 "PATCH", Set.of("/auth/password-reset")
         );
 

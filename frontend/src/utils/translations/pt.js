@@ -191,7 +191,6 @@ const pt = {
   profileErrorLastNameInvalid: "O último nome contém caracteres inválidos",
   profileErrorBirthDateFuture: "A data de nascimento não pode ser futura",
   profileErrorBirthDateTooYoung: "Deve ter pelo menos 16 anos",
-  errorPhoneNumberInvalid: "Formato de número de telefone inválido",
   errorPostalCodeInvalid: "Formato de código postal inválido (ex: 1234-567)",
   profileErrorAddressStreetInvalid: "A rua contém caracteres inválidos",
   profileErrorAddressMunicipalityInvalid:

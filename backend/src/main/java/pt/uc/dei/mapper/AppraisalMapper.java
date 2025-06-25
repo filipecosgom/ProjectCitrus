@@ -1,4 +1,5 @@
 package pt.uc.dei.mapper;
+
 import org.mapstruct.*;
 import pt.uc.dei.dtos.AppraisalDTO;
 import pt.uc.dei.entities.AppraisalEntity;
@@ -17,7 +18,7 @@ import java.util.List;
  *   <li>Safely ignoring sensitive or unnecessary fields</li>
  * </ul>
  *
- * @author [Your Name]
+ * @author ProjectCitrus Team
  * @version 1.0
  */
 @Mapper(
@@ -32,9 +33,25 @@ public interface AppraisalMapper {
      * @param appraisalEntity the entity to convert
      * @return the mapped DTO
      */
-    @Mapping(source = "appraisedUser.id", target = "appraisedUserId") // Maps appraised user ID
-    @Mapping(source = "appraisingUser.id", target = "appraisingUserId") // Maps appraising user ID
+    @Mapping(source = "appraisedUser.id", target = "appraisedUserId")
+    @Mapping(source = "appraisingUser.id", target = "appraisingUserId")
+    @Mapping(source = "cycle.id", target = "cycleId")
     AppraisalDTO toDto(AppraisalEntity appraisalEntity);
+
+    /**
+     * Converts an AppraisalDTO object to an AppraisalEntity object.
+     * Note: This mapping ignores the user and cycle relationships to prevent issues.
+     * These should be set separately in the service layer.
+     *
+     * @param appraisalDTO the DTO to convert
+     * @return the mapped entity
+     */
+    @Mapping(target = "appraisedUser", ignore = true)
+    @Mapping(target = "appraisingUser", ignore = true)
+    @Mapping(target = "cycle", ignore = true)
+    @Mapping(target = "editedDate", ignore = true)
+    @Mapping(target = "id", ignore = true) // ID should be auto-generated
+    AppraisalEntity toEntity(AppraisalDTO appraisalDTO);
 
     /**
      * Converts a list of AppraisalEntity objects into a list of AppraisalDTO objects.
@@ -45,26 +62,25 @@ public interface AppraisalMapper {
     List<AppraisalDTO> toDtoList(List<AppraisalEntity> appraisals);
 
     /**
-     * Converts an AppraisalDTO object back into an AppraisalEntity object.
-     * Ignores user mapping to prevent circular references.
+     * Converts a list of AppraisalDTO objects into a list of AppraisalEntity objects.
      *
-     * @param appraisalDTO the DTO to convert
-     * @return the mapped entity
+     * @param appraisalDTOs the list of DTOs to convert
+     * @return the mapped list of entities
      */
-    @InheritInverseConfiguration(name = "toDto")
-    @Mapping(target = "appraisedUser", ignore = true) // Prevent recursion issues
-    @Mapping(target = "appraisingUser", ignore = true)
-    AppraisalEntity toEntity(AppraisalDTO appraisalDTO);
+    List<AppraisalEntity> toEntityList(List<AppraisalDTO> appraisalDTOs);
 
     /**
-     * Updates an existing AppraisalEntity with non-null values from AppraisalDTO.
-     * Useful for PATCH updates where only specific fields should be modified.
+     * Updates an existing AppraisalEntity with values from an AppraisalDTO.
+     * Useful for partial updates while preserving existing relationships.
      *
-     * @param dto    the DTO containing updated fields
-     * @param entity the entity to update
+     * @param appraisalDTO the DTO containing the new values
+     * @param appraisalEntity the existing entity to update
      */
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true) // ID should never be updated in PATCH requests
-    @Mapping(target = "cycle", ignore = true) // Prevent cycle reference issues
-    void updateAppraisalFromDto(AppraisalDTO dto, @MappingTarget AppraisalEntity entity);
+    @Mapping(target = "appraisedUser", ignore = true)
+    @Mapping(target = "appraisingUser", ignore = true)
+    @Mapping(target = "cycle", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "editedDate", ignore = true)
+    void updateEntityFromDto(AppraisalDTO appraisalDTO, @MappingTarget AppraisalEntity appraisalEntity);
 }

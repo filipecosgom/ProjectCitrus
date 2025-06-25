@@ -185,7 +185,6 @@ const en = {
   profileErrorLastNameInvalid: "Last name contains invalid characters",
   profileErrorBirthDateFuture: "Birth date cannot be in the future",
   profileErrorBirthDateTooYoung: "You must be at least 16 years old",
-  errorPhoneNumberInvalid: "Invalid phone number format",
   errorPostalCodeInvalid: "Invalid postal code format (e.g. 1234-567)",
   profileErrorAddressStreetInvalid: "Street contains invalid characters",
   profileErrorAddressMunicipalityInvalid:
