@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm, useFormContext  } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -775,13 +775,11 @@ export default function Profile() {
                 </label>
               </div>
             </form>
-            <button onClick={handleNotification("success", "sucess")}></button>
           </div>
         </div>
       )}
       {activeTab === "appraisals" && <AppraisalsTab userId={userId} />}
       {activeTab === "training" && <TrainingTab userId={userId} />}
-      <ToastContainer />
     </div>
   );
 }

@@ -320,7 +320,7 @@ public class UserController {
                 parameter, order, offset, limit);
 
         if (userData.get("users") == null || ((List<?>) userData.get("users")).isEmpty()) {
-            return Response.status(404).entity(new ApiResponse(false, "No users found", "NOT_FOUND", null)).build();
+            return Response.status(200).entity(new ApiResponse(true, "No users found", null, null)).build();
         }
         return Response.ok(new ApiResponse(true, "Users retrieved successfully", null, userData)).build();
     }

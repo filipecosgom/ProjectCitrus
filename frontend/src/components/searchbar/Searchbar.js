@@ -1,131 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { FiSearch, FiChevronDown } from 'react-icons/fi';
-import styles from './Searchbar.module.css';
+import React, { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { FiSearch, FiChevronDown } from "react-icons/fi";
+import "./Searchbar.css";
 
-const SearchBar = ({ onSearch, offices}) => {
+const SearchBar = ({ onSearch, offices = [] }) => {
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
-      query: '',
-      searchType: 'email',
-      accountState: '',
-      office: '',
-      resultsPerPage: 10
-    }
+      query: "",
+      searchType: "email",
+      accountState: "",
+      office: "",
+      resultsPerPage: 10,
+    },
   });
 
-  // Carrega enums
-    useEffect(() => {
-      console.log(offices)
-    }, []);
-
-  // State for manual menu toggles (mobile-friendly)
   const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
   const [showOfficeMenu, setShowOfficeMenu] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountStates = [
+    { label: "All States", value: "" },
+    { label: "Complete", value: "COMPLETE" },
+    { label: "Incomplete", value: "INCOMPLETE" },
+  ];
+  const [showResultsMenu, setShowResultsMenu] = useState(false);
+  const perPageOptions = [5, 10, 20];
 
-  const onSubmit = (data) => {
-    if (data.query.trim() || data.accountState || data.office) {
-      onSearch(data);
-    }
+  const onSubmit = ({
+    query,
+    searchType,
+    resultsPerPage,
+    accountState,
+    office,
+  }) => {
+    const filters = {
+      accountState,
+      office,
+    };
+    onSearch(query, searchType, resultsPerPage, filters);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.searchContainer}>
+    <form onSubmit={handleSubmit(onSubmit)} className="searchBar-container">
       {/* Search Input + Button */}
-      <button type="submit" className={styles.searchButton}>
-        <FiSearch />
-      </button>
-      
-      <input
-        {...register('query')}
-        placeholder={`Search by ${watch('searchType').replace(/_/g, ' ')}...`}
-        className={styles.searchInput}
-      />
+      <div className="searchBar-wrapper">
+        <button type="submit" className="searchBar-button">
+          <FiSearch />
+        </button>
+
+        <input
+          {...register("query")}
+          placeholder={`Search by ${watch("searchType").replace(/_/g, " ")}...`}
+          className="searchBar-input"
+        />
+      </div>
 
       {/* Search Type Dropdown */}
-      <div className={styles.dropdown}>
-        <button 
+      <div className="searchBar-dropdown">
+        <button
           type="button"
-          className={styles.dropdownToggle}
+          className="searchBar-dropdownToggle"
           onClick={() => setShowSearchTypeMenu(!showSearchTypeMenu)}
-          aria-expanded={showSearchTypeMenu}
         >
-          {watch('searchType').replace(/_/g, ' ')} <FiChevronDown />
+          {watch("searchType").replace(/_/g, " ")} <FiChevronDown />
         </button>
-        
+
         {showSearchTypeMenu && (
-          <div className={styles.dropdownMenu}>
-            <div 
-              className={styles.menuItem}
+          <div className="searchBar-dropdownMenu">
+            <div
+              className="searchBar-menuItem"
               onClick={() => {
-                setValue('searchType', 'email');
+                setValue("searchType", "email");
                 setShowSearchTypeMenu(false);
               }}
-              data-active={watch('searchType') === 'email'}
             >
-              Email
+              email
             </div>
-            
-            <div 
-              className={styles.menuItem}
+            <div
+              className="searchBar-menuItem"
               onClick={() => {
-                setValue('searchType', 'name');
+                setValue("searchType", "name");
                 setShowSearchTypeMenu(false);
               }}
-              data-active={watch('searchType') === 'name'}
             >
-              Name
+              name
             </div>
-            
-            <div className={`${styles.menuItem} ${styles.submenuTrigger}`}>
-              <span>Role</span> <span>▶</span>
-              <div 
-              className={styles.menuItem}
+            <div
+              className="searchBar-menuItem"
               onClick={() => {
-                setValue('searchType', 'role');
+                setValue("searchType", "role");
                 setShowSearchTypeMenu(false);
               }}
-              data-active={watch('searchType') === 'role'}
             >
-              Role
-            </div>
+              role
             </div>
           </div>
         )}
       </div>
 
-      {/* Workplace Flyout Menu */}
-      <div className={styles.dropdown}>
-        <button 
+      {/* Office Dropdown */}
+      <div className="searchBar-dropdown">
+        <button
           type="button"
-          className={styles.dropdownToggle}
+          className="searchBar-dropdownToggle"
           onClick={() => setShowOfficeMenu(!showOfficeMenu)}
-          aria-expanded={showOfficeMenu}
         >
-          {watch('office') || 'office'} <FiChevronDown />
+          {watch("office") || "Office"} <FiChevronDown />
         </button>
-        
+
         {showOfficeMenu && (
-          <div className={styles.dropdownMenu}>
-            <div 
-              className={styles.menuItem}
+          <div className="searchBar-dropdownMenu">
+            <div
+              className="searchBar-menuItem"
               onClick={() => {
-                setValue('office', '');
+                setValue("office", "");
                 setShowOfficeMenu(false);
               }}
-              data-active={watch('office') === ''}
             >
-              All offices
+              All Offices
             </div>
-            {offices.map(place => (
+            {offices.map((place) => (
               <div
                 key={place}
-                className={styles.menuItem}
+                className="searchBar-menuItem"
                 onClick={() => {
-                  setValue('office', place);
+                  setValue("office", place);
                   setShowOfficeMenu(false);
                 }}
-                data-active={watch('office') === place}
               >
                 {place}
               </div>
@@ -134,31 +134,67 @@ const SearchBar = ({ onSearch, offices}) => {
         )}
       </div>
 
-      {/* Account State Filter */}
-      <select 
-        {...register('accountState')} 
-        className={styles.filterSelect}
-      >
-        <option value="">All States</option>
-        <option value="COMPLETE">Complete</option>
-        <option value="INCOMPLETE">Incomplete</option>
-      </select>
-
-      {/* Results Per Page - Hidden on mobile */}
-      <div className={styles.resultsPerPage}>
-        <select 
-          {...register('resultsPerPage')} 
-          className={styles.resultsSelect}
+      <div className="searchBar-dropdown">
+        <button
+          type="button"
+          className="searchBar-dropdownToggle"
+          onClick={() => setShowAccountMenu(!showAccountMenu)}
+          aria-expanded={showAccountMenu}
         >
-          <option value={5}>5 per page</option>
-          <option value={10}>10 per page</option>
-          <option value={20}>20 per page</option>
-        </select>
-        <FiChevronDown className={styles.selectArrow} />
+          {accountStates.find((opt) => opt.value === watch("accountState"))
+            ?.label || "Account State"}{" "}
+          <FiChevronDown />
+        </button>
+
+        {showAccountMenu && (
+          <div className="searchBar-dropdownMenu">
+            {accountStates.map((opt) => (
+              <div
+                key={opt.value}
+                className="searchBar-menuItem"
+                onClick={() => {
+                  setValue("accountState", opt.value);
+                  setShowAccountMenu(false);
+                }}
+                data-active={watch("accountState") === opt.value}
+              >
+                {opt.label}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="searchBar-dropdown">
+        <button
+          type="button"
+          className="searchBar-dropdownToggle"
+          onClick={() => setShowResultsMenu(!showResultsMenu)}
+          aria-expanded={showResultsMenu}
+        >
+          {watch("resultsPerPage")} per page <FiChevronDown />
+        </button>
+
+        {showResultsMenu && (
+          <div className="searchBar-dropdownMenu">
+            {perPageOptions.map((num) => (
+              <div
+                key={num}
+                className="searchBar-menuItem"
+                onClick={() => {
+                  setValue("resultsPerPage", num);
+                  setShowResultsMenu(false);
+                }}
+                data-active={watch("resultsPerPage") === num}
+              >
+                {num} per page
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </form>
   );
 };
-
 
 export default SearchBar;

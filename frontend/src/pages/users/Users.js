@@ -10,62 +10,98 @@ import { handleGetOffices } from "../../handles/handleGetEnums";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [offices, setOffices] = useState([]);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
     offset: 0,
-    limit: 5,
+    limit: 10,
     total: 0,
   });
-  const [pageLoading, setPageLoading] = useState(true);
-  const [resultsLoading, setResultsLoading] = useState(false);
-  const [offices, setOffices] = useState([]);
 
-  const handleSearch = async (query, filter, limit) => {
-    console.log(query);
-    console.log(filter);
-    console.log(limit);
-    setResultsLoading(true);
-    const result = await handleGetUsers({
-      [filter]: query,
-      offset: 0, // Reset to page 1
-      limit: limit || pagination.limit,
-    });
+  // 🧠 Track latest search context
+  const [searchParams, setSearchParams] = useState({
+    query: "",
+    searchType: "email",
+    resultsPerPage: 10,
+    filters: {},
+  });
 
-    setUsers(result.users);
-    setPagination({
-      offset: 0,
-      limit: limit || pagination.limit,
-      total: result.pagination.totalUsers,
-    });
-    setResultsLoading(false);
+  // 🔍 Triggered by the SearchBar
+  const handleSearch = async (query, searchType, limit, filters = {}) => {
+    setSearchParams({ query, searchType, resultsPerPage: limit, filters });
+    setPagination((prev) => ({ ...prev, offset: 0 })); // reset to first page
   };
+
+  // 🔁 On pagination offset change
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { query, searchType, resultsPerPage, filters } = searchParams;
+
+      setResultsLoading(true);
+      const result = await handleGetUsers({
+        [searchType]: query,
+        offset: pagination.offset,
+        limit: resultsPerPage,
+        ...filters,
+      });
+
+      setUsers(result.users);
+      setPagination((prev) => ({
+        ...prev,
+        total: result.pagination.totalUsers,
+        limit: result.pagination.limit,
+      }));
+      setResultsLoading(false);
+    };
+
+    if (searchParams.query !== undefined) {
+      fetchUsers();
+    }
+  }, [pagination.offset, searchParams]);
+
+  // 📦 On mount: fetch offices and initial users
+  useEffect(() => {
+    const fetchInitial = async () => {
+      setPageLoading(true);
+      const offices = await handleGetOffices();
+      const initialSearch = {
+        query: "",
+        searchType: "email",
+        resultsPerPage: 10,
+        filters: {}, // empty to fetch all
+      };
+      setSearchParams(initialSearch); // 💡 this enables pagination re-fetch later
+      const result = await handleGetUsers({
+        [initialSearch.searchType]: initialSearch.query,
+        offset: 0,
+        limit: initialSearch.resultsPerPage,
+        ...initialSearch.filters,
+      });
+
+      setUsers(result.users);
+      setPagination((prev) => ({
+        ...prev,
+        offset: 0,
+        limit: result.pagination.limit,
+        total: result.pagination.totalUsers,
+      }));
+      setOffices(offices);
+      setPageLoading(false);
+    };
+    fetchInitial();
+  }, []);
 
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-  // Carrega enums
-  useEffect(() => {
-    const fetchEnums = async () => {
-      const offices = await handleGetOffices();
-      setOffices(offices)
-    };
-    setPageLoading(true);
-    fetchEnums();
-    setPageLoading(false);
-  }, []);
-
   if (pageLoading) return <Spinner />;
 
   return (
     <div className="users-container">
-      <div className="users-header">
-        <SearchBar
-        onSearch={handleSearch}
-        offices={offices} />
-      </div>
-      {pageLoading ? (
+      <SearchBar onSearch={handleSearch} offices={offices} />
+      {resultsLoading ? (
         <div className="users-loading">
           <Spinner />
         </div>

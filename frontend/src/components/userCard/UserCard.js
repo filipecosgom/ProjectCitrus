@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styles from './UserCard.css';
-import UserIcon from '../userIcon/UserIcon';
-import { handleGetUserAvatar } from '../../handles/handleGetUserAvatar';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import styles from "./UserCard.css";
+import UserIcon from "../userIcon/UserIcon";
+import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
+import Spinner from "../spinner/spinner";
 
 const UserCard = ({ user }) => {
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
   const [loadingAvatar, setLoadingAvatar] = useState(false);
+  const [loadingManagerAvatar, setLoadingManagerAvatar] = useState(false);
   const [avatarError, setAvatarError] = useState(null);
-
-  const formattedBirthdate = user.birthdate 
-    ? new Date(...user.birthdate).toLocaleDateString() 
-    : 'Not specified';
+  const [managerAvatarError, setManagerAvatarError] = useState(null);
 
   // Determine status for UserIcon
   const getStatusIcon = () => {
-    if (user.userIsAdmin) return 'check';
-    if (user.userIsDeleted) return 'cross';
-    if (user.accountState === 'INCOMPLETE') return 'stroke';
+    if (user.userIsAdmin) return "check";
+    if (user.userIsDeleted) return "cross";
+    if (user.accountState === "INCOMPLETE") return "stroke";
     return null;
   };
 
   useEffect(() => {
-    if (user.hasAvatar) {
-      const fetchAvatar = async () => {
+    if (!user) return;
+    const fetchUserAvatar = async () => {
+      if (user.hasAvatar) {
         setLoadingAvatar(true);
         try {
           const result = await handleGetUserAvatar(user.id);
@@ -32,92 +33,90 @@ const UserCard = ({ user }) => {
           } else {
             setAvatarError(result.error);
           }
-        } catch (error) {
-          setAvatarError('Failed to load avatar');
+        } catch (err) {
+          setAvatarError("Failed to load avatar");
         } finally {
           setLoadingAvatar(false);
         }
-      };
-
-      fetchAvatar();
-    }
-
-    // Cleanup function to revoke object URL when component unmounts
-    return () => {
-      if (avatarUrl) {
-        URL.revokeObjectURL(avatarUrl);
       }
     };
-  }, [user.id, user.hasAvatar]);
+    const fetchManagerAvatar = async () => {
+      if (user.manager?.hasAvatar) {
+        setLoadingManagerAvatar(true);
+        try {
+          const result = await handleGetUserAvatar(user.manager.id);
+          if (result.success) {
+            setManagerAvatarUrl(result.avatar);
+          } else {
+            setManagerAvatarError(result.error);
+          }
+        } catch (err) {
+          setManagerAvatarError("Failed to load manager avatar");
+        } finally {
+          setLoadingManagerAvatar(false);
+        }
+      }
+    };
 
+    fetchUserAvatar();
+    fetchManagerAvatar();
+    return () => {
+      if (avatarUrl) URL.revokeObjectURL(avatarUrl);
+      if (managerAvatarUrl) URL.revokeObjectURL(managerAvatarUrl);
+    };
+  }, [user.id, user.hasAvatar, user.manager]);
   const getStatusClass = () => {
     if (user.userIsAdmin) return styles.admin;
     if (user.userIsManager) return styles.manager;
-    return '';
+    return "";
   };
 
-
   return (
-    <div className={`${styles.card} ${getStatusClass()}`}>
-      <div className={styles.header}>
-        <div className={styles.avatarContainer}>
-          <UserIcon 
-            avatar={avatarUrl} 
-            status={getStatusIcon()} 
-          />
-        </div>
-        <div className={styles.titles}>
-          <h3>{user.name} {user.surname}</h3>
-          <p className={styles.role}>{user.role.replace(/_/g, ' ')}</p>
-          {avatarError && (
-            <small className={styles.avatarError}>
-              Avatar: {avatarError}
-            </small>
+    <div className={`userCard-container ${getStatusClass()}`}>
+      <div className="userCard-avatarAndInfoContainer">
+        {/* User Avatar */}
+        <div className="userCard-avatarContainer">
+          {loadingAvatar ? (
+            <Spinner /> // You can replace this with a spinner
+          ) : (
+            <UserIcon avatar={avatarUrl} status={getStatusIcon()} />
           )}
         </div>
-      </div>
 
-      {/* Rest of the card content remains the same */}
-      <div className={styles.statusBar}>
-        <span className={`${styles.status} ${
-          user.accountState === 'COMPLETE' ? styles.complete : styles.incomplete
-        }`}>
-          {user.accountState}
-        </span>
-        {user.userIsAdmin && <span className={styles.badge}>Admin</span>}
-        {user.userIsManager && <span className={styles.badge}>Manager</span>}
-      </div>
-
-      <div className={styles.details}>
-        <div className={styles.detailItem}>
-          <span className={styles.icon}>📧</span>
-          <span>{user.email}</span>
-        </div>
-        
-        <div className={styles.detailItem}>
-          <span className={styles.icon}>📱</span>
-          <span>{user.phone || 'Not specified'}</span>
-        </div>
-        
-        <div className={styles.detailItem}>
-          <span className={styles.icon}>📍</span>
-          <span>{user.office.replace(/_/g, ' ')} • {user.municipality}</span>
-        </div>
-        
-        <div className={styles.detailItem}>
-          <span className={styles.icon}>🎂</span>
-          <span>{formattedBirthdate}</span>
+        {/* User Info */}
+        <div className="userCard-userInfo">
+          <div className="userCard-name">
+            {user.name} {user.surname}
+          </div>
+          <div className="userCard-email">{user.email}</div>
         </div>
       </div>
 
+      {/* Role */}
+      <div className="userCard-role">{user.role.replace(/_/g, " ")}</div>
+
+      {/* Office */}
+      <div className="userCard-office">{user.office.replace(/_/g, " ")}</div>
+
+      {/* Manager Section */}
       {user.manager && (
-        <div className={styles.managerSection}>
-          <div className={styles.detailItem}>
-            <span className={styles.icon}>👤</span>
-            <div>
-              <small>Manager</small>
-              <div>{user.manager.name} {user.manager.surname}</div>
+        <div className="userCard-avatarAndInfoContainer">
+          <div className="userCard-managerAvatar">
+            {loadingManagerAvatar ? (
+              <Spinner/>
+            ) : (
+              <UserIcon
+                avatar={managerAvatarUrl}
+                status={user.manager.status}
+              />
+            )}
+          </div>
+
+          <div className="userCard-managerInfo">
+            <div className="userCard-managerName">
+              {user.manager.name} {user.manager.surname}
             </div>
+            <div className="userCard-managerEmail">{user.manager.email}</div>
           </div>
         </div>
       )}
@@ -144,9 +143,9 @@ UserCard.propTypes = {
     manager: PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string,
-      surname: PropTypes.string
-    })
-  }).isRequired
+      surname: PropTypes.string,
+    }),
+  }).isRequired,
 };
 
 export default UserCard;

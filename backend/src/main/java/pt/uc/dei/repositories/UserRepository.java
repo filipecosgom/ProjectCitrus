@@ -100,6 +100,8 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
         Root<UserEntity> root = query.from(UserEntity.class);
+        root.fetch("managerUser", JoinType.LEFT);
+
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -184,10 +186,10 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (SearchUtils.isNotBlank(email)) {
             if (SearchUtils.isQuoted(email)) {
                 String exact = SearchUtils.stripQuotes(email);
-                predicates.add(cb.equal(root.get("email"), exact)); // Full, strict match
+                predicates.add(cb.like(root.get("email"), "%" + exact + "%")); // Full, strict match
             } else {
                 String normalized = SearchUtils.normalizeString(email.toLowerCase());
-                Expression<String> unaccentedEmail = cb.function("unaccent", String.class, cb.lower(root.get("email")));
+                Expression<String> unaccentedEmail = cb.function(" ", String.class, cb.lower(root.get("email")));
                 predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
             }
         }

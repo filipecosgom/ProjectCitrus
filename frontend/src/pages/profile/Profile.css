@@ -135,7 +135,6 @@ label {
   width: 100%;
 }
 
-input,
 textarea {
   padding: 6px;
   font-size: 1em;
@@ -184,7 +183,7 @@ textarea {
   width: 100%;
 }
 
-select {
+.profile-input {
   padding: 6px 32px 6px 10px; /* espaço à direita para a seta */
   font-size: 1em;
   margin-top: 4px;
