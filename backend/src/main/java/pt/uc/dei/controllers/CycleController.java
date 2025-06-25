@@ -33,7 +33,7 @@ public class CycleController {
      */
     private static final Logger LOGGER = LogManager.getLogger(CycleController.class);
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     @EJB
     private CycleService cycleService;
@@ -168,7 +168,7 @@ public class CycleController {
             // Parse date strings if provided
             if (startDateFrom != null && !startDateFrom.isEmpty()) {
                 try {
-                    startDateFromParsed = LocalDate.parse(startDateFrom, DATE_TIME_FORMATTER);
+                    startDateFromParsed = LocalDate.parse(startDateFrom, DATE_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
                                   .entity(new ApiResponse(false, "Invalid startDateFrom format. Use ISO format (yyyy-MM-dd)", "errorInvalidDateFormat", null)).build();
@@ -177,7 +177,7 @@ public class CycleController {
 
             if (startDateTo != null && !startDateTo.isEmpty()) {
                 try {
-                    startDateToParsed = LocalDate.parse(startDateTo, DATE_TIME_FORMATTER);
+                    startDateToParsed = LocalDate.parse(startDateTo, DATE_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
                                   .entity(new ApiResponse(false, "Invalid startDateTo format. Use ISO format (yyyy-MM-dd)", "errorInvalidDateFormat", null)).build();
@@ -195,7 +195,7 @@ public class CycleController {
                 );
             }
             
-            return Response.ok(cycles).build();
+            return Response.ok(new ApiResponse(true, "Cycles retrieved successfully", "success", cycles)).build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycles with filters", e);
@@ -245,7 +245,7 @@ public class CycleController {
             LOGGER.debug("Retrieving upcoming cycles");
 
             List<CycleDTO> upcomingCycles = cycleService.getUpcomingCycles();
-            return Response.ok(upcomingCycles).build();
+            return Response.ok(new ApiResponse(true, "Upcoming cycles retrieved successfully", "success", upcomingCycles)).build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving upcoming cycles", e);
@@ -267,7 +267,7 @@ public class CycleController {
             LOGGER.debug("Retrieving cycles for admin ID: {}", adminId);
 
             List<CycleDTO> cycles = cycleService.getCyclesByAdmin(adminId);
-            return Response.ok(cycles).build();
+            return Response.ok(new ApiResponse(true, "Admin cycles retrieved successfully", "success", cycles)).build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycles for admin ID: {}", adminId, e);
@@ -323,7 +323,7 @@ public class CycleController {
             LOGGER.info("Reopening cycle with ID: {}", id);
 
             CycleDTO reopenedCycle = cycleService.reopenCycle(id);
-            return Response.ok(reopenedCycle).build();
+            return Response.ok(new ApiResponse(true, "Cycle reopened successfully", "success", reopenedCycle)).build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
@@ -353,7 +353,7 @@ public class CycleController {
             LOGGER.info("Deleting cycle with ID: {}", id);
 
             cycleService.deleteCycle(id);
-            return Response.noContent().build();
+            return Response.ok(new ApiResponse(true, "Cycle deleted successfully", "success", null)).build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
@@ -391,54 +391,6 @@ public class CycleController {
             LOGGER.error("Unexpected error closing expired cycles", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                           .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
-        }
-    }
-
-    /**
-     * Error response wrapper class.
-     */
-    public static class ErrorResponse {
-        private String message;
-
-        public ErrorResponse(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-    }
-
-    /**
-     * Count response wrapper class.
-     */
-    public static class CountResponse {
-        private int count;
-        private String description;
-
-        public CountResponse(int count, String description) {
-            this.count = count;
-            this.description = description;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
         }
     }
 
