@@ -171,7 +171,7 @@ public class CycleController {
                     startDateFromParsed = LocalDate.parse(startDateFrom, DATE_TIME_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
-                                  .entity(new ErrorResponse("Invalid startDateFrom format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();
+                                  .entity(new ApiResponse(false, "Invalid startDateFrom format. Use ISO format (yyyy-MM-dd)", "errorInvalidDateFormat", null)).build();
                 }
             }
 
@@ -180,7 +180,7 @@ public class CycleController {
                     startDateToParsed = LocalDate.parse(startDateTo, DATE_TIME_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
-                                  .entity(new ErrorResponse("Invalid startDateTo format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();
+                                  .entity(new ApiResponse(false, "Invalid startDateTo format. Use ISO format (yyyy-MM-dd)", "errorInvalidDateFormat", null)).build();
                 }
             }
 
@@ -200,7 +200,7 @@ public class CycleController {
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycles with filters", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
@@ -250,7 +250,7 @@ public class CycleController {
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving upcoming cycles", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
@@ -272,7 +272,7 @@ public class CycleController {
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycles for admin ID: {}", adminId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
@@ -328,15 +328,15 @@ public class CycleController {
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                          .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null)).build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Cannot reopen cycle with ID {}: {}", id, e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                          .entity(new ApiResponse(false, e.getMessage(), "errorCycleAlreadyOpen", null)).build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error reopening cycle with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
@@ -358,15 +358,16 @@ public class CycleController {
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                          .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null)).build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Cannot delete cycle with ID {}: {}", id, e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                          .entity(new ApiResponse(false, e.getMessage(), "errorCycleAlreadyClosed", null))
+                          .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error deleting cycle with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
@@ -384,12 +385,12 @@ public class CycleController {
             LOGGER.info("Closing expired cycles");
 
             int closedCount = cycleService.closeExpiredCycles();
-            return Response.ok(new CountResponse(closedCount, "cycles closed")).build();
+            return Response.ok(new ApiResponse(true, "Expired cycles closed successfully", "success", closedCount)).build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error closing expired cycles", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                          .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null)).build();
         }
     }
 
