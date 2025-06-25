@@ -10,8 +10,9 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.CycleDTO;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.services.CycleService;
+import pt.uc.dei.utils.ApiResponse;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -65,7 +66,8 @@ public class CycleController {
         } catch (Exception e) {
             LOGGER.error("Unexpected error creating cycle", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Start date cannot be in the past", "errorStartDatePast", null))
+                    .build();
         }
     }
 
@@ -145,13 +147,13 @@ public class CycleController {
         try {
             LOGGER.debug("Retrieving cycles with filters");
 
-            LocalDateTime startDateFromParsed = null;
-            LocalDateTime startDateToParsed = null;
+            LocalDate startDateFromParsed = null;
+            LocalDate startDateToParsed = null;
 
             // Parse date strings if provided
             if (startDateFrom != null && !startDateFrom.isEmpty()) {
                 try {
-                    startDateFromParsed = LocalDateTime.parse(startDateFrom, DATE_TIME_FORMATTER);
+                    startDateFromParsed = LocalDate.parse(startDateFrom, DATE_TIME_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
                                   .entity(new ErrorResponse("Invalid startDateFrom format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();
@@ -160,7 +162,7 @@ public class CycleController {
 
             if (startDateTo != null && !startDateTo.isEmpty()) {
                 try {
-                    startDateToParsed = LocalDateTime.parse(startDateTo, DATE_TIME_FORMATTER);
+                    startDateToParsed = LocalDate.parse(startDateTo, DATE_TIME_FORMATTER);
                 } catch (DateTimeParseException e) {
                     return Response.status(Response.Status.BAD_REQUEST)
                                   .entity(new ErrorResponse("Invalid startDateTo format. Use ISO format (yyyy-MM-ddTHH:mm:ss)")).build();

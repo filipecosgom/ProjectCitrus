@@ -15,7 +15,7 @@ import pt.uc.dei.repositories.CycleRepository;
 import pt.uc.dei.repositories.UserRepository;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -75,7 +75,7 @@ public class CycleService implements Serializable {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        if (cycleDTO.getStartDate().isBefore(LocalDateTime.now().minusHours(1))) {
+        if (cycleDTO.getStartDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Start date cannot be in the past");
         }
 
@@ -236,7 +236,7 @@ public class CycleService implements Serializable {
      * @return List of filtered cycle DTOs
      */
     public List<CycleDTO> getCyclesWithFilters(CycleState state, Long adminId,
-                                              LocalDateTime startDateFrom, LocalDateTime startDateTo,
+                                              LocalDate startDateFrom, LocalDate startDateTo,
                                               Integer limit, Integer offset) {
         LOGGER.debug("Retrieving cycles with filters");
 
@@ -324,7 +324,7 @@ public class CycleService implements Serializable {
         }
 
         // Business rule: Can only delete cycles that haven't started yet
-        if (cycle.getStartDate().isBefore(LocalDateTime.now())) {
+        if (cycle.getStartDate().isBefore(LocalDate.now())) {
             throw new IllegalStateException("Cannot delete a cycle that has already started");
         }
 

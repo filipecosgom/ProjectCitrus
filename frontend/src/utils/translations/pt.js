@@ -1,5 +1,5 @@
 const pt = {
-  welcomeMessage: "Benvindo {name}",
+  welcomeMessage: "Bem-vindo {name}",
   //Login
   loginLogo: "CITRUS",
   loginTitle: "Entrar",

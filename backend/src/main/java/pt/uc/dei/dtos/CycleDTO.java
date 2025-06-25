@@ -2,7 +2,7 @@ package pt.uc.dei.dtos;
 import jakarta.validation.constraints.NotNull;
 import pt.uc.dei.enums.CycleState;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Data Transfer Object (DTO) representing a cycle.
@@ -19,14 +19,14 @@ public class CycleDTO {    /**
      * Must not be null.
      */
     @NotNull(message = "Start date missing")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     /**
      * The end date and time of the cycle.
      * Must not be null.
      */
     @NotNull(message = "End date missing")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     /**
      * The current state of the cycle.
@@ -49,19 +49,19 @@ public class CycleDTO {    /**
         this.id = id;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

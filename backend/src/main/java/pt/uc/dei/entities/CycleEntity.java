@@ -3,7 +3,7 @@ package pt.uc.dei.entities;
 import jakarta.persistence.*;
 import pt.uc.dei.enums.CycleState;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Entity representing a cycle.
@@ -27,14 +27,14 @@ public class CycleEntity implements Serializable {
      * Must always be set and can be updated.
      */
     @Column(name = "start_date", nullable = false, unique = false, updatable = true)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     /**
      * The end date and time of the cycle.
      * Must always be set and can be updated.
      */
     @Column(name = "end_date", nullable = false, unique = false, updatable = true)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     /**
      * The current status of the cycle.
@@ -62,19 +62,19 @@ public class CycleEntity implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

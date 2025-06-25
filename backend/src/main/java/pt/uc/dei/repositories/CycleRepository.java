@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.enums.CycleState;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      */
     public CycleEntity findCurrentActiveCycle() {
         try {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDate now = LocalDate.now();
             TypedQuery<CycleEntity> query = em.createQuery(
                 "SELECT c FROM CycleEntity c WHERE c.state = :state " +
                 "AND c.startDate <= :now AND c.endDate >= :now " +
@@ -116,7 +116,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      * @param endDate The end date of the range
      * @return List of cycles that overlap with the specified date range
      */
-    public List<CycleEntity> findCyclesByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<CycleEntity> findCyclesByDateRange(LocalDate startDate, LocalDate endDate) {
         try {
             TypedQuery<CycleEntity> query = em.createQuery(
                 "SELECT c FROM CycleEntity c WHERE " +
@@ -140,7 +140,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      */
     public List<CycleEntity> findUpcomingCycles() {
         try {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDate now = LocalDate.now();
             TypedQuery<CycleEntity> query = em.createQuery(
                 "SELECT c FROM CycleEntity c WHERE c.startDate > :now ORDER BY c.startDate ASC", 
                 CycleEntity.class
@@ -160,7 +160,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      */
     public List<CycleEntity> findExpiredOpenCycles() {
         try {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDate now = LocalDate.now();
             TypedQuery<CycleEntity> query = em.createQuery(
                 "SELECT c FROM CycleEntity c WHERE c.state = :state AND c.endDate < :now " +
                 "ORDER BY c.endDate DESC", 
@@ -183,7 +183,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      * @param excludeCycleId Optional cycle ID to exclude from the check (for updates)
      * @return True if there are overlapping cycles, false otherwise
      */
-    public boolean hasOverlappingCycles(LocalDateTime startDate, LocalDateTime endDate, Long excludeCycleId) {
+    public boolean hasOverlappingCycles(LocalDate startDate, LocalDate endDate, Long excludeCycleId) {
         try {
             String jpql = "SELECT COUNT(c) FROM CycleEntity c WHERE " +
                          "(c.startDate <= :endDate AND c.endDate >= :startDate)";
@@ -219,7 +219,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
      * @return List of filtered cycles
      */
     public List<CycleEntity> findCyclesWithFilters(CycleState state, Long adminId, 
-                                                  LocalDateTime startDateFrom, LocalDateTime startDateTo,
+                                                  LocalDate startDateFrom, LocalDate startDateTo,
                                                   Integer limit, Integer offset) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
