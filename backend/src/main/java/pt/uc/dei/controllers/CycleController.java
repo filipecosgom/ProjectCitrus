@@ -53,20 +53,26 @@ public class CycleController {
                        cycleDTO.getAdminId());
 
             CycleDTO createdCycle = cycleService.createCycle(cycleDTO);
-            return Response.status(Response.Status.CREATED).entity(createdCycle).build();
+            return Response.status(Response.Status.CREATED)
+                    .entity(new ApiResponse(true, "Cycle created successfully", "success", createdCycle))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Invalid request for cycle creation: {}", e.getMessage());
+            String errorCode = getValidationErrorCode(e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Business rule violation for cycle creation: {}", e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error creating cycle", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ApiResponse(false, "Start date cannot be in the past", "errorStartDatePast", null))
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
                     .build();
         }
     }
@@ -83,20 +89,26 @@ public class CycleController {
             LOGGER.info("Updating cycle with ID: {}", cycleDTO.getId());
 
             CycleDTO updatedCycle = cycleService.updateCycle(cycleDTO);
-            return Response.ok(updatedCycle).build();
+            return Response.ok(new ApiResponse(true, "Cycle updated successfully", "success", updatedCycle))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Invalid request for cycle update: {}", e.getMessage());
+            String errorCode = getValidationErrorCode(e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Business rule violation for cycle update: {}", e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error updating cycle", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -113,16 +125,19 @@ public class CycleController {
             LOGGER.debug("Retrieving cycle with ID: {}", id);
 
             CycleDTO cycle = cycleService.getCycleById(id);
-            return Response.ok(cycle).build();
+            return Response.ok(new ApiResponse(true, "Cycle retrieved successfully", "success", cycle))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycle with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -203,15 +218,18 @@ public class CycleController {
             CycleDTO currentCycle = cycleService.getCurrentActiveCycle();
             if (currentCycle == null) {
                 return Response.status(Response.Status.NOT_FOUND)
-                              .entity(new ErrorResponse("No active cycle found")).build();
+                        .entity(new ApiResponse(false, "No active cycle found", "errorNoActiveCycle", null))
+                        .build();
             }
             
-            return Response.ok(currentCycle).build();
+            return Response.ok(new ApiResponse(true, "Current cycle retrieved successfully", "success", currentCycle))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving current active cycle", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -271,20 +289,24 @@ public class CycleController {
             LOGGER.info("Closing cycle with ID: {}", id);
 
             CycleDTO closedCycle = cycleService.closeCycle(id);
-            return Response.ok(closedCycle).build();
+            return Response.ok(new ApiResponse(true, "Cycle closed successfully", "success", closedCycle))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Cycle not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Cannot close cycle with ID {}: {}", id, e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleAlreadyClosed", null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error closing cycle with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -417,5 +439,30 @@ public class CycleController {
         public void setDescription(String description) {
             this.description = description;
         }
+    }
+
+    // Métodos helper para determinar códigos de erro
+    private String getValidationErrorCode(String message) {
+        if (message.contains("Start date") && message.contains("past")) {
+            return "errorStartDatePast";
+        } else if (message.contains("Start date") && message.contains("before end date")) {
+            return "errorDateValidation";
+        } else if (message.contains("Admin user not found")) {
+            return "errorMissingAdmin";
+        } else if (message.contains("format")) {
+            return "errorInvalidDateFormat";
+        }
+        return "errorInvalidData";
+    }
+
+    private String getConflictErrorCode(String message) {
+        if (message.contains("overlapping") || message.contains("already exists")) {
+            return "errorCycleOverlap";
+        } else if (message.contains("already closed")) {
+            return "errorCycleAlreadyClosed";
+        } else if (message.contains("already open")) {
+            return "errorCycleAlreadyOpen";
+        }
+        return "errorConflict";
     }
 }

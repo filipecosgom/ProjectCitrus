@@ -12,6 +12,7 @@ import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.services.AppraisalService;
+import pt.uc.dei.utils.ApiResponse;
 
 import java.util.List;
 
@@ -48,20 +49,27 @@ public class AppraisalController {
                        createAppraisalDTO.getAppraisingUserId());
 
             AppraisalDTO createdAppraisal = appraisalService.createAppraisal(createAppraisalDTO);
-            return Response.status(Response.Status.CREATED).entity(createdAppraisal).build();
+            return Response.status(Response.Status.CREATED)
+                    .entity(new ApiResponse(true, "Appraisal created successfully", "success", createdAppraisal))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Invalid request for appraisal creation: {}", e.getMessage());
+            String errorCode = getValidationErrorCode(e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Business rule violation for appraisal creation: {}", e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error creating appraisal", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -77,20 +85,26 @@ public class AppraisalController {
             LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
 
             AppraisalDTO updatedAppraisal = appraisalService.updateAppraisal(updateAppraisalDTO);
-            return Response.ok(updatedAppraisal).build();
+            return Response.ok(new ApiResponse(true, "Appraisal updated successfully", "success", updatedAppraisal))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Invalid request for appraisal update: {}", e.getMessage());
+            String errorCode = getValidationErrorCode(e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Business rule violation for appraisal update: {}", e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error updating appraisal", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -107,16 +121,19 @@ public class AppraisalController {
             LOGGER.debug("Retrieving appraisal with ID: {}", id);
 
             AppraisalDTO appraisal = appraisalService.getAppraisalById(id);
-            return Response.ok(appraisal).build();
+            return Response.ok(new ApiResponse(true, "Appraisal retrieved successfully", "success", appraisal))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Appraisal not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorAppraisalNotFound", null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving appraisal with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -144,12 +161,14 @@ public class AppraisalController {
             List<AppraisalDTO> appraisals = appraisalService.getAppraisalsWithFilters(
                 appraisedUserId, appraisingUserId, cycleId, state, limit, offset
             );
-            return Response.ok(appraisals).build();
+            return Response.ok(new ApiResponse(true, "Appraisals retrieved successfully", "success", appraisals))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving appraisals with filters", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -166,12 +185,14 @@ public class AppraisalController {
             LOGGER.debug("Retrieving appraisals for user ID: {}", userId);
 
             List<AppraisalDTO> appraisals = appraisalService.getAppraisalsByAppraisedUser(userId);
-            return Response.ok(appraisals).build();
+            return Response.ok(new ApiResponse(true, "User appraisals retrieved successfully", "success", appraisals))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving appraisals for user ID: {}", userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -188,12 +209,14 @@ public class AppraisalController {
             LOGGER.debug("Retrieving appraisals created by manager ID: {}", managerId);
 
             List<AppraisalDTO> appraisals = appraisalService.getAppraisalsByManager(managerId);
-            return Response.ok(appraisals).build();
+            return Response.ok(new ApiResponse(true, "Manager appraisals retrieved successfully", "success", appraisals))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving appraisals for manager ID: {}", managerId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -210,12 +233,14 @@ public class AppraisalController {
             LOGGER.debug("Retrieving appraisals for cycle ID: {}", cycleId);
 
             List<AppraisalDTO> appraisals = appraisalService.getAppraisalsByCycle(cycleId);
-            return Response.ok(appraisals).build();
+            return Response.ok(new ApiResponse(true, "Cycle appraisals retrieved successfully", "success", appraisals))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving appraisals for cycle ID: {}", cycleId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -232,20 +257,25 @@ public class AppraisalController {
             LOGGER.info("Completing appraisal with ID: {}", id);
 
             AppraisalDTO completedAppraisal = appraisalService.completeAppraisal(id);
-            return Response.ok(completedAppraisal).build();
+            return Response.ok(new ApiResponse(true, "Appraisal completed successfully", "success", completedAppraisal))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Appraisal not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorAppraisalNotFound", null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Cannot complete appraisal with ID {}: {}", id, e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error completing appraisal with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -262,16 +292,25 @@ public class AppraisalController {
             LOGGER.info("Closing appraisal with ID: {}", id);
 
             AppraisalDTO closedAppraisal = appraisalService.closeAppraisal(id);
-            return Response.ok(closedAppraisal).build();
+            return Response.ok(new ApiResponse(true, "Appraisal closed successfully", "success", closedAppraisal))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Appraisal not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorAppraisalNotFound", null))
+                    .build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot close appraisal with ID {}: {}", id, e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error closing appraisal with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -288,20 +327,25 @@ public class AppraisalController {
             LOGGER.info("Deleting appraisal with ID: {}", id);
 
             appraisalService.deleteAppraisal(id);
-            return Response.noContent().build();
+            return Response.ok(new ApiResponse(true, "Appraisal deleted successfully", "success", null))
+                    .build();
 
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Appraisal not found with ID: {}", id);
             return Response.status(Response.Status.NOT_FOUND)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), "errorAppraisalNotFound", null))
+                    .build();
         } catch (IllegalStateException e) {
             LOGGER.warn("Cannot delete appraisal with ID {}: {}", id, e.getMessage());
+            String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
-                          .entity(new ErrorResponse(e.getMessage())).build();
+                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                    .build();
         } catch (Exception e) {
             LOGGER.error("Unexpected error deleting appraisal with ID: {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
@@ -318,31 +362,43 @@ public class AppraisalController {
             LOGGER.debug("Getting appraisal statistics for user ID: {}", userId);
 
             AppraisalService.AppraisalStatsDTO stats = appraisalService.getAppraisalStats(userId);
-            return Response.ok(stats).build();
+            return Response.ok(new ApiResponse(true, "Appraisal statistics retrieved successfully", "success", stats))
+                    .build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error getting appraisal statistics for user ID: {}", userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                          .entity(new ErrorResponse("Internal server error")).build();
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
         }
     }
 
-    /**
-     * Error response wrapper class.
-     */
-    public static class ErrorResponse {
-        private String message;
-
-        public ErrorResponse(String message) {
-            this.message = message;
+    // Métodos helper para determinar códigos de erro
+    private String getValidationErrorCode(String message) {
+        if (message.contains("not found") && message.contains("User")) {
+            return "errorUserNotFound";
+        } else if (message.contains("Cycle") && message.contains("not found")) {
+            return "errorCycleNotFound";
+        } else if (message.contains("score") && (message.contains("between") || message.contains("invalid"))) {
+            return "errorInvalidScore";
+        } else if (message.contains("feedback") && message.contains("required")) {
+            return "errorMissingFeedback";
+        } else if (message.contains("Appraisal") && message.contains("not found")) {
+            return "errorAppraisalNotFound";
         }
+        return "errorInvalidData";
+    }
 
-        public String getMessage() {
-            return message;
+    private String getConflictErrorCode(String message) {
+        if (message.contains("already exists") || message.contains("duplicate")) {
+            return "errorAppraisalExists";
+        } else if (message.contains("already completed")) {
+            return "errorAppraisalCompleted";
+        } else if (message.contains("already closed")) {
+            return "errorAppraisalClosed";
+        } else if (message.contains("cycle") && message.contains("closed")) {
+            return "errorCycleAlreadyClosed";
         }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
+        return "errorConflict";
     }
 }
