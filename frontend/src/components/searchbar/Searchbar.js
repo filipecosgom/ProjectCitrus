@@ -10,7 +10,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       searchType: "email",
       accountState: "",
       office: "",
-      resultsPerPage: 10,
+      limit: 10,
     },
   });
 
@@ -23,20 +23,15 @@ const SearchBar = ({ onSearch, offices = [] }) => {
     { label: "Incomplete", value: "INCOMPLETE" },
   ];
   const [showResultsMenu, setShowResultsMenu] = useState(false);
-  const perPageOptions = [5, 10, 20];
+  const limit = [5, 10, 20];
 
-  const onSubmit = ({
-    query,
-    searchType,
-    resultsPerPage,
-    accountState,
-    office,
-  }) => {
+  const onSubmit = ({ query, searchType, limit, accountState, office }) => {
     const filters = {
       accountState,
       office,
     };
-    onSearch(query, searchType, resultsPerPage, filters);
+    console.log(limit);
+    onSearch(query, searchType, limit, filters);
   };
 
   return (
@@ -172,22 +167,23 @@ const SearchBar = ({ onSearch, offices = [] }) => {
           onClick={() => setShowResultsMenu(!showResultsMenu)}
           aria-expanded={showResultsMenu}
         >
-          {watch("resultsPerPage")} per page <FiChevronDown />
+          {watch("limit")}<FiChevronDown />
         </button>
 
         {showResultsMenu && (
           <div className="searchBar-dropdownMenu">
-            {perPageOptions.map((num) => (
+            {limit.map((num) => (
               <div
                 key={num}
                 className="searchBar-menuItem"
                 onClick={() => {
-                  setValue("resultsPerPage", num);
+                  setValue("limit", num);
                   setShowResultsMenu(false);
+                  handleSubmit(onSubmit)(); // 🔄 re-run search
                 }}
-                data-active={watch("resultsPerPage") === num}
+                data-active={watch("limit") === num}
               >
-                {num} per page
+                {num}
               </div>
             ))}
           </div>

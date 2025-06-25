@@ -23,40 +23,45 @@ export default function Users() {
   const [searchParams, setSearchParams] = useState({
     query: "",
     searchType: "email",
-    resultsPerPage: 10,
+    limit: 10,
     filters: {},
   });
+  const [lastSearch, setLastSearch] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // 🔍 Triggered by the SearchBar
   const handleSearch = async (query, searchType, limit, filters = {}) => {
-    setSearchParams({ query, searchType, resultsPerPage: limit, filters });
-    setPagination((prev) => ({ ...prev, offset: 0 })); // reset to first page
+    const search = { query, searchType, limit, filters };
+    setLastSearch(search);
+    setCurrentPage(1);
+    setSearchParams({ query, searchType, limit, filters });
+    fetchUsers(0, search); // fetch first page
   };
 
-  // 🔁 On pagination offset change
+  const fetchUsers = async (offset = 0, overrideParams = null) => {
+    const { query, searchType, limit, filters } =
+      overrideParams || searchParams;
+    console.log(limit);
+    setResultsLoading(true);
+    const result = await handleGetUsers({
+      [searchType]: query,
+      offset,
+      limit,
+      ...filters,
+    });
+    setUsers(result.users);
+    setPagination((prev) => ({
+      ...prev,
+      offset,
+      limit: result.pagination.limit,
+      total: result.pagination.totalUsers,
+    }));
+    setResultsLoading(false);
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { query, searchType, resultsPerPage, filters } = searchParams;
-
-      setResultsLoading(true);
-      const result = await handleGetUsers({
-        [searchType]: query,
-        offset: pagination.offset,
-        limit: resultsPerPage,
-        ...filters,
-      });
-
-      setUsers(result.users);
-      setPagination((prev) => ({
-        ...prev,
-        total: result.pagination.totalUsers,
-        limit: result.pagination.limit,
-      }));
-      setResultsLoading(false);
-    };
-
     if (searchParams.query !== undefined) {
-      fetchUsers();
+      fetchUsers(pagination.offset);
     }
   }, [pagination.offset, searchParams]);
 
@@ -68,14 +73,14 @@ export default function Users() {
       const initialSearch = {
         query: "",
         searchType: "email",
-        resultsPerPage: 10,
+        limit: 10,
         filters: {}, // empty to fetch all
       };
       setSearchParams(initialSearch); // 💡 this enables pagination re-fetch later
       const result = await handleGetUsers({
         [initialSearch.searchType]: initialSearch.query,
         offset: 0,
-        limit: initialSearch.resultsPerPage,
+        limit: initialSearch.limit,
         ...initialSearch.filters,
       });
 
@@ -94,6 +99,9 @@ export default function Users() {
 
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
+    if (lastSearch) {
+      fetchUsers(newOffset, lastSearch);
+    }
   };
 
   if (pageLoading) return <Spinner />;
@@ -125,7 +133,6 @@ export default function Users() {
           />
         </div>
       )}
-      ;
     </div>
   );
 }

@@ -10,8 +10,6 @@ const UserCard = ({ user }) => {
   const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
   const [loadingAvatar, setLoadingAvatar] = useState(false);
   const [loadingManagerAvatar, setLoadingManagerAvatar] = useState(false);
-  const [avatarError, setAvatarError] = useState(null);
-  const [managerAvatarError, setManagerAvatarError] = useState(null);
 
   // Determine status for UserIcon
   const getStatusIcon = () => {
@@ -23,48 +21,52 @@ const UserCard = ({ user }) => {
 
   useEffect(() => {
     if (!user) return;
+
+    let userBlobUrl = null;
+    let managerBlobUrl = null;
+
     const fetchUserAvatar = async () => {
-      if (user.hasAvatar) {
-        setLoadingAvatar(true);
-        try {
-          const result = await handleGetUserAvatar(user.id);
-          if (result.success) {
-            setAvatarUrl(result.avatar);
-          } else {
-            setAvatarError(result.error);
-          }
-        } catch (err) {
-          setAvatarError("Failed to load avatar");
-        } finally {
-          setLoadingAvatar(false);
-        }
+      if (!user.hasAvatar) return;
+
+      setLoadingAvatar(true);
+      try {
+        const result = await handleGetUserAvatar(user.id);
+        if (!result.success || !result.avatar) throw new Error(result.error);
+        userBlobUrl = result.avatar;
+        setAvatarUrl(result.avatar);
+      } catch {
+        setAvatarUrl(null)
+      } finally {
+        setLoadingAvatar(false);
       }
     };
+
     const fetchManagerAvatar = async () => {
-      if (user.manager?.hasAvatar) {
-        setLoadingManagerAvatar(true);
-        try {
-          const result = await handleGetUserAvatar(user.manager.id);
-          if (result.success) {
-            setManagerAvatarUrl(result.avatar);
-          } else {
-            setManagerAvatarError(result.error);
-          }
-        } catch (err) {
-          setManagerAvatarError("Failed to load manager avatar");
-        } finally {
-          setLoadingManagerAvatar(false);
-        }
+      if (!user.manager?.hasAvatar) return;
+
+      setLoadingManagerAvatar(true);
+      try {
+        const result = await handleGetUserAvatar(user.manager.id);
+        if (!result.success || !result.avatar) throw new Error(result.error);
+        managerBlobUrl = result.avatar;
+        setManagerAvatarUrl(result.avatar);
+      } catch {
+        setManagerAvatarUrl(null);
+      } finally {
+        setLoadingManagerAvatar(false);
       }
     };
 
     fetchUserAvatar();
     fetchManagerAvatar();
+
     return () => {
-      if (avatarUrl) URL.revokeObjectURL(avatarUrl);
-      if (managerAvatarUrl) URL.revokeObjectURL(managerAvatarUrl);
+      if (userBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(userBlobUrl);
+      if (managerBlobUrl?.startsWith("blob:"))
+        URL.revokeObjectURL(managerBlobUrl);
     };
   }, [user.id, user.hasAvatar, user.manager]);
+
   const getStatusClass = () => {
     if (user.userIsAdmin) return styles.admin;
     if (user.userIsManager) return styles.manager;
@@ -103,7 +105,7 @@ const UserCard = ({ user }) => {
         <div className="userCard-avatarAndInfoContainer">
           <div className="userCard-managerAvatar">
             {loadingManagerAvatar ? (
-              <Spinner/>
+              <Spinner />
             ) : (
               <UserIcon
                 avatar={managerAvatarUrl}
