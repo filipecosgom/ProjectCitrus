@@ -75,7 +75,7 @@ const UserCard = ({ user }) => {
 
   return (
     <div className={`userCard-container ${getStatusClass()}`}>
-      <div className="userCard-avatarAndInfoContainer">
+      <div className="userCard-avatarAndInfoContainer container-user">
         {/* User Avatar */}
         <div className="userCard-avatarContainer">
           {loadingAvatar ? (
@@ -102,7 +102,7 @@ const UserCard = ({ user }) => {
 
       {/* Manager Section */}
       {user.manager && (
-        <div className="userCard-avatarAndInfoContainer">
+        <div className="userCard-avatarAndInfoContainer container-manager">
           <div className="userCard-managerAvatar">
             {loadingManagerAvatar ? (
               <Spinner />

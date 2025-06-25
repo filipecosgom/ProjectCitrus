@@ -2,23 +2,23 @@
 .searchBar-container {
   padding: var(--padding-sm);
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
 }
 .searchBar-wrapper {
   flex: 1;
-   display: flex;
-  padding: 0.5rem 1rem; /* or whatever spacing you prefer */
- border: 2px solid #cbb4b4;
- border-radius: 10px;
- box-shadow: var(--shadow-text);
+  display: flex;
+  border: 2px solid #cbb4b4;
+  border-radius: 10px;
+  box-shadow: var(--shadow-text);
   padding: 0rem 0rem;
   align-items: center;
   box-sizing: border-box;
 }
 
-
 .searchBar-input {
+  background-color: white;
   flex: 1;
   width: auto;
   border: none;
@@ -30,9 +30,7 @@
   border: none;
 }
 
-
 .searchBar-button {
-  color: var(--secondary);
   background-color: white;
   border: none;
   display: flex;
@@ -40,8 +38,12 @@
   gap: 0.5rem;
   transition: background 0.2s;
 }
+.search-icon {
+  color: var(--secondary);
+  font-size: 1.5rem;
+}
 
-.searchBar-button:hover {
+.search-icon:hover {
   color: var(--blue);
 }
 
@@ -59,8 +61,23 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-width: 150px;
   justify-content: space-between;
+}
+
+.toggle-searchType {
+  min-width: 100px;
+}
+
+.toggle-office {
+  width: 140px;
+}
+
+.toggle-state {
+  width: 140px;
+}
+
+.toggle-limit {
+  width: 80px;
 }
 
 .searchBar-dropdownToggle:hover {
@@ -116,4 +133,15 @@
   .searchBar-select {
     width: 100%;
   }
+}
+
+@media (max-width: 1024px) {
+  .searchBar-container {
+  padding: var(--padding-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 }

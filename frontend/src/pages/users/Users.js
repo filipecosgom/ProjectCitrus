@@ -109,6 +109,7 @@ export default function Users() {
   return (
     <div className="users-container">
       <SearchBar onSearch={handleSearch} offices={offices} />
+      
       {resultsLoading ? (
         <div className="users-loading">
           <Spinner />
@@ -124,15 +125,15 @@ export default function Users() {
               <UserCard key={user.id} user={user} />
             ))}
           </div>
-
-          <Pagination
+        </div>
+      )}
+      <Pagination
             offset={pagination.offset}
             limit={pagination.limit}
             total={pagination.total}
             onChange={handlePageChange}
           />
-        </div>
-      )}
+      
     </div>
   );
 }

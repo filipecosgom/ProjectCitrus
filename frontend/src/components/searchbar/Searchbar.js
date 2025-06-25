@@ -39,7 +39,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       {/* Search Input + Button */}
       <div className="searchBar-wrapper">
         <button type="submit" className="searchBar-button">
-          <FiSearch />
+          <FiSearch type="submit" className="search-icon" />
         </button>
 
         <input
@@ -53,7 +53,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       <div className="searchBar-dropdown">
         <button
           type="button"
-          className="searchBar-dropdownToggle"
+          className="searchBar-dropdownToggle toggle-searchType"
           onClick={() => setShowSearchTypeMenu(!showSearchTypeMenu)}
         >
           {watch("searchType").replace(/_/g, " ")} <FiChevronDown />
@@ -96,7 +96,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       <div className="searchBar-dropdown">
         <button
           type="button"
-          className="searchBar-dropdownToggle"
+          className="searchBar-dropdownToggle toggle-office"
           onClick={() => setShowOfficeMenu(!showOfficeMenu)}
         >
           {watch("office") || "Office"} <FiChevronDown />
@@ -132,7 +132,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       <div className="searchBar-dropdown">
         <button
           type="button"
-          className="searchBar-dropdownToggle"
+          className="searchBar-dropdownToggle toggle-state"
           onClick={() => setShowAccountMenu(!showAccountMenu)}
           aria-expanded={showAccountMenu}
         >
@@ -163,7 +163,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       <div className="searchBar-dropdown">
         <button
           type="button"
-          className="searchBar-dropdownToggle"
+          className="searchBar-dropdownToggle toggle-limit"
           onClick={() => setShowResultsMenu(!showResultsMenu)}
           aria-expanded={showResultsMenu}
         >
