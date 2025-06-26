@@ -4,6 +4,7 @@ import styles from "./UserCard.css";
 import UserIcon from "../userIcon/UserIcon";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
+import noManager from '../../assets/photos/noManager.webp';
 
 const UserCard = ({ user }) => {
   const [avatarUrl, setAvatarUrl] = useState(null);

@@ -1,18 +1,31 @@
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
 .userCard-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
   border-radius: 8px;
   background-color: white;
-  padding: var(--padding-lg)
+  padding: var(--padding-sm);
 }
 
-.userCard-avatarAndInfoContainer{
+.userCard-avatarAndInfoContainer {
   display: flex;
   flex: 1;
   gap: 0.5rem;
+}
+
+.userCard-email {
+  display: none;
+}
+.userCard-managerEmail {
+  display: none;
+}
+
+.userCard-office {
+  display: none;
 }
 
 .container-manager {
@@ -22,12 +35,15 @@
 .userCard-avatarContainer {
   width: 50px;
   height: 50px;
+  display: flex;
+  align-items: center;
 }
 
 .userCard-userInfo {
   display: flex;
   flex-direction: column;
-  min-width: 150px;
+  width: auto;
+  justify-content: center;
 }
 
 .userCard-name {
@@ -35,9 +51,8 @@
   font-size: 1rem;
 }
 
-.userCard-email {
-  font-size: 0.8rem;
-  color: #666;
+.container-manager {
+  display: none;
 }
 
 .userCard-role {
@@ -53,14 +68,16 @@
 }
 
 .userCard-managerAvatar {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
 }
 
 .userCard-managerInfo {
   display: flex;
   flex-direction: column;
-  min-width: 150px;
+  width: auto;
 }
 
 .userCard-managerName {
@@ -68,6 +85,129 @@
 }
 
 .userCard-managerEmail {
+  display: block;
   font-size: 0.8rem;
   color: #666;
+}
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
+  .userCard-avatarAndInfoContainer {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 0.5rem;
+  }
+
+  .userCard-email {
+    display: none;
+  }
+  .userCard-managerEmail {
+    display: none;
+  }
+
+  .userCard-office {
+    display: block;
+  }
+
+  .userCard-avatarAndInfoContainer {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem;
+  }
+  .container-user {
+    justify-content: flex-start;
+  }
+  .container-manager {
+    justify-content: flex-end;
+  }
+}
+
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+  .userCard-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    background-color: white;
+    padding: var(--padding-lg);
+  }
+
+  .userCard-avatarAndInfoContainer {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .container-user {
+    justify-content: flex-start;
+  }
+  .container-manager {
+    justify-content: center;
+  }
+
+  .userCard-email {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .userCard-avatarContainer {
+    width: 50px;
+    height: 50px;
+  }
+
+  .userCard-userInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+  }
+
+  .userCard-name {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .userCard-email {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .userCard-role {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .userCard-office {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .userCard-managerAvatar {
+    width: 46px;
+    height: 46px;
+  }
+
+  .userCard-managerInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+  }
+
+  .userCard-managerName {
+    font-size: 0.9rem;
+  }
+
+  .userCard-managerEmail {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+  }
 }

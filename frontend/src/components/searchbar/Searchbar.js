@@ -14,15 +14,6 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       limit: 10,
     },
   });
-
-  const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
-  const [showOfficeMenu, setShowOfficeMenu] = useState(false);
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const accountStates = [
-    { label: "All States", value: "" },
-    { label: "Complete", value: "COMPLETE" },
-    { label: "Incomplete", value: "INCOMPLETE" },
-  ];
   const [showResultsMenu, setShowResultsMenu] = useState(false);
   const limit = [5, 10, 20];
 

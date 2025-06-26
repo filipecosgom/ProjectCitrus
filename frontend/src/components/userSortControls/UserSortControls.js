@@ -25,7 +25,7 @@ const UserSortControls = ({ sortBy, sortOrder, onSortChange }) => {
       {sortFields.map(({ label, key }) => (
         <div
           key={key}
-          className={`userSortControls-div ${sortBy === key ? "active" : ""}`}
+          className={`userSortControls-div ${key} ${sortBy === key ? "active" : ""}`}
           onClick={() => handleSort(key)}
         >
           {label}
