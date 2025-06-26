@@ -7,6 +7,7 @@ import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
+import UserSortControls from "../../components/userSortControls/UserSortControls";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -18,8 +19,6 @@ export default function Users() {
     limit: 10,
     total: 0,
   });
-
-  // 🧠 Track latest search context
   const [searchParams, setSearchParams] = useState({
     query: "",
     searchType: "email",
@@ -28,27 +27,44 @@ export default function Users() {
   });
   const [lastSearch, setLastSearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sort, setSort] = useState({
+    sortBy: "name",
+    sortOrder: "ascending",
+  });
 
-  // 🔍 Triggered by the SearchBar
-  const handleSearch = async (query, searchType, limit, filters = {}) => {
+  const setSearchingParameters = async (
+    query,
+    searchType,
+    limit,
+    filters = {}
+  ) => {
     const search = { query, searchType, limit, filters };
     setLastSearch(search);
     setCurrentPage(1);
     setSearchParams({ query, searchType, limit, filters });
-    fetchUsers(0, search); // fetch first page
+  };
+
+  const handlePageChange = (newOffset) => {
+    setPagination((prev) => ({ ...prev, offset: newOffset }));
+    if (lastSearch) {
+      fetchUsers(newOffset, lastSearch);
+    }
   };
 
   const fetchUsers = async (offset = 0, overrideParams = null) => {
+    console.log("TRIGGERED");
     const { query, searchType, limit, filters } =
       overrideParams || searchParams;
-    console.log(limit);
     setResultsLoading(true);
     const result = await handleGetUsers({
       [searchType]: query,
       offset,
       limit,
       ...filters,
+      parameter: sort.sortBy, // e.g. "name", "email", "manager.name"
+      order: sort.sortOrder, // e.g. "ASCENDING" or "DESCENDING"
     });
+
     setUsers(result.users);
     setPagination((prev) => ({
       ...prev,
@@ -61,9 +77,22 @@ export default function Users() {
 
   useEffect(() => {
     if (searchParams.query !== undefined) {
-      fetchUsers(pagination.offset);
+      fetchUsers(0, searchParams);
     }
-  }, [pagination.offset, searchParams]);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (lastSearch) {
+      fetchUsers(pagination.offset, lastSearch);
+    }
+  }, [pagination.offset]);
+
+  useEffect(() => {
+    if (lastSearch) {
+      fetchUsers(0, lastSearch); // restart at page 1
+      setPagination((prev) => ({ ...prev, offset: 0 }));
+    }
+  }, [sort]);
 
   // 📦 On mount: fetch offices and initial users
   useEffect(() => {
@@ -76,14 +105,16 @@ export default function Users() {
         limit: 10,
         filters: {}, // empty to fetch all
       };
-      setSearchParams(initialSearch); // 💡 this enables pagination re-fetch later
+      setSearchParams(initialSearch);
+      setLastSearch(initialSearch);
       const result = await handleGetUsers({
         [initialSearch.searchType]: initialSearch.query,
         offset: 0,
         limit: initialSearch.limit,
         ...initialSearch.filters,
+        parameter: sort.sortBy,
+        order: sort.sortOrder,
       });
-
       setUsers(result.users);
       setPagination((prev) => ({
         ...prev,
@@ -97,19 +128,17 @@ export default function Users() {
     fetchInitial();
   }, []);
 
-  const handlePageChange = (newOffset) => {
-    setPagination((prev) => ({ ...prev, offset: newOffset }));
-    if (lastSearch) {
-      fetchUsers(newOffset, lastSearch);
-    }
-  };
-
   if (pageLoading) return <Spinner />;
 
   return (
     <div className="users-container">
-      <SearchBar onSearch={handleSearch} offices={offices} />
-      
+      <SearchBar onSearch={setSearchingParameters} offices={offices} />
+      <UserSortControls
+        sortBy={sort.sortBy}
+        sortOrder={sort.sortOrder}
+        onSortChange={setSort}
+      />
+
       {resultsLoading ? (
         <div className="users-loading">
           <Spinner />
@@ -128,12 +157,11 @@ export default function Users() {
         </div>
       )}
       <Pagination
-            offset={pagination.offset}
-            limit={pagination.limit}
-            total={pagination.total}
-            onChange={handlePageChange}
-          />
-      
+        offset={pagination.offset}
+        limit={pagination.limit}
+        total={pagination.total}
+        onChange={handlePageChange}
+      />
     </div>
   );
 }

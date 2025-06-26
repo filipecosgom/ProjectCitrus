@@ -6,7 +6,7 @@ package pt.uc.dei.enums;
  * - DESCENDING: Sorts elements from largest to smallest.
  */
 public enum Order {
-    ASCENDING("name"),
+    ASCENDING("ascending"),
     DESCENDING("descending");
 
     private final String fieldName;

@@ -100,7 +100,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
         Root<UserEntity> root = query.from(UserEntity.class);
-        root.fetch("managerUser", JoinType.LEFT);
+        Join<UserEntity, UserEntity> managerJoin = root.join("managerUser", JoinType.LEFT);
 
 
         List<Predicate> predicates = new ArrayList<>();
@@ -157,15 +157,19 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));
         }
-
         query.where(predicates.toArray(new Predicate[0]));
-
         // Sorting logic
         if (parameter != null) {
-            Path<Object> sortingField = root.get(parameter.getFieldName());
+            Path<?> sortingField;
+
+            if ("manager.name".equals(parameter.getFieldName())) {
+                sortingField = managerJoin.get("name"); // nested field
+            } else {
+                sortingField = root.get(parameter.getFieldName());
+            }
+
             query.orderBy(order == Order.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
         }
-
         TypedQuery<UserEntity> typedQuery = em.createQuery(query);
         typedQuery.setFirstResult(offset);
         typedQuery.setMaxResults(limit);

@@ -1,0 +1,31 @@
+.userSortControls-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--padding-lg);
+  
+}
+
+.userSortControls-div {
+  cursor: pointer;
+  flex: 1;
+  font-weight: var(--font-weight-regular);
+  font-family: var(--font-family-secondary);
+  font-size: var(--font-size-subtitle);
+  transition: color 0.2s ease;
+  text-align: center;
+}
+
+.userSortControls-div:hover {
+    font-weight: var(--font-weight-bold);
+  color: var(--blue);
+}
+
+.userSortControls-div.active {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.sort-icon {
+  font-size: 0.9rem;
+}

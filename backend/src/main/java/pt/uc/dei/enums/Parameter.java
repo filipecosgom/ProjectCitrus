@@ -12,7 +12,10 @@ public enum Parameter {
     FIRST_NAME("name"),
     SURNAME("surname"),
     EMAIL("email"),
-    DATE("creationDate");
+    DATE("creationDate"),
+    ROLE("role"),
+    OFFICE("office"),
+    MANAGER("manager.name");
 
     private final String fieldName;
 
