@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import pt.uc.dei.enums.AppraisalState;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -55,7 +56,7 @@ public class AppraisalDTO {    /**
     /**
      * The date and time when the appraisal was created.
      */
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     // Getters and Setters
     /**
@@ -142,7 +143,7 @@ public class AppraisalDTO {    /**
      * Retrieves the date and time when the appraisal was created.
      * @return the creation date and time.
      */
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
@@ -150,7 +151,7 @@ public class AppraisalDTO {    /**
      * Sets the date and time when the appraisal was created.
      * @param creationDate the creation date and time to set.
      */
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 

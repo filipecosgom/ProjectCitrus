@@ -61,7 +61,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         if (skipAuth) {
             return;
         }
-
         Cookie jwtCookie = requestContext.getCookies().get("jwt");
 
         if (jwtCookie == null || jwtCookie.getValue().isEmpty()) {

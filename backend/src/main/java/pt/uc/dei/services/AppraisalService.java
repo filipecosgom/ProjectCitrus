@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.AppraisalStatsDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.entities.AppraisalEntity;
@@ -71,13 +72,11 @@ public class AppraisalService implements Serializable {
                    createAppraisalDTO.getAppraisedUserId(), 
                    createAppraisalDTO.getAppraisingUserId(),
                    createAppraisalDTO.getCycleId());
-
         // Validate users exist
         UserEntity appraisedUser = userRepository.find(createAppraisalDTO.getAppraisedUserId());
         if (appraisedUser == null) {
             throw new IllegalArgumentException("Appraised user not found");
         }
-
         UserEntity appraisingUser = userRepository.find(createAppraisalDTO.getAppraisingUserId());
         if (appraisingUser == null) {
             throw new IllegalArgumentException("Appraising user not found");
@@ -318,10 +317,8 @@ public class AppraisalService implements Serializable {
      */
     public AppraisalStatsDTO getAppraisalStats(Long userId) {
         LOGGER.debug("Getting appraisal statistics for user ID: {}", userId);
-
         Long receivedCount = appraisalRepository.countAppraisalsByUser(userId, true);
         Long givenCount = appraisalRepository.countAppraisalsByUser(userId, false);
-
         AppraisalStatsDTO stats = new AppraisalStatsDTO();
         stats.setUserId(userId);
         stats.setReceivedAppraisalsCount(receivedCount);
@@ -349,39 +346,6 @@ public class AppraisalService implements Serializable {
         return !manager.getId().equals(user.getId()); // Can't appraise yourself
     }
 
-    /**
-     * Inner class for appraisal statistics.
-     */
-    public static class AppraisalStatsDTO {
-        private Long userId;
-        private Long receivedAppraisalsCount;
-        private Long givenAppraisalsCount;
-
-        // Getters and setters
-        public Long getUserId() {
-            return userId;
-        }
-
-        public void setUserId(Long userId) {
-            this.userId = userId;
-        }
-
-        public Long getReceivedAppraisalsCount() {
-            return receivedAppraisalsCount;
-        }
-
-        public void setReceivedAppraisalsCount(Long receivedAppraisalsCount) {
-            this.receivedAppraisalsCount = receivedAppraisalsCount;
-        }
-
-        public Long getGivenAppraisalsCount() {
-            return givenAppraisalsCount;
-        }
-
-        public void setGivenAppraisalsCount(Long givenAppraisalsCount) {
-            this.givenAppraisalsCount = givenAppraisalsCount;
-        }
-    }
 
     /**
      * Closes specific appraisals by their IDs.

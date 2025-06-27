@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.AppraisalStatsDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.enums.AppraisalState;
@@ -363,7 +364,7 @@ public class AppraisalController {
         try {
             LOGGER.debug("Getting appraisal statistics for user ID: {}", userId);
 
-            AppraisalService.AppraisalStatsDTO stats = appraisalService.getAppraisalStats(userId);
+            AppraisalStatsDTO stats = appraisalService.getAppraisalStats(userId);
             return Response.ok(new ApiResponse(true, "Appraisal statistics retrieved successfully", "success", stats))
                     .build();
 
