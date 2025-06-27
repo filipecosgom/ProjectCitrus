@@ -14,7 +14,9 @@ import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.services.AppraisalService;
 import pt.uc.dei.utils.ApiResponse;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST Controller for managing appraisal-related operations.
@@ -367,6 +369,166 @@ public class AppraisalController {
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error getting appraisal statistics for user ID: {}", userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Closes specific appraisals by their IDs.
+     * Only COMPLETED appraisals in OPEN cycles can be closed.
+     * Requires Admin authorization.
+     *
+     * @param appraisalIds Comma-separated list of appraisal IDs
+     * @return Response with count of closed appraisals
+     */
+    @POST
+    @Path("/close-by-ids")
+    public Response closeAppraisalsByIds(@QueryParam("ids") String appraisalIds) {
+        try {
+            // TODO: Add JWT Admin validation here
+            // if (!isUserAdmin(jwtToken)) {
+            //     return Response.status(Response.Status.FORBIDDEN)
+            //             .entity(new ApiResponse(false, "Admin access required", "errorUnauthorized", null))
+            //             .build();
+            // }
+
+            if (appraisalIds == null || appraisalIds.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, "Appraisal IDs parameter is required", "errorMissingIds", null))
+                        .build();
+            }
+
+            List<Long> ids = Arrays.stream(appraisalIds.split(","))
+                    .map(String::trim)
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+
+            LOGGER.info("Admin requesting to close appraisals by IDs: {}", ids);
+
+            int closedCount = appraisalService.closeAppraisalsByIds(ids);
+            
+            String message = String.format("Successfully closed %d appraisal(s)", closedCount);
+            return Response.ok(new ApiResponse(true, message, "success", closedCount))
+                    .build();
+
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Invalid appraisal ID format: {}", appraisalIds);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid appraisal ID format", "errorInvalidIdFormat", null))
+                    .build();
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Invalid request for closing appraisals by IDs: {}", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorInvalidData", null))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing appraisals by IDs", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Closes all COMPLETED appraisals in a specific cycle.
+     * Only works if the cycle is OPEN.
+     * Requires Admin authorization.
+     *
+     * @param cycleId The cycle ID
+     * @return Response with count of closed appraisals
+     */
+    @POST
+    @Path("/cycle/{cycleId}/close-completed")
+    public Response closeCompletedAppraisalsByCycle(@PathParam("cycleId") Long cycleId) {
+        try {
+            // TODO: Add JWT Admin validation here
+
+            LOGGER.info("Admin requesting to close COMPLETED appraisals in cycle ID: {}", cycleId);
+
+            int closedCount = appraisalService.closeCompletedAppraisalsByCycleId(cycleId);
+            
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) in cycle %d", closedCount, cycleId);
+            return Response.ok(new ApiResponse(true, message, "success", closedCount))
+                    .build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", cycleId);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null))
+                    .build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot close appraisals in cycle ID {}: {}", cycleId, e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleAlreadyClosed", null))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing appraisals in cycle ID: {}", cycleId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Closes all COMPLETED appraisals for a specific user.
+     * Only works for appraisals in OPEN cycles.
+     * Requires Admin authorization.
+     *
+     * @param userId The user ID
+     * @return Response with count of closed appraisals
+     */
+    @POST
+    @Path("/user/{userId}/close-completed")
+    public Response closeCompletedAppraisalsByUser(@PathParam("userId") Long userId) {
+        try {
+            // TODO: Add JWT Admin validation here
+
+            LOGGER.info("Admin requesting to close COMPLETED appraisals for user ID: {}", userId);
+
+            int closedCount = appraisalService.closeCompletedAppraisalsByUserId(userId);
+            
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) for user %d", closedCount, userId);
+            return Response.ok(new ApiResponse(true, message, "success", closedCount))
+                    .build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("User not found with ID: {}", userId);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorUserNotFound", null))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing appraisals for user ID: {}", userId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Closes all COMPLETED appraisals in all OPEN cycles.
+     * Administrative bulk operation.
+     * Requires Admin authorization.
+     *
+     * @return Response with count of closed appraisals
+     */
+    @POST
+    @Path("/close-all-completed")
+    public Response closeAllCompletedAppraisals() {
+        try {
+            // TODO: Add JWT Admin validation here
+
+            LOGGER.info("Admin requesting to close ALL COMPLETED appraisals");
+
+            int closedCount = appraisalService.closeAllCompletedAppraisals();
+            
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) across all OPEN cycles", closedCount);
+            return Response.ok(new ApiResponse(true, message, "success", closedCount))
+                    .build();
+
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error closing all COMPLETED appraisals", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
                     .build();

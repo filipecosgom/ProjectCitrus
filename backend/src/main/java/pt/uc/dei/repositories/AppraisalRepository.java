@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.enums.AppraisalState;
+import pt.uc.dei.enums.CycleState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,5 +233,98 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
             LOGGER.error("Error counting appraisals for user ID: {}", userId, e);
             return 0L;
         }
+    }
+
+    /**
+     * Finds appraisals by specific IDs.
+     *
+     * @param appraisalIds List of appraisal IDs
+     * @return List of appraisal entities
+     */
+    public List<AppraisalEntity> findAppraisalsByIds(List<Long> appraisalIds) {
+        if (appraisalIds == null || appraisalIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        TypedQuery<AppraisalEntity> query = em.createQuery(
+            "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids", 
+            AppraisalEntity.class
+        );
+        query.setParameter("ids", appraisalIds);
+        return query.getResultList();
+    }
+
+    /**
+     * Finds all COMPLETED appraisals in an OPEN cycle.
+     *
+     * @param cycleId The cycle ID
+     * @return List of completed appraisal entities
+     */
+    public List<AppraisalEntity> findCompletedAppraisalsByCycleId(Long cycleId) {
+        TypedQuery<AppraisalEntity> query = em.createQuery(
+            "SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId " +
+            "AND a.state = :state AND a.cycle.state = :cycleState", 
+            AppraisalEntity.class
+        );
+        query.setParameter("cycleId", cycleId);
+        query.setParameter("state", AppraisalState.COMPLETED);
+        query.setParameter("cycleState", CycleState.OPEN);
+        return query.getResultList();
+    }
+
+    /**
+     * Finds all COMPLETED appraisals for a specific user in OPEN cycles.
+     *
+     * @param userId The user ID (appraised user)
+     * @return List of completed appraisal entities
+     */
+    public List<AppraisalEntity> findCompletedAppraisalsByUserId(Long userId) {
+        TypedQuery<AppraisalEntity> query = em.createQuery(
+            "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId " +
+            "AND a.state = :state AND a.cycle.state = :cycleState", 
+            AppraisalEntity.class
+        );
+        query.setParameter("userId", userId);
+        query.setParameter("state", AppraisalState.COMPLETED);
+        query.setParameter("cycleState", CycleState.OPEN);
+        return query.getResultList();
+    }
+
+    /**
+     * Finds all COMPLETED appraisals in all OPEN cycles.
+     *
+     * @return List of completed appraisal entities
+     */
+    public List<AppraisalEntity> findAllCompletedAppraisalsInOpenCycles() {
+        TypedQuery<AppraisalEntity> query = em.createQuery(
+            "SELECT a FROM AppraisalEntity a WHERE a.state = :state " +
+            "AND a.cycle.state = :cycleState", 
+            AppraisalEntity.class
+        );
+        query.setParameter("state", AppraisalState.COMPLETED);
+        query.setParameter("cycleState", CycleState.OPEN);
+        return query.getResultList();
+    }
+
+    /**
+     * Validates that all specified appraisals are COMPLETED and in OPEN cycles.
+     *
+     * @param appraisalIds List of appraisal IDs to validate
+     * @return List of valid appraisal entities
+     */
+    public List<AppraisalEntity> findValidAppraisalsForClosing(List<Long> appraisalIds) {
+        if (appraisalIds == null || appraisalIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        TypedQuery<AppraisalEntity> query = em.createQuery(
+            "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids " +
+            "AND a.state = :state AND a.cycle.state = :cycleState", 
+            AppraisalEntity.class
+        );
+        query.setParameter("ids", appraisalIds);
+        query.setParameter("state", AppraisalState.COMPLETED);
+        query.setParameter("cycleState", CycleState.OPEN);
+        return query.getResultList();
     }
 }

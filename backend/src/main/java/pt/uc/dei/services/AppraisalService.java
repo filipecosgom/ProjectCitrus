@@ -10,14 +10,13 @@ import pt.uc.dei.dtos.AppraisalDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.entities.AppraisalEntity;
-import pt.uc.dei.entities.CycleEntity;
-import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.enums.CycleState;
-import pt.uc.dei.mapper.AppraisalMapper;
-import pt.uc.dei.repositories.AppraisalRepository;
+import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.repositories.CycleRepository;
+import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.mapper.AppraisalMapper;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -381,5 +380,146 @@ public class AppraisalService implements Serializable {
         public void setGivenAppraisalsCount(Long givenAppraisalsCount) {
             this.givenAppraisalsCount = givenAppraisalsCount;
         }
+    }
+
+    /**
+     * Closes specific appraisals by their IDs.
+     * Only COMPLETED appraisals in OPEN cycles can be closed.
+     *
+     * @param appraisalIds List of appraisal IDs to close
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If no valid appraisals found
+     */
+    @Transactional
+    public int closeAppraisalsByIds(List<Long> appraisalIds) {
+        LOGGER.info("Attempting to close appraisals by IDs: {}", appraisalIds);
+        
+        if (appraisalIds == null || appraisalIds.isEmpty()) {
+            throw new IllegalArgumentException("No appraisal IDs provided");
+        }
+
+        List<AppraisalEntity> validAppraisals = appraisalRepository.findValidAppraisalsForClosing(appraisalIds);
+        
+        if (validAppraisals.isEmpty()) {
+            LOGGER.warn("No valid COMPLETED appraisals found in OPEN cycles for IDs: {}", appraisalIds);
+            throw new IllegalArgumentException("No valid appraisals found for closing. Only COMPLETED appraisals in OPEN cycles can be closed.");
+        }
+
+        int closedCount = 0;
+        for (AppraisalEntity appraisal : validAppraisals) {
+            appraisal.setState(AppraisalState.CLOSED);
+            appraisalRepository.merge(appraisal);
+            closedCount++;
+            LOGGER.debug("Closed appraisal ID: {} for user: {}", appraisal.getId(), appraisal.getAppraisedUser().getId());
+        }
+        
+        LOGGER.info("Successfully closed {} appraisals by IDs", closedCount);
+        return closedCount;
+    }
+
+    /**
+     * Closes all COMPLETED appraisals in a specific cycle.
+     * Only works if the cycle is OPEN.
+     *
+     * @param cycleId The cycle ID
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If cycle not found or not OPEN
+     */
+    @Transactional
+    public int closeCompletedAppraisalsByCycleId(Long cycleId) {
+        LOGGER.info("Attempting to close all COMPLETED appraisals in cycle ID: {}", cycleId);
+
+        // Verify cycle exists and is OPEN
+        CycleEntity cycle = cycleRepository.find(cycleId);
+        if (cycle == null) {
+            throw new IllegalArgumentException("Cycle not found with ID: " + cycleId);
+        }
+        if (cycle.getState() != CycleState.OPEN) {
+            throw new IllegalStateException("Cannot close appraisals in a CLOSED cycle. Cycle ID: " + cycleId);
+        }
+
+        List<AppraisalEntity> completedAppraisals = appraisalRepository.findCompletedAppraisalsByCycleId(cycleId);
+        
+        if (completedAppraisals.isEmpty()) {
+            LOGGER.info("No COMPLETED appraisals found in cycle ID: {}", cycleId);
+            return 0;
+        }
+
+        int closedCount = 0;
+        for (AppraisalEntity appraisal : completedAppraisals) {
+            appraisal.setState(AppraisalState.CLOSED);
+            appraisalRepository.merge(appraisal);
+            closedCount++;
+            LOGGER.debug("Closed appraisal ID: {} in cycle: {}", appraisal.getId(), cycleId);
+        }
+        
+        LOGGER.info("Successfully closed {} COMPLETED appraisals in cycle ID: {}", closedCount, cycleId);
+        return closedCount;
+    }
+
+    /**
+     * Closes all COMPLETED appraisals for a specific user.
+     * Only works for appraisals in OPEN cycles.
+     *
+     * @param userId The user ID (appraised user)
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If user not found
+     */
+    @Transactional
+    public int closeCompletedAppraisalsByUserId(Long userId) {
+        LOGGER.info("Attempting to close all COMPLETED appraisals for user ID: {}", userId);
+
+        // Verify user exists
+        UserEntity user = userRepository.find(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+
+        List<AppraisalEntity> completedAppraisals = appraisalRepository.findCompletedAppraisalsByUserId(userId);
+        
+        if (completedAppraisals.isEmpty()) {
+            LOGGER.info("No COMPLETED appraisals found for user ID: {}", userId);
+            return 0;
+        }
+
+        int closedCount = 0;
+        for (AppraisalEntity appraisal : completedAppraisals) {
+            appraisal.setState(AppraisalState.CLOSED);
+            appraisalRepository.merge(appraisal);
+            closedCount++;
+            LOGGER.debug("Closed appraisal ID: {} for user: {}", appraisal.getId(), userId);
+        }
+        
+        LOGGER.info("Successfully closed {} COMPLETED appraisals for user ID: {}", closedCount, userId);
+        return closedCount;
+    }
+
+    /**
+     * Closes all COMPLETED appraisals in all OPEN cycles.
+     * Administrative operation.
+     *
+     * @return Number of successfully closed appraisals
+     */
+    @Transactional
+    public int closeAllCompletedAppraisals() {
+        LOGGER.info("Attempting to close ALL COMPLETED appraisals in OPEN cycles");
+
+        List<AppraisalEntity> completedAppraisals = appraisalRepository.findAllCompletedAppraisalsInOpenCycles();
+        
+        if (completedAppraisals.isEmpty()) {
+            LOGGER.info("No COMPLETED appraisals found in OPEN cycles");
+            return 0;
+        }
+
+        int closedCount = 0;
+        for (AppraisalEntity appraisal : completedAppraisals) {
+            appraisal.setState(AppraisalState.CLOSED);
+            appraisalRepository.merge(appraisal);
+            closedCount++;
+            LOGGER.debug("Closed appraisal ID: {} in cycle: {}", appraisal.getId(), appraisal.getCycle().getId());
+        }
+        
+        LOGGER.info("Successfully closed {} COMPLETED appraisals across all OPEN cycles", closedCount);
+        return closedCount;
     }
 }
