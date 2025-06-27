@@ -146,9 +146,9 @@
     flex-direction: column;
   }
 
-  .register-form-container{
-    order:2 ;
-    display:flex;
+  .register-form-container {
+    order: 2;
+    display: flex;
     flex: 2;
     width: 100vw;
     max-width: 100vw;
@@ -162,10 +162,10 @@
     align-items: flex-start;
     justify-content: center;
   }
-  
+
   .register-logo-container {
     order: 1;
-    display:flex;
+    display: flex;
     flex: 1;
     width: 100vw;
     max-width: 100vw;
@@ -211,13 +211,13 @@
   }
   .register-logo-container {
     display: block;
-    flex:1;
+    flex: 1;
     order: 1;
     /* height: 0 !important; */
   }
 
   .register-logo-container-title {
-    display:none;
+    display: none;
   }
 
   .register-form-container {
@@ -299,8 +299,6 @@
 /* Input field styling */
 .register-input {
   padding-right: 40px; /* Space for the button */
-  width: 100%;
-  /* Your existing input styles */
 }
 
 /* Toggle button styling */

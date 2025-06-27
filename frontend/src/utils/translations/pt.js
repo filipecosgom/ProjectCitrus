@@ -200,6 +200,39 @@ const pt = {
   profileTabProfile: "Perfil",
   profileTabTraining: "Formação",
   profileTabAppraisals: "Avaliações",
+
+  //Users
+  usersNoResults:
+    "Nenhum utilizador encontrado que corresponda aos seus critérios",
+
+    //Usercard
+  userCardNoManager: "Sem gestor",
+
+  //SearchBar
+  searchBarSearchButton: "Pesquisar",
+  searchBarPlaceholder: "Pesquisar por {type}…",
+  searchBarAllStates: "Todos os estados",
+  searchBarComplete: "Completo",
+  searchBarIncomplete: "Incompleto",
+  searchBarLimitToggle: "Resultados por página",
+
+  //Usercontrols
+  userSortControlsName: "Nome",
+  userSortControlsRole: "Cargo",
+  userSortControlsOffice: "Escritório",
+  userSortControlsManager: "Gestor",
+  userSortControlsSortAscending: "Ordenar de A a Z",
+  userSortControlsSortDescending: "Ordenar de Z a A",
+
+  //Fltermenu
+  filterMenuSettings: "Filtros",
+  filterMenuSearchType: "Tipo de pesquisa",
+  filterMenuOptionName: "Nome",
+  filterMenuOptionEmail: "E-mail",
+  filterMenuOptionRole: "Cargo",
+  filterMenuOffice: "Escritório",
+  filterMenuAllOffices: "Todos os escritórios",
+  filterMenuAccountState: "Estado da conta",
 };
 
 export default pt;

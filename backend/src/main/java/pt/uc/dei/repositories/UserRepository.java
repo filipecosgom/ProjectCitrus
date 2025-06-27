@@ -100,6 +100,8 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
         Root<UserEntity> root = query.from(UserEntity.class);
+        Join<UserEntity, UserEntity> managerJoin = root.join("managerUser", JoinType.LEFT);
+
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -155,15 +157,19 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));
         }
-
         query.where(predicates.toArray(new Predicate[0]));
-
         // Sorting logic
         if (parameter != null) {
-            Path<Object> sortingField = root.get(parameter.getFieldName());
+            Path<?> sortingField;
+
+            if ("manager.name".equals(parameter.getFieldName())) {
+                sortingField = managerJoin.get("name"); // nested field
+            } else {
+                sortingField = root.get(parameter.getFieldName());
+            }
+
             query.orderBy(order == Order.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
         }
-
         TypedQuery<UserEntity> typedQuery = em.createQuery(query);
         typedQuery.setFirstResult(offset);
         typedQuery.setMaxResults(limit);
@@ -184,10 +190,10 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (SearchUtils.isNotBlank(email)) {
             if (SearchUtils.isQuoted(email)) {
                 String exact = SearchUtils.stripQuotes(email);
-                predicates.add(cb.equal(root.get("email"), exact)); // Full, strict match
+                predicates.add(cb.like(root.get("email"), "%" + exact + "%")); // Full, strict match
             } else {
                 String normalized = SearchUtils.normalizeString(email.toLowerCase());
-                Expression<String> unaccentedEmail = cb.function("unaccent", String.class, cb.lower(root.get("email")));
+                Expression<String> unaccentedEmail = cb.function(" ", String.class, cb.lower(root.get("email")));
                 predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
             }
         }

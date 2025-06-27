@@ -1,54 +1,157 @@
-.avatarContainer {
-  margin-right: 1rem;
-  position: relative;
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
+.userCard-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  background-color: white;
 }
 
-.avatarError {
-  color: #dc3545;
-  font-size: 0.7rem;
-  margin-top: 0.2rem;
-  display: block;
+.userCard-avatarAndInfoContainer {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
 }
 
-.user-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  border: 3px solid white;
+.userCard-email {
+  display: none;
+}
+.userCard-managerEmail {
+  display: none;
 }
 
-.user-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.userCard-office {
+  display: none;
 }
 
-.status-badge {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: white;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+.container-manager {
+  align-self: flex-end;
+}
+
+.userCard-avatarContainer {
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
+}
+
+.userCard-userInfo {
+  display: flex;
+  flex-direction: column;
+  width: auto;
   justify-content: center;
-  font-size: 12px;
-  box-shadow: 0 0 0 2px #f8f9fa;
 }
 
-/* Status badge colors */
-.status-badge[data-status="check"] {
-  color: #28a745;
+.userCard-name {
+  font-weight: bold;
+  font-size: 1rem;
 }
 
-.status-badge[data-status="cross"] {
-  color: #dc3545;
+.container-manager {
+  display: none;
 }
 
-.status-badge[data-status="stroke"] {
-  color: #ffc107;
+.userCard-role {
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.userCard-office {
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.userCard-managerAvatar {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.userCard-managerInfo {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.userCard-managerName {
+  font-size: 0.9rem;
+}
+
+.userCard-managerEmail {
+    display: none;
+  }
+
+.userCard-noManager {
+  display: none;
+}
+
+.noManager-icon {
+  color: #c0392b;
+}
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
+    
+  .userCard-email {
+    display: none;
+  }
+  .userCard-managerEmail {
+    display: none;
+  }
+
+  .userCard-office {
+    display: block;
+  }
+
+  .userCard-avatarAndInfoContainer {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem;
+  }
+  .container-manager {
+    justify-content: flex-end;
+  }
+}
+
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+  .userCard-container {
+    padding: var(--padding-lg);
+  }
+
+  .container-manager {
+    justify-content: center;
+  }
+
+  .userCard-email {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .userCard-managerEmail {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.userCard-noManager {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: #888;
+  font-style: italic;
+}
 }

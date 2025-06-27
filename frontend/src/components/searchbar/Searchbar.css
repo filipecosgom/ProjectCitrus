@@ -1,0 +1,143 @@
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
+.searchBar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+.searchBar-wrapper {
+  flex: 1;
+  display: flex;
+  border: 2px solid #cbb4b4;
+  border-radius: 10px;
+  box-shadow: var(--shadow-text);
+  padding: 0rem 0rem;
+  align-items: center;
+}
+
+.searchBar-input {
+  background-color: white;
+  flex: 1;
+  border: none;
+  box-shadow: none;
+}
+
+.searchBar-input:focus {
+  outline: none;
+  border: none;
+}
+
+.searchBar-button {
+  background-color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+.search-icon {
+  color: var(--secondary);
+  font-size: 1.5rem;
+}
+
+.search-icon:hover {
+  color: var(--blue);
+}
+
+/* ===== Dropdown Styles ===== */
+.searchBar-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.searchBar-dropdownToggle {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.toggle-searchType {
+  min-width: 100px;
+}
+
+.toggle-office {
+  width: 140px;
+}
+
+.toggle-state {
+  width: 140px;
+}
+
+.toggle-limit {
+  width: 80px;
+}
+
+.searchBar-dropdownToggle:hover {
+  background: #f8f9fa;
+}
+
+.searchBar-dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 160px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.searchBar-menuItem {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.searchBar-menuItem:hover {
+  background: #f5f5f5;
+}
+
+/* ===== Select Elements ===== */
+.searchBar-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  min-width: 120px;
+  cursor: pointer;
+}
+
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
+
+  .searchBar-dropdown {
+    width: auto;
+  }
+
+  .searchBar-dropdownToggle,
+  .searchBar-select {
+    width: 100%;
+  }
+}
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+  .searchBar-container {
+  padding: var(--padding-lg)
+}
+  
+
+}

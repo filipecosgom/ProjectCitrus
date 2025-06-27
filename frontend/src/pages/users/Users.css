@@ -1,67 +1,14 @@
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
 .users-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.users-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.users-header h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    color: #333;
-}
-
-.users-filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.users-filters select {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: white;
-    font-size: 0.9rem;
+    padding: var(--padding-sm);
 }
 
 .users-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.users-loading {
     display: flex;
-    justify-content: center;
-    padding: 3rem;
-}
-
-.users-error {
-    background: #ffebee;
-    padding: 1.5rem;
-    border-radius: 4px;
-    text-align: center;
-    color: #c62828;
-}
-
-.users-error button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background: #c62828;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    flex-direction: column;
+    margin-bottom: 2rem;
 }
 
 .users-empty {
@@ -71,12 +18,23 @@
     font-size: 1.1rem;
 }
 
-@media (max-width: 768px) {
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
     .users-container {
-        padding: 1rem;
-    }
+    padding: var(--padding-sm);
+}
     
-    .users-grid {
-        grid-template-columns: 1fr;
-    }
+}
+
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+.users-container {
+    padding: var(--padding-lg);
+}
+
 }

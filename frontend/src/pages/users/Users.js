@@ -1,77 +1,154 @@
 import "./Users.css";
 import SearchBar from "../../components/searchbar/Searchbar";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./Users.css";
 import UserCard from "../../components/userCard/UserCard";
 import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
+import UserSortControls from "../../components/userSortControls/UserSortControls";
+import { useIntl } from "react-intl";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [offices, setOffices] = useState([]);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
     offset: 0,
-    limit: 5,
+    limit: 10,
     total: 0,
   });
-  const [pageLoading, setPageLoading] = useState(true);
-  const [resultsLoading, setResultsLoading] = useState(false);
-  const [offices, setOffices] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+    query: "",
+    searchType: "email",
+    limit: 10,
+    filters: {},
+  });
+  const [lastSearch, setLastSearch] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sort, setSort] = useState({
+    sortBy: "name",
+    sortOrder: "ascending",
+  });
+  const intl = useIntl();
 
-  const handleSearch = async (query, filter, limit) => {
-    console.log(query);
-    console.log(filter);
-    console.log(limit);
-    setResultsLoading(true);
-    const result = await handleGetUsers({
-      [filter]: query,
-      offset: 0, // Reset to page 1
-      limit: limit || pagination.limit,
-    });
 
-    setUsers(result.users);
-    setPagination({
-      offset: 0,
-      limit: limit || pagination.limit,
-      total: result.pagination.totalUsers,
-    });
-    setResultsLoading(false);
+  const setSearchingParameters = async (
+    query,
+    searchType,
+    limit,
+    filters = {}
+  ) => {
+    const search = { query, searchType, limit, filters };
+    setLastSearch(search);
+    setCurrentPage(1);
+    setSearchParams({ query, searchType, limit, filters });
   };
 
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
+    if (lastSearch) {
+      fetchUsers(newOffset, lastSearch);
+    }
   };
 
-  // Carrega enums
+  const fetchUsers = async (offset = 0, overrideParams = null) => {
+    console.log("TRIGGERED");
+    const { query, searchType, limit, filters } =
+      overrideParams || searchParams;
+    setResultsLoading(true);
+    const result = await handleGetUsers({
+      [searchType]: query,
+      offset,
+      limit,
+      ...filters,
+      parameter: sort.sortBy, // e.g. "name", "email", "manager.name"
+      order: sort.sortOrder, // e.g. "ASCENDING" or "DESCENDING"
+    });
+
+    setUsers(result.users);
+    setPagination((prev) => ({
+      ...prev,
+      offset,
+      limit: result.pagination.limit,
+      total: result.pagination.totalUsers,
+    }));
+    setResultsLoading(false);
+  };
+
   useEffect(() => {
-    const fetchEnums = async () => {
+    if (searchParams.query !== undefined) {
+      fetchUsers(0, searchParams);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (lastSearch) {
+      fetchUsers(pagination.offset, lastSearch);
+    }
+  }, [pagination.offset]);
+
+  useEffect(() => {
+    if (lastSearch) {
+      fetchUsers(0, lastSearch); // restart at page 1
+      setPagination((prev) => ({ ...prev, offset: 0 }));
+    }
+  }, [sort]);
+
+  // 📦 On mount: fetch offices and initial users
+  useEffect(() => {
+    const fetchInitial = async () => {
+      setPageLoading(true);
       const offices = await handleGetOffices();
-      setOffices(offices)
+      const initialSearch = {
+        query: "",
+        searchType: "email",
+        limit: 10,
+        filters: {}, // empty to fetch all
+      };
+      setSearchParams(initialSearch);
+      setLastSearch(initialSearch);
+      const result = await handleGetUsers({
+        [initialSearch.searchType]: initialSearch.query,
+        offset: 0,
+        limit: initialSearch.limit,
+        ...initialSearch.filters,
+        parameter: sort.sortBy,
+        order: sort.sortOrder,
+      });
+      setUsers(result.users);
+      setPagination((prev) => ({
+        ...prev,
+        offset: 0,
+        limit: result.pagination.limit,
+        total: result.pagination.totalUsers,
+      }));
+      setOffices(offices);
+      setPageLoading(false);
     };
-    setPageLoading(true);
-    fetchEnums();
-    setPageLoading(false);
+    fetchInitial();
   }, []);
 
   if (pageLoading) return <Spinner />;
 
   return (
     <div className="users-container">
-      <div className="users-header">
-        <SearchBar
-        onSearch={handleSearch}
-        offices={offices} />
-      </div>
-      {pageLoading ? (
+      <SearchBar onSearch={setSearchingParameters} offices={offices} />
+      <UserSortControls
+        sortBy={sort.sortBy}
+        sortOrder={sort.sortOrder}
+        onSortChange={setSort}
+      />
+
+      {resultsLoading ? (
         <div className="users-loading">
           <Spinner />
         </div>
       ) : users.length === 0 ? (
         <div className="users-empty">
-          <p>No users found matching your criteria</p>
+          <p>{intl.formatMessage({ id: "usersNoResults" })}</p>
         </div>
       ) : (
         <div>
@@ -80,16 +157,14 @@ export default function Users() {
               <UserCard key={user.id} user={user} />
             ))}
           </div>
-
-          <Pagination
-            offset={pagination.offset}
-            limit={pagination.limit}
-            total={pagination.total}
-            onChange={handlePageChange}
-          />
         </div>
       )}
-      ;
+      <Pagination
+        offset={pagination.offset}
+        limit={pagination.limit}
+        total={pagination.total}
+        onChange={handlePageChange}
+      />
     </div>
   );
 }

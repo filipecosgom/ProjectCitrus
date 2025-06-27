@@ -1,0 +1,71 @@
+.filterMenu-icon {
+    rotate: 90deg;
+    border: none;
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+.filterMenu-icon:hover {
+    color: var(--blue);
+}
+
+.filterMenu-button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filterMenu {
+  position: relative;
+  display: inline-block;
+}
+
+
+
+.filterMenu-panel {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  z-index: 10;
+  padding: 0.5rem;
+}
+
+.filterMenu-category {
+  position: relative;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filterMenu-label {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
+}
+
+.filterMenu-submenu {
+  position: absolute;
+  right: 100%;
+  top: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  min-width: 160px;
+  padding: 0.4rem;
+  z-index: 20;
+}
+
+.filterMenu-item {
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+.filterMenu-item[data-active="true"] {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}

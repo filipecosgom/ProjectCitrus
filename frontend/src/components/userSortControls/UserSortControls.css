@@ -1,0 +1,79 @@
+/* LOGIN PAGE STYLES */
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
+.userSortControls-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .userSortControls-div {
+    cursor: pointer;
+    flex: 1;
+    font-weight: var(--font-weight-regular);
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-main);
+    transition: color 0.2s ease;
+    text-align: center;
+  }
+
+  .userSortControls-div.office {
+  display: none;
+}
+.userSortControls-div.manager {
+  display: none;
+}
+
+  .userSortControls-div:hover {
+    font-weight: var(--font-weight-bold);
+    color: var(--blue);
+  }
+
+  .userSortControls-div.active {
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  .sort-icon {
+    font-size: 0.9rem;
+  }
+
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
+
+  .userSortControls-div.office {
+    display: block;
+  }
+  .userSortControls-div.manager {
+    display: block;
+  }
+  .userSortControls-div {
+    font-size: var(--font-size-main);
+  }
+}
+
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+  .userSortControls-container {
+    padding: var(--padding-lg);
+  }
+
+  .userSortControls-div {
+    font-size: var(--font-size-subtitle);
+  }
+
+
+  .userSortControls-div.office {
+    display: block;
+  }
+  .userSortControls-div.manager {
+    display: block;
+  }
+
+}
