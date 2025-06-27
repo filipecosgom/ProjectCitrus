@@ -128,7 +128,7 @@ const UserCard = ({ user }) => {
       ) : (
         <div className="userCard-noManager">
           <ImCross title="No manager assigned" className="noManager-icon" />
-          <span className="noManager-label">{intl.formatMessage({ id: "userCard" })}</span>
+          <span className="noManager-label">{intl.formatMessage({ id: "userCardNoManager" })}</span>
         </div>
       )}
     </div>
