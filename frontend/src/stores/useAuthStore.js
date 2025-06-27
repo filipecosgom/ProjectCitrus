@@ -19,6 +19,12 @@ const useAuthStore = create((set, get) => {
     tokenExpiration: null,
     remainingTime: null,
 
+    // ✅ NOVA FUNÇÃO: Verifica se user é admin
+    isUserAdmin: () => {
+      const user = get().user;
+      return user?.userIsAdmin === true;
+    },
+
     setAvatar: (avatarUrl, blob = null) => {
       set({ avatar: avatarUrl, avatarBlob: blob });
     },
@@ -61,6 +67,7 @@ const useAuthStore = create((set, get) => {
           const { user, tokenExpiration } = response.data.data || {};
           if (user && tokenExpiration) {
             console.log("User information fetched successfully:", user);
+            console.log("User is admin:", user.userIsAdmin); // ✅ DEBUG LOG
 
             get().setUserAndExpiration(user, tokenExpiration);
           }

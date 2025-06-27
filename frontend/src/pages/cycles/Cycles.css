@@ -1,0 +1,165 @@
+.cycles-page {
+  padding: 24px;
+  margin-left: 80px; /* Espaço para o menu */
+  max-width: 1200px;
+  margin-right: auto;
+}
+
+.cycles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.cycles-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cycles-icon {
+  font-size: 32px;
+  color: #00B9CD;
+}
+
+.cycles-title h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+  font-weight: 600;
+}
+
+.btn-create-cycle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #00B9CD;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-create-cycle:hover {
+  background: #0090a3;
+}
+
+.cycles-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.cycles-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+.cycle-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+  transition: box-shadow 0.2s;
+}
+
+.cycle-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cycle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.cycle-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  flex: 1;
+}
+
+.cycle-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.cycle-status.active {
+  background: #e8f5e8;
+  color: #2e7d2e;
+}
+
+.cycle-status.closed {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.cycle-body {
+  margin-bottom: 20px;
+}
+
+.cycle-body p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.cycle-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cycle-action {
+  padding: 8px 16px;
+  border: 1px solid #00B9CD;
+  background: white;
+  color: #00B9CD;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cycle-action:hover {
+  background: #00B9CD;
+  color: white;
+}
+
+.btn-cycle-action.close {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-cycle-action.close:hover {
+  background: #dc3545;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .cycles-page {
+    margin-left: 0;
+    padding: 16px;
+  }
+  
+  .cycles-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .cycles-grid {
+    grid-template-columns: 1fr;
+  }
+}

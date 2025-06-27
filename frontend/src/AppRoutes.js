@@ -9,11 +9,14 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from "./pages/profile/Profile";
 import Users from "./pages/users/Users";
+import Cycles from "./pages/cycles/Cycles";
+import Settings from "./pages/settings/Settings";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
 import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
 
 function AppRoutes() {
@@ -34,7 +37,7 @@ function AppRoutes() {
     "/header",
   ];
 
-  // Lista de todas as rotas conhecidas (as que tens no <Routes>)
+  // ✅ ATUALIZAR: Lista de todas as rotas conhecidas
   const knownRoutes = [
     "/",
     "/login",
@@ -46,9 +49,10 @@ function AppRoutes() {
     "/header",
     "/profile",
     "/users",
+    "/cycles",
+    "/settings",
   ];
 
-  // Se não for uma rota conhecida, é 404
   const is404 = !knownRoutes.includes(location.pathname);
   const showHeader = !hideHeaderRoutes.includes(location.pathname) && !is404;
 
@@ -64,10 +68,8 @@ function AppRoutes() {
           }
         }
       }
-      // Now, after trying to fetch, check if the user is set
       if (useAuthStore.getState().user) {
         if (useAuthStore.getState().user.accountState === "INCOMPLETE") {
-          // If the user is logged in but their account is incomplete, redirect to profile edit
           navigate("/profile?id=" + useAuthStore.getState().user.id);
         }
       }
@@ -80,12 +82,10 @@ function AppRoutes() {
 
   return (
     <>
-      {/* Mostra o Header em todas as páginas exceto as do array acima, mas permite testar em /header */}
       {(showHeader || location.pathname === "/header") && (
         <>
           <Menu language={locale} setLanguage={setLocale} />
-          <Header
-          />
+          <Header />
         </>
       )}
       <Routes>
@@ -108,6 +108,23 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        {/* ✅ NOVAS ROTAS ADMIN */}
+        <Route
+          path="/cycles"
+          element={
+            <AdminRoute>
+              <Cycles />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          }
+        />
         <Route
           path="/offcanvas-forgot-password"
           element={<div>OffcanvasForgotPassword</div>}
@@ -118,9 +135,8 @@ function AppRoutes() {
         <Route
           path="/menu"
           element={<Menu language={locale} setLanguage={setLocale} />}
-        />{" "}
-        {/* Só mostra o Menu */}
-        <Route path="/header" element={<div />} /> {/* Só mostra o Header */}
+        />
+        <Route path="/header" element={<div />} />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
       <ToastContainer limit={3} />

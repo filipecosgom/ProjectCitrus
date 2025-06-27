@@ -14,6 +14,7 @@ import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.services.AppraisalService;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.annotations.AdminOnly;
 
 import java.util.Arrays;
 import java.util.List;
@@ -440,12 +441,11 @@ public class AppraisalController {
      * @param cycleId The cycle ID
      * @return Response with count of closed appraisals
      */
+    @AdminOnly
     @POST
     @Path("/cycle/{cycleId}/close-completed")
     public Response closeCompletedAppraisalsByCycle(@PathParam("cycleId") Long cycleId) {
         try {
-            // TODO: Add JWT Admin validation here
-
             LOGGER.info("Admin requesting to close COMPLETED appraisals in cycle ID: {}", cycleId);
 
             int closedCount = appraisalService.closeCompletedAppraisalsByCycleId(cycleId);
