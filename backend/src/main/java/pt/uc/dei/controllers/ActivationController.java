@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.uc.dei.annotations.AllowAnonymous;
 import pt.uc.dei.dtos.ActivationTokenDTO;
 import pt.uc.dei.dtos.TemporaryUserDTO;
 import pt.uc.dei.repositories.ActivationTokenRepository;
@@ -31,6 +32,7 @@ import java.util.Map;
  *
  * @Path("/activate") Root path for activation endpoints
  */
+@AllowAnonymous
 @Path("/activate")
 public class ActivationController {
     /**
