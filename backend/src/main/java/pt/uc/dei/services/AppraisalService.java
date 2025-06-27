@@ -20,7 +20,7 @@ import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.mapper.AppraisalMapper;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -117,8 +117,8 @@ public class AppraisalService implements Serializable {
         appraisalEntity.setFeedback(createAppraisalDTO.getFeedback());
         appraisalEntity.setScore(createAppraisalDTO.getScore());
         appraisalEntity.setState(AppraisalState.IN_PROGRESS);
-        appraisalEntity.setCreationDate(LocalDateTime.now());
-        appraisalEntity.setEditedDate(LocalDateTime.now());        appraisalRepository.persist(appraisalEntity);
+        appraisalEntity.setCreationDate(LocalDate.now());
+        appraisalEntity.setEditedDate(LocalDate.now());        appraisalRepository.persist(appraisalEntity);
         LOGGER.info("Created appraisal with ID: {}", appraisalEntity.getId());
 
         return appraisalMapper.toDto(appraisalEntity);
@@ -152,7 +152,7 @@ public class AppraisalService implements Serializable {
         // Update fields
         appraisal.setFeedback(updateAppraisalDTO.getFeedback());
         appraisal.setScore(updateAppraisalDTO.getScore());
-        appraisal.setEditedDate(LocalDateTime.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
         LOGGER.info("Updated appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);
@@ -259,7 +259,7 @@ public class AppraisalService implements Serializable {
         }
 
         appraisal.setState(AppraisalState.COMPLETED);
-        appraisal.setEditedDate(LocalDateTime.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
         LOGGER.info("Completed appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);
@@ -282,7 +282,7 @@ public class AppraisalService implements Serializable {
         }
 
         appraisal.setState(AppraisalState.CLOSED);
-        appraisal.setEditedDate(LocalDateTime.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
         LOGGER.info("Closed appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);

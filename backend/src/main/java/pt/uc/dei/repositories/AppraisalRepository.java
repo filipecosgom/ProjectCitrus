@@ -125,13 +125,13 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     }
 
     /**
-     * Finds an appraisal by appraised user, appraising user, and cycle.
-     * Useful to check if an appraisal already exists for a specific combination.
+     * Finds an appraisal by appraised user, appraising user and cycle.
+     * Used to check for duplicates before creating new appraisals.
      *
-     * @param appraisedUserId The ID of the user being appraised
-     * @param appraisingUserId The ID of the user performing the appraisal
-     * @param cycleId The ID of the cycle
-     * @return The appraisal entity if found, null otherwise
+     * @param appraisedUserId The appraised user ID
+     * @param appraisingUserId The appraising user ID  
+     * @param cycleId The cycle ID
+     * @return AppraisalEntity if found, null otherwise
      */
     public AppraisalEntity findAppraisalByUsersAndCycle(Long appraisedUserId, Long appraisingUserId, Long cycleId) {
         try {
@@ -143,10 +143,10 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
             query.setParameter("appraisedUserId", appraisedUserId);
             query.setParameter("appraisingUserId", appraisingUserId);
             query.setParameter("cycleId", cycleId);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            LOGGER.debug("No appraisal found for users {} -> {} in cycle {}", appraisingUserId, appraisedUserId, cycleId);
-            return null;
+            
+            List<AppraisalEntity> results = query.getResultList();
+            return results.isEmpty() ? null : results.get(0);
+            
         } catch (Exception e) {
             LOGGER.error("Error finding appraisal by users and cycle", e);
             return null;

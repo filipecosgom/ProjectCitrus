@@ -241,4 +241,67 @@ public class UserRepository extends AbstractRepository<UserEntity> {
 
         return em.createQuery(query).getSingleResult();
     }
+
+    /**
+     * Finds all active users (not deleted) for cycle initialization.
+     *
+     * @return List of active user entities
+     */
+    public List<UserEntity> findActiveUsersForCycle() {
+        try {
+            TypedQuery<UserEntity> query = em.createQuery(
+                "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false ORDER BY u.id", 
+                UserEntity.class
+            );
+            List<UserEntity> result = query.getResultList();
+            LOGGER.debug("Found {} active users for cycle creation", result.size());
+            return result;
+        } catch (Exception e) {
+            LOGGER.error("Error finding active users for cycle", e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Finds active users without a manager assigned.
+     * Used for validation before cycle creation.
+     *
+     * @return List of users without manager
+     */
+    public List<UserEntity> findActiveUsersWithoutManager() {
+        try {
+            TypedQuery<UserEntity> query = em.createQuery(
+                "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false " +
+                "AND u.managerUser IS NULL ORDER BY u.email", 
+                UserEntity.class
+            );
+            List<UserEntity> result = query.getResultList();
+            LOGGER.debug("Found {} active users without manager", result.size());
+            return result;
+        } catch (Exception e) {
+            LOGGER.error("Error finding active users without manager", e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Counts active users without a manager.
+     *
+     * @return Number of users without manager
+     */
+    public long countActiveUsersWithoutManager() {
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(u) FROM UserEntity u WHERE u.userIsDeleted = false " +
+                "AND u.managerUser IS NULL", 
+                Long.class
+            );
+            Long count = query.getSingleResult();
+            LOGGER.debug("Count of active users without manager: {}", count);
+            return count;
+        } catch (Exception e) {
+            LOGGER.error("Error counting active users without manager", e);
+            return 0L;
+        }
+    }
 }

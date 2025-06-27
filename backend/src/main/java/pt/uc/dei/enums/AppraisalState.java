@@ -9,5 +9,5 @@ package pt.uc.dei.enums;
 public enum AppraisalState {
     IN_PROGRESS,
     COMPLETED,
-    CLOSED;
+    CLOSED
 }

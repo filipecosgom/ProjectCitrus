@@ -7,16 +7,20 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.entities.UserEntity;
+import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.mapper.CycleMapper;
+import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.repositories.CycleRepository;
 import pt.uc.dei.repositories.UserRepository;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service class for managing cycle-related operations.
@@ -46,11 +50,15 @@ public class CycleService implements Serializable {
     @EJB
     private UserRepository userRepository;
 
+    @EJB
+    private AppraisalRepository appraisalRepository;
+
     @Inject
     private CycleMapper cycleMapper;
 
     /**
-     * Creates a new cycle.
+     * Creates a new cycle and initializes appraisals for all active users.
+     * Validates that all users have managers before creation.
      *
      * @param cycleDTO The DTO containing cycle creation data
      * @return The created cycle DTO
@@ -64,13 +72,29 @@ public class CycleService implements Serializable {
                    cycleDTO.getEndDate(),
                    cycleDTO.getAdminId());
 
-        // Validate admin user exists
+        // VALIDATION 1: Check for users without managers BEFORE creating cycle
+        List<UserEntity> usersWithoutManager = userRepository.findActiveUsersWithoutManager();
+        if (!usersWithoutManager.isEmpty()) {
+            List<String> userEmails = usersWithoutManager.stream()
+                    .map(UserEntity::getEmail)
+                    .collect(Collectors.toList());
+            
+            LOGGER.error("Cannot create cycle: {} active users without manager assigned: {}", 
+                        usersWithoutManager.size(), userEmails);
+            
+            throw new IllegalStateException(
+                String.format("Cannot create cycle. %d active user(s) without manager: %s", 
+                            usersWithoutManager.size(), String.join(", ", userEmails))
+            );
+        }
+
+        // VALIDATION 2: Validate admin user exists
         UserEntity admin = userRepository.find(cycleDTO.getAdminId());
         if (admin == null) {
             throw new IllegalArgumentException("Admin user not found");
         }
 
-        // Validate dates
+        // VALIDATION 3: Validate dates
         if (cycleDTO.getStartDate().isAfter(cycleDTO.getEndDate())) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
@@ -79,20 +103,30 @@ public class CycleService implements Serializable {
             throw new IllegalArgumentException("Start date cannot be in the past");
         }
 
-        // Check for overlapping cycles
+        // VALIDATION 4: Check for overlapping cycles
         if (cycleRepository.hasOverlappingCycles(cycleDTO.getStartDate(), cycleDTO.getEndDate(), null)) {
             throw new IllegalStateException("A cycle already exists for the specified date range");
         }
 
-        // Create new cycle
-        CycleEntity cycleEntity = cycleMapper.toEntity(cycleDTO);
-        cycleEntity.setAdmin(admin);
-        cycleEntity.setState(CycleState.OPEN);
+        try {
+            // Create new cycle
+            CycleEntity cycleEntity = cycleMapper.toEntity(cycleDTO);
+            cycleEntity.setAdmin(admin);
+            cycleEntity.setState(CycleState.OPEN);
 
-        cycleRepository.persist(cycleEntity);
-        LOGGER.info("Created cycle with ID: {}", cycleEntity.getId());
+            // PERSIST CYCLE
+            cycleRepository.persist(cycleEntity);
+            LOGGER.info("Created cycle with ID: {}", cycleEntity.getId());
 
-        return cycleMapper.toDto(cycleEntity);
+            // CREATE APPRAISALS FOR ALL ACTIVE USERS
+            createAppraisalsForCycle(cycleEntity);
+
+            return cycleMapper.toDto(cycleEntity);
+
+        } catch (Exception e) {
+            LOGGER.error("Error creating cycle: {}", cycleDTO.getId(), e);
+            throw new RuntimeException("Failed to create cycle: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -358,5 +392,103 @@ public class CycleService implements Serializable {
         LOGGER.info("Closed {} expired cycles", closedCount);
         
         return closedCount;
+    }
+
+    /**
+     * Creates a single empty appraisal entity.
+     *
+     * @param appraisedUser The user being appraised
+     * @param appraisingUser The manager doing the appraisal
+     * @param cycle The cycle this appraisal belongs to
+     * @return The created appraisal entity
+     */
+    private AppraisalEntity createEmptyAppraisal(UserEntity appraisedUser, UserEntity appraisingUser, CycleEntity cycle) {
+        AppraisalEntity appraisal = new AppraisalEntity();
+        
+        // Set relationships
+        appraisal.setAppraisedUser(appraisedUser);
+        appraisal.setAppraisingUser(appraisingUser);
+        appraisal.setCycle(cycle);
+        
+        // Set initial state and data
+        appraisal.setState(AppraisalState.IN_PROGRESS);
+        appraisal.setFeedback(null);  // Empty initially
+        appraisal.setScore(null);     // Empty initially
+        appraisal.setCreationDate(LocalDate.now());
+        appraisal.setEditedDate(LocalDate.now());
+        
+        LOGGER.trace("Created empty appraisal entity for user {} by manager {} in cycle {}", 
+                    appraisedUser.getEmail(), appraisingUser.getEmail(), cycle.getId());
+        
+        return appraisal;
+    }
+
+    /**
+     * Creates empty appraisals for all active users in the given cycle.
+     * Each user receives an appraisal from their assigned manager.
+     *
+     * @param cycle The cycle for which to create appraisals
+     * @throws IllegalStateException If any user has no manager
+     */
+    @Transactional
+    private void createAppraisalsForCycle(CycleEntity cycle) {
+        LOGGER.info("Creating appraisals for cycle ID: {}", cycle.getId());
+
+        // Get all active users
+        List<UserEntity> activeUsers = userRepository.findActiveUsersForCycle();
+        LOGGER.debug("Found {} active users for appraisal creation", activeUsers.size());
+        
+        if (activeUsers.isEmpty()) {
+            LOGGER.warn("No active users found for appraisal creation in cycle ID: {}", cycle.getId());
+            return;
+        }
+
+        int createdCount = 0;
+        int skippedCount = 0;
+
+        for (UserEntity user : activeUsers) {
+            try {
+                // Double-check manager exists (redundant safety check)
+                if (user.getManagerUser() == null) {
+                    LOGGER.error("CRITICAL: User {} (ID: {}) has no manager during appraisal creation", 
+                                user.getEmail(), user.getId());
+                    throw new IllegalStateException("User " + user.getEmail() + " has no manager assigned");
+                }
+
+                // Check if appraisal already exists (safety check)
+                AppraisalEntity existingAppraisal = appraisalRepository.findAppraisalByUsersAndCycle(
+                    user.getId(), user.getManagerUser().getId(), cycle.getId()
+                );
+
+                if (existingAppraisal != null) {
+                    LOGGER.warn("Appraisal already exists for user {} in cycle {} - skipping", 
+                               user.getEmail(), cycle.getId());
+                    skippedCount++;
+                    continue;
+                }
+
+                // Create empty appraisal
+                AppraisalEntity appraisal = createEmptyAppraisal(user, user.getManagerUser(), cycle);
+                appraisalRepository.persist(appraisal);
+                
+                createdCount++;
+                LOGGER.debug("Created appraisal ID: {} for user {} (ID: {}) by manager {} (ID: {})", 
+                            appraisal.getId(),
+                            user.getEmail(), user.getId(), 
+                            user.getManagerUser().getEmail(), user.getManagerUser().getId());
+
+            } catch (Exception e) {
+                LOGGER.error("Error creating appraisal for user {} (ID: {}) in cycle {}", 
+                            user.getEmail(), user.getId(), cycle.getId(), e);
+                throw new RuntimeException("Failed to create appraisal for user: " + user.getEmail(), e);
+            }
+        }
+
+        LOGGER.info("Appraisal creation summary for cycle ID: {} - Created: {}, Skipped: {}, Total Users: {}", 
+                   cycle.getId(), createdCount, skippedCount, activeUsers.size());
+
+        if (createdCount == 0 && skippedCount == 0) {
+            LOGGER.warn("No appraisals were created for cycle ID: {}", cycle.getId());
+        }
     }
 }

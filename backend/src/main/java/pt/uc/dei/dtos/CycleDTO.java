@@ -32,7 +32,6 @@ public class CycleDTO {    /**
      * The current state of the cycle.
      * Must not be null.
      */
-    @NotNull(message = "State missing")
     private CycleState state;
 
     /**

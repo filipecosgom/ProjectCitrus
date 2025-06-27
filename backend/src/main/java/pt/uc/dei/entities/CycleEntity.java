@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import pt.uc.dei.enums.CycleState;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Entity representing a cycle.
@@ -92,5 +93,10 @@ public class CycleEntity implements Serializable {
 
     public void setAdmin(UserEntity admin) {
         this.admin = admin;
+    }
+
+    public void setCreationDate(LocalDate now) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCreationDate'");
     }
 }

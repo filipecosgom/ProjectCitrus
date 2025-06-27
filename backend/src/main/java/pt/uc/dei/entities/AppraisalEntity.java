@@ -3,7 +3,7 @@ package pt.uc.dei.entities;
 import jakarta.persistence.*;
 import pt.uc.dei.enums.AppraisalState;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Entity representing an appraisal.
@@ -27,14 +27,14 @@ public class AppraisalEntity implements Serializable {
      * Cannot be updated once set.
      */
     @Column(name = "creation_date", nullable = false, unique = false, updatable = false)
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     /**
      * The date and time when the appraisal was last edited.
      * Can be updated.
      */
     @Column(name = "edited_date", nullable = false, unique = false, updatable = true)
-    private LocalDateTime editedDate;
+    private LocalDate editedDate;
 
     /**
      * The score assigned in the appraisal.
@@ -83,8 +83,8 @@ public class AppraisalEntity implements Serializable {
 
     // Construtor padrão
     public AppraisalEntity() {
-        this.creationDate = LocalDateTime.now();
-        this.editedDate = LocalDateTime.now();
+        this.creationDate = LocalDate.now();
+        this.editedDate = LocalDate.now();
         this.state = AppraisalState.IN_PROGRESS;
     }
 
@@ -92,11 +92,11 @@ public class AppraisalEntity implements Serializable {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public LocalDateTime getCreationDate() { return creationDate; }
-    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
+    public LocalDate getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
 
-    public LocalDateTime getEditedDate() { return editedDate; }
-    public void setEditedDate(LocalDateTime editedDate) { this.editedDate = editedDate; }
+    public LocalDate getEditedDate() { return editedDate; }
+    public void setEditedDate(LocalDate editedDate) { this.editedDate = editedDate; }
 
     public Integer getScore() { return score; }
     public void setScore(Integer score) { this.score = score; }
