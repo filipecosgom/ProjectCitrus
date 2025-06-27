@@ -1,6 +1,7 @@
 package pt.uc.dei.controllers;
 
 import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
 import jakarta.resource.spi.AdministeredObject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -66,12 +67,35 @@ public class CycleController {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
                     .build();
+
         } catch (IllegalStateException e) {
             LOGGER.warn("Business rule violation for cycle creation: {}", e.getMessage());
             String errorCode = getConflictErrorCode(e.getMessage());
             return Response.status(Response.Status.CONFLICT)
                     .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
                     .build();
+
+        } catch (EJBException e) {
+            Throwable cause = e.getCause();
+            
+            if (cause instanceof IllegalStateException) {
+                String errorCode = getConflictErrorCode(cause.getMessage());
+                return Response.status(Response.Status.CONFLICT)
+                        .entity(new ApiResponse(false, cause.getMessage(), errorCode, null))
+                        .build();
+                        
+            } else if (cause instanceof IllegalArgumentException) {
+                String errorCode = getValidationErrorCode(cause.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, cause.getMessage(), errorCode, null))
+                        .build();
+                        
+            } else {
+                LOGGER.error("EJB error in operation", e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                        .build();
+            }
         } catch (Exception e) {
             LOGGER.error("Unexpected error creating cycle", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -412,12 +436,19 @@ public class CycleController {
     }
 
     private String getConflictErrorCode(String message) {
-        if (message.contains("overlapping") || message.contains("already exists")) {
+        // Caso específico para users sem manager
+        if (message.contains("without manager")) {
+            return "errorUsersWithoutManager";
+        } else if (message.contains("overlapping") || message.contains("already exists")) {
             return "errorCycleOverlap";
         } else if (message.contains("already closed")) {
             return "errorCycleAlreadyClosed";
         } else if (message.contains("already open")) {
             return "errorCycleAlreadyOpen";
+        } else if (message.contains("already started")) {
+            return "errorCycleAlreadyStarted";
+        } else if (message.contains("would overlap")) {
+            return "errorReopenOverlap";
         }
         return "errorConflict";
     }
