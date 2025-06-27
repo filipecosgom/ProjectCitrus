@@ -55,48 +55,63 @@ public class CycleEntity implements Serializable {
 
     // Getters and Setters
 
-    public Long getId() {
-        return id;
-    }
+    /**
+     * Retrieves the unique identifier for the cycle.
+     * @return the cycle ID.
+     */
+    public Long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    /**
+     * Sets the unique identifier for the cycle.
+     * @param id the cycle ID to set.
+     */
+    public void setId(Long id) { this.id = id; }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
+    /**
+     * Retrieves the start date of the cycle.
+     * @return the start date.
+     */
+    public LocalDate getStartDate() { return startDate; }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
+    /**
+     * Sets the start date of the cycle.
+     * @param startDate the start date to set.
+     */
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 
-    public LocalDate getEndDate() {
-        return endDate;
-    }
+    /**
+     * Retrieves the end date of the cycle.
+     * @return the end date.
+     */
+    public LocalDate getEndDate() { return endDate; }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
+    /**
+     * Sets the end date of the cycle.
+     * @param endDate the end date to set.
+     */
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
-    public CycleState getState() {
-        return state;
-    }
+    /**
+     * Retrieves the current status of the cycle.
+     * @return the cycle state.
+     */
+    public CycleState getState() { return state; }
 
-    public void setState(CycleState state) {
-        this.state = state;
-    }
+    /**
+     * Sets the current status of the cycle.
+     * @param state the cycle state to set.
+     */
+    public void setState(CycleState state) { this.state = state; }
 
-    public UserEntity getAdmin() {
-        return admin;
-    }
+    /**
+     * Retrieves the administrator responsible for managing the cycle.
+     * @return the admin user entity.
+     */
+    public UserEntity getAdmin() { return admin; }
 
-    public void setAdmin(UserEntity admin) {
-        this.admin = admin;
-    }
-
-    public void setCreationDate(LocalDate now) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setCreationDate'");
-    }
+    /**
+     * Sets the administrator responsible for managing the cycle.
+     * @param admin the admin user entity to set.
+     */
+    public void setAdmin(UserEntity admin) { this.admin = admin; }
 }

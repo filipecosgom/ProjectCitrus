@@ -6,8 +6,18 @@ import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.ext.Provider;
 
+/**
+ * JAX-RS response filter to refresh authentication cookies unless logging out.
+ * Adds a new cookie to the response if present in the request context.
+ */
 @Provider
 public class RefreshCookieResponseFilter implements ContainerResponseFilter {
+    /**
+     * Adds a refreshed cookie to the response headers unless the logout endpoint is called.
+     *
+     * @param requestContext the request context
+     * @param responseContext the response context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         // Skip refresh if the logout endpoint is called.

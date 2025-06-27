@@ -128,6 +128,14 @@ public class UserService implements Serializable {
         return codes;
     }
 
+    /**
+     * Updates an existing user with the provided data.
+     * Only non-null fields in the DTO are updated.
+     *
+     * @param id The ID of the user to update
+     * @param updateUserDTO The DTO containing updated user data
+     * @return true if the update was successful, false otherwise
+     */
     @Transactional
     public Boolean updateUser(Long id, UpdateUserDTO updateUserDTO) {
         // Fetch the user from the repository
@@ -195,12 +203,34 @@ public class UserService implements Serializable {
         return true;
     }
 
+    /**
+     * Retrieves a user by their unique ID and maps to a UserDTO.
+     *
+     * @param id The user ID
+     * @return The mapped UserDTO, or null if not found
+     */
     public UserDTO getUser(Long id) {
         UserEntity user = userRepository.findUserById(id);
         UserDTO userDTO = userMapper.toDto(user);
         return userDTO;
     }
 
+    /**
+     * Retrieves a paginated and filtered list of users as DTOs, with total count and pagination info.
+     *
+     * @param id User ID to filter (optional)
+     * @param email Email to filter (optional)
+     * @param name Name or surname to filter (optional)
+     * @param phone Phone number to filter (optional)
+     * @param accountState Account state to filter (optional)
+     * @param roleStr Role to filter (optional)
+     * @param office Office to filter (optional)
+     * @param parameter Sorting parameter (optional)
+     * @param order Sorting order (ASCENDING or DESCENDING)
+     * @param offset Pagination offset (start position)
+     * @param limit Pagination limit (max results)
+     * @return Map containing the list of users, total count, offset, and limit
+     */
     public Map<String, Object> getUsers(Long id, String email, String name, String phone,
                                         AccountState accountState, String roleStr, Office office,
                                         Parameter parameter, Order order, int offset, int limit) {
@@ -263,6 +293,12 @@ public class UserService implements Serializable {
         }
     }
 
+    /**
+     * Retrieves a user response DTO by email.
+     *
+     * @param email The email address to search for
+     * @return The mapped UserResponseDTO, or null if not found
+     */
     public UserResponseDTO getResponseUserByEmail(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
         return userMapper.toUserResponseDto(user);
@@ -285,28 +321,34 @@ public class UserService implements Serializable {
         return temporaryUserDTO;
     }
 
+    /**
+     * Checks and updates the account state of a user based on profile completeness.
+     *
+     * @param userId The user ID to check
+     * @return true if the account state was updated or already correct, false otherwise
+     */
     @Transactional
-public boolean checkAndUpdateAccountState(Long userId) {
-    UserEntity user = userRepository.findUserById(userId);
-    if (user == null)
-        return false;
+    public boolean checkAndUpdateAccountState(Long userId) {
+        UserEntity user = userRepository.findUserById(userId);
+        if (user == null)
+            return false;
 
-    boolean isComplete =
-        user.getHasAvatar() &&
-        user.getBiography() != null &&
-        user.getBirthdate() != null &&
-        user.getMunicipality() != null &&
-        user.getName() != null &&
-        user.getPhone() != null &&
-        user.getPostalCode() != null &&
-        user.getStreet() != null &&
-        user.getSurname() != null;
+        boolean isComplete =
+            user.getHasAvatar() &&
+            user.getBiography() != null &&
+            user.getBirthdate() != null &&
+            user.getMunicipality() != null &&
+            user.getName() != null &&
+            user.getPhone() != null &&
+            user.getPostalCode() != null &&
+            user.getStreet() != null &&
+            user.getSurname() != null;
 
-    if (isComplete && user.getAccountState() == AccountState.INCOMPLETE) {
-        user.setAccountState(AccountState.COMPLETE);
-        userRepository.persist(user);
+        if (isComplete && user.getAccountState() == AccountState.INCOMPLETE) {
+            user.setAccountState(AccountState.COMPLETE);
+            userRepository.persist(user);
+        }
+        LOGGER.info("User account state updated for user ID: " + userId + ", new state: " + user.getAccountState());
+        return true;
     }
-    LOGGER.info("User account state updated for user ID: " + userId + ", new state: " + user.getAccountState());
-    return true;
-}
 }

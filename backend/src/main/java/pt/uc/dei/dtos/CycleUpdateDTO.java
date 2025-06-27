@@ -8,7 +8,7 @@ import java.time.LocalDate;
  * Data Transfer Object (DTO) representing a cycle.
  * Stores essential information related to a specific cycle.
  */
-public class CycleDTO {    /**
+public class CycleUpdateDTO {    /**
      * The unique identifier for the cycle.
      * Auto-generated, not required for creation.
      */
@@ -18,14 +18,12 @@ public class CycleDTO {    /**
      * The start date and time of the cycle.
      * Must not be null.
      */
-    @NotNull(message = "Start date missing")
     private LocalDate startDate;
 
     /**
      * The end date and time of the cycle.
      * Must not be null.
      */
-    @NotNull(message = "End date missing")
     private LocalDate endDate;
 
     /**

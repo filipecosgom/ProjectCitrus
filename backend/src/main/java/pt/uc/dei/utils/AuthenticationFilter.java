@@ -7,10 +7,13 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+import pt.uc.dei.annotations.AllowAnonymous;
 import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.services.AuthenticationService;
@@ -22,6 +25,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * JAX-RS authentication filter for validating JWT tokens and user authentication.
+ * Skips authentication for endpoints annotated with @AllowAnonymous.
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
@@ -38,33 +45,22 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Inject
     private ConfigurationService configurationService;
 
+    @Context
+    private ResourceInfo resourceInfo;
+
+    /**
+     * Filters incoming requests to authenticate users based on JWT cookies.
+     *
+     * @param requestContext the request context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        String path = requestContext.getUriInfo().getPath();
-        String method = requestContext.getMethod(); // Get the HTTP method
+        boolean skipAuth = resourceInfo.getResourceMethod().isAnnotationPresent(AllowAnonymous.class)
+                || resourceInfo.getResourceClass().isAnnotationPresent(AllowAnonymous.class);
 
-        System.out.println("Request: " + method + " " + path);
-
-        // Define paths that should always be skipped, regardless of method
-        Set<String> generalSkippedPaths = Set.of("/login", "/logout", "/public", "/activate");
-
-        // Define method-specific skipped paths
-        Map<String, Set<String>> methodSkippedPaths = Map.of(
-                "POST", Set.of("/users", "/activate", "/auth", "/auth/login", "/auth/password-reset"),
-                "GET", Set.of("/enums", "/enums/roles", "/enums/offices", "/auth/password-reset", "/enums/appraisal-states", "/enums/cycle-states"),
-                "PATCH", Set.of("/auth/password-reset")
-        );
-
-        // Check if the path is globally skipped
-        if (generalSkippedPaths.contains(path)) {
+        if (skipAuth) {
             return;
         }
-
-        // Check if the path is skipped for its specific method
-        if (methodSkippedPaths.containsKey(method) && methodSkippedPaths.get(method).contains(path)) {
-            return;
-        }
-
 
         Cookie jwtCookie = requestContext.getCookies().get("jwt");
 

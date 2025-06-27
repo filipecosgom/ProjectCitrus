@@ -8,11 +8,20 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import pt.uc.dei.annotations.ManagerOnly;
 
+/**
+ * JAX-RS filter that restricts access to managers or admins only.
+ * Checks user properties to determine access rights.
+ */
 @ManagerOnly
 @Provider
 @Priority(Priorities.AUTHORIZATION)
 public class ManagerAuthorizationFilter implements ContainerRequestFilter {
 
+    /**
+     * Filters requests to ensure only managers or admins can access the resource.
+     *
+     * @param requestContext the request context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         Boolean isManager = (Boolean) requestContext.getProperty("userIsManager");

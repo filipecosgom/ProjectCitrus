@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
  * Initializes system configuration with default values if none exists.
  * <p>
  * Creates the first configuration entity with default time settings:
- * - Login expiration: 60 minutes
- * - Email verification: 48 hours (2880 minutes)
- * - Password reset: 48 hours (2880 minutes)
+ * <ul>
+ *   <li>Login expiration: 60 minutes</li>
+ *   <li>Email verification: 48 hours (2880 minutes)</li>
+ *   <li>Password reset: 48 hours (2880 minutes)</li>
+ * </ul>
  *
- * @Singleton Ensures single instance manages configuration
+ * Annotated with <b>@Singleton</b> to ensure a single instance manages configuration.
  */
 @Singleton
 public class ConfigurationInitializer {

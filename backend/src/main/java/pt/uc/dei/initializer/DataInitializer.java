@@ -16,10 +16,12 @@ import java.nio.file.Path;
  * Orchestrates system initialization during application startup.
  * <p>
  * Executes in sequence:
- * 1. Admin user creation
- * 2. System configuration setup
+ * <ol>
+ *   <li>Admin user creation</li>
+ *   <li>System configuration setup</li>
+ * </ol>
  *
- * @Singleton @Startup Ensures immediate execution on deployment
+ * Annotated with <b>@Singleton</b> and <b>@Startup</b> to ensure immediate execution on deployment.
  */
 @Singleton
 @Startup

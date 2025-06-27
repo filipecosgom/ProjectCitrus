@@ -10,12 +10,12 @@ import jakarta.ws.rs.core.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import pt.uc.dei.annotations.AllowAnonymous;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.services.*;
 
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import jakarta.inject.Inject;
@@ -66,23 +66,30 @@ public class AuthenticationController {
      *
      * @param user The login request containing email and password.
      * @return HTTP 200 (OK) with a JWT token if authentication is successful,
-     * otherwise HTTP 401 (Unauthorized) if login fails.
+     *         otherwise HTTP 401 (Unauthorized) if login fails.
      */
+    @AllowAnonymous
     @POST
     @Path("/login") // Defines the login endpoint
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response login(@Valid LoginDTO user) {
-        /*if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode", null))
-                    .build();
-        }*/
-        /*if(!authenticationService.checkAuthenticationCode(user)) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Invalid two factor code", "errorInvalidAuthCode", null))
-                    .build();
-        }*/
+        /*
+         * if(!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {
+         * return Response.status(Response.Status.UNAUTHORIZED)
+         * .entity(new ApiResponse(false, "Invalid Auth Code", "errorInvalidAuthCode",
+         * null))
+         * .build();
+         * }
+         */
+        /*
+         * if(!authenticationService.checkAuthenticationCode(user)) {
+         * return Response.status(Response.Status.UNAUTHORIZED)
+         * .entity(new ApiResponse(false, "Invalid two factor code",
+         * "errorInvalidAuthCode", null))
+         * .build();
+         * }
+         */
         // Attempt to authenticate user and generate JWT token
         String token = authenticationService.loginUser(user);
         // If authentication fails, return structured error response
@@ -94,33 +101,53 @@ public class AuthenticationController {
         // Retrieve configuration settings
         ConfigurationDTO configuration = configurationService.getLatestConfiguration();
         // Prepare the response with JWT in headers and structured body
-        Response.ResponseBuilder response = Response.ok(new ApiResponse(true, "Login successful", null, Map.of("token", token)));
+        Response.ResponseBuilder response = Response
+                .ok(new ApiResponse(true, "Login successful", null, Map.of("token", token)));
         response.header("Set-Cookie",
                 "jwt=" + token +
-                        "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60)
-        );
+                        "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60));
         return response.build();
     }
 
+    /**
+     * Handles user logout by clearing the JWT cookie.
+     *
+     * @param response The HTTP servlet response to set the cookie header.
+     * @return HTTP 200 (OK) with a logout confirmation message.
+     */
     @POST
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletResponse response) {
+        LOGGER.info("Logout request received");
         // Use response.header to overwrite the previous cookie setting
         response.setHeader("Set-Cookie",
                 "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
+        LOGGER.info("JWT cookie cleared for logout");
         return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
     }
 
+    /**
+     * Handles requests to initiate a password reset process.
+     * Generates a password reset token and sends it via email if the user exists.
+     *
+     * @param emailJSON The JSON object containing the user's email.
+     * @param language  The language preference from the Accept-Language header.
+     * @return HTTP 201 (Created) if the process is successful, or an error
+     *         response.
+     */
+    @AllowAnonymous
     @POST
     @Path("/password-reset")
     @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
     @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
     public Response requestPasswordReset(JsonObject emailJSON, @HeaderParam("Accept-Language") String language) {
-        if(language.trim() == "" || language.trim() == null) {
+        LOGGER.info("Password reset request received");
+        if (language == null || language.trim().isEmpty()) {
             LOGGER.error("Language is empty");
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Invalid request: missing language parameter", "errorMissingLanguage", null))
+                    .entity(new ApiResponse(false, "Invalid request: missing language parameter",
+                            "errorMissingLanguage", null))
                     .build();
         }
         String email = emailJSON.getString("email");
@@ -131,8 +158,9 @@ public class AuthenticationController {
                     .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
                     .build();
         }
-        if(!userService.findIfUserExists(email)) {
-            LOGGER.error("User not found");
+        if (!userService.findIfUserExists(email)) {
+            LOGGER.warn("Password reset requested for non-existent user: {}", email);
+            // Do not reveal user existence for security reasons
             return Response.status(Response.Status.CREATED)
                     .entity(new ApiResponse(true, "Password reset token generated successfully", null, null))
                     .build();
@@ -148,6 +176,7 @@ public class AuthenticationController {
                         .build();
             }
             emailService.sendPasswordResetEmail(email, token, language);
+            LOGGER.info("Password reset token generated and email sent to {}", email);
 
             return Response.status(Response.Status.CREATED)
                     .entity(new ApiResponse(true, "Password reset token generated successfully", null, null))
@@ -161,27 +190,36 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Checks the validity of a password reset token.
+     *
+     * @param passwordResetTokenValue The token value from the request header.
+     * @return HTTP 200 (OK) if the token is valid, otherwise an error response.
+     */
+    @AllowAnonymous
     @GET
     @Path("/password-reset")
-    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
-    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response checkPasswordReset(@HeaderParam("token") String passwordResetTokenValue) {
+        LOGGER.info("Password reset token validation requested");
         if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {
             LOGGER.error("Password update failed due to missing token");
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
+                    .entity(new ApiResponse(false, "Invalid request: missing password reset token",
+                            "errorMissingPasswordResetToken", null))
                     .build();
         }
         PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);
         PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);
 
-        if(tokenService.isTokenExpired(passwordResetToken)){
+        if (tokenService.isTokenExpired(passwordResetToken)) {
             LOGGER.error("Password reset attempt with token {} expired", passwordResetTokenDTO.getTokenValue());
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Invalid request: expired password reset token", "errorExpiredPasswordResetToken", null))
+                    .entity(new ApiResponse(false, "Invalid request: expired password reset token",
+                            "errorExpiredPasswordResetToken", null))
                     .build();
-        }
-        else {
+        } else {
             LOGGER.info("Password reset token {} valid", passwordResetTokenDTO.getTokenValue());
             return Response.status(Response.Status.OK)
                     .entity(new ApiResponse(true, "Valid password reset token", "successPasswordResetToken", null))
@@ -189,12 +227,21 @@ public class AuthenticationController {
         }
     }
 
-
+    /**
+     * Updates the user's password using a valid password reset token.
+     *
+     * @param passwordResetTokenValue The token value from the request header.
+     * @param newPasswordJSON         The JSON object containing the new password.
+     * @return HTTP 200 (OK) if the password is updated, otherwise an error
+     *         response.
+     */
+    @AllowAnonymous
     @PATCH
     @Path("/password-reset")
-    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
-    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updatePassword(@HeaderParam("token") String passwordResetTokenValue, JsonObject newPasswordJSON) {
+        LOGGER.info("Password update requested");
         String newPassword = newPasswordJSON.getString("password");
         if (newPassword == null || newPassword.isEmpty()) {
             LOGGER.error("Password update failed due to missing password");
@@ -205,36 +252,45 @@ public class AuthenticationController {
         if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {
             LOGGER.error("Password update failed due to missing token");
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Invalid request: missing password reset token", "errorMissingPasswordResetToken", null))
+                    .entity(new ApiResponse(false, "Invalid request: missing password reset token",
+                            "errorMissingPasswordResetToken", null))
                     .build();
         }
         PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);
         PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);
 
-        if(tokenService.isTokenExpired(passwordResetToken)){
+        if (tokenService.isTokenExpired(passwordResetToken)) {
             LOGGER.error("Password reset attempt with token {} expired", passwordResetTokenDTO.getTokenValue());
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Invalid request: expired password reset token", "errorExpiredPasswordResetToken", null))
+                    .entity(new ApiResponse(false, "Invalid request: expired password reset token",
+                            "errorExpiredPasswordResetToken", null))
                     .build();
         }
         if (authenticationService.setNewPassword(passwordResetToken, newPassword)) {
-            LOGGER.info("Password reset successfully");
+            LOGGER.info("Password reset successfully for token {}", passwordResetTokenDTO.getTokenValue());
             return Response.status(Response.Status.OK)
                     .entity(new ApiResponse(true, "Password reset sucessfully", "successPasswordResetSuccess", null))
                     .build();
-        }
-        else {
-            LOGGER.error("Password reset failed");
+        } else {
+            LOGGER.error("Password reset failed for token {}", passwordResetTokenDTO.getTokenValue());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Password reset failed", "errorPasswordResetFailed", null))
                     .build();
         }
     }
 
+    /**
+     * Handles requests for generating a two-factor authentication code.
+     *
+     * @param requester The DTO containing the requester's email.
+     * @return HTTP 200 (OK) with the authentication code, or an error response.
+     */
+    @AllowAnonymous
     @POST
-    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
-    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response requestAuthCode(@Valid RequestAuthCodeDTO requester) {
+        LOGGER.info("Authentication code request received for {}", requester.getEmail());
         try {
             String authCode = authenticationService.getAuthCode(requester);
             if (authCode == null) {
@@ -243,8 +299,10 @@ public class AuthenticationController {
                         .entity(new ApiResponse(false, "Unauthorized request", "errorInvalidCodeRequest", null))
                         .build();
             }
+            LOGGER.info("Authentication code generated for {}", requester.getEmail());
             return Response.status(Response.Status.OK)
-                    .entity(new ApiResponse(true, "Authentication code requested sucessfully", null, Map.of("authCode", authCode)))
+                    .entity(new ApiResponse(true, "Authentication code requested sucessfully", null,
+                            Map.of("authCode", authCode)))
                     .build();
 
         } catch (Exception e) {

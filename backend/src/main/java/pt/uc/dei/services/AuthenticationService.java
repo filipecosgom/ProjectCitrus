@@ -88,6 +88,12 @@ public class AuthenticationService implements Serializable {
         return null;
     }
 
+    /**
+     * Checks the authentication code for a user during login.
+     *
+     * @param loginDTO The login request containing the user's email and authentication code
+     * @return true if the authentication code is valid, false otherwise
+     */
     public boolean checkAuthenticationCode(LoginDTO loginDTO) {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(loginDTO.getEmail());
@@ -100,6 +106,12 @@ public class AuthenticationService implements Serializable {
         return false;
     }
 
+    /**
+     * Retrieves the authenticated user's information as a UserResponseDTO.
+     *
+     * @param id The user ID
+     * @return The UserResponseDTO if found, null otherwise
+     */
     public UserResponseDTO getSelfInformation(Long id) {
         UserEntity user = userRepository.findUserById(id);
         if(user != null) {
@@ -108,6 +120,12 @@ public class AuthenticationService implements Serializable {
         return null;
     }
 
+    /**
+     * Retrieves the authentication code (secret key) for a user if credentials are valid.
+     *
+     * @param requester The DTO containing the user's email and password
+     * @return The authentication code (secret key) if credentials are valid, null otherwise
+     */
     public String getAuthCode(RequestAuthCodeDTO requester) {
         // Retrieve user entity from the database using their email
         UserEntity user = findUserByEmail(requester.getEmail());
@@ -147,6 +165,13 @@ public class AuthenticationService implements Serializable {
         }
     }
 
+    /**
+     * Sets a new password for a user using a valid password reset token.
+     *
+     * @param passwordResetTokenDTO The DTO containing the password reset token
+     * @param newPassword The new password to set
+     * @return true if the password was successfully set, false otherwise
+     */
     @Transactional
     public boolean setNewPassword(PasswordResetTokenDTO passwordResetTokenDTO, String newPassword){
         try {

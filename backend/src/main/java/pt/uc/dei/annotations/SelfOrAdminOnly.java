@@ -9,7 +9,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
 /**
- * Annotation to indicate that a resource or method requires admin privileges.
- * Can be applied to classes or methods to restrict access to administrators only.
+ * Annotation to indicate that a resource or method requires the user to be either the resource owner (self) or an admin.
+ * Can be applied to classes or methods to restrict access accordingly.
  */
-public @interface AdminOnly {}
+public @interface SelfOrAdminOnly {}

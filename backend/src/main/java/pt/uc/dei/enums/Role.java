@@ -2,24 +2,27 @@ package pt.uc.dei.enums;
 
 /**
  * Enum representing different professional roles in an organization.
- * - SOFTWARE_ENGINEER: General software engineering role.
- * - FRONTEND_DEVELOPER: Specializes in client-side/user interface development.
- * - BACKEND_DEVELOPER: Specializes in server-side/application logic development.
- * - FULL_STACK_DEVELOPER: Works on both frontend and backend development.
- * - DATA_SCIENTIST: Works with data analysis, machine learning, and statistics.
- * - PRODUCT_MANAGER: Oversees product development and strategy.
- * - UX_UI_DESIGNER: Focuses on user experience and interface design.
- * - DEVOPS_ENGINEER: Manages infrastructure, deployment, and operations.
- * - SYSTEM_ADMINISTRATOR: Maintains and configures computer systems.
- * - SECURITY_ANALYST: Focuses on information security and risk management.
- * - QA_ENGINEER: Ensures software quality through testing.
- * - BUSINESS_ANALYST: Bridges business needs with technical solutions.
- * - TECH_LEAD: Technical leader of a development team.
- * - CTO: Chief Technology Officer, executive-level technology leader.
- * - CEO: Chief Executive Officer, highest-ranking executive.
- * - HR_MANAGER: Manages human resources department.
- * - HR_SPECIALIST: Specializes in specific HR functions.
- * - RECRUITER: Focuses on talent acquisition and hiring.
+ * <ul>
+ *   <li>WITHOUT_ROLE: No role assigned.</li>
+ *   <li>SOFTWARE_ENGINEER: General software engineering role.</li>
+ *   <li>FRONTEND_DEVELOPER: Specializes in client-side/user interface development.</li>
+ *   <li>BACKEND_DEVELOPER: Specializes in server-side/application logic development.</li>
+ *   <li>FULL_STACK_DEVELOPER: Works on both frontend and backend development.</li>
+ *   <li>DATA_SCIENTIST: Works with data analysis, machine learning, and statistics.</li>
+ *   <li>PRODUCT_MANAGER: Oversees product development and strategy.</li>
+ *   <li>UX_UI_DESIGNER: Focuses on user experience and interface design.</li>
+ *   <li>DEVOPS_ENGINEER: Manages infrastructure, deployment, and operations.</li>
+ *   <li>SYSTEM_ADMINISTRATOR: Maintains and configures computer systems.</li>
+ *   <li>SECURITY_ANALYST: Focuses on information security and risk management.</li>
+ *   <li>QA_ENGINEER: Ensures software quality through testing.</li>
+ *   <li>BUSINESS_ANALYST: Bridges business needs with technical solutions.</li>
+ *   <li>TECH_LEAD: Technical leader of a development team.</li>
+ *   <li>CTO: Chief Technology Officer, executive-level technology leader.</li>
+ *   <li>CEO: Chief Executive Officer, highest-ranking executive.</li>
+ *   <li>HR_MANAGER: Manages human resources department.</li>
+ *   <li>HR_SPECIALIST: Specializes in specific HR functions.</li>
+ *   <li>RECRUITER: Focuses on talent acquisition and hiring.</li>
+ * </ul>
  */
 public enum Role {
     WITHOUT_ROLE("withoutRole"),

@@ -2,8 +2,10 @@ package pt.uc.dei.enums;
 
 /**
  * Enum representing sorting order options.
- * - ASCENDING: Sorts elements from smallest to largest.
- * - DESCENDING: Sorts elements from largest to smallest.
+ * <ul>
+ *   <li>ASCENDING: Sorts elements from smallest to largest.</li>
+ *   <li>DESCENDING: Sorts elements from largest to smallest.</li>
+ * </ul>
  */
 public enum Order {
     ASCENDING("ascending"),

@@ -162,194 +162,386 @@ public class UserEntity implements Serializable {
 
     // Getters and Setters
 
+    /**
+     * Gets the unique identifier for the user.
+     * @return the user ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the user.
+     * @param id the user ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the user's email address.
+     * @return the email address
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets the user's email address.
+     * @param email the email address
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Gets the user's hashed password.
+     * @return the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets the user's hashed password.
+     * @param password the password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Gets whether the user has an avatar.
+     * @return true if the user has an avatar, false otherwise
+     */
     public Boolean getHasAvatar() {
         return hasAvatar;
     }
 
+    /**
+     * Sets whether the user has an avatar.
+     * @param hasAvatar true if the user has an avatar, false otherwise
+     */
     public void setHasAvatar(Boolean hasAvatar) {
         this.hasAvatar = hasAvatar;
     }
 
+    /**
+     * Gets the user's first name.
+     * @return the first name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the user's first name.
+     * @param name the first name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the user's last name.
+     * @return the last name
+     */
     public String getSurname() {
         return surname;
     }
 
+    /**
+     * Sets the user's last name.
+     * @param surname the last name
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    /**
+     * Gets whether the user is an administrator.
+     * @return true if admin, false otherwise
+     */
     public Boolean getUserIsAdmin() {
         return userIsAdmin;
     }
 
+    /**
+     * Sets whether the user is an administrator.
+     * @param userIsAdmin true if admin, false otherwise
+     */
     public void setUserIsAdmin(Boolean userIsAdmin) {
         this.userIsAdmin = userIsAdmin;
     }
 
+    /**
+     * Gets whether the user is deleted (soft delete).
+     * @return true if deleted, false otherwise
+     */
     public Boolean getUserIsDeleted() {
         return userIsDeleted;
     }
 
+    /**
+     * Sets whether the user is deleted (soft delete).
+     * @param userIsDeleted true if deleted, false otherwise
+     */
     public void setUserIsDeleted(Boolean userIsDeleted) {
         this.userIsDeleted = userIsDeleted;
     }
 
+    /**
+     * Gets whether the user is a manager.
+     * @return true if manager, false otherwise
+     */
     public Boolean getUserIsManager() {
         return userIsManager;
     }
 
+    /**
+     * Sets whether the user is a manager.
+     * @param userIsManager true if manager, false otherwise
+     */
     public void setUserIsManager(Boolean userIsManager) {
         this.userIsManager = userIsManager;
     }
 
+    /**
+     * Gets the user's office location.
+     * @return the office
+     */
     public Office getOffice() {
         return office;
     }
 
+    /**
+     * Sets the user's office location.
+     * @param office the office
+     */
     public void setOffice(Office office) {
         this.office = office;
     }
 
+    /**
+     * Gets the user's phone number.
+     * @return the phone number
+     */
     public String getPhone() {
         return phone;
     }
 
+    /**
+     * Sets the user's phone number.
+     * @param phone the phone number
+     */
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    /**
+     * Gets the user's date of birth.
+     * @return the birthdate
+     */
     public LocalDate getBirthdate() {
         return birthdate;
     }
 
+    /**
+     * Sets the user's date of birth.
+     * @param birthdate the birthdate
+     */
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
 
+    /**
+     * Gets the user's street address.
+     * @return the street address
+     */
     public String getStreet() {
         return street;
     }
 
+    /**
+     * Sets the user's street address.
+     * @param street the street address
+     */
     public void setStreet(String street) {
         this.street = street;
     }
 
+    /**
+     * Gets the user's postal code.
+     * @return the postal code
+     */
     public String getPostalCode() {
         return postalCode;
     }
 
+    /**
+     * Sets the user's postal code.
+     * @param postalCode the postal code
+     */
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
 
+    /**
+     * Gets the user's municipality.
+     * @return the municipality
+     */
     public String getMunicipality() {
         return municipality;
     }
 
+    /**
+     * Sets the user's municipality.
+     * @param municipality the municipality
+     */
     public void setMunicipality(String municipality) {
         this.municipality = municipality;
     }
 
+    /**
+     * Gets the user's biography.
+     * @return the biography
+     */
     public String getBiography() {
         return biography;
     }
 
+    /**
+     * Sets the user's biography.
+     * @param biography the biography
+     */
     public void setBiography(String biography) {
         this.biography = biography;
     }
 
+    /**
+     * Gets the user's account state.
+     * @return the account state
+     */
     public AccountState getAccountState() {
         return accountState;
     }
 
+    /**
+     * Sets the user's account state.
+     * @param accountState the account state
+     */
     public void setAccountState(AccountState accountState) {
         this.accountState = accountState;
     }
 
+    /**
+     * Gets the user's role.
+     * @return the role
+     */
     public Role getRole() {
         return role;
     }
 
+    /**
+     * Sets the user's role.
+     * @param role the role
+     */
     public void setRole(Role role) {
         this.role = role;
     }
 
+    /**
+     * Gets the account creation date and time.
+     * @return the creation date and time
+     */
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * Sets the account creation date and time.
+     * @param creationDate the creation date and time
+     */
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Gets the user's secret key.
+     * @return the secret key
+     */
     public String getSecretKey() {
         return secretKey;
     }
 
+    /**
+     * Sets the user's secret key.
+     * @param secretKey the secret key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
 
+    /**
+     * Gets the user's manager (if any).
+     * @return the manager user entity
+     */
     public UserEntity getManagerUser() {
         return managerUser;
     }
 
+    /**
+     * Sets the user's manager.
+     * @param managerUser the manager user entity
+     */
     public void setManagerUser(UserEntity managerUser) {
         this.managerUser = managerUser;
     }
 
+    /**
+     * Gets the list of performance evaluations received by the user.
+     * @return the list of received evaluations
+     */
     public List<AppraisalEntity> getEvaluationsReceived() {
         return evaluationsReceived;
     }
 
+    /**
+     * Sets the list of performance evaluations received by the user.
+     * @param evaluationsReceived the list of received evaluations
+     */
     public void setEvaluationsReceived(List<AppraisalEntity> evaluationsReceived) {
         this.evaluationsReceived = evaluationsReceived;
     }
 
+    /**
+     * Gets the list of performance evaluations given by the user.
+     * @return the list of given evaluations
+     */
     public List<AppraisalEntity> getEvaluationsGiven() {
         return evaluationsGiven;
     }
 
+    /**
+     * Sets the list of performance evaluations given by the user.
+     * @param evaluationsGiven the list of given evaluations
+     */
     public void setEvaluationsGiven(List<AppraisalEntity> evaluationsGiven) {
         this.evaluationsGiven = evaluationsGiven;
     }
 
+    /**
+     * Gets the set of courses completed by the user.
+     * @return the set of completed courses
+     */
     public Set<FinishedCourseEntity> getCompletedCourses() {
         return completedCourses;
     }
 
+    /**
+     * Sets the set of courses completed by the user.
+     * @param completedCourses the set of completed courses
+     */
     public void setCompletedCourses(Set<FinishedCourseEntity> completedCourses) {
         this.completedCourses = completedCourses;
     }

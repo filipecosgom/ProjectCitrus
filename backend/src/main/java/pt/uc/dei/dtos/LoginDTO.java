@@ -1,7 +1,6 @@
 package pt.uc.dei.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -71,10 +70,20 @@ public class LoginDTO {
         this.password = password;
     }
 
+    /**
+     * Retrieves the authentication code for the user.
+     *
+     * @return The authentication code.
+     */
     public String getAuthenticationCode() {
         return authenticationCode;
     }
 
+    /**
+     * Sets the authentication code for the user.
+     *
+     * @param authenticationCode The authentication code to be set.
+     */
     public void setAuthenticationCode(String authenticationCode) {
         this.authenticationCode = authenticationCode;
     }
