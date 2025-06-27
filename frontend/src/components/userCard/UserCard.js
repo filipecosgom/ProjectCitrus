@@ -4,13 +4,15 @@ import styles from "./UserCard.css";
 import UserIcon from "../userIcon/UserIcon";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
-import noManager from '../../assets/photos/noManager.webp';
+import { ImCross } from "react-icons/im";
+import { useIntl } from "react-intl";
 
 const UserCard = ({ user }) => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
   const [loadingAvatar, setLoadingAvatar] = useState(false);
   const [loadingManagerAvatar, setLoadingManagerAvatar] = useState(false);
+  const intl = useIntl();
 
   // Determine status for UserIcon
   const getStatusIcon = () => {
@@ -36,7 +38,7 @@ const UserCard = ({ user }) => {
         userBlobUrl = result.avatar;
         setAvatarUrl(result.avatar);
       } catch {
-        setAvatarUrl(null)
+        setAvatarUrl(null);
       } finally {
         setLoadingAvatar(false);
       }
@@ -102,7 +104,8 @@ const UserCard = ({ user }) => {
       <div className="userCard-office">{user.office.replace(/_/g, " ")}</div>
 
       {/* Manager Section */}
-      {user.manager && (
+      {/* Manager Section */}
+      {user.manager ? (
         <div className="userCard-avatarAndInfoContainer container-manager">
           <div className="userCard-managerAvatar">
             {loadingManagerAvatar ? (
@@ -121,6 +124,11 @@ const UserCard = ({ user }) => {
             </div>
             <div className="userCard-managerEmail">{user.manager.email}</div>
           </div>
+        </div>
+      ) : (
+        <div className="userCard-noManager">
+          <ImCross title="No manager assigned" className="noManager-icon" />
+          <span className="noManager-label">{intl.formatMessage({ id: "userCard" })}</span>
         </div>
       )}
     </div>

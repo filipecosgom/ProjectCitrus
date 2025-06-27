@@ -1,6 +1,8 @@
+// FilterMenu.jsx
 import React, { useState } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { GiSettingsKnobs } from "react-icons/gi";
+import { useIntl } from "react-intl";
 import "./FilterMenu.css";
 
 const FilterMenu = ({
@@ -13,38 +15,43 @@ const FilterMenu = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const intl = useIntl();
 
   const categories = [
     {
-      label: "Search Type",
+      id: "filterMenuSearchType",
       key: "searchType",
-      options: ["email", "name", "role"],
+      options: ["name", "email", "role"],
     },
     {
-      label: "Office",
+      id: "filterMenuOffice",
       key: "office",
       options: ["", ...offices],
     },
     {
-      label: "Account State",
+      id: "filterMenuAccountState",
       key: "accountState",
-      options: accountStates.map(({ label, value }) => ({ label, value })),
-    }
+      options: accountStates, // already [{label,value},…] from parent
+    },
   ];
 
-  const getOptionLabel = (key, option) => {
-    if (key === "accountState" && typeof option === "object")
-      return option.label;
-    if (key === "accountState") {
-      const found = accountStates.find((s) => s.value === option);
-      return found?.label || option;
+  const getOptionLabel = (key, opt) => {
+    if (key === "searchType") {
+      // e.g. "name" → filterMenuOptionName
+      const cap = opt.charAt(0).toUpperCase() + opt.slice(1);
+      return intl.formatMessage({ id: `filterMenuOption${cap}` });
     }
-    if (key === "office") return option || "All Offices";
-    return option;
+    if (key === "office") {
+      return opt
+        ? opt
+        : intl.formatMessage({ id: "filterMenuAllOffices" });
+    }
+    // accountStates: each opt is { label, value }
+    return typeof opt === "object" ? opt.label : opt;
   };
 
-  const getOptionValue = (key, option) =>
-    typeof option === "object" ? option.value : option;
+  const getOptionValue = (key, opt) =>
+    typeof opt === "object" ? opt.value : opt;
 
   return (
     <div className="filterMenu">
@@ -52,12 +59,16 @@ const FilterMenu = ({
         className="filterMenu-button"
         onClick={() => setMenuOpen((prev) => !prev)}
       >
-        <GiSettingsKnobs className="filterMenu-icon" size={28}/>
-
+        <GiSettingsKnobs
+          className="filterMenu-icon"
+          size={28}
+          title={intl.formatMessage({ id: "filterMenuSettings" })}
+        />
       </div>
+
       {menuOpen && (
         <div className="filterMenu-panel">
-          {categories.map(({ label, key, options }) => (
+          {categories.map(({ id, key, options }) => (
             <div
               className="filterMenu-category"
               key={key}
@@ -65,7 +76,8 @@ const FilterMenu = ({
               onMouseLeave={() => setActiveCategory(null)}
             >
               <div className="filterMenu-label">
-                 <FiChevronLeft />{label}
+                <FiChevronLeft aria-hidden="true" />
+                {intl.formatMessage({ id })}
               </div>
 
               {activeCategory === key && (
@@ -78,12 +90,12 @@ const FilterMenu = ({
                       <div
                         key={value}
                         className="filterMenu-item"
+                        data-active={watch(key) === value}
                         onClick={() => {
                           setValue(key, value);
                           handleSubmit(onSubmit)();
                           setMenuOpen(false);
                         }}
-                        data-active={watch(key) === value}
                       >
                         {label}
                       </div>

@@ -1,41 +1,58 @@
+// UserSortControls.jsx
+import React from "react";
 import "./UserSortControls.css";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
+import { useIntl } from "react-intl";
 
 const sortFields = [
-  { label: "Name", key: "name" },
-  { label: "Role", key: "role" },
-  { label: "Office", key: "office" },
-  { label: "Manager", key: "manager" },
+  { id: "userSortControlsName", key: "name" },
+  { id: "userSortControlsRole", key: "role" },
+  { id: "userSortControlsOffice", key: "office" },
+  { id: "userSortControlsManager", key: "manager" },
 ];
 
 const UserSortControls = ({ sortBy, sortOrder, onSortChange }) => {
+  const intl = useIntl();
+
   const handleSort = (field) => {
     if (sortBy === field) {
-      // Toggle direction
       const newOrder = sortOrder === "ascending" ? "descending" : "ascending";
       onSortChange({ sortBy: field, sortOrder: newOrder });
     } else {
-      // New sort field, default to ascending
       onSortChange({ sortBy: field, sortOrder: "ascending" });
     }
   };
 
   return (
     <div className="userSortControls-container">
-      {sortFields.map(({ label, key }) => (
+      {sortFields.map(({ id, key }) => (
         <div
           key={key}
-          className={`userSortControls-div ${key} ${sortBy === key ? "active" : ""}`}
+          className={`userSortControls-div ${key} ${
+            sortBy === key ? "active" : ""
+          }`}
           onClick={() => handleSort(key)}
         >
-          {label}
-          {sortBy === key && (
-            sortOrder === "ascending" ? (
-              <FaSortAlphaDown className="sort-icon" />
+          {/* field label */}
+          {intl.formatMessage({ id })}
+
+          {/* sort-direction icon */}
+          {sortBy === key &&
+            (sortOrder === "ascending" ? (
+              <FaSortAlphaDown
+                className="sort-icon"
+                title={intl.formatMessage({
+                  id: "userSortControlsSortAscending",
+                })}
+              />
             ) : (
-              <FaSortAlphaUp className="sort-icon" />
-            )
-          )}
+              <FaSortAlphaUp
+                className="sort-icon"
+                title={intl.formatMessage({
+                  id: "userSortControlsSortDescending",
+                })}
+              />
+            ))}
         </div>
       ))}
     </div>

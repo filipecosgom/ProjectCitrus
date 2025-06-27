@@ -3,12 +3,14 @@ import { useForm } from "react-hook-form";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
+import { useIntl } from "react-intl";
+
 
 const SearchBar = ({ onSearch, offices = [] }) => {
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
       query: "",
-      searchType: "email",
+      searchType: "name",
       accountState: "",
       office: "",
       limit: 10,
@@ -16,6 +18,16 @@ const SearchBar = ({ onSearch, offices = [] }) => {
   });
   const [showResultsMenu, setShowResultsMenu] = useState(false);
   const limit = [5, 10, 20];
+
+  const intl = useIntl();
+
+  // pre-built list of accountStates with translated labels
+  const accountStates = [
+    { label: intl.formatMessage({ id: "searchBarAllStates" }), value: "" },
+    { label: intl.formatMessage({ id: "searchBarComplete" }), value: "COMPLETE" },
+    { label: intl.formatMessage({ id: "searchBarIncomplete" }), value: "INCOMPLETE" },
+  ];
+
 
   const onSubmit = ({ query, searchType, limit, accountState, office }) => {
     const filters = {
@@ -25,41 +37,52 @@ const SearchBar = ({ onSearch, offices = [] }) => {
     onSearch(query, searchType, limit, filters);
   };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="searchBar-container">
-      {/* Search Input + Button */}
+ return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="searchBar-container"
+    >
       <div className="searchBar-wrapper">
-        <button type="submit" className="searchBar-button">
-          <FiSearch type="submit" className="search-icon" />
+        <button
+          type="submit"
+          className="searchBar-button"
+          aria-label={intl.formatMessage({ id: "searchBarSearchButton" })}
+        >
+          <FiSearch className="search-icon" />
         </button>
 
         <input
           {...register("query")}
-          placeholder={`Search by ${watch("searchType").replace(/_/g, " ")}...`}
+          placeholder={intl.formatMessage(
+            { id: "searchBarPlaceholder" },
+            {
+              type: watch("searchType")
+                .replace(/_/g, " ")
+                .toLowerCase(), // if you need lowercase
+            }
+          )}
           className="searchBar-input"
         />
+
         <FilterMenu
-        watch={watch}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        offices={offices}
-        accountStates={[
-          { label: "All States", value: "" },
-          { label: "Complete", value: "COMPLETE" },
-          { label: "Incomplete", value: "INCOMPLETE" },
-        ]}
-      />
-      </div>  
+          watch={watch}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          offices={offices}
+          accountStates={accountStates}
+        />
+      </div>
 
       <div className="searchBar-dropdown">
         <button
           type="button"
           className="searchBar-dropdownToggle toggle-limit"
-          onClick={() => setShowResultsMenu(!showResultsMenu)}
+          onClick={() => setShowResultsMenu((prev) => !prev)}
           aria-expanded={showResultsMenu}
+          aria-label={intl.formatMessage({ id: "searchBarLimitToggle" })}
         >
-          {watch("limit")}<FiChevronDown />
+          {watch("limit")} <FiChevronDown />
         </button>
 
         {showResultsMenu && (
@@ -68,12 +91,12 @@ const SearchBar = ({ onSearch, offices = [] }) => {
               <div
                 key={num}
                 className="searchBar-menuItem"
+                data-active={watch("limit") === num}
                 onClick={() => {
                   setValue("limit", num);
                   setShowResultsMenu(false);
-                  handleSubmit(onSubmit)(); // 🔄 re-run search
+                  handleSubmit(onSubmit)();
                 }}
-                data-active={watch("limit") === num}
               >
                 {num}
               </div>

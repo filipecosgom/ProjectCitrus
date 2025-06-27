@@ -1,6 +1,6 @@
 import "./Users.css";
 import SearchBar from "../../components/searchbar/Searchbar";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./Users.css";
 import UserCard from "../../components/userCard/UserCard";
 import { handleGetUsers } from "../../handles/handleGetUsers";
@@ -8,6 +8,7 @@ import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
 import UserSortControls from "../../components/userSortControls/UserSortControls";
+import { useIntl } from "react-intl";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -31,6 +32,8 @@ export default function Users() {
     sortBy: "name",
     sortOrder: "ascending",
   });
+  const intl = useIntl();
+
 
   const setSearchingParameters = async (
     query,
@@ -145,7 +148,7 @@ export default function Users() {
         </div>
       ) : users.length === 0 ? (
         <div className="users-empty">
-          <p>No users found matching your criteria</p>
+          <p>{intl.formatMessage({ id: "usersNoResults" })}</p>
         </div>
       ) : (
         <div>

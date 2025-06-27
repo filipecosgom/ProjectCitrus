@@ -18,25 +18,23 @@
     font-size: 1.1rem;
 }
 
-@media (max-width: 768px) {
-    .users-container {
-        padding: 1rem;
-    }
-    
-    .users-grid {
-        grid-template-columns: 1fr;
-    }
-}
 
 /*----------------------------------------*/
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
-.users-container {
+@media (min-width: 480px) {
+    .users-container {
     padding: var(--padding-sm);
 }
+    
+}
+
 /*----------------------------------------*/
 /*----------------DESKTOP------------------*/
 /*----------------------------------------*/
+@media (min-width: 1024px) {
 .users-container {
     padding: var(--padding-lg);
+}
+
 }

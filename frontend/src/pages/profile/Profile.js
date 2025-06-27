@@ -58,10 +58,6 @@ export default function Profile() {
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
-    console.log(intl);
-  }, [intl]);
-
   // Carrega dados do utilizador
   useEffect(() => {
     const fetchUserInformation = async () => {

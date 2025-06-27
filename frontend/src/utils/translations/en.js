@@ -194,5 +194,37 @@ const en = {
   profileTabProfile: "Profile",
   profileTabTraining: "Training",
   profileTabAppraisals: "Appraisals",
+
+  //Users
+  usersNoResults: "No users found matching your criteria",
+
+  //Usercard
+  userCardNoManager: "No manager",
+
+  //Searchbar
+  searchBarSearchButton: "Search",
+  searchBarPlaceholder: "Search by {type}…",
+  searchBarAllStates: "All States",
+  searchBarComplete: "Complete",
+  searchBarIncomplete: "Incomplete",
+  searchBarLimitToggle: "Results per page",
+
+  //Usercontrols
+  userSortControlsName: "Name",
+  userSortControlsRole: "Role",
+  userSortControlsOffice: "Office",
+  userSortControlsManager: "Manager",
+  userSortControlsSortAscending: "Sort ascending",
+  userSortControlsSortDescending: "Sort descending",
+
+  //Filtermenu
+  filterMenuSettings: "Filters",
+  filterMenuSearchType: "Search Type",
+  filterMenuOptionName: "Name",
+  filterMenuOptionEmail: "Email",
+  filterMenuOptionRole: "Role",
+  filterMenuOffice: "Office",
+  filterMenuAllOffices: "All Offices",
+  filterMenuAccountState: "Account State",
 };
 export default en;

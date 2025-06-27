@@ -1,6 +1,7 @@
-/* ===== Base Styles ===== */
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
 .searchBar-container {
-  padding: var(--padding-sm);
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -14,13 +15,11 @@
   box-shadow: var(--shadow-text);
   padding: 0rem 0rem;
   align-items: center;
-  box-sizing: border-box;
 }
 
 .searchBar-input {
   background-color: white;
   flex: 1;
-  width: auto;
   border: none;
   box-shadow: none;
 }
@@ -117,16 +116,14 @@
   cursor: pointer;
 }
 
-/* ===== Responsive Design ===== */
-@media (max-width: 768px) {
-  .searchBar-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
 
   .searchBar-dropdown {
-    width: 100%;
+    width: auto;
   }
 
   .searchBar-dropdownToggle,
@@ -134,14 +131,13 @@
     width: 100%;
   }
 }
-
-@media (max-width: 1024px) {
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
   .searchBar-container {
-  padding: var(--padding-sm);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
+  padding: var(--padding-lg)
 }
+  
 
 }
