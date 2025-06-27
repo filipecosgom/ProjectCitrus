@@ -4,6 +4,7 @@ import { FiChevronLeft } from "react-icons/fi";
 import { GiSettingsKnobs } from "react-icons/gi";
 import { useIntl } from "react-intl";
 import "./FilterMenu.css";
+import useAuthStore from "../../stores/useAuthStore";
 
 const FilterMenu = ({
   watch,
@@ -16,8 +17,9 @@ const FilterMenu = ({
   const [activeCategory, setActiveCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const intl = useIntl();
+  const isAdmin = useAuthStore.getState().user?.userIsAdmin;
 
-  const categories = [
+  const rawCategories  = [
     {
       id: "filterMenuSearchType",
       key: "searchType",
@@ -34,6 +36,11 @@ const FilterMenu = ({
       options: accountStates, // already [{label,value},…] from parent
     },
   ];
+
+  const categories = isAdmin
+  ? rawCategories
+  : rawCategories.filter((cat) => cat.key !== "accountState");
+
 
   const getOptionLabel = (key, opt) => {
     if (key === "searchType") {

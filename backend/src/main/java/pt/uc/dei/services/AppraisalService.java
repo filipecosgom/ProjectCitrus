@@ -10,6 +10,7 @@ import pt.uc.dei.dtos.AppraisalDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
 import pt.uc.dei.entities.AppraisalEntity;
+import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.entities.CycleEntity;

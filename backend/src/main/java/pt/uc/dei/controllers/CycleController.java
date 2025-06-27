@@ -1,12 +1,14 @@
 package pt.uc.dei.controllers;
 
 import jakarta.ejb.EJB;
+import jakarta.resource.spi.AdministeredObject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.uc.dei.annotations.AdminOnly;
 import pt.uc.dei.dtos.CycleDTO;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.services.CycleService;
@@ -23,6 +25,7 @@ import java.util.List;
  * Provides endpoints for CRUD operations on cycles, including
  * creation, retrieval, updating, and filtering functionality.
  */
+@AdminOnly
 @Path("/cycles")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
