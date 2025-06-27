@@ -38,42 +38,82 @@ public class CycleUpdateDTO {    /**
     private Long adminId;
 
     // Getters and Setters
+    /**
+     * Retrieves the unique identifier for the cycle.
+     * @return the cycle ID.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the cycle.
+     * @param id the cycle ID to set.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Retrieves the start date of the cycle.
+     * @return the start date.
+     */
     public LocalDate getStartDate() {
         return startDate;
     }
 
+    /**
+     * Sets the start date of the cycle.
+     * @param startDate the start date to set.
+     */
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * Retrieves the end date of the cycle.
+     * @return the end date.
+     */
     public LocalDate getEndDate() {
         return endDate;
     }
 
+    /**
+     * Sets the end date of the cycle.
+     * @param endDate the end date to set.
+     */
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * Retrieves the current state of the cycle.
+     * @return the cycle state.
+     */
     public CycleState getState() {
         return state;
     }
 
+    /**
+     * Sets the current state of the cycle.
+     * @param state the cycle state to set.
+     */
     public void setState(CycleState state) {
         this.state = state;
     }
 
+    /**
+     * Retrieves the ID of the administrator responsible for the cycle.
+     * @return the admin ID.
+     */
     public Long getAdminId() {
         return adminId;
     }
 
+    /**
+     * Sets the ID of the administrator responsible for the cycle.
+     * @param adminId the admin ID to set.
+     */
     public void setAdminId(Long adminId) {
         this.adminId = adminId;
     }

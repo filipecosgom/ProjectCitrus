@@ -71,58 +71,130 @@ public class NotificationEntity implements Serializable {
 
     // Getters and Setters
 
+    /**
+     * Gets the unique identifier for the notification.
+     * @return the notification ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the notification.
+     * @param id the notification ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the type of notification.
+     * @return the notification type
+     */
     public NotificationType getType() {
         return type;
     }
 
+    /**
+     * Sets the type of notification.
+     * @param type the notification type
+     */
     public void setType(NotificationType type) {
         this.type = type;
     }
 
+    /**
+     * Gets the content of the notification.
+     * @return the notification content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Sets the content of the notification.
+     * @param content the notification content
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
+    /**
+     * Gets the creation date and time of the notification.
+     * @return the creation date and time
+     */
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * Sets the creation date and time of the notification.
+     * @param creationDate the creation date and time
+     */
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Gets whether the notification has been read.
+     * @return true if read, false otherwise
+     */
     public Boolean getRead() {
         return isRead;
     }
 
-    public void setRead(Boolean isRead) {
-        this.isRead = isRead;
+    /**
+     * Sets whether the notification has been read.
+     * @param read true if read, false otherwise
+     */
+    public void setRead(Boolean read) {
+        isRead = read;
     }
 
+    /**
+     * Gets whether the notification has been seen.
+     * @return true if seen, false otherwise
+     */
+    public Boolean getSeen() {
+        return isSeen;
+    }
+
+    /**
+     * Sets whether the notification has been seen.
+     * @param seen true if seen, false otherwise
+     */
+    public void setSeen(Boolean seen) {
+        isSeen = seen;
+    }
+
+    /**
+     * Gets the number of associated messages.
+     * @return the message count
+     */
     public Integer getMessageCount() {
         return messageCount;
     }
 
+    /**
+     * Sets the number of associated messages.
+     * @param messageCount the message count
+     */
     public void setMessageCount(Integer messageCount) {
         this.messageCount = messageCount;
     }
 
+    /**
+     * Gets the user associated with the notification.
+     * @return the user entity
+     */
     public UserEntity getUser() {
         return user;
     }
 
+    /**
+     * Sets the user associated with the notification.
+     * @param user the user entity
+     */
     public void setUser(UserEntity user) {
         this.user = user;
     }

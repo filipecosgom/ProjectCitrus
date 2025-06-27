@@ -95,82 +95,162 @@ public class CourseEntity implements Serializable {
 
     // Getters and Setters
 
+    /**
+     * Gets the unique title of the course.
+     * @return the course title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Sets the unique title of the course.
+     * @param title the course title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Gets the creation date and time of the course.
+     * @return the creation date
+     */
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * Sets the creation date and time of the course.
+     * @param creationDate the creation date
+     */
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Gets the duration of the course in hours.
+     * @return the course duration
+     */
     public Integer getDuration() {
         return duration;
     }
 
+    /**
+     * Sets the duration of the course in hours.
+     * @param duration the course duration
+     */
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
+    /**
+     * Gets the language in which the course is offered.
+     * @return the course language
+     */
     public Language getLanguage() {
         return language;
     }
 
+    /**
+     * Sets the language in which the course is offered.
+     * @param language the course language
+     */
     public void setLanguage(Language language) {
         this.language = language;
     }
 
+    /**
+     * Gets the subject area of the course.
+     * @return the course area
+     */
     public CourseArea getArea() {
         return area;
     }
 
+    /**
+     * Sets the subject area of the course.
+     * @param area the course area
+     */
     public void setArea(CourseArea area) {
         this.area = area;
     }
 
+    /**
+     * Gets the description of the course.
+     * @return the course description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description of the course.
+     * @param description the course description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Gets the URL link to access the course.
+     * @return the course link
+     */
     public String getLink() {
         return link;
     }
 
+    /**
+     * Sets the URL link to access the course.
+     * @param link the course link
+     */
     public void setLink(String link) {
         this.link = link;
     }
 
+    /**
+     * Gets the URL of the image representing the course.
+     * @return the image link
+     */
     public String getImageLink() {
         return imageLink;
     }
 
+    /**
+     * Sets the URL of the image representing the course.
+     * @param imageLink the image link
+     */
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
 
+    /**
+     * Gets whether the course is active.
+     * @return true if the course is active, false otherwise
+     */
     public Boolean getActive() {
         return isActive;
     }
 
+    /**
+     * Sets whether the course is active.
+     * @param active true if the course is active, false otherwise
+     */
     public void setActive(Boolean active) {
         isActive = active;
     }
 
+    /**
+     * Gets the administrator responsible for managing the course.
+     * @return the admin user entity
+     */
     public UserEntity getAdmin() {
         return admin;
     }
 
+    /**
+     * Sets the administrator responsible for managing the course.
+     * @param admin the admin user entity
+     */
     public void setAdmin(UserEntity admin) {
         this.admin = admin;
     }

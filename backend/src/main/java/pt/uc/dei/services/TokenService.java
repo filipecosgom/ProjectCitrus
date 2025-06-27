@@ -92,6 +92,13 @@ public class TokenService {
         return activationToken.getTokenValue();
     }
 
+    /**
+     * Creates and persists a new password reset token for a user by email.
+     * Deletes any existing tokens for the user before creating a new one.
+     *
+     * @param email The email address of the user
+     * @return The generated password reset token value, or null if user not found
+     */
     @Transactional
     public String createNewPasswordResetToken(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
@@ -168,6 +175,12 @@ public class TokenService {
         return activationTokenEntityToActivationTokenDTO(activationToken);
     }
 
+    /**
+     * Retrieves a password reset token entity by its value and maps to a DTO.
+     *
+     * @param passwordResetTokenDTO The DTO containing the token value
+     * @return The mapped PasswordResetTokenDTO, or null if not found
+     */
     public PasswordResetTokenDTO getPasswordResetTokenByValue(PasswordResetTokenDTO passwordResetTokenDTO) {
         PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.getTokenFromValue(passwordResetTokenDTO.getTokenValue());
         return passwordResetTokenEntityToPasswordResetTokenDTO(passwordResetToken);

@@ -2,14 +2,16 @@ package pt.uc.dei.enums;
 
 /**
  * Enum representing different office locations.
- * - NO_OFFICE: no office yet atributted
- * - LISBON: Office located in Lisbon, Portugal.
- * - COIMBRA: Office located in Coimbra, Portugal.
- * - OPORTO: Office located in Oporto (Porto), Portugal.
- * - VISEU: Office located in Viseu, Portugal.
- * - MUNICH: Office located in Munich, Germany.
- * - BOSTON: Office located in Boston, USA.
- * - SOUTHAMPTON: Office located in Southampton, UK.
+ * <ul>
+ *   <li>NO_OFFICE: No office yet attributed.</li>
+ *   <li>LISBON: Office located in Lisbon, Portugal.</li>
+ *   <li>COIMBRA: Office located in Coimbra, Portugal.</li>
+ *   <li>OPORTO: Office located in Oporto (Porto), Portugal.</li>
+ *   <li>VISEU: Office located in Viseu, Portugal.</li>
+ *   <li>MUNICH: Office located in Munich, Germany.</li>
+ *   <li>BOSTON: Office located in Boston, USA.</li>
+ *   <li>SOUTHAMPTON: Office located in Southampton, UK.</li>
+ * </ul>
  */
 public enum Office {
     NO_OFFICE("noOffice"),

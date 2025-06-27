@@ -30,34 +30,66 @@ public class ActivationTokenDTO {
 
     // Getters and Setters
 
+    /**
+     * Retrieves the unique identifier for the activation token.
+     * @return the activation token ID.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the activation token.
+     * @param id the activation token ID to set.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Retrieves the value of the activation token.
+     * @return the activation token value.
+     */
     public String getTokenValue() {
         return tokenValue;
     }
 
+    /**
+     * Sets the value of the activation token.
+     * @param tokenValue the activation token value to set.
+     */
     public void setTokenValue(String tokenValue) {
         this.tokenValue = tokenValue;
     }
 
+    /**
+     * Retrieves the creation date and time of the activation token.
+     * @return the creation date and time.
+     */
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * Sets the creation date and time of the activation token.
+     * @param creationDate the creation date and time to set.
+     */
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Retrieves the temporary user associated with this activation token.
+     * @return the temporary user.
+     */
     public TemporaryUserDTO getTemporaryUser() {
         return temporaryUser;
     }
 
+    /**
+     * Sets the temporary user associated with this activation token.
+     * @param temporaryUser the temporary user to set.
+     */
     public void setTemporaryUser(TemporaryUserDTO temporaryUser) {
         this.temporaryUser = temporaryUser;
     }

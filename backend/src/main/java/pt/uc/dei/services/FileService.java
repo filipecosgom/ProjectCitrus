@@ -67,6 +67,13 @@ public class FileService {
         }
     }
 
+    /**
+     * Saves a file with a size limit, ensuring it does not exceed the maximum allowed bytes.
+     *
+     * @param inputStream The input stream of the file to be saved
+     * @param filename    The desired filename for the saved file
+     * @return true if the file was saved successfully, false if it exceeds the size limit
+     */
     public static boolean saveFileWithSizeLimit(InputStream inputStream, String filename) {
         Path filePath = null;
         try {
@@ -111,6 +118,12 @@ public class FileService {
         }
     }
 
+    /**
+     * Resolves the avatar file path for a user by ID, checking all supported extensions.
+     *
+     * @param id The user ID
+     * @return The Path to the avatar file if found, or null if not found
+     */
     public static Path resolveAvatarPath(Long id) {
         Path avatarDir = getAvatarStoragePath();
         List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
@@ -125,7 +138,12 @@ public class FileService {
         return null;
     }
 
-
+    /**
+     * Removes all existing avatar files for a user by ID.
+     *
+     * @param id The user ID
+     * @return true if all files were removed successfully, false otherwise
+     */
     public static boolean removeExistingFiles(Long id) {
         try {
             Path avatarDir = getAvatarStoragePath();
@@ -143,6 +161,12 @@ public class FileService {
         }
     }
 
+    /**
+     * Gets the MIME type of a file by its path.
+     *
+     * @param filePath The path to the file
+     * @return The MIME type string, or null if not detected
+     */
     public static String getMimeType(Path filePath) {
         try {
             return Files.probeContentType(filePath);
@@ -152,12 +176,33 @@ public class FileService {
         }
     }
 
+    /**
+     * Gets the MIME type of a user's avatar file by user ID.
+     *
+     * @param id The user ID
+     * @return The MIME type string, or null if not found
+     */
     public static String getMimeTypeForUser(Long id) {
         Path path = resolveAvatarPath(id);
         if (path != null) {
             return getMimeType(path);
         }
         return null;
+    }
+
+    /**
+     * Gets cache metadata for a file, including last modified time, size, and MIME type.
+     *
+     * @param filePath The path to the file
+     * @return CacheData object with file metadata
+     * @throws IOException if file attributes cannot be read
+     */
+    public static CacheData getCacheData(Path filePath) throws IOException {
+        return new CacheData(
+                Files.getLastModifiedTime(filePath).toMillis(),
+                Files.size(filePath),
+                Files.probeContentType(filePath)
+        );
     }
 
     public static class CacheData {
@@ -171,13 +216,4 @@ public class FileService {
             this.mimeType = mimeType;
         }
     }
-
-    public static CacheData getCacheData(Path filePath) throws IOException {
-        return new CacheData(
-                Files.getLastModifiedTime(filePath).toMillis(),
-                Files.size(filePath),
-                Files.probeContentType(filePath)
-        );
-    }
-
 }

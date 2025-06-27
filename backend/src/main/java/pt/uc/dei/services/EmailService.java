@@ -94,6 +94,13 @@ public class EmailService {
     }
 
 
+    /**
+     * Sends a password reset email to the specified recipient.
+     *
+     * @param recipientEmail The email address of the recipient
+     * @param passwordResetToken The password reset token for the recipient's account
+     * @param language The language code for the email template
+     */
     public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken, String language) {
         try {
             // Retrieve SMTP properties for configuring email session

@@ -9,10 +9,19 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import pt.uc.dei.annotations.AdminOnly;
 
+/**
+ * JAX-RS filter that restricts access to admin users only.
+ * Checks user properties to determine admin access rights.
+ */
 @AdminOnly
 @Provider
 @Priority(Priorities.AUTHORIZATION)
 public class AdminAuthorizationFilter implements ContainerRequestFilter {
+    /**
+     * Filters requests to ensure only admin users can access the resource.
+     *
+     * @param requestContext the request context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         Boolean isAdmin = (Boolean) requestContext.getProperty("userIsAdmin");

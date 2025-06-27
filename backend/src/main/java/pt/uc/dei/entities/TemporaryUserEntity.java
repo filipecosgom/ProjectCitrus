@@ -67,43 +67,83 @@ public class TemporaryUserEntity implements Serializable {
 
     // Getters and Setters
 
+    /**
+     * Gets the unique identifier for the temporary user account.
+     * @return the account ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the temporary user account.
+     * @param id the account ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the email address for account verification.
+     * @return the email address
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets the email address for account verification.
+     * @param email the email address
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Gets the encrypted password for the temporary account.
+     * @return the encrypted password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets the encrypted password for the temporary account.
+     * @param password the encrypted password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public ActivationTokenEntity getActivationToken() {
-        return activationToken;
-    }
-
-    public void setActivationToken(ActivationTokenEntity activationToken) {
-        this.activationToken = activationToken;
-    }
-
+    /**
+     * Gets the secret key for the temporary account.
+     * @return the secret key
+     */
     public String getSecretKey() {
         return secretKey;
     }
 
+    /**
+     * Sets the secret key for the temporary account.
+     * @param secretKey the secret key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    /**
+     * Gets the activation token associated with this temporary account.
+     * @return the activation token entity
+     */
+    public ActivationTokenEntity getActivationToken() {
+        return activationToken;
+    }
+
+    /**
+     * Sets the activation token associated with this temporary account.
+     * @param activationToken the activation token entity
+     */
+    public void setActivationToken(ActivationTokenEntity activationToken) {
+        this.activationToken = activationToken;
     }
 }

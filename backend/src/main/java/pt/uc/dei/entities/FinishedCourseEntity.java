@@ -43,34 +43,66 @@ public class FinishedCourseEntity implements Serializable {
 
     // ===================== Getters & Setters =====================
 
+    /**
+     * Gets the unique identifier for this course completion record.
+     * @return the record ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for this course completion record.
+     * @param id the record ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the user who completed the course.
+     * @return the user entity
+     */
     public UserEntity getUser() {
         return user;
     }
 
+    /**
+     * Sets the user who completed the course.
+     * @param user the user entity
+     */
     public void setUser(UserEntity user) {
         this.user = user;
     }
 
+    /**
+     * Gets the completed course.
+     * @return the course entity
+     */
     public CourseEntity getCourse() {
         return course;
     }
 
+    /**
+     * Sets the completed course.
+     * @param course the course entity
+     */
     public void setCourse(CourseEntity course) {
         this.course = course;
     }
 
+    /**
+     * Gets the date when the course was completed.
+     * @return the completion date
+     */
     public LocalDate getCompletionDate() {
         return completionDate;
     }
 
+    /**
+     * Sets the date when the course was completed.
+     * @param completionDate the completion date
+     */
     public void setCompletionDate(LocalDate completionDate) {
         this.completionDate = completionDate;
     }

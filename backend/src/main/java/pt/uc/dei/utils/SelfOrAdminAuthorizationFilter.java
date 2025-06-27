@@ -12,6 +12,10 @@ import pt.uc.dei.annotations.SelfOrAdminOnly;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.utils.ApiResponse;
 
+/**
+ * JAX-RS filter that allows access only to the user themselves or an admin.
+ * Checks the path parameter 'id' against the authenticated user's ID and admin status.
+ */
 @SelfOrAdminOnly
 @Provider
 @Priority(Priorities.AUTHORIZATION)
@@ -20,6 +24,11 @@ public class SelfOrAdminAuthorizationFilter implements ContainerRequestFilter {
     @Context
     private ResourceInfo resourceInfo;
 
+    /**
+     * Filters requests to ensure only the user themselves or an admin can access the resource.
+     *
+     * @param requestContext the request context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         UserResponseDTO user = (UserResponseDTO) requestContext.getProperty("user");

@@ -78,11 +78,9 @@ public class ConfigurationService {
 
     /**
      * Creates a new configuration entry in the database.
-     * <p>
-     * Constructs a {@link ConfigurationEntity} object and persists it using {@link ConfigurationRepository}.
      *
-     * @param configurationDto The configuration data transfer object containing the necessary configuration details.
-     * @return {@code true} if the configuration was successfully created, {@code false} otherwise.
+     * @param configurationDto The configuration data transfer object containing the necessary configuration details
+     * @return true if the configuration was successfully created, false otherwise
      */
     public boolean createNewConfiguration(ConfigurationDTO configurationDto) {
         try {

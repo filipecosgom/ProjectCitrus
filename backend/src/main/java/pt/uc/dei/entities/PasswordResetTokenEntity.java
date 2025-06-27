@@ -58,34 +58,66 @@ public class PasswordResetTokenEntity implements Serializable {
 
     // Getters and Setters
 
+    /**
+     * Gets the unique identifier for the password reset token.
+     * @return the token ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for the password reset token.
+     * @param id the token ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the value of the password reset token.
+     * @return the token value
+     */
     public String getTokenValue() {
         return tokenValue;
     }
 
+    /**
+     * Sets the value of the password reset token.
+     * @param tokenValue the token value
+     */
     public void setTokenValue(String tokenValue) {
         this.tokenValue = tokenValue;
     }
 
+    /**
+     * Gets the creation date and time of the token.
+     * @return the creation date and time
+     */
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * Sets the creation date and time of the token.
+     * @param creationDate the creation date and time
+     */
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Gets the user associated with this password reset token.
+     * @return the user entity
+     */
     public UserEntity getUser() {
         return user;
     }
 
+    /**
+     * Sets the user associated with this password reset token.
+     * @param user the user entity
+     */
     public void setUser(UserEntity user) {
         this.user = user;
     }

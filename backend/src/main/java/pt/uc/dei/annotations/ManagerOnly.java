@@ -12,4 +12,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
+/**
+ * Annotation to indicate that a resource or method requires manager privileges.
+ * Can be applied to classes or methods to restrict access to managers only.
+ */
 public @interface ManagerOnly {}

@@ -25,6 +25,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * JAX-RS authentication filter for validating JWT tokens and user authentication.
+ * Skips authentication for endpoints annotated with @AllowAnonymous.
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
@@ -44,6 +48,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Context
     private ResourceInfo resourceInfo;
 
+    /**
+     * Filters incoming requests to authenticate users based on JWT cookies.
+     *
+     * @param requestContext the request context
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         boolean skipAuth = resourceInfo.getResourceMethod().isAnnotationPresent(AllowAnonymous.class)

@@ -48,43 +48,82 @@ public class CreateAppraisalDTO {
     @Max(value = 4, message = "Score must be at most 4")
     private Integer score;
 
-    // Getters and Setters
+    /**
+     * Retrieves the ID of the user being appraised.
+     * @return the appraised user ID.
+     */
     public Long getAppraisedUserId() {
         return appraisedUserId;
     }
 
+    /**
+     * Sets the ID of the user being appraised.
+     * @param appraisedUserId the appraised user ID to set.
+     */
     public void setAppraisedUserId(Long appraisedUserId) {
         this.appraisedUserId = appraisedUserId;
     }
 
+    /**
+     * Retrieves the ID of the user performing the appraisal.
+     * @return the appraising user ID.
+     */
     public Long getAppraisingUserId() {
         return appraisingUserId;
     }
 
+    /**
+     * Sets the ID of the user performing the appraisal.
+     * @param appraisingUserId the appraising user ID to set.
+     */
     public void setAppraisingUserId(Long appraisingUserId) {
         this.appraisingUserId = appraisingUserId;
     }
 
+    /**
+     * Retrieves the feedback provided by the appraising user.
+     * @return the feedback string.
+     */
     public String getFeedback() {
         return feedback;
     }
 
+    /**
+     * Sets the feedback provided by the appraising user.
+     * @param feedback the feedback string to set.
+     */
     public void setFeedback(String feedback) {
         this.feedback = feedback;
     }
 
+    /**
+     * Retrieves the ID of the cycle in which the appraisal occurs.
+     * @return the cycle ID.
+     */
     public Long getCycleId() {
         return cycleId;
     }
 
+    /**
+     * Sets the ID of the cycle in which the appraisal occurs.
+     * @param cycleId the cycle ID to set.
+     */
     public void setCycleId(Long cycleId) {
         this.cycleId = cycleId;
     }
 
+    /**
+     * Retrieves the score assigned during the appraisal.
+     * @return the appraisal score.
+     */
     public Integer getScore() {
         return score;
     }
 
+    /**
+     * Sets the score assigned during the appraisal.
+     * @param score the appraisal score to set.
+     */
     public void setScore(Integer score) {
         this.score = score;
     }

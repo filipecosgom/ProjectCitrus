@@ -18,10 +18,12 @@ import java.time.LocalDateTime;
  * Creates the default administrator account during system startup.
  * <p>
  * Ensures there's always at least one admin user with credentials:
- * - Email: citrus.apiteam@gmail.com
- * - Password: admin (encrypted)
+ * <ul>
+ *   <li>Email: citrus.apiteam@gmail.com</li>
+ *   <li>Password: admin (encrypted)</li>
+ * </ul>
  *
- * @Singleton Guarantees single initialization
+ * Annotated with <b>@Singleton</b> to guarantee single initialization.
  */
 @Singleton
 public class UserInitializer {

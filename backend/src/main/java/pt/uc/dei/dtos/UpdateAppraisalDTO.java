@@ -35,26 +35,50 @@ public class UpdateAppraisalDTO {
     private Integer score;
 
     // Getters and Setters
+    /**
+     * Retrieves the ID of the appraisal to update.
+     * @return the appraisal ID.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the ID of the appraisal to update.
+     * @param id the appraisal ID to set.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Retrieves the updated feedback provided by the appraising user.
+     * @return the feedback string.
+     */
     public String getFeedback() {
         return feedback;
     }
 
+    /**
+     * Sets the updated feedback provided by the appraising user.
+     * @param feedback the feedback string to set.
+     */
     public void setFeedback(String feedback) {
         this.feedback = feedback;
     }
 
+    /**
+     * Retrieves the updated score assigned during the appraisal.
+     * @return the appraisal score.
+     */
     public Integer getScore() {
         return score;
     }
 
+    /**
+     * Sets the updated score assigned during the appraisal.
+     * @param score the appraisal score to set.
+     */
     public void setScore(Integer score) {
         this.score = score;
     }

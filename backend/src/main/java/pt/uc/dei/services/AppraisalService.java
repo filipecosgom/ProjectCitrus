@@ -125,10 +125,10 @@ public class AppraisalService implements Serializable {
     }
 
     /**
-     * Updates an existing appraisal.
+     * Updates an existing appraisal with the provided data.
      *
      * @param updateAppraisalDTO The DTO containing updated appraisal data
-     * @return The updated appraisal DTO
+     * @return The updated AppraisalDTO
      * @throws IllegalArgumentException If appraisal not found
      * @throws IllegalStateException If appraisal cannot be modified
      */
@@ -159,10 +159,10 @@ public class AppraisalService implements Serializable {
     }
 
     /**
-     * Retrieves an appraisal by its ID.
+     * Retrieves an appraisal by its ID and maps to a DTO.
      *
      * @param id The appraisal ID
-     * @return The appraisal DTO
+     * @return The mapped AppraisalDTO, or throws if not found
      * @throws IllegalArgumentException If appraisal not found
      */
     public AppraisalDTO getAppraisalById(Long id) {
@@ -180,7 +180,7 @@ public class AppraisalService implements Serializable {
      * Retrieves all appraisals for a specific user (as appraised).
      *
      * @param userId The user ID
-     * @return List of appraisal DTOs
+     * @return List of AppraisalDTOs for the user
      */
     public List<AppraisalDTO> getAppraisalsByAppraisedUser(Long userId) {
         LOGGER.debug("Retrieving appraisals for appraised user ID: {}", userId);

@@ -2,6 +2,7 @@ package pt.uc.dei.mapper;
 
 import org.mapstruct.*;
 import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.dtos.CycleUpdateDTO;
 import pt.uc.dei.entities.CycleEntity;
 
 import java.util.List;
@@ -71,11 +72,11 @@ public interface CycleMapper {
      * Updates an existing CycleEntity with values from a CycleDTO.
      * Useful for partial updates while preserving existing relationships.
      *
-     * @param cycleDTO the DTO containing the new values
+     * @param cycleUpdateDTO the DTO containing the new values
      * @param cycleEntity the existing entity to update
      */
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "state", target = "state")
-    void updateEntityFromDto(CycleDTO cycleDTO, @MappingTarget CycleEntity cycleEntity);
+    void updateEntityFromDto(CycleUpdateDTO cycleUpdateDTO, @MappingTarget CycleEntity cycleEntity);
 }

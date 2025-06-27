@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.dtos.CycleUpdateDTO;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.CycleState;
@@ -96,18 +97,18 @@ public class CycleService implements Serializable {
     }
 
     /**
-     * Updates an existing cycle.
+     * Updates an existing cycle with the provided data.
      *
-     * @param cycleDTO The DTO containing updated cycle data
-     * @return The updated cycle DTO
+     * @param cycleUpdateDTO The DTO containing updated cycle data
+     * @return The updated CycleDTO
      * @throws IllegalArgumentException If cycle not found or validation fails
      * @throws IllegalStateException If cycle cannot be modified
      */
     @Transactional
-    public CycleDTO updateCycle(CycleDTO cycleDTO) {
-        LOGGER.info("Updating cycle with ID: {}", cycleDTO.getId());
+    public CycleDTO updateCycle(CycleUpdateDTO cycleUpdateDTO) {
+        LOGGER.info("Updating cycle with ID: {}", cycleUpdateDTO.getId());
 
-        CycleEntity cycle = cycleRepository.find(cycleDTO.getId());
+        CycleEntity cycle = cycleRepository.find(cycleUpdateDTO.getId());
         if (cycle == null) {
             throw new IllegalArgumentException("Cycle not found");
         }
@@ -117,18 +118,18 @@ public class CycleService implements Serializable {
         }
 
         // Validate dates
-        if (cycleDTO.getStartDate().isAfter(cycleDTO.getEndDate())) {
+        if (cycleUpdateDTO.getStartDate().isAfter(cycleUpdateDTO.getEndDate())) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
         // Check for overlapping cycles (excluding current cycle)
-        if (cycleRepository.hasOverlappingCycles(cycleDTO.getStartDate(), cycleDTO.getEndDate(), cycle.getId())) {
+        if (cycleRepository.hasOverlappingCycles(cycleUpdateDTO.getStartDate(), cycleUpdateDTO.getEndDate(), cycle.getId())) {
             throw new IllegalStateException("Another cycle already exists for the specified date range");
         }
 
         // Update admin if provided
-        if (cycleDTO.getAdminId() != null && !cycleDTO.getAdminId().equals(cycle.getAdmin().getId())) {
-            UserEntity newAdmin = userRepository.find(cycleDTO.getAdminId());
+        if (cycleUpdateDTO.getAdminId() != null && !cycleUpdateDTO.getAdminId().equals(cycle.getAdmin().getId())) {
+            UserEntity newAdmin = userRepository.find(cycleUpdateDTO.getAdminId());
             if (newAdmin == null) {
                 throw new IllegalArgumentException("New admin user not found");
             }
@@ -136,7 +137,7 @@ public class CycleService implements Serializable {
         }
 
         // Update other fields
-        cycleMapper.updateEntityFromDto(cycleDTO, cycle);
+        cycleMapper.updateEntityFromDto(cycleUpdateDTO, cycle);
 
         cycleRepository.merge(cycle);
         LOGGER.info("Updated cycle with ID: {}", cycle.getId());
@@ -308,7 +309,7 @@ public class CycleService implements Serializable {
     }
 
     /**
-     * Deletes a cycle by its ID.
+     * Deletes a cycle by its ID if it has not started yet.
      *
      * @param cycleId The cycle ID
      * @throws IllegalArgumentException If cycle not found
@@ -336,11 +337,9 @@ public class CycleService implements Serializable {
     }
 
     /**
-     * Automatically closes expired cycles.
-     * This method can be called by a scheduled job to automatically close
-     * cycles that have passed their end date.
+     * Automatically closes all expired cycles (end date in the past).
      *
-     * @return Number of cycles that were closed
+     * @return The number of cycles that were closed
      */
     @Transactional
     public int closeExpiredCycles() {

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.annotations.AdminOnly;
 import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.dtos.CycleUpdateDTO;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.services.CycleService;
 import pt.uc.dei.utils.ApiResponse;
@@ -83,15 +84,15 @@ public class CycleController {
     /**
      * Updates an existing cycle.
      *
-     * @param cycleDTO The cycle update data
+     * @param cycleUpdateDTO The cycle update data
      * @return Response with the updated cycle DTO
      */
-    @PUT
-    public Response updateCycle(@Valid CycleDTO cycleDTO) {
+    @PATCH
+    public Response updateCycle(@Valid CycleUpdateDTO cycleUpdateDTO) {
         try {
-            LOGGER.info("Updating cycle with ID: {}", cycleDTO.getId());
+            LOGGER.info("Updating cycle with ID: {}", cycleUpdateDTO.getId());
 
-            CycleDTO updatedCycle = cycleService.updateCycle(cycleDTO);
+            CycleDTO updatedCycle = cycleService.updateCycle(cycleUpdateDTO);
             return Response.ok(new ApiResponse(true, "Cycle updated successfully", "success", updatedCycle))
                     .build();
 

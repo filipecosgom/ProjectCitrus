@@ -95,6 +95,25 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         }
     }
 
+    /**
+     * Retrieves a paginated and filtered list of users based on provided criteria.
+     * <p>
+     * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
+     * Allows sorting by any parameter and supports pagination.
+     *
+     * @param id User ID to filter (optional)
+     * @param email Email to filter (optional, supports quoted and normalized search)
+     * @param name Name or surname to filter (optional, supports quoted and normalized search)
+     * @param phone Phone number to filter (optional)
+     * @param accountState Account state to filter (optional)
+     * @param roleStr Role to filter (optional, supports quoted and normalized search)
+     * @param office Office to filter (optional)
+     * @param parameter Sorting parameter (optional)
+     * @param order Sorting order (ASCENDING or DESCENDING)
+     * @param offset Pagination offset (start position)
+     * @param limit Pagination limit (max results)
+     * @return List of users matching the criteria
+     */
     public List<UserEntity> getUsers(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office, Parameter parameter, Order order, int offset, int limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -177,6 +196,20 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         return typedQuery.getResultList();
     }
 
+    /**
+     * Counts the total number of users matching the provided filters.
+     * <p>
+     * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
+     *
+     * @param id User ID to filter (optional)
+     * @param email Email to filter (optional, supports quoted and normalized search)
+     * @param name Name or surname to filter (optional, supports quoted and normalized search)
+     * @param phone Phone number to filter (optional)
+     * @param accountState Account state to filter (optional)
+     * @param roleStr Role to filter (optional, supports quoted and normalized search)
+     * @param office Office to filter (optional)
+     * @return Total count of users matching the criteria
+     */
     public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();

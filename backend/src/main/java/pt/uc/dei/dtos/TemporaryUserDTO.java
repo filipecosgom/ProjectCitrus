@@ -35,7 +35,6 @@ public class TemporaryUserDTO {
 
     /**
      * Retrieves the user ID.
-     *
      * @return The user ID.
      */
     public Long getId() {
@@ -44,7 +43,6 @@ public class TemporaryUserDTO {
 
     /**
      * Sets the user ID.
-     *
      * @param id The user ID to be set.
      */
     public void setId(Long id) {
@@ -53,7 +51,6 @@ public class TemporaryUserDTO {
 
     /**
      * Retrieves the user's email address.
-     *
      * @return The email address.
      */
     public String getEmail() {
@@ -62,7 +59,6 @@ public class TemporaryUserDTO {
 
     /**
      * Sets the user's email address.
-     *
      * @param email The email address to be set.
      */
     public void setEmail(String email) {
@@ -71,7 +67,6 @@ public class TemporaryUserDTO {
 
     /**
      * Retrieves the user's password.
-     *
      * @return The hashed password.
      */
     public String getPassword() {
@@ -80,17 +75,24 @@ public class TemporaryUserDTO {
 
     /**
      * Sets the user's password.
-     *
      * @param password The password to be set.
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Retrieves the secret key associated with the user.
+     * @return The secret key.
+     */
     public String getSecretKey() {
         return secretKey;
     }
 
+    /**
+     * Sets the secret key associated with the user.
+     * @param secretKey The secret key to be set.
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }

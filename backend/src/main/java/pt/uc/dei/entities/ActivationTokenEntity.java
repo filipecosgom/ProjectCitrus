@@ -125,10 +125,20 @@ public class ActivationTokenEntity implements Serializable {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Retrieves the temporary user account associated with this activation token.
+     *
+     * @return The associated temporary user entity.
+     */
     public TemporaryUserEntity getTemporaryUser() {
         return temporaryUser;
     }
 
+    /**
+     * Sets the temporary user account associated with this activation token.
+     *
+     * @param temporaryUser The temporary user entity to associate.
+     */
     public void setTemporaryUser(TemporaryUserEntity temporaryUser) {
         this.temporaryUser = temporaryUser;
     }

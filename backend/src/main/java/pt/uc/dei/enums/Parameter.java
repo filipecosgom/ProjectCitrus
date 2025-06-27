@@ -2,10 +2,16 @@ package pt.uc.dei.enums;
 
 /**
  * Enum representing different parameters for sorting or filtering.
- * - FIRST_NAME: Represents a user's first name.
- * - SURNAME: Represents a user's surname.
- * - EMAIL: Represents a user's email address.
- * - DATE: Represents a date-related parameter.
+ * <ul>
+ *   <li>ID: Unique identifier.</li>
+ *   <li>FIRST_NAME: User's first name.</li>
+ *   <li>SURNAME: User's surname.</li>
+ *   <li>EMAIL: User's email address.</li>
+ *   <li>DATE: Date-related parameter.</li>
+ *   <li>ROLE: User's role.</li>
+ *   <li>OFFICE: User's office location.</li>
+ *   <li>MANAGER: User's manager name.</li>
+ * </ul>
  */
 public enum Parameter {
     ID("id"),
