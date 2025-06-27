@@ -43,6 +43,14 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
         super(CycleEntity.class);
     }
 
+    public List<CycleEntity> getAllCycles() {
+        TypedQuery<CycleEntity> query = em.createQuery(
+                "SELECT DISTINCT c FROM CycleEntity c LEFT JOIN FETCH c.evaluations",
+                CycleEntity.class
+        );
+        return query.getResultList();
+    }
+
     /**
      * Finds all cycles with a specific state.
      *
@@ -225,7 +233,10 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<CycleEntity> cq = cb.createQuery(CycleEntity.class);
             Root<CycleEntity> cycle = cq.from(CycleEntity.class);
-            
+            cycle.fetch("evaluations", JoinType.LEFT);
+            cq.select(cycle).distinct(true);
+
+
             List<Predicate> predicates = new ArrayList<>();
             
             if (state != null) {

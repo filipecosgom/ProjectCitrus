@@ -82,7 +82,7 @@ public class AppraisalController {
      * @param updateAppraisalDTO The appraisal update data
      * @return Response with the updated appraisal DTO
      */
-    @PUT
+    @PATCH
     public Response updateAppraisal(@Valid UpdateAppraisalDTO updateAppraisalDTO) {
         try {
             LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());

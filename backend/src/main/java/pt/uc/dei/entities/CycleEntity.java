@@ -5,6 +5,7 @@ import pt.uc.dei.enums.CycleState;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Entity representing a cycle.
@@ -52,6 +53,10 @@ public class CycleEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false, updatable = false)
     private UserEntity admin;
+
+    @OneToMany(mappedBy = "cycle", fetch = FetchType.LAZY)
+    private List<AppraisalEntity> evaluations;
+
 
     // Getters and Setters
 
@@ -114,4 +119,12 @@ public class CycleEntity implements Serializable {
      * @param admin the admin user entity to set.
      */
     public void setAdmin(UserEntity admin) { this.admin = admin; }
+
+    public List<AppraisalEntity> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<AppraisalEntity> evaluations) {
+        this.evaluations = evaluations;
+    }
 }

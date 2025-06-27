@@ -23,7 +23,8 @@ import java.util.List;
  * @version 1.0
  */
 @Mapper(
-        componentModel = "jakarta",
+        componentModel = "cdi",
+        uses = { AppraisalMapper.class },
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface CycleMapper {
@@ -37,6 +38,7 @@ public interface CycleMapper {
      */
     @Mapping(source = "admin.id", target = "adminId")
     @Mapping(source = "state", target = "state")
+    @Mapping(source = "evaluations", target = "evaluations")
     CycleDTO toDto(CycleEntity cycleEntity);
 
     /**
@@ -50,6 +52,7 @@ public interface CycleMapper {
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "state", ignore = true)
     @Mapping(target = "id", ignore = true) // ID should be auto-generated
+    @Mapping(target = "evaluations", ignore = true) // Usually ignored during creation
     CycleEntity toEntity(CycleDTO cycleDTO);
 
     /**

@@ -3,6 +3,7 @@ import jakarta.validation.constraints.NotNull;
 import pt.uc.dei.enums.CycleState;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Data Transfer Object (DTO) representing a cycle.
@@ -38,6 +39,10 @@ public class CycleDTO {    /**
      * The ID of the administrator responsible for managing the cycle.
      */
     private Long adminId;
+
+    @NotNull(message = "Evaluations missing")
+    private List<AppraisalDTO> evaluations;
+
 
     // Getters and Setters
     /**
@@ -118,5 +123,13 @@ public class CycleDTO {    /**
      */
     public void setAdminId(Long adminId) {
         this.adminId = adminId;
+    }
+
+    public List<AppraisalDTO> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<AppraisalDTO> evaluations) {
+        this.evaluations = evaluations;
     }
 }

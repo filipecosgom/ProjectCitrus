@@ -204,8 +204,7 @@ public class CycleService implements Serializable {
      */
     public List<CycleDTO> getAllCycles() {
         LOGGER.debug("Retrieving all cycles");
-
-        List<CycleEntity> cycles = cycleRepository.findAll();
+        List<CycleEntity> cycles = cycleRepository.getAllCycles();
         return cycleMapper.toDtoList(cycles);
     }
 

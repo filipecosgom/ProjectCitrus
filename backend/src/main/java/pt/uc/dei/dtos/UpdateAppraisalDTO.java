@@ -22,14 +22,12 @@ public class UpdateAppraisalDTO {
      * The updated feedback provided by the appraising user.
      * Must not be blank.
      */
-    @NotBlank(message = "Feedback is required")
     private String feedback;
 
     /**
      * The updated score assigned during the appraisal (1-4 stars).
      * Must be between 1 and 4.
      */
-    @NotNull(message = "Score is required")
     @Min(value = 1, message = "Score must be at least 1")
     @Max(value = 4, message = "Score must be at most 4")
     private Integer score;
