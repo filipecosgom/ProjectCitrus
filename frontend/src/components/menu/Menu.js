@@ -12,12 +12,16 @@ import useAuthStore from "../../stores/useAuthStore";
 
 export default function Menu({
   onLogout,
-  language = "en", // idioma atual (default: en)
-  setLanguage = () => {}, // função para mudar idioma
-  show = false, // se o menu está visível (mobile)
-  onClose, // função para fechar menu (mobile)
+  language = "en",
+  setLanguage = () => {},
+  show = false,
+  onClose,
 }) {
   const userId = useAuthStore((state) => state.user?.id);
+  
+  // ✅ CORREÇÃO: Usar useAuthStore em vez de sessionStorage
+  const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
+
   // Lista de itens do menu, com ícones, cores, rotas e flags especiais
   const menuItems = [
     {
@@ -26,7 +30,7 @@ export default function Menu({
       icon: <TbLayoutDashboardFilled />,
       color: "#B61B23",
       route: "/dashboard",
-      admin: true,
+      adminOnly: false, // ✅ Todos podem ver dashboard
     },
     {
       key: "profile",
@@ -34,7 +38,7 @@ export default function Menu({
       icon: <FaUserCircle />,
       color: "#9747FF",
       route: userId ? `/profile?id=${userId}` : "/profile",
-      admin: true,
+      adminOnly: false, // ✅ Todos podem ver profile
     },
     {
       key: "users",
@@ -42,7 +46,7 @@ export default function Menu({
       icon: <FaUsers />,
       color: "#3F861E",
       route: "/users",
-      admin: true,
+      adminOnly: false, // ✅ Todos podem ver users (verificar se é correto)
     },
     {
       key: "training",
@@ -50,7 +54,7 @@ export default function Menu({
       icon: <FaBook />,
       color: "#FF5900",
       route: "/training",
-      admin: true,
+      adminOnly: false, // ✅ Todos podem ver training
     },
     {
       key: "appraisal",
@@ -58,15 +62,16 @@ export default function Menu({
       icon: <FaAward />,
       color: "#FDD835",
       route: "/appraisal",
-      admin: true,
+      adminOnly: false, // ✅ Todos podem ver appraisal
     },
+    // ✅ NOVAS OPÇÕES ADMIN
     {
       key: "cycles",
       label: "Cycles",
       icon: <IoCalendar />,
       color: "#00B9CD",
       route: "/cycles",
-      admin: true, // só admin
+      adminOnly: true, // ✅ SÓ ADMIN
     },
     {
       key: "settings",
@@ -74,7 +79,7 @@ export default function Menu({
       icon: <IoSettings />,
       color: "#1976d2",
       route: "/settings",
-      admin: true, // só admin
+      adminOnly: true, // ✅ SÓ ADMIN
     },
     {
       key: "darkmode",
@@ -82,7 +87,7 @@ export default function Menu({
       icon: <MdDarkMode />,
       color: "#818488",
       route: null,
-      admin: true,
+      adminOnly: false,
       isToggle: true,
     },
     {
@@ -91,7 +96,7 @@ export default function Menu({
       icon: null,
       color: null,
       route: null,
-      admin: true,
+      adminOnly: false,
       isLanguage: true,
     },
     {
@@ -100,29 +105,28 @@ export default function Menu({
       icon: <MdLogout />,
       color: "#818488",
       route: null,
-      admin: true,
+      adminOnly: false,
       isLogout: true,
     },
   ];
+
   const location = useLocation();
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false); // controla expansão em desktop/tablet
-  const [darkMode, setDarkMode] = useState(false); // estado do toggle dark mode
+  const [expanded, setExpanded] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    console.log("MENU");
-    console.log(userId);
-  }, []);
+    console.log("MENU - User ID:", userId);
+    console.log("MENU - Is Admin:", isUserAdmin); // ✅ DEBUG LOG
+  }, [userId, isUserAdmin]);
 
-  // Lê isAdmin do sessionStorage (true/false)
-  const isAdmin = sessionStorage.getItem("isAdmin") === "true";
-
-  // Filtra itens do menu se não for admin (esconde cycles/settings)
-  const filteredItems = isAdmin
-    ? menuItems
-    : menuItems.filter(
-        (item) => item.key !== "cycles" && item.key !== "settings"
-      );
+  // ✅ CORREÇÃO: Filtrar baseado em adminOnly e isUserAdmin
+  const filteredItems = menuItems.filter(item => {
+    if (item.adminOnly && !isUserAdmin) {
+      return false; // Esconde itens admin para users normais
+    }
+    return true; // Mostra todos os outros
+  });
 
   // Expande menu ao hover (apenas desktop/tablet)
   const handleMouseEnter = () => {
