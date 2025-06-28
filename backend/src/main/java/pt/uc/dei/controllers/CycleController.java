@@ -19,7 +19,9 @@ import pt.uc.dei.utils.ApiResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST Controller for managing cycle-related operations.
@@ -213,17 +215,18 @@ public class CycleController {
             }
 
             List<CycleDTO> cycles;
+            Map<String, Object> cycleData = new HashMap<>();
             
             // If no filters are provided, return all cycles
             if (state == null && adminId == null && startDateFromParsed == null && startDateToParsed == null) {
-                cycles = cycleService.getAllCycles();
+                cycleData = cycleService.getAllCycles(offset, limit);
             } else {
-                cycles = cycleService.getCyclesWithFilters(
+                cycleData = cycleService.getCyclesWithFilters(
                     state, adminId, startDateFromParsed, startDateToParsed, limit, offset
                 );
             }
             
-            return Response.ok(new ApiResponse(true, "Cycles retrieved successfully", "success", cycles)).build();
+            return Response.ok(new ApiResponse(true, "Cycles retrieved successfully", "success", cycleData)).build();
 
         } catch (Exception e) {
             LOGGER.error("Unexpected error retrieving cycles with filters", e);

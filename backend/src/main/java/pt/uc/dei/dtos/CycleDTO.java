@@ -132,4 +132,6 @@ public class CycleDTO {    /**
     public void setEvaluations(List<AppraisalDTO> evaluations) {
         this.evaluations = evaluations;
     }
+
+
 }

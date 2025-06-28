@@ -18,3 +18,4 @@ export const httpStatusCodes = {
     serviceUnavailable: 503, // Service Unavailable
     gatewayTimeout: 504 // Gateway Timeout
 }
+

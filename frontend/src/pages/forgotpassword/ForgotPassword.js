@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import "./ForgotPassword.css"; // Copia Register.css e adapta o nome
+import "./ForgotPassword.css";
 import "../../styles/AuthTransition.css";
-import { useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import handleNotification from "../../handles/handleNotification";
 import handleRequestPasswordReset from "../../handles/handleRequestPasswordReset";
 import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function ForgotPassword({ onClose }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const {
     register,
@@ -15,9 +16,6 @@ export default function ForgotPassword({ onClose }) {
     reset,
     formState: { errors },
   } = useForm();
-
-  //Internacionalização
-  const intl = useIntl();
   const lang = useLocaleStore((state) => state.locale);
 
   const resetPassword = async(email) => {
@@ -29,7 +27,7 @@ export default function ForgotPassword({ onClose }) {
   // Apresentação de erros ao utilizador
   const onError = (errors) => {
     Object.entries(errors).forEach(([errorKey, errorValue]) => {
-      handleNotification(intl, "error", errorValue.message);
+      handleNotification("error", errorValue.message);
     });
   };
 
@@ -37,10 +35,10 @@ export default function ForgotPassword({ onClose }) {
     <div className="forgot-container d-flex auth-slide-in">
       <div className="forgot-form-container">
         <h1 className="forgot-title">
-          {intl.formatMessage({ id: "forgotPasswordTitle" })}
+          {t("forgotPasswordTitle")}
         </h1>
         <div className="forgot-subtitle">
-          {intl.formatMessage({ id: "forgotPasswordSubtitle" })}
+          {t("forgotPasswordSubtitle")}
         </div>
 
         <form
@@ -50,7 +48,7 @@ export default function ForgotPassword({ onClose }) {
           <div className="forgot-fields">
             <div className="forgot-field">
               <label className="forgot-label" htmlFor="forgot-email">
-                {intl.formatMessage({ id: "forgotPasswordFieldEmail" })}
+                {t("forgotPasswordFieldEmail")}
               </label>
               <span className="error-message">
                 {errors.email ? errors.email.message : "\u00A0"}
@@ -60,21 +58,17 @@ export default function ForgotPassword({ onClose }) {
                 type="email"
                 className="forgot-input"
                 {...register("email", {
-                  required: intl.formatMessage({
-                    id: "forgotPasswordEmailMissing",
-                  }),
+                  required: t("forgotPasswordEmailMissing"),
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: intl.formatMessage({
-                      id: "forgotPasswordEmailInvalid",
-                    }),
+                    message: t("forgotPasswordEmailInvalid"),
                   },
                 })}
               />
             </div>
           </div>
           <button className="main-button" type="submit">
-            {intl.formatMessage({ id: "forgotPasswordSubmit" })}
+            {t("forgotPasswordSubmit")}
           </button>
         </form>
       </div>

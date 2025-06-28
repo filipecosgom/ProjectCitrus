@@ -20,7 +20,9 @@ import pt.uc.dei.repositories.UserRepository;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -202,10 +204,19 @@ public class CycleService implements Serializable {
      *
      * @return List of all cycle DTOs
      */
-    public List<CycleDTO> getAllCycles() {
+    public Map<String, Object> getAllCycles(Integer offset, Integer limit) {
         LOGGER.debug("Retrieving all cycles");
         List<CycleEntity> cycles = cycleRepository.getAllCycles();
-        return cycleMapper.toDtoList(cycles);
+        Long totalCycles = cycleRepository.getTotalCycles();
+        List<CycleDTO> cycleDtos = cycles.stream()
+                .map(cycleMapper::toDto)
+                .collect(Collectors.toList());
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("cycles", cycleDtos);
+        responseData.put("totalCycles", totalCycles);
+        responseData.put("offset", offset);
+        responseData.put("limit", limit);
+        return responseData;
     }
 
     /**
@@ -269,7 +280,7 @@ public class CycleService implements Serializable {
      * @param offset Starting position for pagination
      * @return List of filtered cycle DTOs
      */
-    public List<CycleDTO> getCyclesWithFilters(CycleState state, Long adminId,
+    public Map<String, Object> getCyclesWithFilters(CycleState state, Long adminId,
                                               LocalDate startDateFrom, LocalDate startDateTo,
                                               Integer limit, Integer offset) {
         LOGGER.debug("Retrieving cycles with filters");
@@ -277,7 +288,17 @@ public class CycleService implements Serializable {
         List<CycleEntity> cycles = cycleRepository.findCyclesWithFilters(
             state, adminId, startDateFrom, startDateTo, limit, offset
         );
-        return cycleMapper.toDtoList(cycles);
+        Long totalCycles = cycleRepository.countCyclesWithFilters(state, adminId, startDateFrom, startDateTo);
+        List<CycleDTO> cycleDTOS = cycles.stream()
+                .map(cycleMapper::toDto)
+                .collect(Collectors.toList());
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("cycles", cycleDTOS);
+        responseData.put("totalCycles", totalCycles);
+        responseData.put("offset", offset);
+        responseData.put("limit", limit);
+        return responseData;
     }
 
     /**

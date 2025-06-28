@@ -1,27 +1,15 @@
 import { create } from 'zustand';
+import i18n from '../i18n';
 
 const LOCALE_KEY = 'locale';
 
-const getInitialLocale = () => {
-  const stored = localStorage.getItem(LOCALE_KEY);
-  if (stored && stored.trim() !== '' && stored !== 'null') {
-    return stored;
-  }
-  // If no valid value exists, store and return the default locale 'en'
-  localStorage.setItem(LOCALE_KEY, 'en');
-  return 'en';
-};
-
-// Store responsável pela gestão do idioma
-export const useLocaleStore = create((set) => ({
-  locale: getInitialLocale(),
+const useLocaleStore = create((set) => ({
+  locale: localStorage.getItem(LOCALE_KEY) || 'en',
   setLocale: (newLocale) => {
     const validLocale = newLocale || 'en';
     localStorage.setItem(LOCALE_KEY, validLocale);
-    set({ locale: validLocale });
-  },
+    i18n.changeLanguage(validLocale); // Notify i18next of language change
+    set({ locale: validLocale }, false, { type: "locale/changed" }); // Add action type
+  }
 }));
-
-
-
 export default useLocaleStore;

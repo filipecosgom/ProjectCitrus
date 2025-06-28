@@ -1,7 +1,7 @@
 import { register } from "../api/userApi";
 import { handleApiError } from "../api/api";
 
-const handleRegistration = async (newUser, lang, intl) => {
+const handleRegistration = async (newUser, lang) => {
   console.log("locale:", lang);
 
   const response = await register(newUser, lang);
@@ -9,7 +9,7 @@ const handleRegistration = async (newUser, lang, intl) => {
   if (response.success) {
     return true; // Success
   } else {
-    handleApiError(response.error, intl); // Handle error here
+    handleApiError(response.error); // Now uses i18n via handleNotification
     return false; // Failure
   }
 };

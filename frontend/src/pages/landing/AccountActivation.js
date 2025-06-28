@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaRegCheckCircle } from "react-icons/fa";
 import "./AccountActivation.css";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function AccountActivation({ email }) {
-  const intl = useIntl();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const segundos = 10; // valor inicial em segundos
   const [countdown, setCountdown] = useState(segundos);
@@ -27,23 +27,17 @@ export default function AccountActivation({ email }) {
       <div className="activation-card">
         <FaRegCheckCircle className="activation-check-icon" />
         <h1 className="activation-title">
-          {intl.formatMessage({ id: "activationTitle" })}
+          {t("activationTitle")}
         </h1>
         <div className="activation-message">
           <strong>
-            {intl.formatMessage({ id: "activationSuccessMessage" })}
+            {t("activationSuccessMessage")}
           </strong>
           <p>
-            {intl.formatMessage(
-              { id: "activationEmailConfirmation" },
-              { email: email || "x" }
-            )}
+            {t("activationEmailConfirmation", { email: email || "x" })}
           </p>
           <p style={{ marginTop: 16, color: "#888", fontSize: "0.95em" }}>
-            {intl.formatMessage(
-              { id: "activationRedirectMessage" },
-              { segundos: countdown }
-            )}
+            {t("activationRedirectMessage", { segundos: countdown })}
           </p>
         </div>
         <div>
@@ -52,7 +46,7 @@ export default function AccountActivation({ email }) {
             type="button"
             onClick={() => navigate("/login")}
           >
-            {intl.formatMessage({ id: "registerButton" })}
+            {t("registerButton")}
           </button>
         </div>
       </div>

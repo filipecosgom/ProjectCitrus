@@ -5,14 +5,14 @@ import UserIcon from "../userIcon/UserIcon";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
 import { ImCross } from "react-icons/im";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 
 const UserCard = ({ user }) => {
+  const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
   const [loadingAvatar, setLoadingAvatar] = useState(false);
   const [loadingManagerAvatar, setLoadingManagerAvatar] = useState(false);
-  const intl = useIntl();
 
   // Determine status for UserIcon
   const getStatusIcon = () => {
@@ -128,7 +128,7 @@ const UserCard = ({ user }) => {
       ) : (
         <div className="userCard-noManager">
           <ImCross title="No manager assigned" className="noManager-icon" />
-          <span className="noManager-label">{intl.formatMessage({ id: "userCardNoManager" })}</span>
+          <span className="noManager-label">{t('userCardNoManager')}</span>
         </div>
       )}
     </div>

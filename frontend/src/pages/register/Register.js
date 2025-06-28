@@ -3,16 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
 import LanguageDropdown from "../../components/languages/LanguageDropdown";
-import "./Register.css"; // You can copy Login.css and adjust as needed
-import "../../styles/AuthTransition.css"; // Import the transition styles
-import { useIntl } from "react-intl";
+import "./Register.css";
+import "../../styles/AuthTransition.css";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import handleRegistration from "../../handles/handleRegistration";
 import handleNotification from "../../handles/handleNotification";
 import AccountActivation from "../landing/AccountActivation";
-import { useLocaleStore } from "../../stores/useLocaleStore";
+import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function Register() {
+  const { t } = useTranslation();
   //Modal de Registo de novo utilizador
   const {
     register,
@@ -25,16 +26,10 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [animationClass, setAnimationClass] = useState("auth-slide-in");
-
-  // as duas linhas abaixo adicionam estado para saber se deve mostrar o formulário ou o AccountActivation.
   const [showActivation, setShowActivation] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
-  const strongPasswordPattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
-
+  const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
   const navigate = useNavigate();
-  //Internacionalização
-  const intl = useIntl();
   const lang = useLocaleStore((state) => state.locale);
 
   // Handler para animação de saída
@@ -51,10 +46,8 @@ export default function Register() {
       email: registerData.email,
       password: registerData.password,
     };
-    
-
     try {
-      const success = await handleRegistration(newUser, lang, intl);
+      const success = await handleRegistration(newUser, lang);
 
       if (success) {
         setRegisteredEmail(registerData.email);
@@ -66,7 +59,7 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Unexpected registration error:", error);
-      handleNotification(intl, "error", "An unexpected error occurred.");
+      handleNotification("error", "errorUnexpected");
     }
   };
 
@@ -78,12 +71,8 @@ export default function Register() {
           <AccountActivation email={registeredEmail} />
         ) : (
           <>
-            <h1 className="register-title">
-              {intl.formatMessage({ id: "registerTitle" })}
-            </h1>
-            <div className="register-subtitle">
-              {intl.formatMessage({ id: "registerSubtitle" })}
-            </div>
+            <h1 className="register-title">{t("registerTitle")}</h1>
+            <div className="register-subtitle">{t("registerSubtitle")}</div>
             <form
               className="register-form"
               id="register-form"
@@ -103,14 +92,10 @@ export default function Register() {
                 id="register-email"
                 className={`register-input`}
                 {...register("email", {
-                  required: intl.formatMessage({
-                    id: "registerErrorEmailMissing",
-                  }),
+                  required: t("registerErrorEmailMissing"),
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: intl.formatMessage({
-                      id: "registerErrorEmailInvalid",
-                    }),
+                    message: t("registerErrorEmailInvalid"),
                   },
                 })}
               />
@@ -122,7 +107,7 @@ export default function Register() {
                       className="register-label"
                       htmlFor="register-password"
                     >
-                      {intl.formatMessage({ id: "registerFieldPassword" })}
+                      {t("registerFieldPassword")}
                     </label>
                     <span className="error-message">
                       {errors.password ? errors.password.message : "\u00A0"}
@@ -135,14 +120,10 @@ export default function Register() {
                       type={showPassword ? "text" : "password"}
                       className="register-input"
                       {...register("password", {
-                        required: intl.formatMessage({
-                          id: "registerErrorPasswordMissing",
-                        }),
+                        required: t("registerErrorPasswordMissing"),
                         pattern: {
                           value: strongPasswordPattern,
-                          message: intl.formatMessage({
-                            id: "registerErrorPasswordWeak",
-                          }),
+                          message: t("registerErrorPasswordWeak"),
                         },
                       })}
                     />
@@ -150,11 +131,11 @@ export default function Register() {
                       type="button"
                       className="password-toggle-btn"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={intl.formatMessage({
-                        id: showPassword
+                      aria-label={t(
+                        showPassword
                           ? "registerHidePassword"
-                          : "registerShowPassword",
-                      })}
+                          : "registerShowPassword"
+                      )}
                     >
                       {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                     </button>
@@ -166,9 +147,7 @@ export default function Register() {
                       className="register-label"
                       htmlFor="register-confirm-password"
                     >
-                      {intl.formatMessage({
-                        id: "registerFieldConfirmPassword",
-                      })}
+                      {t("registerFieldConfirmPassword")}
                     </label>
                     <span className="error-message">
                       {errors.passwordConfirm
@@ -183,15 +162,11 @@ export default function Register() {
                       type={showConfirmPassword ? "text" : "password"}
                       className="register-input"
                       {...register("passwordConfirm", {
-                        required: intl.formatMessage({
-                          id: "registerErrorConfirmPasswordMissing",
-                        }),
+                        required: t("registerErrorConfirmPasswordMissing"),
                         validate: {
                           isConfirmed: (value) =>
                             value === watch("password") ||
-                            intl.formatMessage({
-                              id: "registerErrorPasswordMismatch",
-                            }),
+                            t("registerErrorPasswordMismatch"),
                         },
                       })}
                     />
@@ -201,11 +176,11 @@ export default function Register() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      aria-label={intl.formatMessage({
-                        id: showConfirmPassword
+                      aria-label={t(
+                        showConfirmPassword
                           ? "registerHidePassword"
-                          : "registerShowPassword",
-                      })}
+                          : "registerShowPassword"
+                      )}
                     >
                       {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                     </button>
@@ -213,18 +188,18 @@ export default function Register() {
                 </div>
               </div>
               <button className="main-button" type="submit">
-                {intl.formatMessage({ id: "registerSubmit" })}
+                {t("registerSubmit")}
               </button>
             </form>
             <div className="register-bottom-row">
               <div className="register-already-account">
-                {intl.formatMessage({ id: "registerAlreadyAccount" })}{" "}
+                {t("registerAlreadyAccount")}{" "}
                 <Link
                   className="register-login-link"
                   to="/login"
                   onClick={handleLoginClick}
                 >
-                  {intl.formatMessage({ id: "registerLogin" })}
+                  {t("registerLogin")}
                 </Link>
               </div>
               <div className="register-language-dropdown">
@@ -241,12 +216,12 @@ export default function Register() {
       <div className="register-logo-container d-flex flex-grow-1 flex-column align-items-center">
         <img
           src={citrusLogo}
-          alt={intl.formatMessage({ id: "registerLogo" })}
+          alt={t("registerLogo")}
           className="register-logo"
           width={280}
         />
         <div className="register-logo-container-title hide-on-mobile">
-          {intl.formatMessage({ id: "registerLogoContainerTitle" })}
+          {t("registerLogoContainerTitle")}
         </div>
       </div>
     </div>

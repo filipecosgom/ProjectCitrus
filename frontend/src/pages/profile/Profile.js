@@ -22,11 +22,12 @@ import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 import AppraisalsTab from "./AppraisalsTab";
 import TrainingTab from "./TrainingTab";
 
 export default function Profile() {
+  const { t } = useTranslation();
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
@@ -46,9 +47,6 @@ export default function Profile() {
   const [avatarFile, setAvatarFile] = useState(null);
 
   const navigate = useNavigate();
-
-  // Internacionalização
-  const intl = useIntl();
 
   // react-hook-form setup
   const {
@@ -186,14 +184,13 @@ export default function Profile() {
           }}
         />
         <span>
-          {intl.formatMessage({
-            id:
-              tab === "profile"
-                ? "profileTabProfile"
-                : tab === "appraisals"
-                ? "profileTabAppraisals"
-                : "profileTabTraining",
-          })}
+          {t(
+            tab === "profile"
+              ? "profileTabProfile"
+              : tab === "appraisals"
+              ? "profileTabAppraisals"
+              : "profileTabTraining"
+          )}
         </span>
       </button>
     );
@@ -229,7 +226,7 @@ export default function Profile() {
                     }}
                   >
                     <FaTimes style={{ marginRight: 8 }} />
-                    {intl.formatMessage({ id: "profileCancel" })}
+                    {t("profileCancel")}
                   </button>
                 </>
               )}
@@ -248,12 +245,12 @@ export default function Profile() {
                 {editMode ? (
                   <>
                     <FaCheck style={{ marginRight: 8 }} />
-                    {intl.formatMessage({ id: "profileSave" })}
+                    {t("profileSave")}
                   </>
                 ) : (
                   <>
                     <FaPen style={{ marginRight: 8 }} />
-                    {intl.formatMessage({ id: "profileEdit" })}
+                    {t("profileEdit")}
                   </>
                 )}
               </button>
@@ -262,7 +259,7 @@ export default function Profile() {
                 <button
                   className="icon-btn edit-cancel-btn"
                   type="button"
-                  title={intl.formatMessage({ id: "profileCancel" })}
+                  title={t("profileCancel")}
                   onClick={() => {
                     setEditMode(false);
                     setShowAddressFields(false);
@@ -279,8 +276,8 @@ export default function Profile() {
                 type={editMode ? "submit" : "button"}
                 title={
                   editMode
-                    ? intl.formatMessage({ id: "profileSave" })
-                    : intl.formatMessage({ id: "profileEdit" })
+                    ? t("profileSave")
+                    : t("profileEdit")
                 }
                 onClick={
                   editMode
@@ -379,7 +376,7 @@ export default function Profile() {
               <div className="form-fields">
                 {/* First Name */}
                 <label>
-                  {intl.formatMessage({ id: "profileFirstName" })}
+                  {t("profileFirstName")}
                   <input
                     className="profile-input"
                     {...register("name", {
@@ -388,35 +385,27 @@ export default function Profile() {
                       pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({
-                      id: "profilePlaceholderNA",
-                    })}
+                    placeholder={t("profilePlaceholderNA")}
                   />
                   {errors.name?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorFirstNameRequired",
-                      })}
+                      {t("profileErrorFirstNameRequired")}
                     </span>
                   )}
                   {errors.name?.type === "minLength" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorFirstNameRequired",
-                      })}
+                      {t("profileErrorFirstNameRequired")}
                     </span>
                   )}
                   {errors.name?.type === "pattern" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorFirstNameInvalid",
-                      })}
+                      {t("profileErrorFirstNameInvalid")}
                     </span>
                   )}
                 </label>
                 {/* Last Name */}
                 <label>
-                  {intl.formatMessage({ id: "profileLastName" })}
+                  {t("profileLastName")}
                   <input
                     className="profile-input"
                     {...register("surname", {
@@ -425,35 +414,27 @@ export default function Profile() {
                       pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({
-                      id: "profilePlaceholderNA",
-                    })}
+                    placeholder={t("profilePlaceholderNA")}
                   />
                   {errors.surname?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorLastNameRequired",
-                      })}
+                      {t("profileErrorLastNameRequired")}
                     </span>
                   )}
                   {errors.surname?.type === "minLength" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorLastNameRequired",
-                      })}
+                      {t("profileErrorLastNameRequired")}
                     </span>
                   )}
                   {errors.surname?.type === "pattern" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorLastNameInvalid",
-                      })}
+                      {t("profileErrorLastNameInvalid")}
                     </span>
                   )}
                 </label>
                 {/* Birth Date */}
                 <label>
-                  {intl.formatMessage({ id: "profileBirthDate" })}
+                  {t("profileBirthDate")}
                   <input
                     type="date"
                     className="profile-input"
@@ -476,29 +457,23 @@ export default function Profile() {
                   />
                   {errors.birthdate?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorBirthDateRequired",
-                      })}
+                      {t("profileErrorBirthDateRequired")}
                     </span>
                   )}
                   {errors.birthdate?.message === "future" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorBirthDateFuture",
-                      })}
+                      {t("profileErrorBirthDateFuture")}
                     </span>
                   )}
                   {errors.birthdate?.message === "tooyoung" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorBirthDateTooYoung",
-                      })}
+                      {t("profileErrorBirthDateTooYoung")}
                     </span>
                   )}
                 </label>
                 {/* Role */}
                 <label>
-                  {intl.formatMessage({ id: "profileRole" })}
+                  {t("profileRole")}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
@@ -507,7 +482,7 @@ export default function Profile() {
                           required: true,
                         })}
                       >
-                        <option value="">Select role</option>
+                        <option value="">{t("selectRole")}</option>
                         {roleOptions.map((role) => (
                           <option key={role} value={role}>
                             {role
@@ -547,13 +522,13 @@ export default function Profile() {
                   )}
                   {errors.role?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({ id: "profileErrorRoleRequired" })}
+                      {t("profileErrorRoleRequired")}
                     </span>
                   )}
                 </label>
                 {/* Workplace */}
                 <label>
-                  {intl.formatMessage({ id: "profileWorkplace" })}
+                  {t("profileWorkplace")}
                   {editMode ? (
                     <div className="select-wrapper">
                       <select
@@ -562,7 +537,7 @@ export default function Profile() {
                           required: true,
                         })}
                       >
-                        <option value="">Select office</option>
+                        <option value="">{t("selectOffice")}</option>
                         {officeOptions.map((office) => (
                           <option key={office} value={office}>
                             {office
@@ -602,15 +577,13 @@ export default function Profile() {
                   )}
                   {errors.office?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({
-                        id: "profileErrorWorkplaceRequired",
-                      })}
+                      {t("profileErrorWorkplaceRequired")}
                     </span>
                   )}
                 </label>
                 {/* Phone */}
                 <label>
-                  {intl.formatMessage({ id: "profilePhone" })}
+                  {t("profilePhone")}
                   <input
                     className="profile-input"
                     {...register("phone", {
@@ -618,34 +591,30 @@ export default function Profile() {
                       pattern: /^[0-9]{9}$/,
                     })}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({
-                      id: "profilePlaceholderNA",
-                    })}
+                    placeholder={t("profilePlaceholderNA")}
                   />
                   {errors.phone?.type === "required" && (
                     <span className="error-message">
-                      {intl.formatMessage({ id: "profileErrorPhoneRequired" })}
+                      {t("profileErrorPhoneRequired")}
                     </span>
                   )}
                   {errors.phone?.type === "pattern" && (
                     <span className="error-message">
-                      {intl.formatMessage({ id: "errorPhoneNumberInvalid" })}
+                      {t("errorPhoneNumberInvalid")}
                     </span>
                   )}
                 </label>
                 {/* Address fields */}
                 <div className="address-container">
                   <label>
-                    {intl.formatMessage({ id: "profileAddress" })}
+                    {t("profileAddress")}
                     <input
                       className="profile-input"
                       value={[user.street, user.postalCode, user.municipality]
                         .filter(Boolean)
                         .join(", ")}
                       disabled
-                      placeholder={intl.formatMessage({
-                        id: "profilePlaceholderNA",
-                      })}
+                      placeholder={t("profilePlaceholderNA")}
                     />
                   </label>
                   {editMode && (
@@ -656,7 +625,7 @@ export default function Profile() {
                     >
                       {/* Street */}
                       <label>
-                        {intl.formatMessage({ id: "profileAddressStreet" })}
+                        {t("profileAddressStreet")}
                         <input
                           className="profile-input"
                           {...register("street", {
@@ -664,65 +633,49 @@ export default function Profile() {
                             minLength: 3,
                             pattern: /^[A-Za-zÀ-ÿ0-9\s'-,.]+$/,
                           })}
-                          placeholder={intl.formatMessage({
-                            id: "profileAddressStreet",
-                          })}
+                          placeholder={t("profileAddressStreet")}
                         />
                         {errors.street?.type === "required" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressStreetRequired",
-                            })}
+                            {t("profileErrorAddressStreetRequired")}
                           </span>
                         )}
                         {errors.street?.type === "minLength" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressStreetRequired",
-                            })}
+                            {t("profileErrorAddressStreetRequired")}
                           </span>
                         )}
                         {errors.street?.type === "pattern" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressStreetInvalid",
-                            })}
+                            {t("profileErrorAddressStreetInvalid")}
                           </span>
                         )}
                       </label>
                       {/* Postal Code */}
                       <label>
-                        {intl.formatMessage({ id: "profileAddressPostalCode" })}
+                        {t("profileAddressPostalCode")}
                         <input
                           className="profile-input"
                           {...register("postalCode", {
                             required: true,
                             pattern: /^[0-9]{4}-[0-9]{3}$/,
                           })}
-                          placeholder={intl.formatMessage({
-                            id: "profileAddressPostalCode",
-                          })}
+                          placeholder={t("profileAddressPostalCode")}
                         />
                         {errors.postalCode?.type === "required" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressPostalCodeRequired",
-                            })}
+                            {t("profileErrorAddressPostalCodeRequired")}
                           </span>
                         )}
                         {errors.postalCode?.type === "pattern" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "errorPostalCodeInvalid",
-                            })}
+                            {t("errorPostalCodeInvalid")}
                           </span>
                         )}
                       </label>
                       {/* Municipality */}
                       <label>
-                        {intl.formatMessage({
-                          id: "profileAddressMunicipality",
-                        })}
+                        {t("profileAddressMunicipality")}
                         <input
                           className="profile-input"
                           {...register("municipality", {
@@ -730,29 +683,21 @@ export default function Profile() {
                             minLength: 2,
                             pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                           })}
-                          placeholder={intl.formatMessage({
-                            id: "profileAddressMunicipality",
-                          })}
+                          placeholder={t("profileAddressMunicipality")}
                         />
                         {errors.municipality?.type === "required" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressMunicipalityRequired",
-                            })}
+                            {t("profileErrorAddressMunicipalityRequired")}
                           </span>
                         )}
                         {errors.municipality?.type === "minLength" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressMunicipalityRequired",
-                            })}
+                            {t("profileErrorAddressMunicipalityRequired")}
                           </span>
                         )}
                         {errors.municipality?.type === "pattern" && (
                           <span className="error-message">
-                            {intl.formatMessage({
-                              id: "profileErrorAddressMunicipalityInvalid",
-                            })}
+                            {t("profileErrorAddressMunicipalityInvalid")}
                           </span>
                         )}
                       </label>
@@ -761,12 +706,12 @@ export default function Profile() {
                 </div>
                 {/* Biography */}
                 <label>
-                  {intl.formatMessage({ id: "profileBiography" })}
+                  {t("profileBiography")}
                   <textarea
                     className="profile-input"
                     {...register("biography")}
                     disabled={!editMode}
-                    placeholder={intl.formatMessage({ id: "profileBiography" })}
+                    placeholder={t("profileBiography")}
                   />
                 </label>
               </div>

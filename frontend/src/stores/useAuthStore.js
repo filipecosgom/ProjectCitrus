@@ -49,7 +49,6 @@ const useAuthStore = create((set, get) => {
       if (tokenExpiration - Date.now() > TIME_TO_WARN) {
         timers.warningTimeout = setTimeout(() => {
           handleNotification("info", "infoAboutToExpire");
-          alert("tmeout");
         }, tokenExpiration - Date.now() - TIME_TO_WARN);
       }
 
@@ -59,17 +58,26 @@ const useAuthStore = create((set, get) => {
       }, tokenExpiration - Date.now());
     },
 
+    // Refresh session timer (called by API interceptor)
+    refreshSessionTimer: () => {
+      const { user, tokenExpiration } = get();
+      if (user && tokenExpiration) {
+        // Assume session duration is the same as last time
+        const sessionDuration = tokenExpiration - Date.now();
+        // If session is still valid, reset the timer
+        if (sessionDuration > 0) {
+          get().setUserAndExpiration(user, Date.now() + sessionDuration);
+        }
+      }
+    },
+
     fetchAndSetUserInformation: async () => {
       try {
-        console.log("Fetching user information...");
         const response = await fetchSelfInformation();
         if (response.success) {
           const { user, tokenExpiration } = response.data.data || {};
           if (user && tokenExpiration) {
-            console.log("User information fetched successfully:", user);
-            console.log("User is admin:", user.userIsAdmin); // ✅ DEBUG LOG
-
-            get().setUserAndExpiration(user, tokenExpiration);
+             get().setUserAndExpiration(user, tokenExpiration);
           }
           return { success: true, data: { user, tokenExpiration } };
         } else {
@@ -128,7 +136,6 @@ const useAuthStore = create((set, get) => {
 
     logout: async () => {
       clearTimers();
-      await api.post("/logout");
       set({ user: null, tokenExpiration: null, remainingTime: null });
     },
   };

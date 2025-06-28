@@ -1,12 +1,12 @@
 import { showSuccessToast, showErrorToast, showInfoToast } from "../utils/toastConfig/toastConfig";
-import { getIntl } from "../utils/Intl";
+import i18n from '../i18n';
 
+// Accept t (from useTranslation) as an optional argument for fresh translations
 const handleNotification = (type, messageId, params = {}) => {
-  console.log("TESTE");
-  const intl = getIntl();
+  const t = i18n.t.bind(i18n);
 
-  const translatedMessage = intl.formatMessage({ id: messageId }, params);
-  console.log(intl);
+  const translatedMessage = t(messageId, params);
+  console.log(t);
   console.log(translatedMessage);
 
   if (type === "success") {

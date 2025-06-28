@@ -1,4 +1,4 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.filters;
 
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
@@ -7,6 +7,7 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import pt.uc.dei.annotations.ManagerOnly;
+import pt.uc.dei.utils.ApiResponse;
 
 /**
  * JAX-RS filter that restricts access to managers or admins only.

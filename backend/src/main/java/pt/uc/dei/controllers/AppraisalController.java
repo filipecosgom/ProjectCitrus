@@ -19,6 +19,7 @@ import pt.uc.dei.annotations.AdminOnly;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * REST Controller for managing appraisal-related operations.
@@ -48,9 +49,9 @@ public class AppraisalController {
     @POST
     public Response createAppraisal(@Valid CreateAppraisalDTO createAppraisalDTO) {
         try {
-            LOGGER.info("Creating new appraisal for user {} by user {}", 
-                       createAppraisalDTO.getAppraisedUserId(), 
-                       createAppraisalDTO.getAppraisingUserId());
+            LOGGER.info("Creating new appraisal for user {} by user {}",
+                    createAppraisalDTO.getAppraisedUserId(),
+                    createAppraisalDTO.getAppraisingUserId());
 
             AppraisalDTO createdAppraisal = appraisalService.createAppraisal(createAppraisalDTO);
             return Response.status(Response.Status.CREATED)
@@ -144,28 +145,32 @@ public class AppraisalController {
     /**
      * Retrieves appraisals with filtering options.
      *
-     * @param appraisedUserId Optional filter by appraised user ID
+     * @param appraisedUserId  Optional filter by appraised user ID
      * @param appraisingUserId Optional filter by appraising user ID (manager)
-     * @param cycleId Optional filter by cycle ID
-     * @param state Optional filter by appraisal state
-     * @param limit Maximum number of results
-     * @param offset Starting position for pagination
+     * @param cycleId          Optional filter by cycle ID
+     * @param state            Optional filter by appraisal state
+     * @param limit            Maximum number of results
+     * @param offset           Starting position for pagination
      * @return Response with list of filtered appraisal DTOs
      */
     @GET
     public Response getAppraisalsWithFilters(@QueryParam("appraisedUserId") Long appraisedUserId,
-                                           @QueryParam("appraisingUserId") Long appraisingUserId,
-                                           @QueryParam("cycleId") Long cycleId,
-                                           @QueryParam("state") AppraisalState state,
-                                           @QueryParam("limit") @DefaultValue("50") Integer limit,
-                                           @QueryParam("offset") @DefaultValue("0") Integer offset) {
+                                             @QueryParam("appraisedUserName") String appraisedUserName,
+                                             @QueryParam("appraisedUserEmail") String appraisedUserEmail,
+                                             @QueryParam("managerId") Long appraisingUserId,
+                                             @QueryParam("managerName") String appraisingUserName,
+                                             @QueryParam("managerEmail") String appraisingUserEmail,
+                                             @QueryParam("cycleId") Long cycleId,
+                                             @QueryParam("state") AppraisalState state,
+                                             @QueryParam("limit") @DefaultValue("50") Integer limit,
+                                             @QueryParam("offset") @DefaultValue("0") Integer offset) {
         try {
             LOGGER.debug("Retrieving appraisals with filters");
 
-            List<AppraisalDTO> appraisals = appraisalService.getAppraisalsWithFilters(
-                appraisedUserId, appraisingUserId, cycleId, state, limit, offset
+            Map<String, Object> appraisalData = appraisalService.getAppraisalsWithFilters(
+                    appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName, appraisingUserEmail, cycleId, state, limit, offset
             );
-            return Response.ok(new ApiResponse(true, "Appraisals retrieved successfully", "success", appraisals))
+            return Response.ok(new ApiResponse(true, "Appraisals retrieved successfully", "success", appraisalData))
                     .build();
 
         } catch (Exception e) {
@@ -410,7 +415,7 @@ public class AppraisalController {
             LOGGER.info("Admin requesting to close appraisals by IDs: {}", ids);
 
             int closedCount = appraisalService.closeAppraisalsByIds(ids);
-            
+
             String message = String.format("Successfully closed %d appraisal(s)", closedCount);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
@@ -449,7 +454,7 @@ public class AppraisalController {
             LOGGER.info("Admin requesting to close COMPLETED appraisals in cycle ID: {}", cycleId);
 
             int closedCount = appraisalService.closeCompletedAppraisalsByCycleId(cycleId);
-            
+
             String message = String.format("Successfully closed %d COMPLETED appraisal(s) in cycle %d", closedCount, cycleId);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
@@ -489,7 +494,7 @@ public class AppraisalController {
             LOGGER.info("Admin requesting to close COMPLETED appraisals for user ID: {}", userId);
 
             int closedCount = appraisalService.closeCompletedAppraisalsByUserId(userId);
-            
+
             String message = String.format("Successfully closed %d COMPLETED appraisal(s) for user %d", closedCount, userId);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
@@ -523,7 +528,7 @@ public class AppraisalController {
             LOGGER.info("Admin requesting to close ALL COMPLETED appraisals");
 
             int closedCount = appraisalService.closeAllCompletedAppraisals();
-            
+
             String message = String.format("Successfully closed %d COMPLETED appraisal(s) across all OPEN cycles", closedCount);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();

@@ -2,7 +2,7 @@
 import React from "react";
 import "./UserSortControls.css";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 
 const sortFields = [
   { id: "userSortControlsName", key: "name" },
@@ -12,7 +12,7 @@ const sortFields = [
 ];
 
 const UserSortControls = ({ sortBy, sortOrder, onSortChange }) => {
-  const intl = useIntl();
+  const { t } = useTranslation();
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -34,24 +34,14 @@ const UserSortControls = ({ sortBy, sortOrder, onSortChange }) => {
           onClick={() => handleSort(key)}
         >
           {/* field label */}
-          {intl.formatMessage({ id })}
+          {t(id)}
 
           {/* sort-direction icon */}
           {sortBy === key &&
             (sortOrder === "ascending" ? (
-              <FaSortAlphaDown
-                className="sort-icon"
-                title={intl.formatMessage({
-                  id: "userSortControlsSortAscending",
-                })}
-              />
+              <FaSortAlphaDown className="sort-icon" />
             ) : (
-              <FaSortAlphaUp
-                className="sort-icon"
-                title={intl.formatMessage({
-                  id: "userSortControlsSortDescending",
-                })}
-              />
+              <FaSortAlphaUp className="sort-icon" />
             ))}
         </div>
       ))}

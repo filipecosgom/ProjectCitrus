@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./LanguageDropdown.css";
-import handleLocaleChange from "../../handles/handleLocaleChange";
 import useLocaleStore from "../../stores/useLocaleStore";
 
 const LANGUAGES = [
@@ -10,10 +9,13 @@ const LANGUAGES = [
   { code: "pt", label: "Portuguese", flag: flagPt },
 ];
 
-export default function LanguageDropdown({ language, setLanguage }) {
-  const locale = useLocaleStore((state) => state.locale);
+export default function LanguageDropdown() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  
+  // Get both locale and setLocale directly from the store
+  const locale = useLocaleStore((state) => state.locale);
+  const setLocale = useLocaleStore((state) => state.setLocale);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -22,15 +24,15 @@ export default function LanguageDropdown({ language, setLanguage }) {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    setLanguage(locale);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [locale, setLanguage]);
+  }, []);
 
-  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
+  // Find the selected language based on the store's locale
+  const selectedLang = LANGUAGES.find((lang) => lang.code === locale) || LANGUAGES[0];
 
   const handleChangeLanguage = (newLocale) => {
-    handleLocaleChange(newLocale);
-    setLanguage(newLocale);
+    console.log('Changing language to:', newLocale);
+    setLocale(newLocale); // Update the store directly
     setShowDropdown(false);
   };
 
@@ -59,11 +61,11 @@ export default function LanguageDropdown({ language, setLanguage }) {
       </div>
       {showDropdown && (
         <div className="language-options">
-          {LANGUAGES.filter((l) => l.code !== language).map((lang) => (
+          {LANGUAGES.filter((l) => l.code !== locale).map((lang) => (
             <div
               key={lang.code}
               className="language-option"
-              onClick={() => handleChangeLanguage(lang.code)} // Pass lang.code directly
+              onClick={() => handleChangeLanguage(lang.code)}
             >
               <img
                 src={lang.flag}

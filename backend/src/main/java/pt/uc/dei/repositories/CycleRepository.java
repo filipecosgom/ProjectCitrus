@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.CycleEntity;
+import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.CycleState;
 
 import java.time.LocalDate;
@@ -49,6 +50,14 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
                 CycleEntity.class
         );
         return query.getResultList();
+    }
+
+    public long getTotalCycles() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<CycleEntity> root = query.from(CycleEntity.class);
+        query.select(cb.count(root));
+        return em.createQuery(query).getSingleResult();
     }
 
     /**
@@ -275,6 +284,44 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
         } catch (Exception e) {
             LOGGER.error("Error finding cycles with filters", e);
             return new ArrayList<>();
+        }
+    }
+
+    public long countCyclesWithFilters(CycleState state, Long adminId,
+                                       LocalDate startDateFrom, LocalDate startDateTo) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<CycleEntity> cycle = cq.from(CycleEntity.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (state != null) {
+                predicates.add(cb.equal(cycle.get("state"), state));
+            }
+
+            if (adminId != null) {
+                predicates.add(cb.equal(cycle.get("admin").get("id"), adminId));
+            }
+
+            if (startDateFrom != null) {
+                predicates.add(cb.greaterThanOrEqualTo(cycle.get("startDate"), startDateFrom));
+            }
+
+            if (startDateTo != null) {
+                predicates.add(cb.lessThanOrEqualTo(cycle.get("startDate"), startDateTo));
+            }
+
+            if (!predicates.isEmpty()) {
+                cq.where(cb.and(predicates.toArray(new Predicate[0])));
+            }
+
+            cq.select(cb.countDistinct(cycle)); // countDistinct avoids overcounting if joins are added later
+
+            return em.createQuery(cq).getSingleResult();
+        } catch (Exception e) {
+            LOGGER.error("Error counting cycles with filters", e);
+            return 0L;
         }
     }
 }

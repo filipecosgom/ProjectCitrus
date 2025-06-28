@@ -1,5 +1,5 @@
-import { use, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import citrusLogo from "../../assets/logos/citrus-logo_final.png";
@@ -8,27 +8,26 @@ import OffcanvasForgotPassword from "../../pages/forgotpassword/OffcanvasForgotP
 import OffCanvasTwoFactor from "../../components/twoFactorOffCavas/OffCanvasTwoFactor";
 import "./Login.css";
 import "../../styles/AuthTransition.css";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 import handleLogin from "../../handles/handleLogin";
-import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
+import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function Login() {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
-  const [language, setLanguage] = useState("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
-  //Internacionalização
-  const intl = useIntl();
   const user = useAuthStore((state) => state.user);
+  const locale = useLocaleStore((state) => state.locale); // Get current locale from store
 
   const onSubmit = async (loginData) => {
     const userData = {
@@ -38,25 +37,22 @@ export default function Login() {
     };
     try {
       const success = await handleLogin(userData);
-      if (success) {
-        reset();
-      } else {
-        reset();
-      }
+      reset();
     } catch (error) {
       reset();
     }
   };
 
   useEffect(() => {
-    const userIsLogged = () => {
-      if (user) {
-        handleNotification("success", "welcomeMessage", {name: user.name});
-        navigate("/profile?id=" + user.id);
-      }
-    };
-    userIsLogged();
-  }, [user]);
+    console.log("Current locale:", locale);
+  }, [locale]);
+
+  useEffect(() => {
+    if (user) {
+      handleNotification("success", "welcomeMessage", { name: user.name });
+      navigate("/profile?id=" + user.id);
+    }
+  }, [user, navigate]);
 
   return (
     <div className="login-container">
@@ -64,11 +60,11 @@ export default function Login() {
       <div className="login-logo-container">
         <img
           src={citrusLogo}
-          alt={intl.formatMessage({ id: "loginLogo" })}
+          alt={t("loginLogo")}
           className="login-logo"
         />
         <div className="logo-undertitle">
-          {intl.formatMessage({ id: "loginSubtitle" })}
+          {t("loginSubtitle")}
         </div>
       </div>
 
@@ -76,10 +72,10 @@ export default function Login() {
       <div className="loginform-container">
         <div className="login-title-group">
           <h1 className="login-title">
-            {intl.formatMessage({ id: "loginTitle" })}
+            {t("loginTitle")}
           </h1>
           <div className="login-subtitle">
-            {intl.formatMessage({ id: "loginSubtitle" })}
+            {t("loginSubtitle")}
           </div>
         </div>
         <form
@@ -91,7 +87,7 @@ export default function Login() {
             <div className="login-field">
               <div className="login-labelAndError">
                 <label className="login-label" htmlFor="login-email">
-                  {intl.formatMessage({ id: "loginFieldEmail" })}
+                  {t("loginFieldEmail")}
                 </label>
                 <span className="error-message">
                   {errors.email ? errors.email.message : "\u00A0"}
@@ -102,14 +98,10 @@ export default function Login() {
                 id="login-email"
                 className={`login-input`}
                 {...register("email", {
-                  required: intl.formatMessage({
-                    id: "loginErrorEmailMissing",
-                  }),
+                  required: t("loginErrorEmailMissing"),
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: intl.formatMessage({
-                      id: "loginErrorEmailInvalid",
-                    }),
+                    message: t("loginErrorEmailInvalid"),
                   },
                 })}
               />
@@ -118,7 +110,7 @@ export default function Login() {
             <div className="login-field">
               <div className="login-labelAndError">
                 <label className="login-label" htmlFor="login-password">
-                  {intl.formatMessage({ id: "loginFieldPassword" })}
+                  {t("loginFieldPassword")}
                 </label>
                 <span className="error-message">
                   {errors.password ? errors.password.message : "\u00A0"}
@@ -131,20 +123,14 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   className="login-input"
                   {...register("password", {
-                    required: intl.formatMessage({
-                      id: "loginErrorPasswordMissing",
-                    }),
+                    required: t("loginErrorPasswordMissing"),
                   })}
                 />
                 <button
                   type="button"
                   className="password-toggle-btn"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={intl.formatMessage({
-                    id: showPassword
-                      ? "registerHidePassword"
-                      : "registerShowPassword",
-                  })}
+                  aria-label={t(showPassword ? "registerHidePassword" : "registerShowPassword")}
                 >
                   {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </button>
@@ -162,7 +148,7 @@ export default function Login() {
                   }}
                   onClick={() => setShowForgot(true)}
                 >
-                  {intl.formatMessage({ id: "loginForgotPassword" })}
+                  {t("loginForgotPassword")}
                 </button>
               </div>
             </div>
@@ -170,7 +156,7 @@ export default function Login() {
             <div className="login-field">
               <div className="login-labelAndError">
                 <label className="login-label" htmlFor="login-TwoFAuth">
-                  {intl.formatMessage({ id: "loginFieldTwoFAuth" })}
+                  {t("loginFieldTwoFAuth")}
                 </label>
                 <span className="error-message">
                   {errors.authenticationCode
@@ -182,14 +168,10 @@ export default function Login() {
                 id="login-authenticationCode"
                 className="login-input"
                 {...register("authenticationCode", {
-                  required: intl.formatMessage({
-                    id: "loginErrorAuthenticationCodeMissing",
-                  }),
+                  required: t("loginErrorAuthenticationCodeMissing"),
                   pattern: {
                     value: /^\d{6}$/, // Ensures exactly 6 digits
-                    message: intl.formatMessage({
-                      id: "loginErrorAuthenticationCodeInvalid",
-                    }),
+                    message: t("loginErrorAuthenticationCodeInvalid"),
                   },
                 })}
               />
@@ -213,25 +195,25 @@ export default function Login() {
                     setShowAuth(true);
                   }}
                 >
-                  {intl.formatMessage({ id: "loginHelpTwoFAuth" })}
+                  {t("loginHelpTwoFAuth")}
                 </button>
               </div>
             </div>
           </div>
 
           <button className="main-button" type="submit">
-            {intl.formatMessage({ id: "loginSubmit" })}
+            {t("loginSubmit")}
           </button>
         </form>
         <div className="login-register-row">
-          {intl.formatMessage({ id: "loginRegisterPrompt" })}{" "}
+          {t("loginRegisterPrompt")} {" "}
           <Link className="login-register-link" to="/register">
-            {intl.formatMessage({ id: "loginRegister" })}
+            {t("loginRegister")}
           </Link>
         </div>
         <div className="login-language-dropdown">
           {/* Dropdown de idioma dentro da coluna do formulário */}
-          <LanguageDropdown language={language} setLanguage={setLanguage} />
+          <LanguageDropdown />
         </div>
       </div>
       <OffcanvasForgotPassword

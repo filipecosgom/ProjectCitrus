@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
-import { useIntl } from "react-intl";
-
+import { useTranslation } from "react-i18next";
 
 const SearchBar = ({ onSearch, offices = [] }) => {
+  const { t } = useTranslation();
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
       query: "",
@@ -19,15 +19,12 @@ const SearchBar = ({ onSearch, offices = [] }) => {
   const [showResultsMenu, setShowResultsMenu] = useState(false);
   const limit = [5, 10, 20];
 
-  const intl = useIntl();
-
   // pre-built list of accountStates with translated labels
   const accountStates = [
-    { label: intl.formatMessage({ id: "searchBarAllStates" }), value: "" },
-    { label: intl.formatMessage({ id: "searchBarComplete" }), value: "COMPLETE" },
-    { label: intl.formatMessage({ id: "searchBarIncomplete" }), value: "INCOMPLETE" },
+    { label: t("searchBarAllStates"), value: "" },
+    { label: t("searchBarComplete"), value: "COMPLETE" },
+    { label: t("searchBarIncomplete"), value: "INCOMPLETE" },
   ];
-
 
   const onSubmit = ({ query, searchType, limit, accountState, office }) => {
     const filters = {
@@ -37,30 +34,24 @@ const SearchBar = ({ onSearch, offices = [] }) => {
     onSearch(query, searchType, limit, filters);
   };
 
- return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="searchBar-container"
-    >
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="searchBar-container">
       <div className="searchBar-wrapper">
         <button
           type="submit"
           className="searchBar-button"
-          aria-label={intl.formatMessage({ id: "searchBarSearchButton" })}
+          aria-label={t("searchBarSearchButton")}
         >
           <FiSearch className="search-icon" />
         </button>
 
         <input
           {...register("query")}
-          placeholder={intl.formatMessage(
-            { id: "searchBarPlaceholder" },
-            {
-              type: watch("searchType")
-                .replace(/_/g, " ")
-                .toLowerCase(), // if you need lowercase
-            }
-          )}
+          placeholder={t("searchBarPlaceholder", {
+            type: watch("searchType")
+              .replace(/_/g, " ")
+              .toLowerCase(),
+          })}
           className="searchBar-input"
         />
 
@@ -80,7 +71,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
           className="searchBar-dropdownToggle toggle-limit"
           onClick={() => setShowResultsMenu((prev) => !prev)}
           aria-expanded={showResultsMenu}
-          aria-label={intl.formatMessage({ id: "searchBarLimitToggle" })}
+          aria-label={t("searchBarLimitToggle")}
         >
           {watch("limit")} <FiChevronDown />
         </button>

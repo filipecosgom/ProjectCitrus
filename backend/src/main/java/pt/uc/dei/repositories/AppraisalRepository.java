@@ -7,8 +7,10 @@ import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.AppraisalEntity;
+import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.enums.CycleState;
+import pt.uc.dei.utils.SearchUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,7 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByAppraisedUser(Long userId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId ORDER BY a.creationDate DESC", 
+                "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId ORDER BY a.creationDate DESC",
                 AppraisalEntity.class
             );
             query.setParameter("userId", userId);
@@ -73,7 +75,7 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByAppraisingUser(Long managerId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.appraisingUser.id = :managerId ORDER BY a.creationDate DESC", 
+                "SELECT a FROM AppraisalEntity a WHERE a.appraisingUser.id = :managerId ORDER BY a.creationDate DESC",
                 AppraisalEntity.class
             );
             query.setParameter("managerId", managerId);
@@ -137,7 +139,7 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
                 "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :appraisedUserId " +
-                "AND a.appraisingUser.id = :appraisingUserId AND a.cycle.id = :cycleId", 
+                "AND a.appraisingUser.id = :appraisingUserId AND a.cycle.id = :cycleId",
                 AppraisalEntity.class
             );
             query.setParameter("appraisedUserId", appraisedUserId);
@@ -164,22 +166,84 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
      * @param offset Starting position for pagination (optional)
      * @return List of filtered appraisals
      */
-    public List<AppraisalEntity> findAppraisalsWithFilters(Long appraisedUserId, Long appraisingUserId, 
+    public List<AppraisalEntity> findAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
+                                                           Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
                                                           Long cycleId, AppraisalState state, 
                                                           Integer limit, Integer offset) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<AppraisalEntity> cq = cb.createQuery(AppraisalEntity.class);
             Root<AppraisalEntity> appraisal = cq.from(AppraisalEntity.class);
+            Join<AppraisalEntity, UserEntity> appraisedUserJoin = appraisal.join("appraisedUser", JoinType.LEFT);
+            Join<AppraisalEntity, UserEntity> appraisingUserJoin = appraisal.join("appraisingUser", JoinType.LEFT);
             
             List<Predicate> predicates = new ArrayList<>();
             
             if (appraisedUserId != null) {
                 predicates.add(cb.equal(appraisal.get("appraisedUser").get("id"), appraisedUserId));
             }
-            
+            if (SearchUtils.isNotBlank(appraisedUserName)) {
+                if (SearchUtils.isQuoted(appraisedUserName)) {
+                    String exact = SearchUtils.stripQuotes(appraisedUserName);
+                    Predicate nameMatch = cb.like(appraisedUserJoin.get("name"), "%" + exact + "%");
+                    Predicate surnameMatch = cb.like(appraisedUserJoin.get("surname"), "%" + exact + "%");
+                    predicates.add(cb.or(nameMatch, surnameMatch));
+                } else {
+                    appraisedUserName = SearchUtils.normalizeString(appraisedUserName);
+                    String[] terms = appraisedUserName.toLowerCase().split("\\s+");
+                    for (String term : terms) {
+                        Expression<String> unaccentedName = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("name")));
+                        Expression<String> unaccentedSurname = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("surname")));
+                        predicates.add(cb.or(
+                                cb.like(unaccentedName, "%" + term + "%"),
+                                cb.like(unaccentedSurname, "%" + term + "%")
+                        ));
+                    }
+                }
+            }
+            if (SearchUtils.isNotBlank(appraisedUserEmail)) {
+                if (SearchUtils.isQuoted(appraisedUserEmail)) {
+                    String exact = SearchUtils.stripQuotes(appraisedUserEmail);
+                    predicates.add(cb.like(cb.lower(appraisedUserJoin.get("email")), "%" + exact.toLowerCase() + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(appraisedUserEmail.toLowerCase());
+                    Expression<String> unaccentedEmail = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("email")));
+                    predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
+                }
+            }
             if (appraisingUserId != null) {
                 predicates.add(cb.equal(appraisal.get("appraisingUser").get("id"), appraisingUserId));
+            }
+
+            if (SearchUtils.isNotBlank(appraisingUserName)) {
+                if (SearchUtils.isQuoted(appraisingUserName)) {
+                    String exact = SearchUtils.stripQuotes(appraisingUserName);
+                    Predicate nameMatch = cb.like(appraisingUserJoin.get("name"), "%" + exact + "%");
+                    Predicate surnameMatch = cb.like(appraisingUserJoin.get("surname"), "%" + exact + "%");
+                    predicates.add(cb.or(nameMatch, surnameMatch));
+                } else {
+                    appraisingUserName = SearchUtils.normalizeString(appraisingUserName);
+                    String[] terms = appraisingUserName.toLowerCase().split("\\s+");
+                    for (String term : terms) {
+                        Expression<String> unaccentedName = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("name")));
+                        Expression<String> unaccentedSurname = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("surname")));
+                        predicates.add(cb.or(
+                                cb.like(unaccentedName, "%" + term + "%"),
+                                cb.like(unaccentedSurname, "%" + term + "%")
+                        ));
+                    }
+                }
+            }
+
+            if (SearchUtils.isNotBlank(appraisingUserEmail)) {
+                if (SearchUtils.isQuoted(appraisingUserEmail)) {
+                    String exact = SearchUtils.stripQuotes(appraisingUserEmail);
+                    predicates.add(cb.like(cb.lower(appraisingUserJoin.get("email")), "%" + exact.toLowerCase() + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(appraisingUserEmail.toLowerCase());
+                    Expression<String> unaccentedEmail = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("email")));
+                    predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
+                }
             }
             
             if (cycleId != null) {
@@ -210,6 +274,102 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
         } catch (Exception e) {
             LOGGER.error("Error finding appraisals with filters", e);
             return new ArrayList<>();
+        }
+    }
+
+    public Long getTotalAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
+                                              Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
+                                              Long cycleId, AppraisalState state) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<AppraisalEntity> appraisal = cq.from(AppraisalEntity.class);
+            Join<AppraisalEntity, UserEntity> appraisedUserJoin = appraisal.join("appraisedUser", JoinType.LEFT);
+            Join<AppraisalEntity, UserEntity> appraisingUserJoin = appraisal.join("appraisingUser", JoinType.LEFT);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (appraisedUserId != null) {
+                predicates.add(cb.equal(appraisal.get("appraisedUser").get("id"), appraisedUserId));
+            }
+            if (SearchUtils.isNotBlank(appraisedUserName)) {
+                if (SearchUtils.isQuoted(appraisedUserName)) {
+                    String exact = SearchUtils.stripQuotes(appraisedUserName);
+                    Predicate nameMatch = cb.like(appraisedUserJoin.get("name"), "%" + exact + "%");
+                    Predicate surnameMatch = cb.like(appraisedUserJoin.get("surname"), "%" + exact + "%");
+                    predicates.add(cb.or(nameMatch, surnameMatch));
+                } else {
+                    String[] terms = SearchUtils.normalizeString(appraisedUserName).toLowerCase().split("\\s+");
+                    for (String term : terms) {
+                        Expression<String> name = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("name")));
+                        Expression<String> surname = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("surname")));
+                        predicates.add(cb.or(
+                                cb.like(name, "%" + term + "%"),
+                                cb.like(surname, "%" + term + "%")
+                        ));
+                    }
+                }
+            }
+            if (SearchUtils.isNotBlank(appraisedUserEmail)) {
+                if (SearchUtils.isQuoted(appraisedUserEmail)) {
+                    String exact = SearchUtils.stripQuotes(appraisedUserEmail);
+                    predicates.add(cb.like(cb.lower(appraisedUserJoin.get("email")), "%" + exact.toLowerCase() + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(appraisedUserEmail.toLowerCase());
+                    Expression<String> email = cb.function("unaccent", String.class, cb.lower(appraisedUserJoin.get("email")));
+                    predicates.add(cb.like(email, "%" + normalized + "%"));
+                }
+            }
+            if (appraisingUserId != null) {
+                predicates.add(cb.equal(appraisal.get("appraisingUser").get("id"), appraisingUserId));
+            }
+            if (SearchUtils.isNotBlank(appraisingUserName)) {
+                if (SearchUtils.isQuoted(appraisingUserName)) {
+                    String exact = SearchUtils.stripQuotes(appraisingUserName);
+                    Predicate nameMatch = cb.like(appraisingUserJoin.get("name"), "%" + exact + "%");
+                    Predicate surnameMatch = cb.like(appraisingUserJoin.get("surname"), "%" + exact + "%");
+                    predicates.add(cb.or(nameMatch, surnameMatch));
+                } else {
+                    String[] terms = SearchUtils.normalizeString(appraisingUserName).toLowerCase().split("\\s+");
+                    for (String term : terms) {
+                        Expression<String> name = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("name")));
+                        Expression<String> surname = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("surname")));
+                        predicates.add(cb.or(
+                                cb.like(name, "%" + term + "%"),
+                                cb.like(surname, "%" + term + "%")
+                        ));
+                    }
+                }
+            }
+            if (SearchUtils.isNotBlank(appraisingUserEmail)) {
+                if (SearchUtils.isQuoted(appraisingUserEmail)) {
+                    String exact = SearchUtils.stripQuotes(appraisingUserEmail);
+                    predicates.add(cb.like(cb.lower(appraisingUserJoin.get("email")), "%" + exact.toLowerCase() + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(appraisingUserEmail.toLowerCase());
+                    Expression<String> email = cb.function("unaccent", String.class, cb.lower(appraisingUserJoin.get("email")));
+                    predicates.add(cb.like(email, "%" + normalized + "%"));
+                }
+            }
+
+            if (cycleId != null) {
+                predicates.add(cb.equal(appraisal.get("cycle").get("id"), cycleId));
+            }
+
+            if (state != null) {
+                predicates.add(cb.equal(appraisal.get("state"), state));
+            }
+
+            if (!predicates.isEmpty()) {
+                cq.where(cb.and(predicates.toArray(new Predicate[0])));
+            }
+
+            cq.select(cb.countDistinct(appraisal));
+
+            return em.createQuery(cq).getSingleResult();
+        } catch (Exception e) {
+            LOGGER.error("Error counting appraisals with filters", e);
+            return 0L;
         }
     }
 

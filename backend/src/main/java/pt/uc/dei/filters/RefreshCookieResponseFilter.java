@@ -1,4 +1,4 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.filters;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;

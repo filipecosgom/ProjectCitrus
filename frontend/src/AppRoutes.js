@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
 import useAuthStore from "./stores/useAuthStore";
-import useLocaleStore from "./stores/useLocaleStore";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Spinner from "./components/spinner/spinner";
@@ -19,12 +18,11 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
 
-function AppRoutes() {
+function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
   const location = useLocation();
-  const locale = useLocaleStore((state) => state.locale);
-  const setLocale = useLocaleStore((state) => state.setLocale);
   const navigate = useNavigate();
+ 
 
   const hideHeaderRoutes = [
     "/",
@@ -84,7 +82,7 @@ function AppRoutes() {
     <>
       {(showHeader || location.pathname === "/header") && (
         <>
-          <Menu language={locale} setLanguage={setLocale} />
+          <Menu language={currentLocale} setLanguage={setLocale} />
           <Header />
         </>
       )}
@@ -134,7 +132,7 @@ function AppRoutes() {
         <Route path="/password-reset" element={<PasswordReset />} />
         <Route
           path="/menu"
-          element={<Menu language={locale} setLanguage={setLocale} />}
+          element={<Menu language={currentLocale} setLanguage={setLocale} />}
         />
         <Route path="/header" element={<div />} />
         <Route path="*" element={<NotFound404 />} />

@@ -1,19 +1,20 @@
-import { IntlProvider } from "react-intl";
-import languages from "./utils/translations";
+import './i18n';
+import { I18nextProvider } from 'react-i18next';
 import useLocaleStore from "./stores/useLocaleStore";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import "./App.css";
-
+// App.js
 function App() {
-  const locale = useLocaleStore((state) => state.locale);
+  const locale = useLocaleStore(state => state.locale);
+  const setLocale = useLocaleStore(state => state.setLocale);
 
   return (
-    <IntlProvider locale={locale} messages={languages[locale]}>
+    <I18nextProvider i18n={require('./i18n').default}>
       <Router>
-        <AppRoutes />
+        <AppRoutes currentLocale={locale} setLocale={setLocale} />
       </Router>
-    </IntlProvider>
+    </I18nextProvider>
   );
 }
 

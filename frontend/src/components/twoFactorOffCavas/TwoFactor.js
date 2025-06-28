@@ -1,14 +1,13 @@
 import "./TwoFactor.css";
 import "../../styles/AuthTransition.css";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import "../../styles/AuthTransition.css";
-import { useIntl } from "react-intl";
-import { set, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import handleRequestSecretKey from "../../handles/handleRequestSecretKey";
 
 const TwoFactor = forwardRef((props, ref) => {
-
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -16,9 +15,6 @@ const TwoFactor = forwardRef((props, ref) => {
     formState: { errors },
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
-
-  //Internacionalização
-  const intl = useIntl();
   const [authCode, setAuthCode] = useState(null);
 
   const handleRequestAuthCode = async (data) => {
@@ -40,25 +36,24 @@ const TwoFactor = forwardRef((props, ref) => {
     }
   }));
 
-
   return (
     <div className="twofactor-container">
       <div className="twofactor-form-container">
         <h1 className="twofactor-title">
-          {intl.formatMessage({ id: "twoFactorTitle" })}
+          {t("twoFactorTitle")}
         </h1>
         {authCode ? (
           <div className="twofactor-instructions">
             <ol>
-              <li>{intl.formatMessage({ id: "twoFactorSetupStep1" })}</li>
-              <li>{intl.formatMessage({ id: "twoFactorSetupStep2" })}</li>
-              <li>{intl.formatMessage({ id: "twoFactorSetupStep3" })}</li>
+              <li>{t("twoFactorSetupStep1")}</li>
+              <li>{t("twoFactorSetupStep2")}</li>
+              <li>{t("twoFactorSetupStep3")}</li>
               <div className="twofactor-secret-placeholder">
                 {authCode
                   ? authCode
-                  : intl.formatMessage({ id: "twoFactorSecretPlaceholder" })}
+                  : t("twoFactorSecretPlaceholder")}
               </div>
-              <li>{intl.formatMessage({ id: "twoFactorSetupStep4" })}</li>
+              <li>{t("twoFactorSetupStep4")}</li>
             </ol>            
           </div>
         ) : (
@@ -70,7 +65,7 @@ const TwoFactor = forwardRef((props, ref) => {
               <div className="twofactor-field">
                 <div className="login-labelAndError">
                   <label className="login-label" htmlFor="login-email">
-                    {intl.formatMessage({ id: "loginFieldEmail" })}
+                    {t("loginFieldEmail")}
                   </label>
                   <span className="error-message">
                     {errors.email ? errors.email.message : "\u00A0"}
@@ -80,14 +75,10 @@ const TwoFactor = forwardRef((props, ref) => {
                   id="login-email"
                   className={`login-input`}
                   {...register("email", {
-                    required: intl.formatMessage({
-                      id: "twofactorErrorEmailMissing",
-                    }),
+                    required: t("twofactorErrorEmailMissing"),
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: intl.formatMessage({
-                        id: "twofactorErrorEmailInvalid",
-                      }),
+                      message: t("twofactorErrorEmailInvalid"),
                     },
                   })}
                 />
@@ -95,7 +86,7 @@ const TwoFactor = forwardRef((props, ref) => {
               <div className="twofactor-field">
                 <div className="login-labelAndError">
                   <label className="login-label" htmlFor="login-password">
-                    {intl.formatMessage({ id: "loginFieldPassword" })}
+                    {t("loginFieldPassword")}
                   </label>
                   <span className="error-message">
                     {errors.password ? errors.password.message : "\u00A0"}
@@ -107,20 +98,14 @@ const TwoFactor = forwardRef((props, ref) => {
                     type={showPassword ? "text" : "password"}
                     className="login-input"
                     {...register("password", {
-                      required: intl.formatMessage({
-                        id: "loginErrorPasswordMissing",
-                      }),
+                      required: t("loginErrorPasswordMissing"),
                     })}
                   />
                   <button
                     type="button"
                     className="password-toggle-btn"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={intl.formatMessage({
-                      id: showPassword
-                        ? "registerHidePassword"
-                        : "registerShowPassword",
-                    })}
+                    aria-label={t(showPassword ? "registerHidePassword" : "registerShowPassword")}
                   >
                     {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                   </button>
@@ -129,7 +114,7 @@ const TwoFactor = forwardRef((props, ref) => {
             </div>
             <div className="twofactor-button-container">
               <button className="twoFactor-button" type="submit">
-                {intl.formatMessage({ id: "twoFactorRequest" })}
+                {t("twoFactorRequest")}
               </button>
             </div>
           </form>

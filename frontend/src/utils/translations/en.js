@@ -1,7 +1,8 @@
 import { login } from "../../api/authenticationApi";
 
 const en = {
-  welcomeMessage: "Welcome {name}",
+  welcomeMessage: "Welcome {{name}}",
+  goodByeMessage: "Goodbye {{name}}",
   //Login
   loginLogo: "CITRUS",
   loginTitle: "Login",
@@ -53,15 +54,15 @@ const en = {
   activationTitle: "Account Activation",
   activationSuccessMessage: "Account successfully created!",
   activationEmailConfirmation:
-    "Your account with the email {email} has been created. " +
+    "Your account with the email {{email}} has been created. " +
     "We have sent a confirmation email with a link to verify your account. " +
     "Please check your inbox.",
-  activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
+  activationRedirectMessage: "Redirecting to login in {{segundos}} seconds.",
   activatedAccountTitle: "Account activated!",
   activatedAccountMessage:
     "Your account has been activated, you can now log in.<br />Welcome to Citrus.",
   activatedAccountRedirectMessage:
-    "Redirecting to login in {segundos} seconds.",
+    "Redirecting to login in {{segundos}} seconds.",
   activatedAccountButton: "Back to Login",
 
   //Profile
@@ -146,7 +147,7 @@ const en = {
   // Not Found Page
   notfoundTitle: "404 Not Found",
   notfoundPhrase: "When life gives you lemons...",
-  notfoundRedirect: "Redirecting in {segundos} seconds.",
+  notfoundRedirect: "Redirecting in {{segundos}} seconds.",
 
   // PROFILE
   profileUpdateSuccess: "Profile updated successfully",
@@ -203,7 +204,7 @@ const en = {
 
   //Searchbar
   searchBarSearchButton: "Search",
-  searchBarPlaceholder: "Search by {type}…",
+  searchBarPlaceholder: "Search by {{type}}…",
   searchBarAllStates: "All States",
   searchBarComplete: "Complete",
   searchBarIncomplete: "Incomplete",
@@ -226,5 +227,18 @@ const en = {
   filterMenuOffice: "Office",
   filterMenuAllOffices: "All Offices",
   filterMenuAccountState: "Account State",
+
+  // Menu internationalization
+  menuDashboard: "Dashboard",
+  menuProfile: "Profile",
+  menuUsers: "Users",
+  menuTraining: "Training",
+  menuAppraisal: "Appraisal",
+  menuCycles: "Cycles",
+  menuSettings: "Settings",
+  menuDarkMode: "Dark Mode",
+  menuDarkModeBeta: "Beta",
+  menuLanguage: "Language",
+  menuLogout: "Logout",
 };
 export default en;

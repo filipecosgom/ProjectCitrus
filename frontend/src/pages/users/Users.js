@@ -1,16 +1,22 @@
 import "./Users.css";
 import SearchBar from "../../components/searchbar/Searchbar";
-import React, { useState, useEffect } from "react";
-import "./Users.css";
+import React, { useState, useEffect, useRef } from "react";
 import UserCard from "../../components/userCard/UserCard";
 import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
 import UserSortControls from "../../components/userSortControls/UserSortControls";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
+import {
+  buildSearchParams,
+  createPageChangeHandler,
+  createSortHandler,
+  fetchInitialUsers,
+} from "../../utils/usersSearchUtils";
 
 export default function Users() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const [offices, setOffices] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -32,30 +38,41 @@ export default function Users() {
     sortBy: "name",
     sortOrder: "ascending",
   });
-  const intl = useIntl();
+  const lastSearchRef = useRef(lastSearch);
+  useEffect(() => {
+    lastSearchRef.current = lastSearch;
+  }, [lastSearch]);
 
-
+  // Externalized: set searching parameters
   const setSearchingParameters = async (
     query,
     searchType,
     limit,
     filters = {}
   ) => {
-    const search = { query, searchType, limit, filters };
+    const search = buildSearchParams(query, searchType, limit, filters);
     setLastSearch(search);
     setCurrentPage(1);
-    setSearchParams({ query, searchType, limit, filters });
+    setSearchParams(search);
   };
 
-  const handlePageChange = (newOffset) => {
-    setPagination((prev) => ({ ...prev, offset: newOffset }));
-    if (lastSearch) {
-      fetchUsers(newOffset, lastSearch);
-    }
-  };
+  // Externalized: handle page change
+  const handlePageChange = createPageChangeHandler(
+    setPagination,
+    fetchUsers,
+    lastSearchRef
+  );
 
-  const fetchUsers = async (offset = 0, overrideParams = null) => {
-    console.log("TRIGGERED");
+  // Externalized: handle sort change
+  const handleSortChange = createSortHandler(
+    setSort,
+    setPagination,
+    fetchUsers,
+    lastSearchRef
+  );
+
+  // Externalized: fetch users
+  async function fetchUsers(offset = 0, overrideParams = null) {
     const { query, searchType, limit, filters } =
       overrideParams || searchParams;
     setResultsLoading(true);
@@ -64,10 +81,9 @@ export default function Users() {
       offset,
       limit,
       ...filters,
-      parameter: sort.sortBy, // e.g. "name", "email", "manager.name"
-      order: sort.sortOrder, // e.g. "ASCENDING" or "DESCENDING"
+      parameter: sort.sortBy,
+      order: sort.sortOrder,
     });
-
     setUsers(result.users);
     setPagination((prev) => ({
       ...prev,
@@ -76,7 +92,7 @@ export default function Users() {
       total: result.pagination.totalUsers,
     }));
     setResultsLoading(false);
-  };
+  }
 
   useEffect(() => {
     if (searchParams.query !== undefined) {
@@ -92,43 +108,24 @@ export default function Users() {
 
   useEffect(() => {
     if (lastSearch) {
-      fetchUsers(0, lastSearch); // restart at page 1
+      fetchUsers(0, lastSearch);
       setPagination((prev) => ({ ...prev, offset: 0 }));
     }
   }, [sort]);
 
   // 📦 On mount: fetch offices and initial users
   useEffect(() => {
-    const fetchInitial = async () => {
-      setPageLoading(true);
-      const offices = await handleGetOffices();
-      const initialSearch = {
-        query: "",
-        searchType: "email",
-        limit: 10,
-        filters: {}, // empty to fetch all
-      };
-      setSearchParams(initialSearch);
-      setLastSearch(initialSearch);
-      const result = await handleGetUsers({
-        [initialSearch.searchType]: initialSearch.query,
-        offset: 0,
-        limit: initialSearch.limit,
-        ...initialSearch.filters,
-        parameter: sort.sortBy,
-        order: sort.sortOrder,
-      });
-      setUsers(result.users);
-      setPagination((prev) => ({
-        ...prev,
-        offset: 0,
-        limit: result.pagination.limit,
-        total: result.pagination.totalUsers,
-      }));
-      setOffices(offices);
-      setPageLoading(false);
-    };
-    fetchInitial();
+    fetchInitialUsers({
+      setPageLoading,
+      setOffices,
+      setSearchParams,
+      setLastSearch,
+      setUsers,
+      setPagination,
+      sort,
+      handleGetOffices,
+      handleGetUsers,
+    });
   }, []);
 
   if (pageLoading) return <Spinner />;
@@ -139,7 +136,7 @@ export default function Users() {
       <UserSortControls
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}
-        onSortChange={setSort}
+        onSortChange={handleSortChange}
       />
 
       {resultsLoading ? (
@@ -148,7 +145,7 @@ export default function Users() {
         </div>
       ) : users.length === 0 ? (
         <div className="users-empty">
-          <p>{intl.formatMessage({ id: "usersNoResults" })}</p>
+          <p>{t("usersNoResults")}</p>
         </div>
       ) : (
         <div>

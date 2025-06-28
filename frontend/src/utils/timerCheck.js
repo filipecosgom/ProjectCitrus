@@ -1,11 +1,14 @@
+import React from "react";
+import useAuthStore from "../stores/useAuthStore";
 
+export default function TimerCheck() {
+  const { remainingTime } = useAuthStore();
 
-const { remainingTime } = useAuthStore();
+  const formatTime = (ms) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
 
-const formatTime = (ms) => {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-};
-
-return <p>Session expires in: {formatTime(remainingTime)}</p>;
+  return <p>Session expires in: {formatTime(remainingTime)}</p>;
+}

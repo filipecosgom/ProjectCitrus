@@ -1,4 +1,4 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.filters;
 
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;

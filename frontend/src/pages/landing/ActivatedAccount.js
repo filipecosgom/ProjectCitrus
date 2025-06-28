@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { FcApproval } from "react-icons/fc";
 import "./ActivatedAccount.css";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 import handleActivateAccount from "../../handles/handleActivateAccount";
 import handleNotification from "../../handles/handleNotification";
 
 export default function ActivatedAccount() {
+  const { t } = useTranslation();
   const token = new URLSearchParams(useLocation().search).get("token");
   const language =
     new URLSearchParams(useLocation().search).get("lang") || "en";
   const navigate = useNavigate();
-  const intl = useIntl();
   const segundos = 50;
   const [countdown, setCountdown] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -63,19 +63,16 @@ export default function ActivatedAccount() {
       <div className="activation-card">
         <FcApproval className="activation-check-icon" size={72} />
         <h1 className="activation-title">
-          {intl.formatMessage({ id: "activatedAccountTitle" })}
+          {t("activatedAccountTitle")}
         </h1>
         <div className="activation-message">
           <strong
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "activatedAccountMessage" }),
+              __html: t("activatedAccountMessage"),
             }}
           />
           <p style={{ marginTop: 16, color: "#888", fontSize: "0.95em" }}>
-            {intl.formatMessage(
-              { id: "activatedAccountRedirectMessage" },
-              { segundos: countdown }
-            )}
+            {t("activatedAccountRedirectMessage", { segundos: countdown })}
           </p>
         </div>
         <div>
@@ -84,7 +81,7 @@ export default function ActivatedAccount() {
             type="button"
             onClick={() => navigate("/login")}
           >
-            {intl.formatMessage({ id: "activatedAccountButton" })}
+            {t("activatedAccountButton")}
           </button>
         </div>
       </div>

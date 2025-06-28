@@ -1,11 +1,11 @@
+// intlInstance.js
 import { createIntl, createIntlCache } from 'react-intl';
 import useLocaleStore from '../stores/useLocaleStore';
-import languages from './translations/index'; // Your existing index file
+import languages from './translations/index';
 
 const cache = createIntlCache();
 let intlInstance;
 
-// Initialize or update intl instance
 const updateIntl = (locale) => {
   intlInstance = createIntl(
     {
@@ -23,24 +23,32 @@ const updateIntl = (locale) => {
     cache
   );
 };
+
+// Initialize on first load
+updateIntl(useLocaleStore.getState().locale);
+
+// Export functions
+export const getIntl = () => intlInstance;
 export const getCurrentLocale = () => useLocaleStore.getState().locale;
 
-// Get current intl instance
-export const getIntl = () => {
-  if (!intlInstance) {
-    const currentLocale = useLocaleStore.getState().locale;
-    console.log(currentLocale);
-    updateIntl(currentLocale);
+// Subscription management
+let unsubscribe;
+
+export const setupIntlSubscription = () => {
+  if (!unsubscribe) {
+    unsubscribe = useLocaleStore.subscribe(
+      (state) => state.locale,
+      (newLocale) => {
+        console.log("Changing locale to:", newLocale);
+        updateIntl(newLocale);
+      }
+    );
   }
-  return intlInstance;
 };
 
-// Subscribe to locale changes
-useLocaleStore.subscribe(
-  (state) => {
-    return state.locale;
-  },
-  (newLocale) => {
-    updateIntl(newLocale);
+export const cleanupIntlSubscription = () => {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
   }
-);
+};

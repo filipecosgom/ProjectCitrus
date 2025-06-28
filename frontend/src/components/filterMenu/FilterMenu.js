@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { GiSettingsKnobs } from "react-icons/gi";
-import { useIntl } from "react-intl";
+import { useTranslation } from "react-i18next";
 import "./FilterMenu.css";
 import useAuthStore from "../../stores/useAuthStore";
 
@@ -16,7 +16,7 @@ const FilterMenu = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const intl = useIntl();
+  const { t } = useTranslation();
   const isAdmin = useAuthStore.getState().user?.userIsAdmin;
 
   const rawCategories  = [
@@ -38,20 +38,17 @@ const FilterMenu = ({
   ];
 
   const categories = isAdmin
-  ? rawCategories
-  : rawCategories.filter((cat) => cat.key !== "accountState");
-
+    ? rawCategories
+    : rawCategories.filter((cat) => cat.key !== "accountState");
 
   const getOptionLabel = (key, opt) => {
     if (key === "searchType") {
       // e.g. "name" → filterMenuOptionName
       const cap = opt.charAt(0).toUpperCase() + opt.slice(1);
-      return intl.formatMessage({ id: `filterMenuOption${cap}` });
+      return t(`filterMenuOption${cap}`);
     }
     if (key === "office") {
-      return opt
-        ? opt
-        : intl.formatMessage({ id: "filterMenuAllOffices" });
+      return opt ? opt : t("filterMenuAllOffices");
     }
     // accountStates: each opt is { label, value }
     return typeof opt === "object" ? opt.label : opt;
@@ -69,7 +66,7 @@ const FilterMenu = ({
         <GiSettingsKnobs
           className="filterMenu-icon"
           size={28}
-          title={intl.formatMessage({ id: "filterMenuSettings" })}
+          title={t("filterMenuSettings")}
         />
       </div>
 
@@ -84,7 +81,7 @@ const FilterMenu = ({
             >
               <div className="filterMenu-label">
                 <FiChevronLeft aria-hidden="true" />
-                {intl.formatMessage({ id })}
+                {t(id)}
               </div>
 
               {activeCategory === key && (

@@ -9,6 +9,8 @@ import "./Menu.css";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import useAuthStore from "../../stores/useAuthStore";
+import { useTranslation } from "react-i18next";
+import handleLogout from "../../handles/handleLogout";
 
 export default function Menu({
   onLogout,
@@ -17,73 +19,90 @@ export default function Menu({
   show = false,
   onClose,
 }) {
+  const { t } = useTranslation();
   const userId = useAuthStore((state) => state.user?.id);
-  
-  // ✅ CORREÇÃO: Usar useAuthStore em vez de sessionStorage
   const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
+  // const intl = useIntl();
+
+  // Internationalized menu labels
+  const menuDashboard = t("menuDashboard");
+  const menuProfile = t("menuProfile");
+  const menuUsers = t("menuUsers");
+  const menuTraining = t("menuTraining");
+  const menuAppraisal = t("menuAppraisal");
+  const menuCycles = t("menuCycles");
+  const menuSettings = t("menuSettings");
+  const menuDarkMode = t("menuDarkMode");
+  const menuDarkModeBeta = t("menuDarkModeBeta");
+  const menuLanguage = t("menuLanguage");
+  const menuLogout = t("menuLogout");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Lista de itens do menu, com ícones, cores, rotas e flags especiais
   const menuItems = [
     {
       key: "dashboard",
-      label: "Dashboard",
+      label: menuDashboard,
       icon: <TbLayoutDashboardFilled />,
       color: "#B61B23",
       route: "/dashboard",
-      adminOnly: false, // ✅ Todos podem ver dashboard
+      adminOnly: false,
     },
     {
       key: "profile",
-      label: "Profile",
+      label: menuProfile,
       icon: <FaUserCircle />,
       color: "#9747FF",
       route: userId ? `/profile?id=${userId}` : "/profile",
-      adminOnly: false, // ✅ Todos podem ver profile
+      adminOnly: false,
     },
     {
       key: "users",
-      label: "Users",
+      label: menuUsers,
       icon: <FaUsers />,
       color: "#3F861E",
       route: "/users",
-      adminOnly: false, // ✅ Todos podem ver users (verificar se é correto)
+      adminOnly: false,
     },
     {
       key: "training",
-      label: "Training",
+      label: menuTraining,
       icon: <FaBook />,
       color: "#FF5900",
       route: "/training",
-      adminOnly: false, // ✅ Todos podem ver training
+      adminOnly: false,
     },
     {
       key: "appraisal",
-      label: "Appraisal",
+      label: menuAppraisal,
       icon: <FaAward />,
       color: "#FDD835",
       route: "/appraisal",
-      adminOnly: false, // ✅ Todos podem ver appraisal
+      adminOnly: false,
     },
-    // ✅ NOVAS OPÇÕES ADMIN
     {
       key: "cycles",
-      label: "Cycles",
+      label: menuCycles,
       icon: <IoCalendar />,
       color: "#00B9CD",
       route: "/cycles",
-      adminOnly: true, // ✅ SÓ ADMIN
+      adminOnly: true,
     },
     {
       key: "settings",
-      label: "Settings",
+      label: menuSettings,
       icon: <IoSettings />,
       color: "#1976d2",
       route: "/settings",
-      adminOnly: true, // ✅ SÓ ADMIN
+      adminOnly: true,
     },
     {
       key: "darkmode",
-      label: "Dark Mode",
+      label: menuDarkMode,
       icon: <MdDarkMode />,
       color: "#818488",
       route: null,
@@ -92,7 +111,7 @@ export default function Menu({
     },
     {
       key: "language",
-      label: "Language",
+      label: menuLanguage,
       icon: null,
       color: null,
       route: null,
@@ -101,7 +120,7 @@ export default function Menu({
     },
     {
       key: "logout",
-      label: "Logout",
+      label: menuLogout,
       icon: <MdLogout />,
       color: "#818488",
       route: null,
@@ -110,25 +129,18 @@ export default function Menu({
     },
   ];
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
   useEffect(() => {
     console.log("MENU - User ID:", userId);
-    console.log("MENU - Is Admin:", isUserAdmin); // ✅ DEBUG LOG
+    console.log("MENU - Is Admin:", isUserAdmin);
   }, [userId, isUserAdmin]);
 
-  // ✅ CORREÇÃO: Filtrar baseado em adminOnly e isUserAdmin
-  const filteredItems = menuItems.filter(item => {
+  const filteredItems = menuItems.filter((item) => {
     if (item.adminOnly && !isUserAdmin) {
-      return false; // Esconde itens admin para users normais
+      return false;
     }
-    return true; // Mostra todos os outros
+    return true;
   });
 
-  // Expande menu ao hover (apenas desktop/tablet)
   const handleMouseEnter = () => {
     if (window.innerWidth > 480) setExpanded(true);
   };
@@ -136,11 +148,14 @@ export default function Menu({
     if (window.innerWidth > 480) setExpanded(false);
   };
 
-  // Navegação ao clicar num item do menu
   const handleItemClick = (item) => {
-    if (item.route) navigate(item.route); // navega para a rota
-    // Em mobile, fecha o menu ao navegar
+    if (item.route) navigate(item.route);
     if (window.innerWidth <= 480 && onClose) onClose();
+  };
+
+  const handleMenuLogout = async () => {
+    await handleLogout(navigate);
+    if (onLogout) onLogout(); // Optionally call parent callback
   };
 
   // Fecha menu ao clicar fora (apenas mobile)
@@ -225,10 +240,10 @@ export default function Menu({
                   ? " selected"
                   : ""
               }${item.isLogout ? " menu-cell-logout" : ""}`}
-              onClick={() => {
+              onClick={async () => {
                 if (item.route) navigate(item.route);
-                // Logout chama função onLogout, outros navegam
-                if (item.isLogout && onLogout) onLogout();
+                // Logout chama função handleMenuLogout, outros navegam
+                if (item.isLogout) await handleMenuLogout();
                 else if (!item.isToggle && !item.isLanguage)
                   handleItemClick(item);
               }}
@@ -254,7 +269,10 @@ export default function Menu({
                 {item.isToggle ? (
                   <div className="menu-darkmode-row">
                     <span>
-                      Dark mode <span className="menu-darkmode-beta">Beta</span>
+                      {menuDarkMode}{" "}
+                      <span className="menu-darkmode-beta">
+                        {menuDarkModeBeta}
+                      </span>
                     </span>
                     <label className="switch">
                       <input

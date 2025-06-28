@@ -1,5 +1,6 @@
 import { login } from "../api/authenticationApi";
 import useAuthStore from "../stores/useAuthStore";
+import handleNotification from "./handleNotification";
 
 export const handleLogin = async (loggingInformation) => {
   console.log("stsart handleLogin");
@@ -11,18 +12,20 @@ export const handleLogin = async (loggingInformation) => {
     console.log(response);
     if (response.success) {
       const userId = useAuthStore.getState().user?.id; // Get userId from store
-      console.log(userId);
       if (response.data.user.hasAvatar) {
         const response = useAuthStore.getState().fetchAndSetUserAvatar();
         if (response?.success) {
+          handleNotification("success", "login.success");
           return true;
         }
         else {
+          handleNotification("error", "login.avatarError");
           return false;
         }
       }
     }
   }
+  handleNotification("error", "login.failed");
   return false; // Failure case
 };
 

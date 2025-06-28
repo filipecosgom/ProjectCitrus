@@ -1,4 +1,4 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.filters;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -19,11 +19,10 @@ import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.ConfigurationService;
 import pt.uc.dei.services.UserService;
+import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.JWTUtil;
 
-import java.io.OutputStream;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * JAX-RS authentication filter for validating JWT tokens and user authentication.

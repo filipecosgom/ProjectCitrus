@@ -1,5 +1,6 @@
 const pt = {
-  welcomeMessage: "Bem-vindo {name}",
+  welcomeMessage: "Bem-vindo {{name}}",
+  goodByeMessage: "Até à próxima {{name}}",
   //Login
   loginLogo: "CITRUS",
   loginTitle: "Entrar",
@@ -53,16 +54,16 @@ const pt = {
   activationTitle: "Ativação da Conta",
   activationSuccessMessage: "Conta criada com sucesso!",
   activationEmailConfirmation:
-    "A tua conta com o email {email} foi criada. " +
+    "A tua conta com o email {{email}} foi criada. " +
     "Enviámos um email de confirmação com um link para validares a tua conta. " +
     "Por favor verifica a tua caixa de entrada.",
   activationRedirectMessage:
-    "Serás redirecionado para o login em {segundos} segundos.",
+    "Serás redirecionado para o login em {{segundos}} segundos.",
   activatedAccountTitle: "Conta ativada!",
   activatedAccountMessage:
     "A sua conta foi activada, pode efetuar login.<br />Bem-vindo ao Citrus.",
   activatedAccountRedirectMessage:
-    "Serás redirecionado para o login em {segundos} segundos.",
+    "Serás redirecionado para o login em {{segundos}} segundos.",
   activatedAccountButton: "Voltar ao Login",
 
   //Profile
@@ -151,7 +152,7 @@ const pt = {
   // Not Found
   notfoundTitle: "404 Não Encontrado",
   notfoundPhrase: "Quando a vida te dá limões...",
-  notfoundRedirect: "A redirecioná-lo dentro de {segundos} segundos.",
+  notfoundRedirect: "A redirecioná-lo dentro de {{segundos}} segundos.",
 
   // PROFILE
   profileUpdateSuccess: "Perfil atualizado com sucesso",
@@ -210,7 +211,7 @@ const pt = {
 
   //SearchBar
   searchBarSearchButton: "Pesquisar",
-  searchBarPlaceholder: "Pesquisar por {type}…",
+  searchBarPlaceholder: "Pesquisar por {{type}}…",
   searchBarAllStates: "Todos os estados",
   searchBarComplete: "Completo",
   searchBarIncomplete: "Incompleto",
@@ -233,6 +234,19 @@ const pt = {
   filterMenuOffice: "Escritório",
   filterMenuAllOffices: "Todos os escritórios",
   filterMenuAccountState: "Estado da conta",
+
+  // Menu internationalization
+  menuDashboard: "Painel",
+  menuProfile: "Perfil",
+  menuUsers: "Utilizadores",
+  menuTraining: "Formação",
+  menuAppraisal: "Avaliações",
+  menuCycles: "Ciclos",
+  menuSettings: "Definições",
+  menuDarkMode: "Escuro",
+  menuDarkModeBeta: "Beta",
+  menuLanguage: "Idioma",
+  menuLogout: "Sair",
 };
 
 export default pt;

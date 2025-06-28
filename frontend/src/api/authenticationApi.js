@@ -90,3 +90,14 @@ export const changePassword = async (passwordResetToken, newPassword) => {
     return { success: false, status: error.response?.status || 500, error };
   }
 };
+
+// Calls the backend logout endpoint
+export const logoutRequest = async () => {
+  try {
+    const response = await api.post(`${authenticationEndpoint}/logout`);
+    return response.data;
+  } catch (error) {
+    // Optionally handle error
+    return { success: false, error };
+  }
+};

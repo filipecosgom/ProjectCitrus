@@ -21,8 +21,22 @@ api.interceptors.request.use(config => {
   return config;
 });
 
+// List of endpoints that should NOT refresh the session
+const skipEndpoints = ["/login", "/logout", "/request-password-reset", "/activate", "/register"];
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Refresh session timer on most successful responses
+    const url = response.config.url;
+    if (!skipEndpoints.some((endpoint) => url && url.includes(endpoint))) {
+      // Call the refreshSessionTimer method if it exists
+      const store = useAuthStore.getState();
+      if (typeof store.refreshSessionTimer === "function") {
+        store.refreshSessionTimer();
+      }
+    }
+    return response;
+  },
   (error) => {
     const success = error.response?.data?.success;
     const status = error.response?.status;
