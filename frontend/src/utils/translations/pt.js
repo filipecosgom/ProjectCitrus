@@ -234,6 +234,13 @@ const pt = {
   filterMenuOffice: "Escritório",
   filterMenuAllOffices: "Todos os escritórios",
   filterMenuAccountState: "Estado da conta",
+  filterMenuOptionComplete: "Completo",
+  filterMenuOptionIncomplete: "Incompleto",
+  filterMenuisManager: "Apenas gestores",
+  filterMenuisAdmin: "Apenas administradores",
+  filterMenuisManaged: "Utilizadores com gestores",
+  filterYes: "Sim",
+  filterNo: "Não",
 
   // Menu internationalization
   menuDashboard: "Painel",

@@ -50,6 +50,8 @@ export default function Users() {
     limit,
     filters = {}
   ) => {
+    console.log("Setting search parameters:", { query, searchType, limit, filters });
+    // Validate inputs
     const search = buildSearchParams(query, searchType, limit, filters);
     setLastSearch(search);
     setCurrentPage(1);

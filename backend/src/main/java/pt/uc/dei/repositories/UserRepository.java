@@ -114,7 +114,10 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      * @param limit Pagination limit (max results)
      * @return List of users matching the criteria
      */
-    public List<UserEntity> getUsers(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office, Parameter parameter, Order order, int offset, int limit) {
+    public List<UserEntity> getUsers(Long id, String email, String name, String phone,
+                                     AccountState accountState, String roleStr, Office office,
+                                     Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
+                                     Parameter parameter, Order order, int offset, int limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
@@ -176,6 +179,26 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));
         }
+        if (Boolean.TRUE.equals(userIsManager)) {
+            predicates.add(cb.isTrue(root.get("userIsManager")));
+        }
+        if (Boolean.FALSE.equals(userIsManager)) {
+            predicates.add(cb.isFalse(root.get("userIsManager")));
+        }
+
+        if (Boolean.TRUE.equals(userIsAdmin)) {
+            predicates.add(cb.isTrue(root.get("userIsAdmin")));
+        }
+        if (Boolean.FALSE.equals(userIsAdmin)) {
+            predicates.add(cb.isFalse(root.get("userIsAdmin")));
+        }
+
+        if (Boolean.TRUE.equals(userHasManager)) {
+            predicates.add(cb.isNotNull(root.get("managerUser")));
+        }
+        if (Boolean.FALSE.equals(userHasManager)) {
+            predicates.add(cb.isNull(root.get("managerUser")));
+        }
         query.where(predicates.toArray(new Predicate[0]));
         // Sorting logic
         if (parameter != null) {
@@ -210,7 +233,9 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      * @param office Office to filter (optional)
      * @return Total count of users matching the criteria
      */
-    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState, String roleStr, Office office) {
+    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState,
+                                  String roleStr, Office office, Boolean userIsManager,
+                                  Boolean userIsAdmin, Boolean userHasManager) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
@@ -267,6 +292,26 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         }
         if (office != null) {
             predicates.add(cb.equal(root.get("office"), office));
+        }
+        if (Boolean.TRUE.equals(userIsManager)) {
+            predicates.add(cb.isTrue(root.get("userIsManager")));
+        }
+        if (Boolean.FALSE.equals(userIsManager)) {
+            predicates.add(cb.isFalse(root.get("userIsManager")));
+        }
+
+        if (Boolean.TRUE.equals(userIsAdmin)) {
+            predicates.add(cb.isTrue(root.get("userIsAdmin")));
+        }
+        if (Boolean.FALSE.equals(userIsAdmin)) {
+            predicates.add(cb.isFalse(root.get("userIsAdmin")));
+        }
+
+        if (Boolean.TRUE.equals(userHasManager)) {
+            predicates.add(cb.isNotNull(root.get("managerUser")));
+        }
+        if (Boolean.FALSE.equals(userHasManager)) {
+            predicates.add(cb.isNull(root.get("managerUser")));
         }
 
         query.where(predicates.toArray(new Predicate[0]));

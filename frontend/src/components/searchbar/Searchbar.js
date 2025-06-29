@@ -14,6 +14,9 @@ const SearchBar = ({ onSearch, offices = [] }) => {
       accountState: "",
       office: "",
       limit: 10,
+      isManager: null,
+      isAdmin: null,
+      isManaged: null,
     },
   });
   const [showResultsMenu, setShowResultsMenu] = useState(false);
@@ -26,10 +29,13 @@ const SearchBar = ({ onSearch, offices = [] }) => {
     { label: t("searchBarIncomplete"), value: "INCOMPLETE" },
   ];
 
-  const onSubmit = ({ query, searchType, limit, accountState, office }) => {
+  const onSubmit = ({ query, searchType, limit, accountState, office, isManager, isAdmin, isManaged, }) => {
     const filters = {
       accountState,
       office,
+      isManager,
+      isAdmin,
+      isManaged,
     };
     onSearch(query, searchType, limit, filters);
   };
@@ -48,9 +54,7 @@ const SearchBar = ({ onSearch, offices = [] }) => {
         <input
           {...register("query")}
           placeholder={t("searchBarPlaceholder", {
-            type: watch("searchType")
-              .replace(/_/g, " ")
-              .toLowerCase(),
+            type: watch("searchType").replace(/_/g, " ").toLowerCase(),
           })}
           className="searchBar-input"
         />

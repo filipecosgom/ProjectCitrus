@@ -370,6 +370,9 @@ public class UserController {
                              @QueryParam("accountState") String accountStateStr,
                              @QueryParam("role") String roleStr,
                              @QueryParam("office") String officeStr,
+                             @QueryParam("isManager") Boolean userIsManager,
+                             @QueryParam("isAdmin") Boolean userIsAdmin,
+                             @QueryParam("isManaged") Boolean userIsManaged,
                              @QueryParam("parameter") @DefaultValue("name") String parameterStr,
                              @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
@@ -381,7 +384,7 @@ public class UserController {
         Order order = Order.fromFieldName(SearchUtils.normalizeString(orderStr));
 
         Map<String, Object> userData = userService.getUsers(id, email, name, phone,
-                accountState, roleStr, office,
+                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged,
                 parameter, order, offset, limit);
 
         if (userData.get("users") == null || ((List<?>) userData.get("users")).isEmpty()) {

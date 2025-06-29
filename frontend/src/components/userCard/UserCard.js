@@ -72,7 +72,7 @@ const UserCard = ({ user }) => {
 
   const getStatusClass = () => {
     if (user.userIsAdmin) return styles.admin;
-    if (user.userIsManager) return styles.manager;
+    if (user.isManager) return styles.manager;
     return "";
   };
 
@@ -148,7 +148,7 @@ UserCard.propTypes = {
     birthdate: PropTypes.array,
     accountState: PropTypes.string.isRequired,
     userIsAdmin: PropTypes.bool.isRequired,
-    userIsManager: PropTypes.bool.isRequired,
+    isManager: PropTypes.bool.isRequired,
     userIsDeleted: PropTypes.bool.isRequired,
     hasAvatar: PropTypes.bool.isRequired,
     manager: PropTypes.shape({

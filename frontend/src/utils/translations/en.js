@@ -227,6 +227,11 @@ const en = {
   filterMenuOffice: "Office",
   filterMenuAllOffices: "All Offices",
   filterMenuAccountState: "Account State",
+  filterMenuOptionComplete: "Complete",
+  filterMenuOptionIncomplete: "Incomplete",
+  filterMenuisManager: "Show only managers",
+  filterMenuisAdmin: "Show only admins",
+  filterMenuisManaged: "Managed users",
 
   // Menu internationalization
   menuDashboard: "Dashboard",
