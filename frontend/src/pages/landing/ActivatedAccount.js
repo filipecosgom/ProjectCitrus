@@ -18,8 +18,6 @@ export default function ActivatedAccount() {
 
   useEffect(() => {
     const activateAccount = async () => {
-      console.log("Token recebido:", token);
-      console.log("Idioma selecionado:", language);
       if (!token) {
         console.error("Token não encontrado");
         navigate("/login");
@@ -28,7 +26,6 @@ export default function ActivatedAccount() {
 
       try {
         const response = await handleActivateAccount(token);
-        console.log("Resposta de ativação:", response);
 
         if (response) {
           setCountdown(segundos);

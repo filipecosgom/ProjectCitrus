@@ -138,6 +138,11 @@
   .searchBar-container {
   padding: var(--padding-lg)
 }
+
+.searchBar-dropdownToggle,
+  .searchBar-select {
+    width: auto;
+  }
   
 
 }

@@ -7,13 +7,13 @@ package pt.uc.dei.enums;
  *   <li>DESCENDING: Sorts elements from largest to smallest.</li>
  * </ul>
  */
-public enum Order {
+public enum OrderBy {
     ASCENDING("ascending"),
     DESCENDING("descending");
 
     private final String fieldName;
 
-    Order(String fieldName) {
+    OrderBy(String fieldName) {
         this.fieldName = fieldName;
     }
 
@@ -21,10 +21,10 @@ public enum Order {
         return fieldName;
     }
 
-    public static Order fromFieldName(String input) {
+    public static OrderBy fromFieldName(String input) {
         if (input == null || input.trim().isEmpty()) return null;
         String trimmed = input.trim();
-        for (Order o : values()) {
+        for (OrderBy o : values()) {
             if (o.fieldName.equalsIgnoreCase(trimmed) || (o.toString().equalsIgnoreCase(trimmed))) {
                 return o;
             }

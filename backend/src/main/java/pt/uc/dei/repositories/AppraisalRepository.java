@@ -1,15 +1,14 @@
 package pt.uc.dei.repositories;
 
 import jakarta.ejb.Stateless;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.AppraisalEntity;
+import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.entities.UserEntity;
-import pt.uc.dei.enums.AppraisalState;
-import pt.uc.dei.enums.CycleState;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.utils.SearchUtils;
 
 import java.util.ArrayList;
@@ -55,8 +54,8 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByAppraisedUser(Long userId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId ORDER BY a.creationDate DESC",
-                AppraisalEntity.class
+                    "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId ORDER BY a.creationDate DESC",
+                    AppraisalEntity.class
             );
             query.setParameter("userId", userId);
             return query.getResultList();
@@ -75,8 +74,8 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByAppraisingUser(Long managerId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.appraisingUser.id = :managerId ORDER BY a.creationDate DESC",
-                AppraisalEntity.class
+                    "SELECT a FROM AppraisalEntity a WHERE a.appraisingUser.id = :managerId ORDER BY a.creationDate DESC",
+                    AppraisalEntity.class
             );
             query.setParameter("managerId", managerId);
             return query.getResultList();
@@ -95,8 +94,8 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByCycle(Long cycleId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId ORDER BY a.creationDate DESC", 
-                AppraisalEntity.class
+                    "SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId ORDER BY a.creationDate DESC",
+                    AppraisalEntity.class
             );
             query.setParameter("cycleId", cycleId);
             return query.getResultList();
@@ -115,8 +114,8 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     public List<AppraisalEntity> findAppraisalsByState(AppraisalState state) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.state = :state ORDER BY a.creationDate DESC", 
-                AppraisalEntity.class
+                    "SELECT a FROM AppraisalEntity a WHERE a.state = :state ORDER BY a.creationDate DESC",
+                    AppraisalEntity.class
             );
             query.setParameter("state", state);
             return query.getResultList();
@@ -130,25 +129,25 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
      * Finds an appraisal by appraised user, appraising user and cycle.
      * Used to check for duplicates before creating new appraisals.
      *
-     * @param appraisedUserId The appraised user ID
-     * @param appraisingUserId The appraising user ID  
-     * @param cycleId The cycle ID
+     * @param appraisedUserId  The appraised user ID
+     * @param appraisingUserId The appraising user ID
+     * @param cycleId          The cycle ID
      * @return AppraisalEntity if found, null otherwise
      */
     public AppraisalEntity findAppraisalByUsersAndCycle(Long appraisedUserId, Long appraisingUserId, Long cycleId) {
         try {
             TypedQuery<AppraisalEntity> query = em.createQuery(
-                "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :appraisedUserId " +
-                "AND a.appraisingUser.id = :appraisingUserId AND a.cycle.id = :cycleId",
-                AppraisalEntity.class
+                    "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :appraisedUserId " +
+                            "AND a.appraisingUser.id = :appraisingUserId AND a.cycle.id = :cycleId",
+                    AppraisalEntity.class
             );
             query.setParameter("appraisedUserId", appraisedUserId);
             query.setParameter("appraisingUserId", appraisingUserId);
             query.setParameter("cycleId", cycleId);
-            
+
             List<AppraisalEntity> results = query.getResultList();
             return results.isEmpty() ? null : results.get(0);
-            
+
         } catch (Exception e) {
             LOGGER.error("Error finding appraisal by users and cycle", e);
             return null;
@@ -158,27 +157,28 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     /**
      * Finds appraisals with advanced filtering options.
      *
-     * @param appraisedUserId Optional filter by appraised user ID
+     * @param appraisedUserId  Optional filter by appraised user ID
      * @param appraisingUserId Optional filter by appraising user ID
-     * @param cycleId Optional filter by cycle ID
-     * @param state Optional filter by appraisal state
-     * @param limit Maximum number of results (optional)
-     * @param offset Starting position for pagination (optional)
+     * @param cycleId          Optional filter by cycle ID
+     * @param state            Optional filter by appraisal state
+     * @param limit            Maximum number of results (optional)
+     * @param offset           Starting position for pagination (optional)
      * @return List of filtered appraisals
      */
     public List<AppraisalEntity> findAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
                                                            Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
-                                                          Long cycleId, AppraisalState state, 
-                                                          Integer limit, Integer offset) {
+                                                           Long cycleId, AppraisalState state, AppraisalParameter parameter, OrderBy order,
+                                                           Integer limit, Integer offset) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<AppraisalEntity> cq = cb.createQuery(AppraisalEntity.class);
             Root<AppraisalEntity> appraisal = cq.from(AppraisalEntity.class);
             Join<AppraisalEntity, UserEntity> appraisedUserJoin = appraisal.join("appraisedUser", JoinType.LEFT);
             Join<AppraisalEntity, UserEntity> appraisingUserJoin = appraisal.join("appraisingUser", JoinType.LEFT);
-            
+            Join<AppraisalEntity, CycleEntity> cycleJoin = appraisal.join("cycle", JoinType.LEFT);
+
             List<Predicate> predicates = new ArrayList<>();
-            
+
             if (appraisedUserId != null) {
                 predicates.add(cb.equal(appraisal.get("appraisedUser").get("id"), appraisedUserId));
             }
@@ -245,31 +245,67 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
                     predicates.add(cb.like(unaccentedEmail, "%" + normalized + "%"));
                 }
             }
-            
+
             if (cycleId != null) {
                 predicates.add(cb.equal(appraisal.get("cycle").get("id"), cycleId));
             }
-            
+
             if (state != null) {
                 predicates.add(cb.equal(appraisal.get("state"), state));
             }
-            
+
+            if (parameter != null) {
+                Path<?> sortingField;
+
+                switch (parameter) {
+                    case MANAGER_NAME:
+                        sortingField = appraisingUserJoin.get("name");
+                        break;
+                    case MANAGER_EMAIL:
+                        sortingField = appraisingUserJoin.get("email");
+                        break;
+                    case APPRAISED_NAME:
+                        sortingField = appraisedUserJoin.get("name");
+                        break;
+                    case APPRAISED_EMAIL:
+                        sortingField = appraisedUserJoin.get("email");
+                        break;
+                    default:
+                        sortingField = appraisal.get(parameter.getFieldName());
+                }
+                if ("score".equals(parameter.getFieldName())) {
+                    Path<Integer> scoreExpr = appraisal.get("score");
+
+                    // For ascending: nulls first (nullRank = 0 for nulls, 1 for not null)
+                    // For descending: nulls last (nullRank = 1 for nulls, 0 for not null)
+                    Expression<Integer> nullRank = cb.<Integer>selectCase()
+                            .when(cb.isNull(scoreExpr), order == OrderBy.ASCENDING ? 0 : 1)
+                            .otherwise(order == OrderBy.ASCENDING ? 1 : 0);
+
+                    Order scoreOrder = order == OrderBy.ASCENDING
+                            ? cb.asc(scoreExpr)
+                            : cb.desc(scoreExpr);
+
+                    cq.orderBy(cb.asc(nullRank), scoreOrder);
+                }
+                else {
+                    cq.orderBy(order == OrderBy.DESCENDING
+                            ? cb.desc(sortingField)
+                            : cb.asc(sortingField));
+                }
+            }
             if (!predicates.isEmpty()) {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));
             }
-            
-            cq.orderBy(cb.desc(appraisal.get("creationDate")));
-            
             TypedQuery<AppraisalEntity> query = em.createQuery(cq);
-            
             if (offset != null && offset > 0) {
                 query.setFirstResult(offset);
             }
-            
+
             if (limit != null && limit > 0) {
                 query.setMaxResults(limit);
             }
-            
+
             return query.getResultList();
         } catch (Exception e) {
             LOGGER.error("Error finding appraisals with filters", e);
@@ -376,16 +412,16 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
     /**
      * Counts total appraisals for a specific user (either as appraised or appraising).
      *
-     * @param userId The user ID
+     * @param userId      The user ID
      * @param asAppraised Whether to count as appraised user (true) or appraising user (false)
      * @return Total count of appraisals
      */
     public Long countAppraisalsByUser(Long userId, boolean asAppraised) {
         try {
-            String jpql = asAppraised ? 
-                "SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId" :
-                "SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisingUser.id = :userId";
-                
+            String jpql = asAppraised ?
+                    "SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId" :
+                    "SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisingUser.id = :userId";
+
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
             query.setParameter("userId", userId);
             return query.getSingleResult();
@@ -405,10 +441,10 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
         if (appraisalIds == null || appraisalIds.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         TypedQuery<AppraisalEntity> query = em.createQuery(
-            "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids", 
-            AppraisalEntity.class
+                "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids",
+                AppraisalEntity.class
         );
         query.setParameter("ids", appraisalIds);
         return query.getResultList();
@@ -422,9 +458,9 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
      */
     public List<AppraisalEntity> findCompletedAppraisalsByCycleId(Long cycleId) {
         TypedQuery<AppraisalEntity> query = em.createQuery(
-            "SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId " +
-            "AND a.state = :state AND a.cycle.state = :cycleState", 
-            AppraisalEntity.class
+                "SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId " +
+                        "AND a.state = :state AND a.cycle.state = :cycleState",
+                AppraisalEntity.class
         );
         query.setParameter("cycleId", cycleId);
         query.setParameter("state", AppraisalState.COMPLETED);
@@ -440,9 +476,9 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
      */
     public List<AppraisalEntity> findCompletedAppraisalsByUserId(Long userId) {
         TypedQuery<AppraisalEntity> query = em.createQuery(
-            "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId " +
-            "AND a.state = :state AND a.cycle.state = :cycleState", 
-            AppraisalEntity.class
+                "SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId " +
+                        "AND a.state = :state AND a.cycle.state = :cycleState",
+                AppraisalEntity.class
         );
         query.setParameter("userId", userId);
         query.setParameter("state", AppraisalState.COMPLETED);
@@ -457,9 +493,9 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
      */
     public List<AppraisalEntity> findAllCompletedAppraisalsInOpenCycles() {
         TypedQuery<AppraisalEntity> query = em.createQuery(
-            "SELECT a FROM AppraisalEntity a WHERE a.state = :state " +
-            "AND a.cycle.state = :cycleState", 
-            AppraisalEntity.class
+                "SELECT a FROM AppraisalEntity a WHERE a.state = :state " +
+                        "AND a.cycle.state = :cycleState",
+                AppraisalEntity.class
         );
         query.setParameter("state", AppraisalState.COMPLETED);
         query.setParameter("cycleState", CycleState.OPEN);
@@ -476,11 +512,11 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
         if (appraisalIds == null || appraisalIds.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         TypedQuery<AppraisalEntity> query = em.createQuery(
-            "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids " +
-            "AND a.state = :state AND a.cycle.state = :cycleState", 
-            AppraisalEntity.class
+                "SELECT a FROM AppraisalEntity a WHERE a.id IN :ids " +
+                        "AND a.state = :state AND a.cycle.state = :cycleState",
+                AppraisalEntity.class
         );
         query.setParameter("ids", appraisalIds);
         query.setParameter("state", AppraisalState.COMPLETED);

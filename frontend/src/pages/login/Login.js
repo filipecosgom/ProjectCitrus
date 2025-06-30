@@ -44,7 +44,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    console.log("Current locale:", locale);
+    // Removed console.log("Current locale:", locale);
   }, [locale]);
 
   useEffect(() => {
@@ -189,9 +189,7 @@ export default function Login() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent event bubbling
-                    console.log(
-                      "Clicked for 2FA help, setting showAuth to true"
-                    );
+                    // Removed console.log(...);
                     setShowAuth(true);
                   }}
                 >

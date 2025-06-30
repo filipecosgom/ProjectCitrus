@@ -61,7 +61,6 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
-        console.log(userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
@@ -73,7 +72,6 @@ export default function Profile() {
           }
         }
       } catch (error) {
-        console.log(error);
         navigate("/");
       } finally {
         setLoading(false);
@@ -132,7 +130,6 @@ export default function Profile() {
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (!file) return;
 
     // Validate file type and size

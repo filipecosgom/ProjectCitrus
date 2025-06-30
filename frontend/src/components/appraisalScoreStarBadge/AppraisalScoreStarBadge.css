@@ -1,0 +1,33 @@
+.storeStarCard-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.star {
+  color: #e4e5e9;
+  transition: color 0.2s;
+}
+
+.stars-0 .star {
+  color: #e4e5e9;
+}
+.stars-1 .star:nth-child(1) { color: #FFD700; }
+.stars-1 .star:nth-child(n+2) { color: #e4e5e9; }
+.stars-2 .star:nth-child(1) { color: #FFD700; }
+.stars-2 .star:nth-child(2) { color: #FFA500; }
+.stars-2 .star:nth-child(n+3) { color: #e4e5e9; }
+.stars-3 .star:nth-child(1) { color: #FFD700; }
+.stars-3 .star:nth-child(2) { color: #FFA500; }
+.stars-3 .star:nth-child(3) { color: #FF4500; }
+.stars-3 .star:nth-child(n+4) { color: #e4e5e9; }
+.stars-4 .star:nth-child(1) { color: #FFD700; }
+.stars-4 .star:nth-child(2) { color: #FFA500; }
+.stars-4 .star:nth-child(3) { color: #FF6347; }
+.stars-4 .star:nth-child(4) { color: #FF0000; }
+
+.no-score {
+  color: #aaa;
+  font-style: italic;
+}

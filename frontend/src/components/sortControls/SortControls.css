@@ -2,13 +2,13 @@
 /*----------------------------------------*/
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
-.userSortControls-container {
+.sortControls-container {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
   }
 
-  .userSortControls-div {
+  .sortControls-div {
     cursor: pointer;
     flex: 1;
     font-weight: var(--font-weight-regular);
@@ -18,21 +18,25 @@
     text-align: center;
   }
 
-  .userSortControls-div.office {
+  .sortControls-div.office {
   display: none;
 }
-.userSortControls-div.manager {
+.sortControls-div.manager {
   display: none;
 }
 
-  .userSortControls-div:hover {
+  .sortControls-div:hover {
     font-weight: var(--font-weight-bold);
     color: var(--blue);
   }
 
-  .userSortControls-div.active {
+  .sortControls-div.active {
     font-weight: 600;
     color: var(--blue);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
   }
 
   .sort-icon {
@@ -45,13 +49,13 @@
 /*----------------------------------------*/
 @media (min-width: 480px) {
 
-  .userSortControls-div.office {
+  .sortControls-div.office {
     display: block;
   }
-  .userSortControls-div.manager {
+  .sortControls-div.manager {
     display: block;
   }
-  .userSortControls-div {
+  .sortControls-div {
     font-size: var(--font-size-main);
   }
 }
@@ -60,19 +64,19 @@
 /*----------------DESKTOP------------------*/
 /*----------------------------------------*/
 @media (min-width: 1024px) {
-  .userSortControls-container {
+  .sortControls-container {
     padding: var(--padding-lg);
   }
 
-  .userSortControls-div {
+  .sortControls-div {
     font-size: var(--font-size-subtitle);
   }
 
 
-  .userSortControls-div.office {
+  .sortControls-div.office {
     display: block;
   }
-  .userSortControls-div.manager {
+  .sortControls-div.manager {
     display: block;
   }
 

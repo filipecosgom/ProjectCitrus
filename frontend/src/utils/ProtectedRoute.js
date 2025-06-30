@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom";
-import { getIntl } from "./Intl";
 import handleNotification from "../handles/handleNotification";
 import useAuthStore from "../stores/useAuthStore";
 

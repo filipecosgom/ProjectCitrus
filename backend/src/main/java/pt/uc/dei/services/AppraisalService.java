@@ -9,8 +9,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.entities.UserEntity;
-import pt.uc.dei.enums.AppraisalState;
-import pt.uc.dei.enums.CycleState;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.repositories.CycleRepository;
 import pt.uc.dei.repositories.AppraisalRepository;
@@ -226,19 +225,20 @@ public class AppraisalService implements Serializable {
      * @return List of filtered appraisal DTOs
      */
     public Map<String, Object> getAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
-                                                       Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
-                                                      Long cycleId, AppraisalState state,
-                                                      Integer limit, Integer offset) {
+                                                        Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
+                                                        Long cycleId, AppraisalState state, AppraisalParameter parameter, OrderBy orderBy,
+                                                        Integer limit, Integer offset) {
         LOGGER.debug("Retrieving appraisals with filters");
 
         List<AppraisalEntity> appraisals = appraisalRepository.findAppraisalsWithFilters(
-                appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName, appraisingUserEmail, cycleId, state, limit, offset
+                appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
+                appraisingUserEmail, cycleId, state, parameter, orderBy, limit, offset
         );
         long totalAppraisals = appraisalRepository.getTotalAppraisalsWithFilters(
                 appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName, appraisingUserEmail, cycleId, state);
 
-        List<AppraisalDTO> appraisalDTOS = appraisals.stream()
-                .map(appraisalMapper::toDto)
+        List<AppraisalResponseDTO> appraisalDTOS = appraisals.stream()
+                .map(appraisalMapper::toResponseDto)
                 .collect(Collectors.toList());
 
         Map<String, Object> responseData = new HashMap<>();

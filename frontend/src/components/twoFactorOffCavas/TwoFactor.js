@@ -32,7 +32,6 @@ const TwoFactor = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     resetAuthCode() {
       setAuthCode(""); // Clears the authentication code
-      console.log("Authentication code cleared");
     }
   }));
 

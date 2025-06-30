@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.*;
-import pt.uc.dei.enums.Order;
+import pt.uc.dei.enums.OrderBy;
 import pt.uc.dei.utils.SearchUtils;
 
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      * @param roleStr Role to filter (optional, supports quoted and normalized search)
      * @param office Office to filter (optional)
      * @param parameter Sorting parameter (optional)
-     * @param order Sorting order (ASCENDING or DESCENDING)
+     * @param orderBy Sorting order (ASCENDING or DESCENDING)
      * @param offset Pagination offset (start position)
      * @param limit Pagination limit (max results)
      * @return List of users matching the criteria
@@ -117,7 +117,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
     public List<UserEntity> getUsers(Long id, String email, String name, String phone,
                                      AccountState accountState, String roleStr, Office office,
                                      Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
-                                     Parameter parameter, Order order, int offset, int limit) {
+                                     Parameter parameter, OrderBy orderBy, int offset, int limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
@@ -210,7 +210,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
                 sortingField = root.get(parameter.getFieldName());
             }
 
-            query.orderBy(order == Order.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
+            query.orderBy(orderBy == OrderBy.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
         }
         TypedQuery<UserEntity> typedQuery = em.createQuery(query);
         typedQuery.setFirstResult(offset);

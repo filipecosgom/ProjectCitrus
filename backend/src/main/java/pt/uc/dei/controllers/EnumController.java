@@ -1,5 +1,6 @@
 package pt.uc.dei.controllers;
 
+import pt.uc.dei.enums.AppraisalState;
 import pt.uc.dei.enums.Role;
 import pt.uc.dei.enums.Office;
 
@@ -52,5 +53,16 @@ public class EnumController {
             .collect(Collectors.toList());
         LOGGER.info("Returning {} offices", offices.size());
         return Response.ok(offices).build();
+    }
+
+    @GET
+    @Path("/appraisalStates")
+    public Response getAppraisalStates() {
+        LOGGER.info("Request received for all appraisal states");
+        List<String> appraisals = Arrays.stream(AppraisalState.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        LOGGER.info("Returning {} appraisal states", appraisals.size());
+        return Response.ok(appraisals).build();
     }
 }

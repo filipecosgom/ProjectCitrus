@@ -381,11 +381,11 @@ public class UserController {
         AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;
         Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;
         Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
-        Order order = Order.fromFieldName(SearchUtils.normalizeString(orderStr));
+        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
 
         Map<String, Object> userData = userService.getUsers(id, email, name, phone,
                 accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged,
-                parameter, order, offset, limit);
+                parameter, orderBy, offset, limit);
 
         if (userData.get("users") == null || ((List<?>) userData.get("users")).isEmpty()) {
             LOGGER.info("No users found for given filters");

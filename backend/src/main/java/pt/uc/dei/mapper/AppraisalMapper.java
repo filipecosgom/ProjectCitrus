@@ -2,6 +2,7 @@ package pt.uc.dei.mapper;
 
 import org.mapstruct.*;
 import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.AppraisalResponseDTO;
 import pt.uc.dei.entities.AppraisalEntity;
 
 import java.util.List;
@@ -22,7 +23,8 @@ import java.util.List;
  * @version 1.0
  */
 @Mapper(
-        componentModel = "jakarta",
+        componentModel = "cdi",
+        uses = {UserMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface AppraisalMapper {
@@ -37,6 +39,12 @@ public interface AppraisalMapper {
     @Mapping(source = "appraisingUser.id", target = "appraisingUserId")
     @Mapping(source = "cycle.id", target = "cycleId")
     AppraisalDTO toDto(AppraisalEntity appraisalEntity);
+
+    @Mapping(source = "cycle.id", target = "cycleId")
+    @Mapping(source = "cycle.endDate", target = "endDate")
+    @Mapping(source = "appraisedUser", target = "appraisedUser", qualifiedByName = "toResponseDto")
+    @Mapping(source = "appraisingUser", target = "appraisingUser", qualifiedByName = "toResponseDto")
+    AppraisalResponseDTO toResponseDto(AppraisalEntity appraisalEntity);
 
     /**
      * Converts an AppraisalDTO object to an AppraisalEntity object.

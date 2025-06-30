@@ -22,7 +22,6 @@ export default function Menu({
   const { t } = useTranslation();
   const userId = useAuthStore((state) => state.user?.id);
   const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
-  // const intl = useIntl();
 
   // Internationalized menu labels
   const menuDashboard = t("menuDashboard");
@@ -81,7 +80,7 @@ export default function Menu({
       label: menuAppraisal,
       icon: <FaAward />,
       color: "#FDD835",
-      route: "/appraisal",
+      route: "/appraisals",
       adminOnly: false,
     },
     {
@@ -128,11 +127,6 @@ export default function Menu({
       isLogout: true,
     },
   ];
-
-  useEffect(() => {
-    console.log("MENU - User ID:", userId);
-    console.log("MENU - Is Admin:", isUserAdmin);
-  }, [userId, isUserAdmin]);
 
   const filteredItems = menuItems.filter((item) => {
     if (item.adminOnly && !isUserAdmin) {

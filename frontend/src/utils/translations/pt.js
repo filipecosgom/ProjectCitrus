@@ -208,6 +208,13 @@ const pt = {
 
     //Usercard
   userCardNoManager: "Sem gestor",
+  //Appraisal
+  appraisalsNoResults:
+    "Nenhuma avaliação encontrada que corresponda aos seus critérios",
+  //AppraisalCard
+  appraisalStateCompleted: "Completo",
+  appraisalStateInProgress: "Em curso",
+  appraisalStateClosed: "Fechado",
 
   //SearchBar
   searchBarSearchButton: "Pesquisar",

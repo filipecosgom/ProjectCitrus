@@ -42,7 +42,6 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const message = error.response?.data?.message;
     const errorCode = error.response?.data?.errorCode || "errorUnexpected";
-    console.log("Error code:", error);
 
     const isAuthError =
       (status === 401 && message?.includes("Missing token"));
@@ -50,14 +49,13 @@ api.interceptors.response.use(
 
     // ✅ Only attempt logout if the user is actually stored
     if (isAuthError && authStore.user) {
-      console.log("Session invalid, logging out...");
       authStore.logout();
     }
 
     // ⛔ Prevent toasts during silent hydration or non-critical fetches
     const errorData = { ...error }; // Clone error so we can flag it
     if (isAuthError && !authStore.user) {
-      console.log("No user session, suppressing toast");
+      // No user session, suppressing toast
       errorData.suppressToast = true; // Don't show "session expired" if we're not even logged in
     }
 
@@ -65,13 +63,6 @@ api.interceptors.response.use(
     if (!errorData.suppressToast) {
         handleApiError(errorData)
     }
-
-    console.log("API error:", {
-      status,
-      message,
-      errorCode,
-      success,
-    });
 
     return Promise.resolve({
       success: false,
@@ -86,11 +77,9 @@ api.interceptors.response.use(
 export const handleApiError = (error) => {
   if (error.response) {
     const { success, message, errorCode } = error.response.data;
-    console.log("handleapierror", errorCode);
 
     if (!success) {
       handleNotification("error", errorCode || "errorUnexpected");
-      console.log("ending");
     }
   } else {
     handleNotification("error", "errorNetworkError");

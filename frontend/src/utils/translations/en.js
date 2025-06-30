@@ -198,9 +198,14 @@ const en = {
 
   //Users
   usersNoResults: "No users found matching your criteria",
-
   //Usercard
   userCardNoManager: "No manager",
+  //Appraisal
+  appraisalsNoResults: "No appraisals found matching your criteria",
+  //AppraisalCard
+  appraisalStateCompleted: "Complete",
+  appraisalStateInProgress: "In Progress",
+  appraisalStateClosed: "Closed",
 
   //Searchbar
   searchBarSearchButton: "Search",
@@ -210,13 +215,20 @@ const en = {
   searchBarIncomplete: "Incomplete",
   searchBarLimitToggle: "Results per page",
 
-  //Usercontrols
+  //User Sort Controls
   userSortControlsName: "Name",
   userSortControlsRole: "Role",
   userSortControlsOffice: "Office",
   userSortControlsManager: "Manager",
   userSortControlsSortAscending: "Sort ascending",
   userSortControlsSortDescending: "Sort descending",
+  
+  //Appraisal Sort Controls
+  appraisalSortControlsUser: "User",
+  appraisalSortControlsScore: "Score",
+  appraisalSortControlsManager: "Manager",
+  appraisalSortControlsEndDate: "End date",
+  appraisalSortControlsState: "State",
 
   //Filtermenu
   filterMenuSettings: "Filters",

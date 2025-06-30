@@ -8,6 +8,7 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from "./pages/profile/Profile";
 import Users from "./pages/users/Users";
+import Appraisals from "./pages/appraisals/Appraisals";
 import Cycles from "./pages/cycles/Cycles";
 import Settings from "./pages/settings/Settings";
 import AccountActivation from "./pages/landing/AccountActivation";
@@ -46,6 +47,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/activated-account",
     "/header",
     "/profile",
+    "/appraisals",
     "/users",
     "/cycles",
     "/settings",
@@ -103,6 +105,14 @@ function AppRoutes({ currentLocale, setLocale }) {
           element={
             <ProtectedRoute>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/appraisals"
+          element={
+            <ProtectedRoute>
+              <Appraisals />
             </ProtectedRoute>
           }
         />

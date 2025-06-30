@@ -1,0 +1,67 @@
+.appraisalCard-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.appraisalCard-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 180px;
+}
+
+.appraisalCard-userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.appraisalCard-name {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.appraisalCard-email {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.appraisalCard-score {
+  min-width: 120px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appraisal-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.appraisal-star {
+  font-size: 1.2rem;
+}
+
+.appraisal-no-score {
+  color: #888;
+  font-style: italic;
+}
+
+.appraisalCard-endDate {
+  min-width: 120px;
+  text-align: center;
+  color: #555;
+}
+
+.appraisalCard-state {
+  min-width: 120px;
+  text-align: center;
+  font-weight: bold;
+  color: #007bff;
+}

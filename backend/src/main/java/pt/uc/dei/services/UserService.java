@@ -226,7 +226,7 @@ public class UserService implements Serializable {
      * @param roleStr Role to filter (optional)
      * @param office Office to filter (optional)
      * @param parameter Sorting parameter (optional)
-     * @param order Sorting order (ASCENDING or DESCENDING)
+     * @param orderBy Sorting order (ASCENDING or DESCENDING)
      * @param offset Pagination offset (start position)
      * @param limit Pagination limit (max results)
      * @return Map containing the list of users, total count, offset, and limit
@@ -234,12 +234,12 @@ public class UserService implements Serializable {
     public Map<String, Object> getUsers(Long id, String email, String name, String phone,
                                         AccountState accountState, String roleStr, Office office,
                                         Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
-                                        Parameter parameter, Order order, int offset, int limit) {
+                                        Parameter parameter, OrderBy orderBy, int offset, int limit) {
 
         List<UserEntity> users = userRepository.getUsers(id, email, name, phone,
                 accountState, roleStr, office,
                 userIsManager, userIsAdmin, userHasManager,
-                parameter, order, offset, limit);
+                parameter, orderBy, offset, limit);
 
         long totalUsers = userRepository.getTotalUserCount(id, email, name, phone,
                 accountState, roleStr, office, userIsManager, userIsAdmin, userHasManager);

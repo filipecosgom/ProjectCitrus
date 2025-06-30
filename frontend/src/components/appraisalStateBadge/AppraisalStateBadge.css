@@ -1,0 +1,37 @@
+.appraisal-state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.2em 0.7em;
+  border-radius: 1em;
+  font-weight: 600;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.badge-icon {
+  font-size: 1.1em;
+}
+.badge-inprogress {
+  background: var(--badge-red);
+  color: var(--badge-red-stroke);
+  border: 2px solid var(--badge-red-stroke);
+}
+.badge-completed {
+  background: var(--badge-green);
+  color: var(--badge-green-stroke);
+  border: 2px solid var(--badge-green-stroke);
+}
+.badge-closed {
+  background: var(--badge-yellow);
+  color: var(--badge-yellow-stroke);
+  border: 2px solid var(--badge-yellow-stroke);
+}
+.badge-unknown {
+  background: #eee;
+  color: #888;
+  border: 1px solid #bbb;
+}
+.badge-label {
+  margin-left: 0.2em;
+}

@@ -1,0 +1,40 @@
+/*----------------------------------------*/
+/*----------------MOBILE------------------*/
+/*----------------------------------------*/
+.appraisals-container {
+    padding: var(--padding-sm);
+}
+
+.appraisals-grid {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+
+.appraisals-empty {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+
+/*----------------------------------------*/
+/*----------------TABLET------------------*/
+/*----------------------------------------*/
+@media (min-width: 480px) {
+    .appraisals-container {
+    padding: var(--padding-sm);
+}
+    
+}
+
+/*----------------------------------------*/
+/*----------------DESKTOP------------------*/
+/*----------------------------------------*/
+@media (min-width: 1024px) {
+.appraisals-container {
+    padding: var(--padding-lg);
+}
+
+}

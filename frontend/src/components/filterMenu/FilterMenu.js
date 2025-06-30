@@ -12,39 +12,27 @@ const FilterMenu = ({
   setValue,
   handleSubmit,
   onSubmit,
-  offices = [],
-  accountStates = [],
+  filtersConfig = [],
+  filterOptions = {},
+  tristateFilters = [],
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useTranslation();
   const isAdmin = useAuthStore.getState().user?.userIsAdmin;
 
-  const rawCategories = [
-    {
-      id: "filterMenuSearchType",
-      key: "searchType",
-      options: ["name", "email", "role"],
-    },
-    {
-      id: "filterMenuOffice",
-      key: "office",
-      options: ["", ...offices],
-    },
-    {
-      id: "filterMenuAccountState",
-      key: "accountState",
-      options: accountStates,
-    },
-  ];
-
-  const categories = isAdmin
-    ? rawCategories
-    : rawCategories.filter((cat) => cat.key !== "accountState");
+  // Build categories dynamically from filtersConfig and filterOptions
+  const categories = filtersConfig.map((key) => {
+    const options = filterOptions[key] || [];
+    return {
+      id: `filterMenu${key.charAt(0).toUpperCase() + key.slice(1)}`,
+      key,
+      options,
+    };
+  });
 
   const getOptionLabel = (key, opt) => {
     if (key === "searchType") {
-      // e.g. "name" → filterMenuOptionName
       const cap = opt.charAt(0).toUpperCase() + opt.slice(1);
       return t(`filterMenuOption${cap}`);
     }
@@ -52,7 +40,6 @@ const FilterMenu = ({
       return opt ? opt : t("filterMenuAllOffices");
     }
     if (typeof opt === "object" && opt.label) return opt.label;
-    // accountStates: each opt is { label, value }
     return typeof opt === "object" ? opt.label : opt;
   };
 
@@ -112,106 +99,42 @@ const FilterMenu = ({
             </div>
           ))}
           <div className="filterMenu-tristateGroup">
-            <div className="filterMenu-tristate">
-              <button
-                type="button"
-                data-state={watch("isManager")}
-                className="filterMenu-tristateButton"
-                onClick={() => {
-                  const current = watch("isManager");
-                  const next =
-                    current === null ? true : current === true ? false : null;
-                  setValue("isManager", next);
-                  handleSubmit(onSubmit)();
-                }}
-                title={
-                  watch("isManager") === true
-                    ? t("filterYes")
-                    : watch("isManager") === false
-                    ? t("filterNo")
-                    : t("filterAny")
-                }
-              >
-                {watch("isManager") === true ? (
-                  <FaCheck className="filterMenu-icon"/>
-                ) : watch("isManager") === false ? (
-                  <FaTimes className="filterMenu-icon"/>
-                ) : (
-                  <FaMinus className="filterMenu-icon"/>
-                )}
-              </button>
-              <span className="filterMenu-label-text">
-                {t("filterMenuisManager")}
-              </span>
+            {tristateFilters.map(({ key, label }) => (
+              <div className="filterMenu-tristate" key={key}>
+                <button
+                  type="button"
+                  data-state={watch(key)}
+                  className="filterMenu-tristateButton"
+                  onClick={() => {
+                    const current = watch(key);
+                    const next =
+                      current === null
+                        ? true
+                        : current === true
+                        ? false
+                        : null;
+                    setValue(key, next);
+                    handleSubmit(onSubmit)();
+                  }}
+                  title={
+                    watch(key) === true
+                      ? t("filterYes")
+                      : watch(key) === false
+                      ? t("filterNo")
+                      : t("filterAny")
+                  }
+                >
+                  {watch(key) === true ? (
+                    <FaCheck className="filterMenu-icon" />
+                  ) : watch(key) === false ? (
+                    <FaTimes className="filterMenu-icon" />
+                  ) : (
+                    <FaMinus className="filterMenu-icon" />
+                  )}
+                </button>
+                <span className="filterMenu-label-text">{label}</span>
               </div>
-
-            <div className="filterMenu-tristate">
-              <button
-                type="button"
-                data-state={watch("isAdmin")}
-                className="filterMenu-tristateButton"
-                onClick={() => {
-                  const current = watch("isAdmin");
-                  const next =
-                    current === null ? true : current === true ? false : null;
-                  setValue("isAdmin", next);
-                  handleSubmit(onSubmit)();
-                }}
-                title={
-                  watch("isAdmin") === true
-                    ? t("filterYes")
-                    : watch("isAdmin") === false
-                    ? t("filterNo")
-                    : t("filterAny")
-                }
-              >
-                {watch("isAdmin") === true ? (
-                  <FaCheck className="filterMenu-icon"/>
-                ) : watch("isAdmin") === false ? (
-                  <FaTimes className="filterMenu-icon"/>
-                ) : (
-                  <FaMinus className="filterMenu-icon"/>
-                )}
-              </button>
-              <span className="filterMenu-label-text">
-                {t("filterMenuisAdmin")}
-              </span>
-            </div>
-
-
-            <div className="filterMenu-tristate">
-              <button
-                type="button"
-                data-state={watch("isManaged")}
-                className="filterMenu-tristateButton"
-                onClick={() => {
-                  const current = watch("isManaged");
-                  const next =
-                    current === null ? true : current === true ? false : null;
-                  setValue("isManaged", next);
-                  handleSubmit(onSubmit)();
-                }}
-                title={
-                  watch("isManaged") === true
-                    ? t("filterYes")
-                    : watch("isManaged") === false
-                    ? t("filterNo")
-                    : t("filterAny")
-                }
-              >
-                {watch("isManaged") === true ? (
-                  <FaCheck className="filterMenu-icon"/>
-                ) : watch("isManaged") === false ? (
-                  <FaTimes className="filterMenu-icon"/>
-                ) : (
-                  <FaMinus className="filterMenu-icon"/>
-                )}
-              </button>
-              <span className="filterMenu-label-text">
-                {t("filterMenuisManaged")}
-              </span>
-            
-            </div>
+            ))}
           </div>
         </div>
       )}

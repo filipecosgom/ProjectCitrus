@@ -8,7 +8,6 @@ const Cycles = () => {
 
   useEffect(() => {
     // TODO: Fetch cycles from API
-    console.log("Cycles page loaded - Admin only");
     setLoading(false);
   }, []);
 

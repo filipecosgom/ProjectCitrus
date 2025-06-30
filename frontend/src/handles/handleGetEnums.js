@@ -1,4 +1,4 @@
-import { getRoles, getOffices } from '../api/enumsApi';
+import { getRoles, getOffices, getAppraisalStates } from '../api/enumsApi';
 
 export const handleGetRoles = async () => {
   try {
@@ -20,4 +20,14 @@ export const handleGetOffices = async () => {
   }
 };
 
-export default { handleGetRoles, handleGetOffices };
+export const handleGetAppraisalStates = async () => {
+  try {
+    const appraisalStates = await getAppraisalStates();
+    return appraisalStates;
+  } catch (error) {
+    console.error("Error retrieving appraisal states", error);
+    return [];
+  }
+};
+
+export default { handleGetRoles, handleGetOffices, handleGetAppraisalStates };

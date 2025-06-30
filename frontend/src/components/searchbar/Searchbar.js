@@ -1,43 +1,41 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
 import { useTranslation } from "react-i18next";
 
-const SearchBar = ({ onSearch, offices = [] }) => {
+// Now generic: accepts filtersConfig, filterOptions, defaultValues, limitOptions
+const SearchBar = ({
+  onSearch,
+  filtersConfig = [],
+  filterOptions = {},
+  defaultValues = {},
+  limitOptions = [5, 10, 20],
+  tristateFilters = [],
+  ...props
+}) => {
   const { t } = useTranslation();
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
       query: "",
       searchType: "name",
-      accountState: "",
-      office: "",
       limit: 10,
-      isManager: null,
-      isAdmin: null,
-      isManaged: null,
+      ...defaultValues,
     },
   });
   const [showResultsMenu, setShowResultsMenu] = useState(false);
-  const limit = [5, 10, 20];
 
-  // pre-built list of accountStates with translated labels
-  const accountStates = [
-    { label: t("searchBarAllStates"), value: "" },
-    { label: t("searchBarComplete"), value: "COMPLETE" },
-    { label: t("searchBarIncomplete"), value: "INCOMPLETE" },
-  ];
-
-  const onSubmit = ({ query, searchType, limit, accountState, office, isManager, isAdmin, isManaged, }) => {
-    const filters = {
-      accountState,
-      office,
-      isManager,
-      isAdmin,
-      isManaged,
-    };
-    onSearch(query, searchType, limit, filters);
+  const onSubmit = (formData) => {
+    const filters = {};
+    filtersConfig.forEach((filter) => {
+      filters[filter] = formData[filter];
+    });
+    // Add tristate filters
+    tristateFilters.forEach(({ key }) => {
+      filters[key] = formData[key];
+    });
+    onSearch(formData.query, formData.searchType, formData.limit, filters);
   };
 
   return (
@@ -50,25 +48,42 @@ const SearchBar = ({ onSearch, offices = [] }) => {
         >
           <FiSearch className="search-icon" />
         </button>
-
         <input
           {...register("query")}
           placeholder={t("searchBarPlaceholder", {
-            type: watch("searchType").replace(/_/g, " ").toLowerCase(),
+            type: t(
+              `filterMenuOption${
+                (watch("searchType") || "name").charAt(0).toUpperCase() +
+                (watch("searchType") || "name").slice(1)
+              }`
+            ).toLowerCase(),
           })}
           className="searchBar-input"
         />
+        {props.searchTypes && (
+          <select {...register("searchType")} className="searchBar-select">
+            {props.searchTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {t(
+                  `filterMenuOption${
+                    type.value.charAt(0).toUpperCase() + type.value.slice(1)
+                  }`
+                )}
+              </option>
+            ))}
+          </select>
+        )}
 
         <FilterMenu
           watch={watch}
           setValue={setValue}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          offices={offices}
-          accountStates={accountStates}
+          filtersConfig={filtersConfig}
+          filterOptions={filterOptions}
+          tristateFilters={tristateFilters}
         />
       </div>
-
       <div className="searchBar-dropdown">
         <button
           type="button"
@@ -79,10 +94,9 @@ const SearchBar = ({ onSearch, offices = [] }) => {
         >
           {watch("limit")} <FiChevronDown />
         </button>
-
         {showResultsMenu && (
           <div className="searchBar-dropdownMenu">
-            {limit.map((num) => (
+            {limitOptions.map((num) => (
               <div
                 key={num}
                 className="searchBar-menuItem"

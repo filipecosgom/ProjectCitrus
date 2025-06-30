@@ -9,7 +9,6 @@ export const register = async (newUser, lang) => {
         "Accept-Language": lang,
       },
     });
-    console.log("API Response:", response); // Debugging log
     return { success: true, status: response.status, data: response.data };
   } catch (error) {
     return { success: false, status: error.response?.status || 500, error };
@@ -51,7 +50,6 @@ export const uploadUserAvatar = async (userId, avatarFile) => {
   try {
     const formData = new FormData();
     formData.append("file", avatarFile, fileName);
-    console.log(formData);
 
     const response = await api.patch(
       `${userEndpoint}/${userId}/avatar`,
@@ -121,7 +119,6 @@ export const fetchPaginatedUsers = async ({
     params.append("offset", offset);
     params.append("limit", limit);
 
-    console.log("Fetching users with params:", params.toString()); // Debugging log
     const response = await api.get(`${userEndpoint}?${params.toString()}`);
     return {
       success: true,

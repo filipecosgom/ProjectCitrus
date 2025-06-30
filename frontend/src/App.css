@@ -12,6 +12,12 @@
   --blue: #424359;
   --light-red: #B61B23;
   --background-color: #ffff;
+  --badge-green: #B7F9BF;
+  --badge-green-stroke: #0FE16D;
+  --badge-red: #F8D1D1;
+  --badge-red-stroke: #E20029;
+  --badge-yellow: #F9EDB7;
+  --badge-yellow-stroke: #FF7043;
   
   /* Fonts */
   --font-family-main: 'Montserrat', sans-serif;

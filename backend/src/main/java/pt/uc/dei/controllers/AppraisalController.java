@@ -11,10 +11,11 @@ import pt.uc.dei.dtos.AppraisalDTO;
 import pt.uc.dei.dtos.AppraisalStatsDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
-import pt.uc.dei.enums.AppraisalState;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.services.AppraisalService;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.annotations.AdminOnly;
+import pt.uc.dei.utils.SearchUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -148,7 +149,7 @@ public class AppraisalController {
      * @param appraisedUserId  Optional filter by appraised user ID
      * @param appraisingUserId Optional filter by appraising user ID (manager)
      * @param cycleId          Optional filter by cycle ID
-     * @param state            Optional filter by appraisal state
+     * @param appraisalStateStr            Optional filter by appraisal state
      * @param limit            Maximum number of results
      * @param offset           Starting position for pagination
      * @return Response with list of filtered appraisal DTOs
@@ -161,14 +162,20 @@ public class AppraisalController {
                                              @QueryParam("managerName") String appraisingUserName,
                                              @QueryParam("managerEmail") String appraisingUserEmail,
                                              @QueryParam("cycleId") Long cycleId,
-                                             @QueryParam("state") AppraisalState state,
-                                             @QueryParam("limit") @DefaultValue("50") Integer limit,
+                                             @QueryParam("state") String appraisalStateStr,
+                                             @QueryParam("parameter") @DefaultValue("creationDate") String parameterStr,
+                                             @QueryParam("order") @DefaultValue("DESCENDING") String orderStr,
+                                             @QueryParam("limit") @DefaultValue("10") Integer limit,
                                              @QueryParam("offset") @DefaultValue("0") Integer offset) {
+        AppraisalState state = appraisalStateStr != null ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr)) : null;
+        AppraisalParameter parameter = AppraisalParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
         try {
             LOGGER.debug("Retrieving appraisals with filters");
 
             Map<String, Object> appraisalData = appraisalService.getAppraisalsWithFilters(
-                    appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName, appraisingUserEmail, cycleId, state, limit, offset
+                    appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
+                    appraisingUserEmail, cycleId, state, parameter, orderBy, limit, offset
             );
             return Response.ok(new ApiResponse(true, "Appraisals retrieved successfully", "success", appraisalData))
                     .build();

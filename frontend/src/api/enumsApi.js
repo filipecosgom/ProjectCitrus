@@ -25,3 +25,14 @@ export const getOffices = async () => {
     throw error;
   }
 };
+
+export const getAppraisalStates = async () => {
+  try {
+    const response = await api.get(`${enumsEndpoint}/appraisalStates`);
+    // Assuming the API returns an array of strings
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "getAppraisalStates");
+    throw error; // propagate the error if needed
+  }
+};
