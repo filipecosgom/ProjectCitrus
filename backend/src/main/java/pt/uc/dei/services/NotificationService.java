@@ -10,9 +10,12 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.MessageDTO;
 import pt.uc.dei.dtos.NotificationDTO;
 import pt.uc.dei.entities.NotificationEntity;
-import pt.uc.dei.mappers.NotificationMapper;
+import pt.uc.dei.entities.UserEntity;
+import pt.uc.dei.enums.NotificationType;
+import pt.uc.dei.mapper.NotificationMapper;
 import pt.uc.dei.repositories.MessageRepository;
 import pt.uc.dei.repositories.NotificationRepository;
+import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.websocket.WsNotifications;
 
 import java.beans.Transient;
@@ -36,6 +39,9 @@ public class NotificationService {
     @Inject
     NotificationMapper notificationMapper;
 
+    @Inject
+    UserRepository userRepository;
+
     public NotificationService() {
     }
 
@@ -49,16 +55,29 @@ public class NotificationService {
             Long senderId = messageDTO.getSenderId();
             Long recipientId = messageDTO.getRecipientId();
             int unreadCount = messageRepository.getUnreadMessageCount(recipientId, senderId);
+            UserEntity recipientUser = userRepository.findUserById(recipientId);
+            if (recipientUser == null) {
+                logger.error("Recipient user {} not found", recipientId);
+                return false;
+            }
 
             // Build NotificationEntity using the mapper
-            NotificationEntity notificationEntity = notificationMapper.fromMessageDTO(messageDTO, unreadCount);
+            // Build NotificationEntity using the mapper
+            NotificationEntity notificationEntity = new NotificationEntity();
+            notificationEntity.setSenderId(senderId);
+            notificationEntity.setUser(recipientUser);  // Set managed entity
+            notificationEntity.setType(NotificationType.MESSAGE);
+            notificationEntity.setContent(messageDTO.getContent());
             notificationEntity.setCreationDate(LocalDateTime.now());
-            notificationEntity.setRead(false);
-            notificationEntity.setSeen(false);
+            notificationEntity.setNotificationIsRead(false);
+            notificationEntity.setNotificationIsSeen(false);
+            notificationEntity.setMessageCount(unreadCount);
+
             notificationRepository.persist(notificationEntity);
 
+
             // Map to NotificationDTO for WebSocket delivery
-            NotificationDTO notificationDTO = notificationMapper.toDTO(notificationEntity);
+            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
             boolean delivered = wsNotifications.notifyUser(notificationDTO);
             if (!delivered) {
                 logger.info("WebSocket delivery failed, notification persisted for userId {}", recipientId);
@@ -75,7 +94,7 @@ public class NotificationService {
         try {
             List<NotificationEntity> notificationEntities = notificationRepository.getNotifications(userId);
             return notificationEntities.stream()
-                    .map(notificationMapper::toDTO)
+                    .map(notificationMapper::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("Failed to get notifications for userId {}", userId, e);

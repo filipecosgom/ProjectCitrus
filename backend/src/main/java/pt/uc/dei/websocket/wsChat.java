@@ -8,7 +8,6 @@ import jakarta.json.JsonReader;
 import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
-import jakarta.websocket.server.ServerEndpointConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.MessageDTO;
@@ -32,7 +31,7 @@ import java.util.Set;
  * recebimento de pings e gerenciamento de sessões de usuários.
  */
 @Singleton
-@ServerEndpoint("/websocket/chat/")
+@ServerEndpoint(value = "/websocket/chat/", configurator = CustomConfigurator.class)
 public class WsChat {
 
     // Logger usado para registrar eventos do WebSocket (ex.: conexões, mensagens, erros)
@@ -108,6 +107,7 @@ public class WsChat {
      */
     @OnMessage
     public void toDoOnMessage(Session session, String msg) throws IOException {
+        System.out.println("Received message: " + msg);
         JsonReader jsonReader = Json.createReader(new StringReader(msg));
         JsonObject jsonMessage = jsonReader.readObject();
         String messageType = jsonMessage.getString("type");
@@ -134,7 +134,7 @@ public class WsChat {
                         messageDTO.setRecipientId(recipientId);
                         messageDTO.setContent(message);
                         messageDTO.setSentDate(LocalDateTime.now());
-                        messageDTO.setIsRead(false);
+                        messageDTO.setMessageIsRead(false);
                         // Archive the message only (no delivery attempt here)
                         messageDTO = messageService.archiveMessage(messageDTO);
                         if (messageDTO != null) {
@@ -229,11 +229,12 @@ public class WsChat {
      * @return `true` se a mensagem for válida; caso contrário, `false`.
      */
     private boolean checkIfValidMessage(JsonObject jsonMessage) {
-        return jsonMessage.containsKey("recipient") &&
+        System.out.println("Checking if message is valid: " + jsonMessage);
+        return jsonMessage.containsKey("recipientId") &&
                 jsonMessage.containsKey("message") &&
-                jsonMessage.get("recipient") != null &&
+                jsonMessage.get("recipientId") != null &&
                 jsonMessage.get("message") != null &&
-                !jsonMessage.getString("recipient").trim().isEmpty() &&
+                !jsonMessage.getJsonNumber("recipientId").toString().trim().isEmpty() &&
                 !jsonMessage.getString("message").trim().isEmpty();
     }
 

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
         query = "SELECT m.sender, COUNT(m), MAX(m.sentDate) " +
                 "FROM MessageEntity m " +
                 "JOIN UserEntity u ON m.sender.id = u.id " +
-                "WHERE m.receiver.id = :recipient_id AND m.isRead = false " +
+                "WHERE m.receiver.id = :recipient_id AND m.messageIsRead = false " +
                 "GROUP BY m.sender " +
                 "ORDER BY MAX(m.sentDate) DESC"
 )
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
                 "FROM MessageEntity m " +
                 "WHERE m.receiver.id = :recipient_id " +
                 "AND m.sender.id = :sender_id " +
-                "AND m.isRead = false"
+                "AND m.messageIsRead = false"
 )
 
 @NamedQuery(
@@ -45,7 +45,7 @@ import java.time.LocalDateTime;
 @NamedQuery(
         name = "MessageEntity.readConversation",
         query = "UPDATE MessageEntity m " +
-                "SET m.isRead = true " +
+                "SET m.messageIsRead = true " +
                 "WHERE m.receiver.id = :recipient_id AND m.sender.id = :sender_id"
 )
 @Entity
@@ -76,7 +76,7 @@ public class MessageEntity implements Serializable {
      * Can be updated.
      */
     @Column(name = "is_read", nullable = false, unique = false, updatable = true)
-    private Boolean isRead;
+    private Boolean messageIsRead;
 
     /**
      * The content of the message.
@@ -135,20 +135,12 @@ public class MessageEntity implements Serializable {
         this.sentDate = sentDate;
     }
 
-    /**
-     * Gets whether the message has been read.
-     * @return true if read, false otherwise
-     */
-    public Boolean getRead() {
-        return isRead;
+    public Boolean getMessageIsRead() {
+        return messageIsRead;
     }
 
-    /**
-     * Sets whether the message has been read.
-     * @param read true if read, false otherwise
-     */
-    public void setRead(Boolean read) {
-        isRead = read;
+    public void setMessageIsRead(Boolean messageIsRead) {
+        this.messageIsRead = messageIsRead;
     }
 
     /**

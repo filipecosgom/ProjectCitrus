@@ -27,7 +27,7 @@ import java.util.Set;
  * envio de mensagens PING para manter as conexões ativas e encerramento de sessões.
  */
 @Singleton
-@ServerEndpoint("/websocket/notifications/")
+@ServerEndpoint(value = "/websocket/notifications/", configurator = CustomConfigurator.class)
 public class WsNotifications {
 
     // Logger para registrar informações sobre conexões, erros ou eventos importantes

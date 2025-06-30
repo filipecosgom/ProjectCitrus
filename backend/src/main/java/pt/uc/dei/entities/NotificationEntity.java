@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @NamedQuery(
         name = "NotificationEntity.readNotification",
         query = "UPDATE NotificationEntity n " +
-                "SET isRead = true " +
+                "SET notificationIsRead = true " +
                 "WHERE n.user.id = :userId " +
                 "AND n.id = :notificationId")
 
@@ -77,10 +77,10 @@ public class NotificationEntity implements Serializable {
      * Can be updated.
      */
     @Column(name = "is_read", nullable = false, unique = false, updatable = true)
-    private Boolean isRead;
+    private Boolean notificationIsRead;
 
     @Column(name = "is_seen", nullable = false, unique = false, updatable = true)
-    private Boolean isSeen;
+    private Boolean notificationIsSeen;
 
     /**
      * The number of associated messages.
@@ -171,38 +171,6 @@ public class NotificationEntity implements Serializable {
     }
 
     /**
-     * Gets whether the notification has been read.
-     * @return true if read, false otherwise
-     */
-    public Boolean getRead() {
-        return isRead;
-    }
-
-    /**
-     * Sets whether the notification has been read.
-     * @param read true if read, false otherwise
-     */
-    public void setRead(Boolean read) {
-        isRead = read;
-    }
-
-    /**
-     * Gets whether the notification has been seen.
-     * @return true if seen, false otherwise
-     */
-    public Boolean getSeen() {
-        return isSeen;
-    }
-
-    /**
-     * Sets whether the notification has been seen.
-     * @param seen true if seen, false otherwise
-     */
-    public void setSeen(Boolean seen) {
-        isSeen = seen;
-    }
-
-    /**
      * Gets the number of associated messages.
      * @return the message count
      */
@@ -276,8 +244,19 @@ public class NotificationEntity implements Serializable {
         setMessageCount(unreadCount);
     }
 
-    // Alias for isRead
-    public boolean isRead() {
-        return getRead() != null && getRead();
+    public Boolean getNotificationIsRead() {
+        return notificationIsRead;
+    }
+
+    public void setNotificationIsRead(Boolean notificationIsRead) {
+        this.notificationIsRead = notificationIsRead;
+    }
+
+    public Boolean getNotificationIsSeen() {
+        return notificationIsSeen;
+    }
+
+    public void setNotificationIsSeen(Boolean notificationIsSeen) {
+        this.notificationIsSeen = notificationIsSeen;
     }
 }
