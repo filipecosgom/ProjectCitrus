@@ -1,15 +1,13 @@
-package pt.uc.dei.proj5.websocket;
+package pt.uc.dei.websocket;
 
-import jakarta.inject.Inject;
-import jakarta.websocket.Session;
 import jakarta.json.JsonObject;
+import jakarta.websocket.Session;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.proj5.beans.TokenBean;
 import pt.uc.dei.proj5.dto.TokenDto;
-import pt.uc.dei.proj5.dto.TokenType;
-import pt.uc.dei.proj5.dto.UserDto;
 import pt.uc.dei.proj5.dto.UserAccountState;
+import pt.uc.dei.proj5.dto.UserDto;
 
 import java.io.IOException;
 import java.util.HashMap;

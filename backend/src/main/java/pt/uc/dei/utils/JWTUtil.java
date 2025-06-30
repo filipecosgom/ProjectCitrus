@@ -6,6 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Cookie;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.ConfigurationEntity;
 import pt.uc.dei.repositories.ConfigurationRepository;
@@ -74,6 +76,15 @@ public class JWTUtil {
 
     public static Date getExpiration(String token) {
         return validateToken(token).getExpiration();
+    }
+
+    public static Long getIdFromContainerRequestContext(ContainerRequestContext requestContext) {
+        Cookie cookie = requestContext.getCookies().get("jwt");
+        if (cookie == null) {
+            return null;
+        }
+        Claims claims = validateToken(cookie.getValue());
+        return Long.parseLong(claims.getSubject());
     }
 
 }

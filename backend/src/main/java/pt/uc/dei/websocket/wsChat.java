@@ -1,4 +1,4 @@
-package pt.uc.dei.proj5.websocket;
+package pt.uc.dei.websocket;
 
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;

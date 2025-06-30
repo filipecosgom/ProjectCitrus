@@ -3,22 +3,21 @@ package pt.uc.dei.repositories;
 import jakarta.ejb.Stateless;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.dto.*;
-import pt.uc.dei.proj5.entity.MessageEntity;
+import pt.uc.dei.entities.MessageEntity;
 
 import java.util.Collections;
 import java.util.List;
 
 @Stateless
-public class MessageDao extends AbstractDao<MessageEntity> {
-    private static final Logger logger = LogManager.getLogger(MessageDao.class);
+public class MessageRepository extends AbstractRepository<MessageEntity> {
+    private static final Logger LOGGER = LogManager.getLogger(MessageRepository.class);
     private static final long serialVersionUID = 1L;
 
-    public MessageDao() {
+    public MessageRepository() {
         super(MessageEntity.class);
     }
 
-    public List<MessageEntity> getListOfMessagesBetween(String userUsername, String otherUserUsername) {
+    public List<MessageEntity> getListOfMessagesBetween(Long userId, Long otherUserId) {
         try {
             List<MessageEntity> messageEntities = em.createNamedQuery("MessageEntity.getConversation", MessageEntity.class)
                     .setParameter("user_username", userUsername)

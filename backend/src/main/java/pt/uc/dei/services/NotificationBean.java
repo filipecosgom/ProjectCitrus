@@ -1,4 +1,4 @@
-package pt.uc.dei.proj5.beans;
+package pt.uc.dei.services;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Stateless
-public class NotificationBean {
-    private static final Logger logger = LogManager.getLogger(NotificationBean.class);
+public class NotificationService {
+    private static final Logger logger = LogManager.getLogger(NotificationService.class);
 
     @Inject
     NotificationDao notificationDao;
@@ -35,7 +35,7 @@ public class NotificationBean {
     @Inject
     MessageDao messageDao;
 
-    public NotificationBean() {
+    public NotificationService() {
     }
 
     public List<NotificationDto> getNotifications(UserDto user) {

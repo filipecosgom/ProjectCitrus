@@ -1,4 +1,4 @@
-package pt.uc.dei.proj5.service;
+package pt.uc.dei.controllers;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -12,8 +12,8 @@ import pt.uc.dei.proj5.dto.*;
 import java.util.List;
 
 @Path("/notifications")
-public class NotificationService {
-    private static final Logger logger = LogManager.getLogger(NotificationService.class);
+public class NotificationController {
+    private static final Logger logger = LogManager.getLogger(NotificationController.class);
 
     @Inject
     AuthenticationService authenticationService;

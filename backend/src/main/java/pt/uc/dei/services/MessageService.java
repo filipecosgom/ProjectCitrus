@@ -11,6 +11,8 @@ import pt.uc.dei.proj5.dao.UserDao;
 import pt.uc.dei.proj5.dto.MessageDto;
 import pt.uc.dei.proj5.dto.UserDto;
 import pt.uc.dei.proj5.entity.MessageEntity;
+import pt.uc.dei.repositories.MessageRepository;
+import pt.uc.dei.repositories.NotificationRepository;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,14 +22,12 @@ import java.util.stream.Collectors;
 public class MessageService implements Serializable {
     private static final Logger logger = LogManager.getLogger(UserBean.class);
 
-    @Inject
-    UserDao userDao;
-
-    @EJB
-    MessageDao messageDao;
 
     @Inject
-    NotificationDao notificationDao;
+    MessageRepository messageDao;
+
+    @Inject
+    NotificationRepository notificationDao;
 
     public List<MessageDto> getMessagesBetween(UserDto user, UserDto otherUser) {
         try {

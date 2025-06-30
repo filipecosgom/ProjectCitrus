@@ -1,9 +1,11 @@
-package pt.uc.dei.proj5.service;
+package pt.uc.dei.controllers;
 
 import jakarta.inject.Inject;
-import jakarta.jms.Message;
 import jakarta.json.JsonObject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
@@ -13,16 +15,16 @@ import pt.uc.dei.proj5.beans.NotificationBean;
 import pt.uc.dei.proj5.beans.UserBean;
 import pt.uc.dei.proj5.dto.*;
 import pt.uc.dei.proj5.websocket.wsChat;
+import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.JWTUtil;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Path("/messages")
-public class MessageService {
-    private static final Logger logger = LogManager.getLogger(MessageService.class);
+public class MessageController {
+    private static final Logger LOGGER = LogManager.getLogger(MessageController.class);
 
-    @Inject
-    AuthenticationService authenticationService;
+
 
     @Inject
     UserBean userBean;
@@ -38,15 +40,15 @@ public class MessageService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{username}")
-    public Response getChat(@HeaderParam("token") String authenticationToken,
-                            @PathParam("username") String username) {
-        UserDto user;
-        try {
-            user = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
+    @Path("{id}")
+    public Response getChat(@PathParam("id") Long id, @Context ContainerRequestContext requestContext) {
+        Long userId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if(userId == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(new ApiResponse(false, "Unauthorized", null, null)).build();
         }
+
+
+
         UserDto otherUser = userBean.getUserInformation(username);
         if (otherUser == null) {
             logger.error("Invalid other user - getting messages");

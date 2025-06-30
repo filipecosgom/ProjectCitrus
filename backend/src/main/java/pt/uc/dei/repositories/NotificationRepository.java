@@ -4,18 +4,19 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.NoResultException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.entity.NotificationEntity;
+import pt.uc.dei.
+import pt.uc.dei.entities.NotificationEntity;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @Stateless
-public class NotificationDao extends AbstractDao<NotificationEntity> {
-    private static final Logger logger = LogManager.getLogger(NotificationDao.class);
+public class NotificationRepository extends AbstractRepository<NotificationEntity> {
+    private static final Logger LOGGER = LogManager.getLogger(NotificationRepository.class);
     private static final long serialVersionUID = 1L;
 
-    public NotificationDao() {
+    public NotificationRepository() {
         super(NotificationEntity.class);
     }
 

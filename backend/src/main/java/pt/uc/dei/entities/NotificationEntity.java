@@ -5,12 +5,39 @@ import pt.uc.dei.enums.NotificationType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Entity representing a notification.
- * Stores details about notification type, content, status, and associated user.
- */
+
+@NamedQuery(
+        name = "NotificationEntity.getNotifications",
+        query = "SELECT n " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :id")
+
+@NamedQuery(
+        name = "NotificationEntity.getTotalNotifications",
+        query = "SELECT COUNT(n) " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :id")
+
+@NamedQuery(
+        name = "NotificationEntity.readNotification",
+        query = "UPDATE NotificationEntity n " +
+                "SET isRead = true " +
+                "WHERE n.user.id = :userId " +
+                "AND n.id = :notificationId")
+
+@NamedQuery(
+        name = "NotificationEntity.checkIfNotificationExist",
+        query = "SELECT COUNT(n) " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :userId " +
+                "AND n.id = :notificationId")
+
 @Entity
-@Table(name = "notification")
+@Table(name = "notification", indexes = {
+        @Index(name = "idx_notifications_recipient", columnList = "user"),
+        @Index(name = "idx_notification_recipient_id", columnList = "user, id"),
+        @Index(name = "idx_unread_messages", columnList = "user, type, isRead")
+})
 public class NotificationEntity implements Serializable {
 
     /**

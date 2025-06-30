@@ -1,4 +1,4 @@
-package pt.uc.dei.proj5.websocket;
+package pt.uc.dei.websocket;
 
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
