@@ -13,9 +13,6 @@ import {
   appraisalSearchFilters,
   appraisalsSortFields,
   buildAppraisalsSearchParams,
-  createPageChangeHandler,
-  createSortHandler,
-  fetchInitialAppraisals,
 } from "../../utils/appraisalsSearchUtils";
 
 export default function Appraisals() {
@@ -29,28 +26,28 @@ export default function Appraisals() {
     limit: 10,
     total: 0,
   });
-  // Use null as initial value for searchParams
-  const [searchParams, setSearchParams] = useState(null);
-  const [lastSearch, setLastSearch] = useState(null);
+  // Separate state for search/filter, sort, and pagination
+  const [searchParams, setSearchParams] = useState({
+    query: "",
+    searchType: "creationDate", // or whatever default
+    limit: 10,
+    state: "",
+    score: "",
+  });
   const [sort, setSort] = useState({
     sortBy: "creationDate",
     sortOrder: "DESCENDING",
   });
-  const lastSearchRef = useRef(lastSearch);
+  const lastSearchRef = useRef(searchParams);
   useEffect(() => {
-    lastSearchRef.current = lastSearch;
-  }, [lastSearch]);
+    lastSearchRef.current = searchParams;
+  }, [searchParams]);
 
-  // Externalized: set searching parameters
-  const setSearchingParameters = (query, searchType, limit, filters = {}) => {
-    const search = { query, searchType, limit, ...filters };
-    setLastSearch(search);
-    setSearchParams(search);
-    setPagination((prev) => ({ ...prev, offset: 0 }));
-  };
-
-  // Externalized: fetch appraisals
-  async function fetchAppraisals(offset = 0, overrideParams = null) {
+  // Fetch appraisals
+  async function fetchAppraisals(
+    offset = pagination.offset,
+    overrideParams = null
+  ) {
     const params = buildAppraisalsSearchParams({
       ...(overrideParams || searchParams),
       offset,
@@ -67,23 +64,7 @@ export default function Appraisals() {
       total: result.pagination?.totalAppraisals || 0,
     }));
     setResultsLoading(false);
-    setLastSearch(overrideParams || searchParams);
   }
-
-  // Externalized: handle page change
-  const handlePageChange = createPageChangeHandler(
-    setPagination,
-    fetchAppraisals,
-    lastSearchRef
-  );
-
-  // Externalized: handle sort change
-  const handleSortChange = createSortHandler(
-    setSort,
-    setPagination,
-    fetchAppraisals,
-    lastSearchRef
-  );
 
   // Only one effect for fetching appraisals
   useEffect(() => {
@@ -99,34 +80,33 @@ export default function Appraisals() {
       setPageLoading(true);
       const appraisalStates = await handleGetAppraisalStates();
       setAppraisalStates(appraisalStates);
-      // Build initial search params
-      const initialSearch = {
-        query: "",
-        searchType: "creatioDate",
-        limit: 10,
-        state: "",
-      };
-      setSearchParams(initialSearch);
-      setLastSearch(initialSearch);
-      // Fetch initial appraisals
-      const params = buildAppraisalsSearchParams({
-        ...initialSearch,
-        offset: 0,
-        sortBy: sort.sortBy,
-        sortOrder: sort.sortOrder,
-      });
-      const result = await handleGetAppraisals(params);
-      setAppraisals(result.appraisals || []);
-      setPagination((prev) => ({
-        ...prev,
-        offset: 0,
-        limit: result.pagination?.limit || 10,
-        total: result.pagination?.totalAppraisals || 0,
-      }));
+      setSearchParams((prev) => ({ ...prev })); // triggers initial fetch
       setPageLoading(false);
     }
     fetchInitial();
+    // eslint-disable-next-line
   }, []);
+
+  // Handlers
+  const handleSearch = (query, searchType, limit, filters = {}) => {
+    setSearchParams((prev) => ({
+      ...prev,
+      query,
+      searchType,
+      limit,
+      ...filters,
+    }));
+    setPagination((prev) => ({ ...prev, offset: 0 }));
+  };
+
+  const handleSortChange = (newSort) => {
+    setSort(newSort);
+    setPagination((prev) => ({ ...prev, offset: 0 }));
+  };
+
+  const handlePageChange = (newOffset) => {
+    setPagination((prev) => ({ ...prev, offset: newOffset }));
+  };
 
   if (pageLoading) return <Spinner />;
 
@@ -135,7 +115,7 @@ export default function Appraisals() {
   return (
     <div className="appraisals-container">
       <SearchBar
-        onSearch={setSearchingParameters}
+        onSearch={handleSearch}
         searchTypes={appraisalsSearchTypes}
         {...filtersConfig}
       />
