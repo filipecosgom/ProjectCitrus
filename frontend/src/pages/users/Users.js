@@ -8,7 +8,9 @@ import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";
-import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas"; // ✅ ADICIONAR IMPORT
+import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
+import { GrUserSettings } from "react-icons/gr"; // ✅ ADICIONAR IMPORT
+import useAuthStore from "../../stores/useAuthStore"; // ✅ ADICIONAR IMPORT
 import {
   buildSearchParams,
   createPageChangeHandler,
@@ -30,9 +32,13 @@ export default function Users() {
     total: 0,
   });
 
-  // ✅ ADICIONAR estados para offcanvas
+  // Estados para offcanvas
   const [selectedUser, setSelectedUser] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
+  // ✅ NOVOS ESTADOS para Assign Managers
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState(new Set());
 
   // Use null as initial value for searchParams
   const [searchParams, setSearchParams] = useState(null);
@@ -46,8 +52,14 @@ export default function Users() {
   const usersFilters = userSearchFilters(t, offices);
   const usersSortFields = sortFields;
 
-  // ✅ ADICIONAR handlers para offcanvas
+  // ✅ VERIFICAR se user é admin
+  const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
+
+  // Handlers para offcanvas
   const handleUserClick = (user) => {
+    // ✅ Se está em selection mode, não abrir offcanvas
+    if (isSelectionMode) return;
+
     console.log("🔍 USERS - User clicked:", user);
     setSelectedUser(user);
     setOffcanvasOpen(true);
@@ -55,10 +67,28 @@ export default function Users() {
 
   const handleCloseOffcanvas = () => {
     setOffcanvasOpen(false);
-    // Delay para permitir animação de saída
     setTimeout(() => {
       setSelectedUser(null);
     }, 300);
+  };
+
+  // ✅ NOVOS HANDLERS para Selection Mode
+  const handleToggleSelectionMode = () => {
+    setIsSelectionMode(!isSelectionMode);
+    if (isSelectionMode) {
+      // Se está desativando, limpar seleções
+      setSelectedUsers(new Set());
+    }
+  };
+
+  const handleUserSelection = (userId, isSelected) => {
+    const newSelectedUsers = new Set(selectedUsers);
+    if (isSelected) {
+      newSelectedUsers.add(userId);
+    } else {
+      newSelectedUsers.delete(userId);
+    }
+    setSelectedUsers(newSelectedUsers);
   };
 
   // Externalized: set searching parameters
@@ -136,7 +166,28 @@ export default function Users() {
 
   return (
     <div className="users-container">
-      <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
+      {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
+      <div className="searchBar-container">
+        <div
+          className={`searchBar-wrapper ${isAdmin ? "with-assign-button" : ""}`}
+        >
+          <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
+        </div>
+
+        {/* ✅ BOTÃO Assign Managers - apenas para admins */}
+        {isAdmin && (
+          <button
+            className={`assign-managers-btn ${isSelectionMode ? "active" : ""}`}
+            onClick={handleToggleSelectionMode}
+          >
+            <GrUserSettings className="assign-managers-icon" />
+            <span className="assign-managers-text">
+              {isSelectionMode ? "Cancel Selection" : "Assign Managers"}
+            </span>
+          </button>
+        )}
+      </div>
+
       <SortControls
         fields={usersSortFields}
         sortBy={sort.sortBy}
@@ -158,7 +209,10 @@ export default function Users() {
               <UserCard
                 key={user.id}
                 user={user}
-                onClick={handleUserClick} // ✅ ADICIONAR onClick handler
+                onClick={handleUserClick}
+                isSelectionMode={isSelectionMode} // ✅ NOVA PROP
+                isSelected={selectedUsers.has(user.id)} // ✅ NOVA PROP
+                onSelectionChange={handleUserSelection} // ✅ NOVA PROP
               />
             ))}
           </div>
@@ -171,7 +225,6 @@ export default function Users() {
         onChange={handlePageChange}
       />
 
-      {/* ✅ ADICIONAR UserOffcanvas */}
       <UserOffcanvas
         user={selectedUser}
         isOpen={offcanvasOpen}

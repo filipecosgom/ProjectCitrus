@@ -7,7 +7,13 @@ import Spinner from "../spinner/spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 
-const UserCard = ({ user, onClick }) => {
+const UserCard = ({
+  user,
+  onClick,
+  isSelectionMode = false, // ✅ NOVA PROP
+  isSelected = false, // ✅ NOVA PROP
+  onSelectionChange, // ✅ NOVA PROP
+}) => {
   const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
@@ -76,19 +82,44 @@ const UserCard = ({ user, onClick }) => {
     return "";
   };
 
-  // Handler para click
-  const handleCardClick = () => {
+  // ✅ HANDLER para click do card
+  const handleCardClick = (e) => {
+    // Se clicou na checkbox, não propagar
+    if (e.target.type === "checkbox") return;
+
     if (onClick) {
       onClick(user);
     }
   };
 
+  // ✅ HANDLER para checkbox
+  const handleCheckboxChange = (e) => {
+    e.stopPropagation(); // Evitar propagação para o card
+    if (onSelectionChange) {
+      onSelectionChange(user.id, e.target.checked);
+    }
+  };
+
   return (
     <div
-      className={`userCard-container ${getStatusClass()}`}
+      className={`userCard-container ${getStatusClass()} ${
+        isSelectionMode && isSelected ? "selected" : ""
+      }`} // ✅ CLASSE CONDICIONAL para highlight
       onClick={handleCardClick}
-      style={{ cursor: onClick ? "pointer" : "default" }}
+      style={{ cursor: onClick && !isSelectionMode ? "pointer" : "default" }}
     >
+      {/* ✅ CHECKBOX - apenas em selection mode */}
+      {isSelectionMode && (
+        <div className="userCard-checkbox">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={handleCheckboxChange}
+            onClick={(e) => e.stopPropagation()} // Evitar propagação dupla
+          />
+        </div>
+      )}
+
       <div className="userCard-avatarAndInfoContainer container-user">
         {/* User Avatar */}
         <div className="userCard-avatarContainer">
@@ -171,7 +202,10 @@ UserCard.propTypes = {
       surname: PropTypes.string,
     }),
   }).isRequired,
-  onClick: PropTypes.func, // prop opcional
+  onClick: PropTypes.func,
+  isSelectionMode: PropTypes.bool, // ✅ NOVA PROP
+  isSelected: PropTypes.bool, // ✅ NOVA PROP
+  onSelectionChange: PropTypes.func, // ✅ NOVA PROP
 };
 
 export default UserCard;

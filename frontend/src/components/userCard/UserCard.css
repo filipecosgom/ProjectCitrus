@@ -8,6 +8,30 @@
   align-items: center;
   border-radius: 8px;
   background-color: white;
+  transition: all 0.2s ease; /* ✅ ADICIONAR transição suave */
+}
+
+/* ✅ NOVO: Highlight quando selecionado */
+.userCard-container.selected {
+  background-color: #f0f8ff;
+  border: 2px solid var(--blue, #007bff);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+/* ✅ NOVO: Checkbox container */
+.userCard-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.userCard-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--blue, #007bff);
 }
 
 .userCard-avatarAndInfoContainer {
@@ -57,13 +81,13 @@
 .userCard-role {
   flex: 1;
   min-width: 100px;
-  text-align: left; /* ✅ MUDANÇA: center → left */
+  text-align: left;
 }
 
 .userCard-office {
   flex: 1;
   min-width: 100px;
-  text-align: left; /* ✅ MUDANÇA: center → left */
+  text-align: left;
 }
 
 .userCard-managerAvatar {
@@ -107,7 +131,7 @@
 
   .userCard-office {
     display: block;
-    text-align: left; /* ✅ ADICIONAR: garantir alinhamento à esquerda */
+    text-align: left;
   }
 
   .userCard-avatarAndInfoContainer {
@@ -117,6 +141,16 @@
   }
   .container-manager {
     justify-content: flex-end;
+  }
+
+  /* ✅ CHECKBOX responsivo */
+  .userCard-checkbox {
+    padding: 0 0.75rem;
+  }
+
+  .userCard-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -152,5 +186,16 @@
     gap: 0.5rem;
     color: #888;
     font-style: italic;
+  }
+
+  /* ✅ CHECKBOX desktop */
+  .userCard-checkbox {
+    padding: 0 1rem;
+  }
+
+  /* ✅ HOVER effect mais suave quando selecionado */
+  .userCard-container.selected:hover {
+    background-color: #e6f3ff;
+    border-color: var(--blue-dark, #0056b3);
   }
 }
