@@ -33,10 +33,11 @@ const FilterMenu = ({
 
   const getOptionLabel = (key, opt) => {
     if (key === "searchType") {
-      const cap = opt.charAt(0).toUpperCase() + opt.slice(1);
+      const cap = typeof opt === "string" ? opt.charAt(0).toUpperCase() + opt.slice(1) : "";
       return t(`filterMenuOption${cap}`);
     }
     if (key === "office") {
+      if (typeof opt === "object" && opt.label) return opt.label;
       return opt ? opt : t("filterMenuAllOffices");
     }
     if (typeof opt === "object" && opt.label) return opt.label;

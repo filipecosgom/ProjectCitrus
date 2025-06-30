@@ -6,21 +6,17 @@ export function buildSearchParams(query, searchType, limit, filters = {}) {
 }
 
 // Pagination handler factory
-export function createPageChangeHandler(setPagination, fetchFn, lastSearchRef) {
+export function createPageChangeHandler(setPagination) {
   return (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
-    if (lastSearchRef.current) {
-      fetchFn(newOffset, lastSearchRef.current);
-    }
   };
 }
 
 // Sorting logic handler
-export function createSortHandler(setSort, setPagination, fetchFn, lastSearchRef) {
+export function createSortHandler(setSort, setPagination, lastSearchRef) {
   return (newSort) => {
     setSort(newSort);
     if (lastSearchRef.current) {
-      fetchFn(0, lastSearchRef.current);
       setPagination((prev) => ({ ...prev, offset: 0 }));
     }
   };

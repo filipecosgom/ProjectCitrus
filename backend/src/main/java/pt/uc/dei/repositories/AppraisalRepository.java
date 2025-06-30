@@ -270,6 +270,9 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
                     case APPRAISED_EMAIL:
                         sortingField = appraisedUserJoin.get("email");
                         break;
+                    case END_DATE:
+                        sortingField = cycleJoin.get("endDate");
+                        break;
                     default:
                         sortingField = appraisal.get(parameter.getFieldName());
                 }

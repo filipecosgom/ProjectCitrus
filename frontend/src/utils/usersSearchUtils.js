@@ -30,8 +30,10 @@ export async function fetchInitialUsers({
   handleGetOffices,
 }) {
   setPageLoading(true);
-  const offices = await handleGetOffices();
-  const initialSearch = { query: "", searchType: "email", limit: 10, filters: {} };
+  let offices = await handleGetOffices();
+  // Add "All offices" option at the top
+  offices = [{ label: "All offices", value: "" }, ...offices];
+  const initialSearch = { query: "", searchType: "email", limit: 10, office: "", filters: {} };
   setSearchParams(initialSearch);
   setOffices(offices);
   setPageLoading(false);
