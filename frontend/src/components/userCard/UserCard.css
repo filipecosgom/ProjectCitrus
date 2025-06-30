@@ -57,13 +57,13 @@
 .userCard-role {
   flex: 1;
   min-width: 100px;
-  text-align: center;
+  text-align: left; /* ✅ MUDANÇA: center → left */
 }
 
 .userCard-office {
   flex: 1;
   min-width: 100px;
-  text-align: center;
+  text-align: left; /* ✅ MUDANÇA: center → left */
 }
 
 .userCard-managerAvatar {
@@ -76,7 +76,6 @@
 .userCard-managerInfo {
   display: flex;
   flex-direction: column;
-  
 }
 
 .userCard-managerName {
@@ -84,8 +83,8 @@
 }
 
 .userCard-managerEmail {
-    display: none;
-  }
+  display: none;
+}
 
 .userCard-noManager {
   display: none;
@@ -99,7 +98,6 @@
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 @media (min-width: 480px) {
-    
   .userCard-email {
     display: none;
   }
@@ -109,6 +107,7 @@
 
   .userCard-office {
     display: block;
+    text-align: left; /* ✅ ADICIONAR: garantir alinhamento à esquerda */
   }
 
   .userCard-avatarAndInfoContainer {
@@ -140,18 +139,18 @@
   }
 
   .userCard-managerEmail {
-  display: block;
-  font-size: 0.8rem;
-  color: #666;
-}
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+  }
 
-.userCard-noManager {
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  color: #888;
-  font-style: italic;
-}
+  .userCard-noManager {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    color: #888;
+    font-style: italic;
+  }
 }
