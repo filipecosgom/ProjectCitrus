@@ -3,52 +3,50 @@
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
 .sortControls-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
-  .sortControls-div {
-    cursor: pointer;
-    flex: 1;
-    font-weight: var(--font-weight-regular);
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-main);
-    transition: color 0.2s ease;
-    text-align: center;
-  }
+.sortControls-div {
+  cursor: pointer;
+  flex: 1;
+  font-weight: var(--font-weight-regular);
+  font-family: var(--font-family-secondary);
+  font-size: var(--font-size-main);
+  transition: color 0.2s ease;
+  text-align: left; /* ✅ MUDANÇA: center → left */
+}
 
-  .sortControls-div.office {
+.sortControls-div.office {
   display: none;
 }
 .sortControls-div.manager {
   display: none;
 }
 
-  .sortControls-div:hover {
-    font-weight: var(--font-weight-bold);
-    color: var(--blue);
-  }
+.sortControls-div:hover {
+  font-weight: var(--font-weight-bold);
+  color: var(--blue);
+}
 
-  .sortControls-div.active {
-    font-weight: 600;
-    color: var(--blue);
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: center;
-  }
+.sortControls-div.active {
+  font-weight: 600;
+  color: var(--blue);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-start; /* ✅ MUDANÇA: center → flex-start */
+}
 
-  .sort-icon {
-    font-size: 0.9rem;
-  }
-
+.sort-icon {
+  font-size: 0.9rem;
+}
 
 /*----------------------------------------*/
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 @media (min-width: 480px) {
-
   .sortControls-div.office {
     display: block;
   }
@@ -72,12 +70,10 @@
     font-size: var(--font-size-subtitle);
   }
 
-
   .sortControls-div.office {
     display: block;
   }
   .sortControls-div.manager {
     display: block;
   }
-
 }
