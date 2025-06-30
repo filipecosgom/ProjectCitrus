@@ -13,9 +13,9 @@
 
 /* ✅ NOVO: Highlight quando selecionado */
 .userCard-container.selected {
-  background-color: #f0f8ff;
-  border: 2px solid var(--blue, #007bff);
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+  background-color: #eebbbb;
+  /*border: 2px solid var(--blue, #007bff);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);*/
 }
 
 /* ✅ NOVO: Checkbox container */
