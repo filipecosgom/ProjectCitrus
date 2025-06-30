@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
         name = "NotificationEntity.getNotifications",
         query = "SELECT n " +
                 "FROM NotificationEntity n " +
-                "WHERE n.user.id = :id")
+                "WHERE n.user.id = :id " +
+                "ORDER BY n.creationDate DESC")
 
 @NamedQuery(
         name = "NotificationEntity.getTotalNotifications",
@@ -95,6 +96,13 @@ public class NotificationEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private UserEntity user;
+
+    /**
+     * The sender of the notification.
+     * Stored as a foreign key referencing the user table.
+     */
+    @Column(name = "sender_id", nullable = false, updatable = false)
+    private Long senderId;
 
     // Getters and Setters
 
@@ -224,5 +232,52 @@ public class NotificationEntity implements Serializable {
      */
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    /**
+     * Gets the sender of the notification.
+     * @return the sender ID
+     */
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    /**
+     * Sets the sender of the notification.
+     * @param senderId the sender ID
+     */
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    // Convenience for recipientId (user)
+    public Long getRecipientId() {
+        return user != null ? user.getId() : null;
+    }
+    public void setRecipientId(Long recipientId) {
+        // This should be set via setUser(UserEntity), but for DTO mapping, we allow this setter
+        if (this.user == null) this.user = new UserEntity();
+        this.user.setId(recipientId);
+    }
+
+    // Alias for timestamp
+    public LocalDateTime getTimestamp() {
+        return getCreationDate();
+    }
+    public void setTimestamp(LocalDateTime timestamp) {
+        setCreationDate(timestamp);
+    }
+
+    // Alias for unreadCount
+    public Integer getUnreadCount() {
+        return getMessageCount();
+    }
+    public void setUnreadCount(Integer unreadCount) {
+        setMessageCount(unreadCount);
+    }
+
+    // Alias for isRead
+    public boolean isRead() {
+        return getRead() != null && getRead();
     }
 }

@@ -3,16 +3,21 @@ package pt.uc.dei.services;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.dao.MessageDao;
-import pt.uc.dei.proj5.dao.NotificationDao;
-import pt.uc.dei.proj5.dao.UserDao;
-import pt.uc.dei.proj5.dto.MessageDto;
-import pt.uc.dei.proj5.dto.UserDto;
-import pt.uc.dei.proj5.entity.MessageEntity;
 import pt.uc.dei.repositories.MessageRepository;
 import pt.uc.dei.repositories.NotificationRepository;
+import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.websocket.WsChat;
+import pt.uc.dei.mapper.MessageMapper;
+import pt.uc.dei.mapper.UserMapper;
+import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.entities.MessageEntity;
+import pt.uc.dei.dtos.MessageDTO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,91 +25,127 @@ import java.util.stream.Collectors;
 
 @Stateless
 public class MessageService implements Serializable {
-    private static final Logger logger = LogManager.getLogger(UserBean.class);
+    private static final Logger LOGGER = LogManager.getLogger(MessageService.class);
 
 
     @Inject
-    MessageRepository messageDao;
+    MessageRepository messageRepository;
 
     @Inject
-    NotificationRepository notificationDao;
+    NotificationRepository notificationRepository;
 
-    public List<MessageDto> getMessagesBetween(UserDto user, UserDto otherUser) {
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    MessageMapper messageMapper;
+
+    @Inject
+    UserMapper userMapper;
+
+    @Inject
+    NotificationService notificationService;
+
+    @Inject
+    WsChat wsChat;
+
+    @Transactional
+    public List<MessageDTO> getMessagesBetween(Long userId, Long otherUserId) {
         try {
-            List<MessageEntity> messageEntities = messageDao.getListOfMessagesBetween(user.getUsername(), otherUser.getUsername());
-            List<MessageDto> messageDtos = messageEntities.stream()
-                    .map(this::convertMessageEntityToMessageDto)
+            return messageRepository.getListOfMessagesBetween(userId, otherUserId)
+                    .stream()
+                    .map(messageMapper::toDto)
                     .collect(Collectors.toList());
-            return messageDtos;
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return null;
         }
     }
 
-    public List<UserDto> getAllChats(UserDto user) {
+    public List<UserDTO> getAllChats(Long userId) {
         try {
-            return messageDao.getAllConversations(user.getUsername());
+            List<Long> userIds = messageRepository.getAllConversations(userId);
+            return userIds.stream()
+                    .map(userRepository::findUserById)
+                    .filter(u -> u != null)
+                    .map(userMapper::toDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return null;
         }
     }
 
-    public boolean readAllConversation(String recipient, String sender) {
+    @Transactional
+    public boolean readAllConversation(Long recipientId, Long senderId) {
         try {
-            messageDao.readConversation(recipient, sender);
+            messageRepository.readConversation(recipientId, senderId);
+            // Send real-time notification to sender via WebSocket
+            // You may need to adjust how you access wsChat (static, CDI, etc.)
+            try {
+                JsonObject json = Json.createObjectBuilder()
+                    .add("type", "CONVERSATION_READ")
+                    .add("readerId", recipientId)
+                    .add("senderId", senderId)
+                    .build();
+                wsChat.sendJsonToUser(json, senderId);
+            } catch (Exception ex) {
+                LOGGER.warn("Failed to send WebSocket conversation read notification", ex);
+            }
             return true;
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return false;
         }
     }
 
-    public MessageDto newMessage(MessageDto messageDto) {
+    /**
+     * Archives and attempts to deliver a message. If WebSocket delivery fails, triggers notification.
+     */
+    @Transactional
+    public MessageDTO newMessage(MessageDTO messageDTO) {
         try {
-            MessageEntity newMessageEntity = convertMessageDtoToMessageEntity(messageDto);
-            messageDao.persist(newMessageEntity);
-            return convertMessageEntityToMessageDto(newMessageEntity);
+            // Archive the message
+            MessageDTO savedMessage = archiveMessage(messageDTO);
+            if (savedMessage == null) {
+                LOGGER.error("Failed to archive message from userId {} to userId {}", messageDTO.getSenderId(), messageDTO.getReceiverId());
+                return null;
+            }
+            // Try to deliver via WebSocket
+            boolean delivered = sendMessageToUser(savedMessage);
+            if (!delivered) {
+                LOGGER.info("WebSocket delivery failed, sending notification for message from userId {} to userId {}", messageDTO.getSenderId(), messageDTO.getReceiverId());
+                notificationService.newMessageNotification(savedMessage);
+            }
+            return savedMessage;
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return null;
         }
     }
 
-    private MessageEntity convertMessageDtoToMessageEntity(MessageDto messageDto) {
-        MessageEntity messageEntity = new MessageEntity();
-        messageEntity.setMessageId(messageDto.getMessageId());
-        messageEntity.setMessage(messageDto.getMessage());
-        messageEntity.setRead(messageDto.getRead());
-        messageEntity.setDeleted(messageDto.getDeleted());
-        messageEntity.setTimestamp(messageDto.getTimestamp());
-        messageEntity.setDateEdited(messageEntity.getDateEdited());
+    /**
+     * Persists the message and returns the saved DTO.
+     */
+    @Transactional
+    public MessageDTO archiveMessage(MessageDTO messageDTO) {
         try {
-            messageEntity.setSender(userDao.findUserByUsername(messageDto.getSender()));
+            MessageEntity entity = messageMapper.toEntity(messageDTO);
+            messageRepository.persist(entity);
+            return messageMapper.toDto(entity);
         } catch (Exception e) {
-            logger.error("Error finding sender: " + messageDto.getSender(), e);
-            throw new RuntimeException("Failed to convert MessageDto to MessageEntity");
+            LOGGER.error(e);
+            return null;
         }
-        try {
-            messageEntity.setRecipient(userDao.findUserByUsername(messageDto.getRecipient()));
-        } catch (Exception e) {
-            logger.error("Error finding recipient: " + messageDto.getRecipient(), e);
-            throw new RuntimeException("Failed to convert MessageDto to MessageEntity");
-        }
-        return messageEntity;
     }
 
-    private MessageDto convertMessageEntityToMessageDto(MessageEntity messageEntity) {
-        MessageDto messageDto = new MessageDto();
-        messageDto.setMessageId(messageEntity.getMessageId());
-        messageDto.setMessage(messageEntity.getMessage());
-        messageDto.setRead(messageEntity.getRead());
-        messageDto.setDeleted(messageEntity.getDeleted());
-        messageDto.setTimestamp(messageEntity.getTimestamp());
-        messageDto.setSender(messageEntity.getSender().getUsername());
-        messageDto.setRecipient(messageEntity.getRecipient().getUsername());
-        return messageDto;
+    /**
+     * Attempts to deliver the message via WebSocket. (Stub for now)
+     */
+    public boolean sendMessageToUser(MessageDTO messageDTO) {
+        // TODO: Implement WebSocket delivery logic
+        return false;
     }
+
+
 }
-

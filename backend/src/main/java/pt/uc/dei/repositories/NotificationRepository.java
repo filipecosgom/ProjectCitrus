@@ -4,10 +4,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.NoResultException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.
 import pt.uc.dei.entities.NotificationEntity;
-
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,107 +17,57 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         super(NotificationEntity.class);
     }
 
-    public List<NotificationEntity> getNotifications (String username) {
+    public List<NotificationEntity> getNotifications(Long userId) {
         try {
-            List<NotificationEntity> notificationEntities = em.createNamedQuery("NotificationEntity.getNotifications", NotificationEntity.class).setParameter("username", username).getResultList();
+            List<NotificationEntity> notificationEntities = em.createNamedQuery("NotificationEntity.getNotifications", NotificationEntity.class)
+                    .setParameter("id", userId)
+                    .getResultList();
             return notificationEntities;
-        }
-        catch (Exception e) {
-            logger.error("Error fetching notifications: ", e);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching notifications: ", e);
             return Collections.emptyList();
         }
     }
 
-    public NotificationEntity getChatNotificationBetween (String recipientUsername, String senderUsername) {
-        try {
-            NotificationEntity notificationEntity = em.createNamedQuery("NotificationEntity.getChatNotificationBetween", NotificationEntity.class)
-                    .setParameter("recipientUsername", recipientUsername)
-                    .setParameter("senderUsername", senderUsername)
-                    .getSingleResult();
-            return notificationEntity;
-        }
-        catch (Exception e) {
-            logger.error("Error fetching notifications: ", e);
-            return null;
-        }
+    public NotificationEntity getChatNotificationBetween(Long recipientId, Long senderId) {
+        // Implement this method and its named query using user IDs
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public int getTotalNotifications(String username) {
+    public int getTotalNotifications(Long userId) {
         try {
             Long totalNotifications = em.createNamedQuery("NotificationEntity.getTotalNotifications", Long.class)
-                    .setParameter("username", username)
-                    .getSingleResult(); // Since COUNT always returns one value
-            return totalNotifications.intValue(); // Convert to int
+                    .setParameter("id", userId)
+                    .getSingleResult();
+            return totalNotifications.intValue();
         } catch (Exception e) {
-            logger.error("Error fetching notifications: ", e);
-            return 0; // Return 0 in case of failure
+            LOGGER.error("Error fetching notifications: ", e);
+            return 0;
         }
     }
 
-    public boolean readNotification (Long notificationId, String recipientUsername) {
+    public boolean readNotification(Long notificationId, Long recipientId) {
         try {
-            if (em.createNamedQuery("NotificationEntity.readNotification")
+            int updated = em.createNamedQuery("NotificationEntity.readNotification")
                     .setParameter("notificationId", notificationId)
-                    .setParameter("recipientUsername", recipientUsername)
-                    .executeUpdate() > 0) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }catch (Exception e) {
-            logger.error("Error reading notification", e);
-            return false;
-        }
-    }
-
-    public boolean isNotificationIdValid (Long notificationId, String recipientUsername) {
-        try {
-            if (em.createNamedQuery("NotificationEntity.checkIfNotificationExist", NotificationEntity.class)
-                    .setParameter("notificationId", notificationId)
-                    .setParameter("recipientUsername", recipientUsername)
-                    .getResultList().isEmpty()) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }catch (Exception e) {
-            logger.error("Error reading notification", e);
-            return false;
-        }
-    }
-
-    public boolean hasRecipientBeenNotified(String senderUsername, String recipientUsername) {
-        try {
-            Long count = (Long) em.createNamedQuery("NotificationEntity.isRecipientNotified", Long.class)
-                    .setParameter("senderUsername", senderUsername)
-                    .setParameter("recipientUsername", recipientUsername)
-                    .getSingleResult(); // If no result is found, it might throw NoResultException
-
-            return count > 0; // If count > 0, recipient has been notified
-        } catch (NoResultException e) {
-            logger.error("No notifications found for recipient {} from sender {}", recipientUsername, senderUsername);
-            return false;
-        }
-    }
-
-    public boolean updateMessageNotification(String senderUsername, String recipientUsername, int numberUnreadMessages, String lastMessage) {
-        try {
-            if (em.createNamedQuery("NotificationEntity.updateMessageNotification")
-                    .setParameter("senderUsername", senderUsername)
-                    .setParameter("recipientUsername", recipientUsername)
-                    .setParameter("numberUnreadMessages", numberUnreadMessages)
-                    .setParameter("lastMessage", lastMessage)
-                    .setParameter("newDate", LocalDateTime.now())  // Use LocalDateTime instead of LocalTime
-                    .executeUpdate() > 0) {
-                return true;
-            } else {
-                logger.error("Error updating notification: no rows affected");
-                return false;
-            }
+                    .setParameter("userId", recipientId)
+                    .executeUpdate();
+            return updated > 0;
         } catch (Exception e) {
-            logger.error("Exception occurred while updating notification", e);
+            LOGGER.error("Error reading notification", e);
+            return false;
+        }
+    }
+
+    public boolean isNotificationIdValid(Long notificationId, Long recipientId) {
+        try {
+            boolean exists = !em.createNamedQuery("NotificationEntity.checkIfNotificationExist", NotificationEntity.class)
+                    .setParameter("notificationId", notificationId)
+                    .setParameter("userId", recipientId)
+                    .getResultList().isEmpty();
+            return exists;
+        } catch (Exception e) {
+            LOGGER.error("Error reading notification", e);
             return false;
         }
     }

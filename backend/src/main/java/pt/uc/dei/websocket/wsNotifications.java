@@ -7,12 +7,13 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.websocket.*;
+import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
+import pt.uc.dei.dtos.NotificationDTO;
+import pt.uc.dei.utils.JsonCreator;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.beans.NotificationBean;
-import pt.uc.dei.proj5.beans.TokenBean;
-import pt.uc.dei.proj5.dto.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,22 +28,53 @@ import java.util.Set;
  */
 @Singleton
 @ServerEndpoint("/websocket/notifications/")
-public class wsNotifications {
+public class WsNotifications {
 
     // Logger para registrar informações sobre conexões, erros ou eventos importantes
-    private static final Logger logger = LogManager.getLogger(wsNotifications.class);
+    private static final Logger logger = LogManager.getLogger(WsNotifications.class);
 
     // HashMap que armazena as sessões WebSocket de cada usuário autenticado.
     // A chave é o nome do usuário, e o valor é o conjunto de sessões do usuário.
-    private HashMap<String, Set<Session>> sessions = new HashMap<>();
+    private HashMap<Long, Set<Session>> sessions = new HashMap<>();
 
-    // Bean responsável por gerenciar tokens para autenticação
     @Inject
-    TokenBean tokenBean;
+    private pt.uc.dei.services.NotificationService notificationService;
 
-    // Bean responsável por operações relacionadas a notificações (ex: obter contagem)
-    @Inject
-    NotificationBean notificationBean;
+    /**
+     * Método chamado automaticamente quando uma nova conexão WebSocket é estabelecida.
+     * Este método tenta autenticar o usuário com base na solicitação de handshake (JWT nos cookies ou cabeçalhos)
+     * e registra a sessão do usuário se a autenticação for bem-sucedida.
+     *
+     * @param session A nova sessão WebSocket estabelecida.
+     * @param config  Configurações do endpoint.
+     */
+    @OnOpen
+    public void onOpen(Session session, EndpointConfig config) {
+        try {
+            // Tenta autenticar usando a solicitação de handshake (JWT nos cookies ou cabeçalhos)
+            HandshakeRequest request = (HandshakeRequest) config.getUserProperties().get("HandshakeRequest");
+            boolean authenticated = WebSocketAuthentication.authenticate(session, request, sessions);
+            if (!authenticated) {
+                logger.warn("WebSocket authentication failed: missing or invalid JWT/token");
+                session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT/token"));
+                return;
+            }
+            // Após a autenticação bem-sucedida, envia a contagem de notificações para o usuário
+            Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+            if (userId != null && notificationService != null) {
+                int notificationsCount = notificationService.getTotalNotifications(userId);
+                JsonObject notificationsJSON = Json.createObjectBuilder()
+                        .add("type", "NOTIFICATION_COUNT")
+                        .add("count", notificationsCount)
+                        .build();
+                session.getBasicRemote().sendText(notificationsJSON.toString());
+            }
+        } catch (Exception e) {
+            logger.error("WebSocket authentication error", e);
+            try { session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Authentication error")); } catch (Exception ignore) {}
+        }
+    }
+
 
     /**
      * Método chamado automaticamente quando uma conexão WebSocket é fechada.
@@ -54,17 +86,16 @@ public class wsNotifications {
      */
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        String username = WebSocketAuthentication.findUsernameBySession(sessions, session);
-
-        if (username != null) {
-            Set<Session> userSessions = sessions.get(username);
+        Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+        if (userId != null) {
+            Set<Session> userSessions = sessions.get(userId);
             if (userSessions != null) {
                 userSessions.remove(session); // Remove apenas a sessão fechada
                 if (userSessions.isEmpty()) {
-                    sessions.remove(username); // Remove o usuário se não tiver mais sessões
+                    sessions.remove(userId); // Remove o usuário se não tiver mais sessões
                 }
             }
-            logger.info("User {} disconnected from chat. Reason: {}", username, reason.getReasonPhrase());
+            logger.info("User {} disconnected from notifications. Reason: {}", userId, reason.getReasonPhrase());
         } else {
             logger.info("Unknown WebSocket session closed: {}", reason.getReasonPhrase());
         }
@@ -86,21 +117,6 @@ public class wsNotifications {
         String messageType = jsonMessage.getString("type");
 
         switch (messageType) {
-            case "AUTHENTICATION": { // Se a mensagem for do tipo "AUTENTICAÇÃO"
-                if (WebSocketAuthentication.authenticate(session, jsonMessage, tokenBean, sessions)) {
-                    UserDto user = new UserDto();
-                    user.setUsername(WebSocketAuthentication.findUsernameBySession(sessions, session));
-                    int notificationsCount = notificationBean.getTotalNotifications(user);
-
-                    // Envia ao cliente a contagem de notificações como resposta
-                    JsonObject notificationsJSON = Json.createObjectBuilder()
-                            .add("type", "NOTIFICATION_COUNT")
-                            .add("count", notificationsCount)
-                            .build();
-                    session.getBasicRemote().sendText(notificationsJSON.toString());
-                }
-                break;
-            }
             default: // Se o tipo de mensagem não for reconhecido
                 logger.info("Received unknown message type: " + messageType);
         }
@@ -113,14 +129,14 @@ public class wsNotifications {
      * @return Retorna `true` se a notificação foi enviada com sucesso para pelo menos uma sessão; caso contrário, `false`.
      * @throws Exception Se ocorrer um erro ao criar ou enviar a notificação.
      */
-    public boolean notifyUser(NotificationDto notificationDto) throws Exception {
+    public boolean notifyUser(NotificationDTO notificationDto) throws Exception {
         try {
             // Cria o JSON da notificação usando um utilitário
             JsonObject notificationsJson = JsonCreator.createJson(notificationDto.getType().toString().toUpperCase(), "notification", notificationDto);
             String notificationJsonString = notificationsJson.toString();
 
             // Envia a notificação para as sessões do usuário
-            if (sendNotificationToUserSessions(notificationDto.getRecipientUsername(), notificationJsonString)) {
+            if (sendNotificationToUserSessions(notificationDto.getId(), notificationJsonString)) {
                 return true;
             } else {
                 return false;
@@ -139,22 +155,23 @@ public class wsNotifications {
      * @return Retorna `true` se a notificação foi enviada com sucesso; caso contrário `false`.
      * @throws Exception Se ocorrer erro ao enviar a notificação.
      */
-    private boolean sendNotificationToUserSessions(String recipientUsername, String notification) throws Exception {
+    private boolean sendNotificationToUserSessions(Long recipientId, String notification) throws Exception {
         try {
-            Set<Session> recipientSessions = sessions.get(recipientUsername);
+            Set<Session> recipientSessions = sessions.get(recipientId);
             if (recipientSessions != null && !recipientSessions.isEmpty()) {
                 for (Session session : recipientSessions) {
-                    if (session.isOpen()) {
-                        session.getBasicRemote().sendText(notification); // Envia a notificação
+                    // Double-check: session must still be mapped to this userId
+                    Long mappedUserId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+                    if (session.isOpen() && recipientId.equals(mappedUserId)) {
+                        session.getBasicRemote().sendText(notification);
                     }
                 }
                 return true;
             } else {
-                return false; // Nenhuma sessão para o usuário
+                return false;
             }
-
         } catch (IOException e) {
-            logger.error("Failed to send notification to user {}", recipientUsername, e);
+            logger.error("Failed to send notification to user {}", recipientId, e);
             return false;
         }
     }
@@ -189,4 +206,6 @@ public class wsNotifications {
             }
         }
     }
+
+    
 }

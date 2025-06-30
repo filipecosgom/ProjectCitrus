@@ -66,6 +66,9 @@ public class NotificationDTO {
     @NotBlank(message = "User email is required")
     private String userEmail;
 
+    private Long senderId;
+    private Long recipientId;
+
     // Getters and Setters
 
     public Long getId() {
@@ -130,5 +133,39 @@ public class NotificationDTO {
 
     public void setSeen(Boolean seen) {
         isSeen = seen;
+    }
+
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public Long getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(Long recipientId) {
+        this.recipientId = recipientId;
+    }
+
+    // Alias for timestamp
+    public LocalDateTime getTimestamp() {
+        return getCreationDate();
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        setCreationDate(timestamp);
+    }
+
+    // Alias for unreadCount
+    public Integer getUnreadCount() {
+        return getMessageCount();
+    }
+
+    public void setUnreadCount(Integer unreadCount) {
+        setMessageCount(unreadCount);
     }
 }

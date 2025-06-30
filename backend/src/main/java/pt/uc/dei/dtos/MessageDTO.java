@@ -4,10 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-
 /**
  * Data Transfer Object (DTO) representing a message.
  * Stores information related to message content, sender, receiver, and read status.
@@ -162,5 +158,21 @@ public class MessageDTO {
      */
     public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
+    }
+
+    // Alias for recipientId
+    public Long getRecipientId() {
+        return getReceiverId();
+    }
+    public void setRecipientId(Long recipientId) {
+        setReceiverId(recipientId);
+    }
+
+    // Alias for content
+    public String getContent() {
+        return getMessageContent();
+    }
+    public void setContent(String content) {
+        setMessageContent(content);
     }
 }

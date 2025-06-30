@@ -1,5 +1,4 @@
 package pt.uc.dei.websocket;
-
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;
 import jakarta.inject.Inject;
@@ -7,14 +6,17 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.websocket.*;
+import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
+import jakarta.websocket.server.ServerEndpointConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.beans.MessageBean;
-import pt.uc.dei.proj5.beans.NotificationBean;
-import pt.uc.dei.proj5.beans.TokenBean;
-import pt.uc.dei.proj5.beans.UserBean;
-import pt.uc.dei.proj5.dto.*;
+import pt.uc.dei.dtos.MessageDTO;
+import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.services.MessageService;
+import pt.uc.dei.services.NotificationService;
+import pt.uc.dei.services.UserService;
+import pt.uc.dei.utils.JsonCreator;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -31,25 +33,45 @@ import java.util.Set;
  */
 @Singleton
 @ServerEndpoint("/websocket/chat/")
-public class wsChat {
+public class WsChat {
 
     // Logger usado para registrar eventos do WebSocket (ex.: conexões, mensagens, erros)
-    private static final Logger logger = LogManager.getLogger(wsChat.class);
+    private static final Logger logger = LogManager.getLogger(WsChat.class);
 
-    // Mapa que armazena as sessões dos usuários. A chave é o nome de usuário,
+    // Mapa que armazena as sessões dos usuários. A chave é o ID do usuário,
     // e o valor é um conjunto de sessões WebSocket associados a ele.
-    private HashMap<String, Set<Session>> sessions = new HashMap<>();
+    private HashMap<Long, Set<Session>> sessions = new HashMap<>();
 
-    // Beans necessários para autenticação, envio de notificações,
-    // manipulação de mensagens e verificação de usuários.
     @Inject
-    TokenBean tokenBean;
+    private UserService userService;
     @Inject
-    MessageBean messageBean;
+    private MessageService messageService;
     @Inject
-    NotificationBean notificationBean;
-    @Inject
-    UserBean userBean;
+    private NotificationService notificationService;
+
+
+    /**
+     * Método chamado automaticamente quando uma nova conexão WebSocket é estabelecida.
+     * Extrai o JWT dos cookies, autentica o usuário e registra a sessão.
+     *
+     * @param session A nova sessão WebSocket.
+     * @param config  A configuração do endpoint.
+     */
+    @OnOpen
+    public void onOpen(Session session, EndpointConfig config) {
+        try {
+            HandshakeRequest request = (HandshakeRequest) config.getUserProperties().get("HandshakeRequest");
+            boolean authenticated = WebSocketAuthentication.authenticate(session, request, sessions);
+            if (!authenticated) {
+                logger.warn("WebSocket authentication failed: missing or invalid JWT cookie");
+                session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT"));
+            }
+        } catch (Exception e) {
+            logger.error("WebSocket authentication error", e);
+            try { session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Authentication error")); } catch (Exception ignore) {}
+        }
+    }
+
 
     /**
      * Método chamado automaticamente quando uma conexão WebSocket é fechada.
@@ -61,16 +83,16 @@ public class wsChat {
      */
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        String username = WebSocketAuthentication.findUsernameBySession(sessions, session);
-        if (username != null) {
-            Set<Session> userSessions = sessions.get(username);
+        Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+        if (userId != null) {
+            Set<Session> userSessions = sessions.get(userId);
             if (userSessions != null) {
                 userSessions.remove(session); // Remove apenas a sessão encerrada
                 if (userSessions.isEmpty()) {
-                    sessions.remove(username); // Remove o usuário se não houver mais sessões
+                    sessions.remove(userId); // Remove o usuário se não houver mais sessões
                 }
             }
-            logger.info("User {} disconnected from chat. Reason: {}", username, reason.getReasonPhrase());
+            logger.info("User {} disconnected from chat. Reason: {}", userId, reason.getReasonPhrase());
         } else {
             logger.info("Unknown WebSocket session closed: {}", reason.getReasonPhrase());
         }
@@ -91,45 +113,55 @@ public class wsChat {
         String messageType = jsonMessage.getString("type");
 
         switch (messageType) {
-            case "AUTHENTICATION": { // Processa uma mensagem de autenticação
-                WebSocketAuthentication.authenticate(session, jsonMessage, tokenBean, sessions);
-                break;
-            }
-            case "MESSAGE": { // Processa uma mensagem de chat
-                System.out.println(msg);
-                if (!checkIfValidMessage(jsonMessage)) { // Verifica se a mensagem é válida
+            case "MESSAGE": {
+                if (!checkIfValidMessage(jsonMessage)) {
                     session.getBasicRemote().sendText(
-                            JsonCreator.createJson("ERROR", "message", "Invalid message format").toString());
+                        JsonCreator.createJson("ERROR", "message", "Invalid message format").toString());
                 } else {
-                    String recipient = jsonMessage.getString("recipient").trim();
+                    Long recipientId = jsonMessage.getJsonNumber("recipientId").longValue();
                     String message = jsonMessage.getString("message").trim();
-                    String sender = WebSocketAuthentication.findUsernameBySession(sessions, session);
-
-                    // Verifica se o destinatário existe no sistema
-                    if (userBean.checkIfUserExists(recipient)) {
-                        JsonObject messageJson = archiveNewMessage(message, sender, recipient);
-
-                        // Tenta enviar a mensagem diretamente para o destinatário
-                        if (sendMessageToUser(messageJson, recipient)) {
-                            JsonObject confirmationJson = JsonCreator.createJson("SUCCESS", "message", "Message sent successfully");
-                            session.getBasicRemote().sendText(confirmationJson.toString());
+                    Long senderId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+                    UserDTO recipientUser = userService.getUser(recipientId);
+                    if (recipientUser != null) {
+                        if(recipientUser.getUserIsDeleted()) {
+                            logger.info("Recipient {} is deleted", recipientUser.getId());
+                            JsonObject errorJson = JsonCreator.createJson("ERROR", "message", "Recipient user is deleted");
+                            session.getBasicRemote().sendText(errorJson.toString());
+                            return;
+                        }
+                        MessageDTO messageDTO = new MessageDTO();
+                        messageDTO.setSenderId(senderId);
+                        messageDTO.setRecipientId(recipientId);
+                        messageDTO.setContent(message);
+                        messageDTO.setSentDate(LocalDateTime.now());
+                        messageDTO.setIsRead(false);
+                        // Archive the message only (no delivery attempt here)
+                        messageDTO = messageService.archiveMessage(messageDTO);
+                        if (messageDTO != null) {
+                            boolean delivered = sendMessageToUser(messageDTO);
+                            if (delivered) {
+                                JsonObject confirmationJson = JsonCreator.createJson("SUCCESS", "message", "Message sent successfully");
+                                session.getBasicRemote().sendText(confirmationJson.toString());
+                            } else {
+                                notificationService.newMessageNotification(messageDTO);
+                            }
                         } else {
-                            // Caso o destinatário não esteja conectado, cria uma notificação
-                            notificationBean.newMessageNotification(message, sender, recipient);
+                            session.getBasicRemote().sendText(
+                                JsonCreator.createJson("ERROR", "message", "Failed to archive message").toString());
                         }
                     } else {
-                        logger.info("Recipient {} does not exist", recipient);
+                        logger.info("Recipient {} does not exist", recipientId);
                         JsonObject errorJson = JsonCreator.createJson("ERROR", "message", "Recipient user does not exist");
                         session.getBasicRemote().sendText(errorJson.toString());
                     }
                 }
                 break;
             }
-            case "CONVERSATION_READ": { // Marca uma conversa como lida
-                String sender = jsonMessage.getString("sender").trim();
-                String recipient = session.getId();
-                JsonObject conversationRead = JsonCreator.createJson("CONVERSATION_READ", "sender", sender);
-                sendMessageToUser(conversationRead, recipient);
+            case "CONVERSATION_READ": {
+                Long recipientId = jsonMessage.getJsonNumber("recipientId").longValue();
+                Long senderId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+                JsonObject conversationRead = JsonCreator.createJson("CONVERSATION_READ", "senderId", senderId);
+                sendJsonToUser(conversationRead, recipientId);
                 break;
             }
             default:
@@ -138,16 +170,18 @@ public class wsChat {
         }
     }
 
+    
     /**
      * Envia uma mensagem para todas as sessões associadas ao usuário destinatário.
      *
-     * @param messageJson       O objeto JSON que contém os dados da mensagem.
-     * @param recipientUsername O nome do usuário destinatário.
+     * @param messageDTO O DTO da mensagem a ser enviada.
      * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário, `false`.
      */
-    public boolean sendMessageToUser(JsonObject messageJson, String recipientUsername) {
-        Set<Session> recipientSessions = sessions.get(recipientUsername);
+    public boolean sendMessageToUser(MessageDTO messageDTO) {
+        Long recipientUserId = messageDTO.getRecipientId();
+        Set<Session> recipientSessions = sessions.get(recipientUserId);
         if (recipientSessions != null) {
+            JsonObject messageJson = JsonCreator.createJson("MESSAGE", "message", messageDTO);
             for (Session recipientSession : recipientSessions) {
                 if (recipientSession.isOpen()) {
                     try {
@@ -158,39 +192,34 @@ public class wsChat {
                     }
                 }
             }
-            return true; // Mensagem enviada para pelo menos uma sessão
+            return true;
         }
-        return false; // Não há sessões ativas para o destinatário
+        return false;
     }
 
     /**
-     * Arquiva a mensagem enviada no banco de dados e constrói o JSON da mensagem.
+     * Envia um objeto JSON para todas as sessões associadas ao usuário destinatário.
      *
-     * @param message   O conteúdo da mensagem.
-     * @param sender    O nome do remetente.
-     * @param recipient O nome do destinatário.
-     * @return O JSON da mensagem arquivada ou um JSON de erro, se o arquivamento falhar.
+     * @param json O objeto JSON a ser enviado.
+     * @param recipientUserId O ID do usuário destinatário.
+     * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário, `false`.
      */
-    public JsonObject archiveNewMessage(String message, String sender, String recipient) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        MessageDto messageDto = new MessageDto(message, sender, recipient, timestamp);
-        messageDto = messageBean.newMessage(messageDto);
-
-        if (messageDto != null) {
-            return Json.createObjectBuilder()
-                    .add("type", "MESSAGE")
-                    .add("id", messageDto.getMessageId())
-                    .add("sender", sender)
-                    .add("recipient", recipient)
-                    .add("message", message)
-                    .add("timestamp", timestamp.toString())
-                    .build();
+    public boolean sendJsonToUser(JsonObject json, Long recipientUserId) {
+        Set<Session> recipientSessions = sessions.get(recipientUserId);
+        if (recipientSessions != null) {
+            for (Session recipientSession : recipientSessions) {
+                if (recipientSession.isOpen()) {
+                    try {
+                        recipientSession.getBasicRemote().sendText(json.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
-        // Retorna um JSON de erro em caso de falha
-        return Json.createObjectBuilder()
-                .add("type", "ERROR")
-                .add("message", "Failed to archive message")
-                .build();
+        return false;
     }
 
     /**

@@ -20,65 +20,50 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
     public List<MessageEntity> getListOfMessagesBetween(Long userId, Long otherUserId) {
         try {
             List<MessageEntity> messageEntities = em.createNamedQuery("MessageEntity.getConversation", MessageEntity.class)
-                    .setParameter("user_username", userUsername)
-                    .setParameter("otherUser_username", otherUserUsername)
+                    .setParameter("user_id", userId)
+                    .setParameter("otherUser_id", otherUserId)
                     .getResultList();
             return messageEntities;
-        }
-        catch (Exception e) {
-            logger.error("Error fetching conversation: ", e);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching conversation: ", e);
             return Collections.emptyList();
         }
     }
 
-    public List<UserDto> getAllConversations(String userUsername) {
+    public List<Long> getAllConversations(Long userId) {
         try {
-            List<UserDto> usersWithChat = em.createNamedQuery("MessageEntity.getAllChats", UserDto.class)
-                    .setParameter("user_username", userUsername)
+            List<Long> usersWithChat = em.createNamedQuery("MessageEntity.getAllChats", Long.class)
+                    .setParameter("user_id", userId)
                     .getResultList();
             return usersWithChat;
-        }
-        catch (Exception e) {
-            logger.error("Error fetching conversation: ", e);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching conversation: ", e);
             return Collections.emptyList();
         }
     }
 
-    public int getUnreadMessageCount(String recipientUsername, String senderUsername) {
+    public int getUnreadMessageCount(Long recipientId, Long senderId) {
         try {
             return ((Long) em.createNamedQuery("MessageEntity.getUnreadMessages")
-                    .setParameter("recipient_username", recipientUsername)
-                    .setParameter("sender_username", senderUsername)
+                    .setParameter("recipient_id", recipientId)
+                    .setParameter("sender_id", senderId)
                     .getSingleResult()).intValue();
         } catch (Exception e) {
-            logger.error("Error fetching unread messages count: ", e);
+            LOGGER.error("Error fetching unread messages count: ", e);
             return -1;
         }
     }
 
-    public boolean readConversation(String recipient, String sender) {
+    public boolean readConversation(Long recipientId, Long senderId) {
         try {
             em.createNamedQuery("MessageEntity.readConversation")
-                    .setParameter("recipient_username", recipient)
-                    .setParameter("sender_username", sender)
+                    .setParameter("recipient_id", recipientId)
+                    .setParameter("sender_id", senderId)
                     .executeUpdate();
             return true;
         } catch (Exception e) {
-            logger.error("Error reading conversation", e);
+            LOGGER.error("Error reading conversation", e);
             return false;
         }
     }
-
-    public List<MessageNotificationDto> getMessageNotifications(String recipientUsername) {
-        try {
-            List<MessageNotificationDto> results = em.createNamedQuery("MessageEntity.getMessageNotifications", MessageNotificationDto.class).setParameter("recipient_username", recipientUsername).getResultList();
-            return results;
-        }
-        catch (Exception e) {
-            logger.error(e);
-            return Collections.emptyList();
-        }
-    }
-
-
 }

@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.websocket.server.HandshakeRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
 import pt.uc.dei.dtos.UserResponseDTO;
@@ -13,6 +14,7 @@ import pt.uc.dei.entities.ConfigurationEntity;
 import pt.uc.dei.repositories.ConfigurationRepository;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 /**
  * Utility class for handling JWT authentication.
  * <p>
@@ -85,6 +87,52 @@ public class JWTUtil {
         }
         Claims claims = validateToken(cookie.getValue());
         return Long.parseLong(claims.getSubject());
+    }
+
+    /**
+     * Extracts the user ID from a JWT token in a WebSocket HandshakeRequest.
+     *
+     * @param request The HandshakeRequest containing cookies.
+     * @return The user ID as Long, or null if invalid or missing.
+     */
+    public static Long getUserIdFromToken(HandshakeRequest request) {
+        if (request != null && request.getHeaders().containsKey("cookie")) {
+            List<String> cookies = request.getHeaders().get("cookie");
+            String jwt = null;
+            for (String cookieHeader : cookies) {
+                for (String cookie : cookieHeader.split(";")) {
+                    String[] parts = cookie.trim().split("=", 2);
+                    if (parts.length == 2 && parts[0].equals("jwt")) {
+                        jwt = parts[1];
+                    }
+                }
+            }
+            if (jwt != null) {
+                try {
+                    Claims claims = validateToken(jwt);
+                    return Long.parseLong(claims.getSubject());
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Optionally, keep the String version for direct JWT usage
+    /**
+     * Extracts the user ID from a JWT token string.
+     *
+     * @param token The JWT token.
+     * @return The user ID as Long, or null if invalid.
+     */
+    public static Long getUserIdFromToken(String token) {
+        try {
+            Claims claims = validateToken(token);
+            return Long.parseLong(claims.getSubject());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

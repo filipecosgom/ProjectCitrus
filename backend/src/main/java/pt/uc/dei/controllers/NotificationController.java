@@ -1,76 +1,87 @@
 package pt.uc.dei.controllers;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.beans.NotificationBean;
-import pt.uc.dei.proj5.dto.*;
+
+import pt.uc.dei.dtos.NotificationDTO;
+import pt.uc.dei.services.NotificationService;
+import pt.uc.dei.utils.JWTUtil;
 
 import java.util.List;
 
 @Path("/notifications")
 public class NotificationController {
-    private static final Logger logger = LogManager.getLogger(NotificationController.class);
+    private static final Logger LOGGER = LogManager.getLogger(NotificationController.class);
 
-    @Inject
-    AuthenticationService authenticationService;
-
-    @Inject
-    NotificationBean notificationBean;
+    NotificationService notificationService = new NotificationService(); // Assuming a default constructor is available
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNotifications(@HeaderParam("token") String authenticationToken) {
-        UserDto user;
+    public Response getNotifications(@Context ContainerRequestContext requestContext) {
+        Long userId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if (userId == null) {
+            LOGGER.warn("Unauthorized getNotifications request: missing or invalid JWT");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new pt.uc.dei.utils.ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                    .build();
+        }
         try {
-            user = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
-        }
-        List<NotificationDto> notificationDtos = notificationBean.getNotifications(user);
-            if (notificationDtos == null) {
-                logger.error("No notifications - getting notifications - user {} tried get notifications", user.getUsername());
-                return Response.status(404).entity("No notifications - getting notifications").build();
+            List<NotificationDTO> notificationDtos = notificationService.getNotifications(userId);
+            if (notificationDtos == null || notificationDtos.isEmpty()) {
+                LOGGER.info("No notifications found for userId {}", userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new pt.uc.dei.utils.ApiResponse(false, "No notifications found", "errorNoNotifications", null))
+                        .build();
             } else {
-                logger.info("User {} got notifications", user.getUsername());
-                return Response.status(200).entity(notificationDtos).build();
+                LOGGER.info("User {} got notifications", userId);
+                return Response.ok(new pt.uc.dei.utils.ApiResponse(true, "Notifications retrieved", "successNotificationsRetrieved", notificationDtos)).build();
             }
+        } catch (Exception e) {
+            LOGGER.error("Exception in getNotifications", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new pt.uc.dei.utils.ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
         }
+    }
 
     @PATCH
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/read/{notificationId}")
-    public Response readNotification(
-            @HeaderParam("token") String authenticationToken,
-            @PathParam("notificationId") Long notificationId) {
-        UserDto user;
+    public Response readNotification(@Context ContainerRequestContext requestContext,
+                                     @PathParam("notificationId") Long notificationId) {
+        Long userId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if (userId == null) {
+            LOGGER.warn("Unauthorized readNotification request: missing or invalid JWT");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new pt.uc.dei.utils.ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                    .build();
+        }
+        if (notificationId == null) {
+            LOGGER.error("Invalid notification id - reading notification");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new pt.uc.dei.utils.ApiResponse(false, "Invalid notification id", "errorInvalidNotificationId", null))
+                    .build();
+        }
         try {
-            user = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
-        }
-        if(notificationId == null) {
-            logger.error("Invalid notification id - getting notifications");
-            return Response.status(401).entity("Invalid notification id").build();
-        }
-        NotificationDto notificationDto = new NotificationDto();
-        notificationDto.setId(notificationId);
-        if(!notificationBean.checkIfNotificationExists(notificationDto, user)) {
-            logger.error("Notification {} does not exist", notificationId);
-            return Response.status(404).entity("Notification " + notificationId + " does not exist").build();
-        }
-        else {
-            if(!notificationBean.readNotification(notificationDto, user)){
-                logger.error("Reading {} failed", notificationId);
-                return Response.status(500).entity("Reading " + notificationId + " failed").build();
+            boolean read = notificationService.readNotification(notificationId, userId);
+            if (!read) {
+                LOGGER.error("Notification {} does not exist or could not be marked as read for userId {}", notificationId, userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new pt.uc.dei.utils.ApiResponse(false, "Notification does not exist or could not be marked as read", "errorNotificationNotFoundOrUnreadable", null))
+                        .build();
             }
-            else {
-                logger.info("User {} read notification {}", user.getUsername(), notificationId);
-                return Response.status(200).entity(notificationDto).build();
-            }
+            LOGGER.info("User {} read notification {}", userId, notificationId);
+            return Response.ok(new pt.uc.dei.utils.ApiResponse(true, "Notification marked as read", "successNotificationRead", notificationId)).build();
+        } catch (Exception e) {
+            LOGGER.error("Exception in readNotification", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new pt.uc.dei.utils.ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
         }
     }
 }

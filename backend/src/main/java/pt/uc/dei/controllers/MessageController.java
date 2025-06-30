@@ -3,6 +3,7 @@ package pt.uc.dei.controllers;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
@@ -10,13 +11,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.proj5.beans.MessageBean;
-import pt.uc.dei.proj5.beans.NotificationBean;
-import pt.uc.dei.proj5.beans.UserBean;
-import pt.uc.dei.proj5.dto.*;
-import pt.uc.dei.proj5.websocket.wsChat;
+import pt.uc.dei.services.MessageService;
+import pt.uc.dei.services.NotificationService;
+import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
+import pt.uc.dei.dtos.MessageDTO;
+import pt.uc.dei.dtos.UserDTO;
 
 import java.util.List;
 
@@ -24,122 +25,130 @@ import java.util.List;
 public class MessageController {
     private static final Logger LOGGER = LogManager.getLogger(MessageController.class);
 
-
+    @Inject
+    UserService userService;
 
     @Inject
-    UserBean userBean;
+    MessageService messageService;
 
     @Inject
-    MessageBean messageBean;
-
-    @Inject
-    NotificationBean notificationBean;
-
-    @Inject
-    wsChat wsChat;
+    NotificationService notificationService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getChat(@PathParam("id") Long id, @Context ContainerRequestContext requestContext) {
+    public Response getChat(@PathParam("id") Long otherUserId, @Context ContainerRequestContext requestContext) {
+        LOGGER.info("Request to get chat with userId: {} and otherUserId: {}", JWTUtil.getIdFromContainerRequestContext(requestContext), otherUserId);
         Long userId = JWTUtil.getIdFromContainerRequestContext(requestContext);
-        if(userId == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(new ApiResponse(false, "Unauthorized", null, null)).build();
+        if (userId == null) {
+            LOGGER.warn("Unauthorized chat request: missing or invalid JWT");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                    .build();
         }
-
-
-
-        UserDto otherUser = userBean.getUserInformation(username);
-        if (otherUser == null) {
-            logger.error("Invalid other user - getting messages");
-            return Response.status(404).entity("Other user doesn't exist").build();
+        List<MessageDTO> conversation = messageService.getMessagesBetween(userId, otherUserId);
+        if (conversation == null || conversation.isEmpty()) {
+            LOGGER.info("No conversation found between userId {} and otherUserId {}", userId, otherUserId);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, "No conversation found", "errorNoConversation", null))
+                    .build();
         }
-        if (otherUser.getState() == UserAccountState.INACTIVE || otherUser.getState() == UserAccountState.EXCLUDED) {
-            logger.error("Invalid other user - getting messages");
-            return Response.status(403).entity("Other user has inactive or excluded account").build();
-        }
-        List<MessageDto> conversation = messageBean.getMessagesBetween(user, otherUser);
-        if (conversation == null) {
-            logger.error("Invalid conversation - getting messages");
-            return Response.status(404).entity("No conversation found").build();
-        } else {
-            logger.info("Conversation retrieved");
-            return Response.status(200).entity(conversation).build();
-        }
+        LOGGER.info("Conversation retrieved between userId {} and otherUserId {}", userId, otherUserId);
+        return Response.ok(new ApiResponse(true, "Conversation retrieved", "successConversationRetrieved", conversation)).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("all")
-    public Response getAllUsersWhoChat(@HeaderParam("token") String authenticationToken) {
-        UserDto user;
-        try {
-            user = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
+    public Response getAllUsersWhoChat(@Context ContainerRequestContext requestContext) {
+        LOGGER.info("Request to get all users who chat");
+        Long userId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if (userId == null) {
+            LOGGER.warn("Missing or invalid JWT in getAllUsersWhoChat");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Missing token", "errorMissingToken", null))
+                    .build();
         }
-        List<UserDto> userList = messageBean.getAllChats(user);
-        if (userList == null) {
-            logger.error("Invalid conversation - getting messages");
-            return Response.status(404).entity("No conversations found").build();
-        } else {
-            logger.info("All conversations retrieved");
-            return Response.status(200).entity(userList).build();
+        try {
+            List<UserDTO> userList = messageService.getAllChats(userId);
+            if (userList == null || userList.isEmpty()) {
+                LOGGER.info("No conversations found for userId {}", userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, "No conversations found", "errorNoConversations", null))
+                        .build();
+            }
+            LOGGER.info("All conversations retrieved for userId {}", userId);
+            return Response.ok(new ApiResponse(true, "All conversations retrieved", "successConversationsRetrieved", userList)).build();
+        } catch (Exception e) {
+            LOGGER.error("Error in getAllUsersWhoChat", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
         }
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendMessage(@HeaderParam("token") String authenticationToken, JsonObject payload) {
-        UserDto sender;
-        String message = payload.getString("message");
-        String recipient = payload.getString("recipient");
-
-        if (recipient == null || recipient.isEmpty()) {
-            return Response.status(400).entity("Recipient cannot be empty").build();
+    public Response sendMessage(@Context ContainerRequestContext requestContext, @Valid MessageDTO messageDTO) {
+        LOGGER.info("Request to send message: {}", messageDTO);
+        Long senderId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if (senderId == null) {
+            LOGGER.warn("Unauthorized sendMessage request: missing or invalid JWT");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                    .build();
         }
+        messageDTO.setSenderId(senderId);
         try {
-            sender = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
-        }
-        JsonObject messageJson = wsChat.archiveNewMessage(message, sender.getUsername(), recipient);
-        if (wsChat.sendMessageToUser(messageJson, recipient)) {
-            logger.info("Message sent to user " + sender.getUsername());
-            return Response.status(200).entity(messageJson).build();
-        } else {
-            if(notificationBean.newMessageNotification(message, sender.getUsername(), recipient)) {
-                logger.error("Message sucessfully sent via http " + recipient);
-                return Response.status(200).entity("Message sucessfully sent via http " + recipient).build();
+            MessageDTO savedMessage = messageService.newMessage(messageDTO);
+            if (savedMessage == null) {
+                LOGGER.error("Failed to save message from userId {} to userId {}", senderId, messageDTO.getReceiverId());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Failed to send message", "errorSendMessage", null))
+                        .build();
             }
-            else {
-                logger.error("Failed to message user " + recipient);
-                return Response.status(403).entity("Failed to message user " + recipient).build();
-            }
+            LOGGER.info("Message sent from userId {} to userId {}", senderId, messageDTO.getReceiverId());
+            return Response.ok(new ApiResponse(true, "Message sent successfully", "successMessageSent", savedMessage)).build();
+        } catch (Exception e) {
+            LOGGER.error("Exception in sendMessage", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
         }
     }
 
     @PATCH
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/conversation")
-    public Response readConversation(@HeaderParam("token") String authenticationToken,
-                                     @QueryParam("username") String sender) {
-        UserDto recipient;
-        if (sender == null || sender.isEmpty()) {
-            return Response.status(400).entity("Recipient cannot be empty").build();
+    public Response readConversation(@Context ContainerRequestContext requestContext,
+                                     @QueryParam("userId") Long senderId) {
+        Long recipientId = JWTUtil.getIdFromContainerRequestContext(requestContext);
+        if (recipientId == null) {
+            LOGGER.warn("Unauthorized readConversation request: missing or invalid JWT");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                    .build();
+        }
+        if (senderId == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Sender ID cannot be empty", "errorMissingSenderId", null))
+                    .build();
         }
         try {
-            recipient = authenticationService.validateAuthenticationToken(authenticationToken);
-        } catch (WebApplicationException e) {
-            return e.getResponse();
-        }
-        if (messageBean.readAllConversation(recipient.getUsername(), sender)) {
-            JsonObject readConversations = JsonCreator.createJson("CONVERSATION_READ", "sender", recipient.getUsername());
-            wsChat.sendMessageToUser(readConversations, sender);
-            logger.info("Conversation read");return Response.status(200).entity("Conversation read by " + recipient.getUsername()).build();
-        }
-        else {
-            return Response.status(403).entity("No conversation found").build();
+            boolean success = messageService.readAllConversation(recipientId, senderId);
+            if (success) {
+                LOGGER.info("Conversation read by userId {}", recipientId);
+                return Response.ok(new ApiResponse(true, "Conversation read", "successConversationRead", null)).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, "No conversation found", "errorNoConversation", null))
+                        .build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception in readConversation", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
         }
     }
 }
