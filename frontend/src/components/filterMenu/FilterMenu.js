@@ -19,7 +19,6 @@ const FilterMenu = ({
   const [activeCategory, setActiveCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useTranslation();
-  const isAdmin = useAuthStore.getState().user?.userIsAdmin;
 
   // Build categories dynamically from filtersConfig and filterOptions
   const categories = filtersConfig.map((key) => {

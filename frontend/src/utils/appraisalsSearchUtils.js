@@ -35,7 +35,11 @@ export async function fetchInitialAppraisals({
   handleGetAppraisals,
 }) {
   setPageLoading(true);
-  const appraisalStates = await handleGetAppraisalStates();
+  let appraisalStates = await handleGetAppraisalStates();
+  // Ensure all states option is present and value is null or ""
+  if (!appraisalStates.some(s => s.value === "" || s.value === null)) {
+    appraisalStates = [{ label: "All states", value: "" }, ...appraisalStates];
+  }
   const initialSearch = { query: "", searchType: "appraisedUserName", limit: 10, filters: {} };
   setSearchParams(initialSearch);
   setLastSearch(initialSearch);
@@ -98,12 +102,35 @@ export function buildAppraisalsSearchParams({ query, searchType, limit, offset, 
 
 // Externalized search filter config for appraisals
 export const appraisalSearchFilters = (t, appraisalStates) => {
-  const filterOptions = {
-    state: appraisalStates || [
+  let stateOptions = appraisalStates;
+  if (!stateOptions || !Array.isArray(stateOptions) || !stateOptions.length) {
+    stateOptions = [
+      { value: "", label: t("appraisalStateAllStates") },
       { value: "IN_PROGRESS", label: t("appraisalStateInProgress") },
       { value: "COMPLETED", label: t("appraisalStateCompleted") },
       { value: "CLOSED", label: t("appraisalStateClosed") },
-    ],
+    ];
+  }
+  // If stateOptions are strings, map them to {label, value}
+  if (typeof stateOptions[0] === "string") {
+    stateOptions = [
+      { value: "", label: t("appraisalStateAllStates") },
+      ...stateOptions.map(s => ({
+        value: s,
+        label: t(
+          s === "IN_PROGRESS"
+            ? "appraisalStateInProgress"
+            : s === "COMPLETED"
+            ? "appraisalStateCompleted"
+            : s === "CLOSED"
+            ? "appraisalStateClosed"
+            : s
+        ),
+      })),
+    ];
+  }
+  const filterOptions = {
+    state: stateOptions,
     score: [
       { value: "", label: t("filterMenuAllScores") },
       { value: 0, label: "0 ⭐" },
