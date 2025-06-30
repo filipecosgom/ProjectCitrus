@@ -8,6 +8,7 @@ import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";
+import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas"; // ✅ ADICIONAR IMPORT
 import {
   buildSearchParams,
   createPageChangeHandler,
@@ -28,6 +29,11 @@ export default function Users() {
     limit: 10,
     total: 0,
   });
+
+  // ✅ ADICIONAR estados para offcanvas
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
   // Use null as initial value for searchParams
   const [searchParams, setSearchParams] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
@@ -39,6 +45,21 @@ export default function Users() {
   const lastSearchRef = useRef(lastSearch);
   const usersFilters = userSearchFilters(t, offices);
   const usersSortFields = sortFields;
+
+  // ✅ ADICIONAR handlers para offcanvas
+  const handleUserClick = (user) => {
+    console.log("🔍 USERS - User clicked:", user);
+    setSelectedUser(user);
+    setOffcanvasOpen(true);
+  };
+
+  const handleCloseOffcanvas = () => {
+    setOffcanvasOpen(false);
+    // Delay para permitir animação de saída
+    setTimeout(() => {
+      setSelectedUser(null);
+    }, 300);
+  };
 
   // Externalized: set searching parameters
   const setSearchingParameters = async (
@@ -115,10 +136,7 @@ export default function Users() {
 
   return (
     <div className="users-container">
-      <SearchBar
-        onSearch={setSearchingParameters}
-        {...usersFilters}
-      />
+      <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
       <SortControls
         fields={usersSortFields}
         sortBy={sort.sortBy}
@@ -137,7 +155,11 @@ export default function Users() {
         <div>
           <div className="users-grid">
             {users.map((user) => (
-              <UserCard key={user.id} user={user} />
+              <UserCard
+                key={user.id}
+                user={user}
+                onClick={handleUserClick} // ✅ ADICIONAR onClick handler
+              />
             ))}
           </div>
         </div>
@@ -147,6 +169,13 @@ export default function Users() {
         limit={pagination.limit}
         total={pagination.total}
         onChange={handlePageChange}
+      />
+
+      {/* ✅ ADICIONAR UserOffcanvas */}
+      <UserOffcanvas
+        user={selectedUser}
+        isOpen={offcanvasOpen}
+        onClose={handleCloseOffcanvas}
       />
     </div>
   );

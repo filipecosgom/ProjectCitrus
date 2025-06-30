@@ -7,7 +7,7 @@ import Spinner from "../spinner/spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, onClick }) => {
   const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
@@ -76,13 +76,24 @@ const UserCard = ({ user }) => {
     return "";
   };
 
+  // Handler para click
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick(user);
+    }
+  };
+
   return (
-    <div className={`userCard-container ${getStatusClass()}`}>
+    <div
+      className={`userCard-container ${getStatusClass()}`}
+      onClick={handleCardClick}
+      style={{ cursor: onClick ? "pointer" : "default" }}
+    >
       <div className="userCard-avatarAndInfoContainer container-user">
         {/* User Avatar */}
         <div className="userCard-avatarContainer">
           {loadingAvatar ? (
-            <Spinner /> // You can replace this with a spinner
+            <Spinner />
           ) : (
             <UserIcon avatar={avatarUrl} status={getStatusIcon()} />
           )}
@@ -98,12 +109,15 @@ const UserCard = ({ user }) => {
       </div>
 
       {/* Role */}
-      <div className="userCard-role">{user.role.replace(/_/g, " ")}</div>
+      <div className="userCard-role">
+        {user.role?.replace(/_/g, " ") || "N/A"}
+      </div>
 
       {/* Office */}
-      <div className="userCard-office">{user.office.replace(/_/g, " ")}</div>
+      <div className="userCard-office">
+        {user.office?.replace(/_/g, " ") || "N/A"}
+      </div>
 
-      {/* Manager Section */}
       {/* Manager Section */}
       {user.manager ? (
         <div className="userCard-avatarAndInfoContainer container-manager">
@@ -128,7 +142,7 @@ const UserCard = ({ user }) => {
       ) : (
         <div className="userCard-noManager">
           <ImCross title="No manager assigned" className="noManager-icon" />
-          <span className="noManager-label">{t('userCardNoManager')}</span>
+          <span className="noManager-label">{t("userCardNoManager")}</span>
         </div>
       )}
     </div>
@@ -157,6 +171,7 @@ UserCard.propTypes = {
       surname: PropTypes.string,
     }),
   }).isRequired,
+  onClick: PropTypes.func, // prop opcional
 };
 
 export default UserCard;

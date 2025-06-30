@@ -10,6 +10,17 @@
   justify-content: center;
   position: relative;
   margin-bottom: 20px;
+  gap: 10px; /* ✅ ADICIONAR gap entre elementos */
+}
+
+/* ✅ NOVO: Estilização do título do perfil */
+.profile-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-main, 1.0rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  white-space: nowrap; /* Evitar quebra de linha */
+  margin-right: auto; /* Empurrar tabs para o centro */
 }
 
 .tabs {
@@ -69,7 +80,7 @@
   border-radius: 10px;
 }
 
-.profile-actions{
+.profile-actions {
   display: flex;
   gap: 5px;
 }
@@ -331,6 +342,47 @@ textarea {
     padding: var(--padding-sm, 16px);
     margin: 0;
     gap: 20px;
+  }
+
+  .profile-tabs-row {
+    margin-top: 20px;
+    flex-direction: column; /* ✅ MUDANÇA: Stack vertical no mobile */
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ✅ NOVO: Título no mobile */
+  .profile-title {
+    font-size: var(--font-size-subtitle, 1.2rem);
+    text-align: center;
+    margin-right: 0; /* Reset margin no mobile */
+    order: 2; /* Aparecer depois do UserIcon */
+  }
+
+  /* ✅ UserIcon primeiro */
+  .user-profile .profile-tabs-row > *:first-child {
+    order: 1;
+  }
+
+  /* ✅ Tabs por último */
+  .tabs {
+    gap: 8px;
+    order: 3;
+  }
+
+  .tab {
+    padding: 8px 10px;
+    font-size: 1.1em;
+    gap: 0;
+  }
+
+  .tab span {
+    display: none;
+  }
+
+  /* ✅ Actions ficam no final */
+  .profile-actions {
+    order: 4;
   }
 
   .profile-section {
@@ -598,5 +650,12 @@ textarea {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+/* ✅ RESPONSIVO TABLET */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .profile-title {
+    font-size: var(--font-size-main, 0.9 rem);
   }
 }

@@ -1,109 +1,111 @@
-// src/components/userOffcanvas/UserOffcanvas.js
 import React, { useEffect, useState } from "react";
 import { FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
-import useAuthStore from "../../stores/useAuthStore";
+import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import "./UserOffcanvas.css";
 
 const UserOffcanvas = ({ user, isOpen, onClose }) => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false); // ✅ NOVO estado
+  const [isAnimating, setIsAnimating] = useState(false); // ✅ NOVO estado
 
-  // ✅ DEBUG: Log do user recebido
+  // ✅ CONTROLAR renderização e animação
   useEffect(() => {
-    console.log("🔍 OFFCANVAS - User data received:", user);
-    if (user) {
-      console.log("🔍 OFFCANVAS - User properties:");
-      console.log("  - ID:", user.id);
-      console.log("  - Name:", user.name, user.surname);
-      console.log("  - FirstName/LastName:", user.firstName, user.lastName);
-      console.log("  - Email:", user.email);
-      console.log("  - Role (raw):", user.role);
-      console.log("  - Workplace (raw):", user.workplace);
-      console.log("  - Office (raw):", user.office);
-      console.log("  - Phone:", user.phone);
-      console.log("  - HasAvatar:", user.hasAvatar);
-      console.log("  - All keys:", Object.keys(user));
+    if (isOpen) {
+      // Mostrar o componente primeiro
+      setShouldRender(true);
+      // Delay micro para trigger da animação de entrada
+      const timer = setTimeout(() => {
+        setIsAnimating(true);
+      }, 10); // ✅ 10ms delay para garantir o DOM update
+
+      return () => clearTimeout(timer);
+    } else {
+      // Iniciar animação de saída
+      setIsAnimating(false);
+      // Aguardar animação terminar antes de esconder
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 400); // ✅ Mesma duração da transição CSS (0.4s)
+
+      return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [isOpen]);
 
-  // Função para buscar avatar
-  const fetchUserAvatar = async (userId) => {
-    if (!userId || avatarLoading) return;
+  // Buscar avatar quando user muda
+  useEffect(() => {
+    if (!user?.id) {
+      setAvatarUrl(null);
+      return;
+    }
 
-    console.log("🔍 OFFCANVAS - Fetching avatar for user ID:", userId);
-    setAvatarLoading(true);
+    let isCancelled = false;
 
-    try {
-      const possiblePaths = [
-        `/api/users/${userId}/avatar`,
-        `/users/${userId}/avatar`,
-        `/api/avatar/${userId}`,
-      ];
-
-      for (const path of possiblePaths) {
-        try {
-          console.log("🔍 OFFCANVAS - Trying avatar path:", path);
-          const response = await fetch(path, {
-            method: "GET",
-            credentials: "include",
-          });
-
-          console.log(
-            "🔍 OFFCANVAS - Avatar response status:",
-            response.status
-          );
-
-          if (response.ok) {
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            console.log(
-              "✅ OFFCANVAS - Avatar loaded successfully from:",
-              path
-            );
-            setAvatarUrl(url);
-            return;
-          }
-        } catch (err) {
-          console.log("❌ OFFCANVAS - Failed to fetch from:", path, err);
-        }
+    const fetchAvatar = async () => {
+      if (!user.hasAvatar) {
+        setAvatarUrl(null);
+        return;
       }
 
-      console.log("❌ OFFCANVAS - No avatar found, using default");
-      setAvatarUrl(null);
-    } catch (error) {
-      console.error("❌ OFFCANVAS - Error fetching avatar:", error);
-      setAvatarUrl(null);
-    } finally {
-      setAvatarLoading(false);
-    }
-  };
+      setAvatarLoading(true);
+      try {
+        const result = await handleGetUserAvatar(user.id);
+        if (!isCancelled) {
+          if (result.success && result.avatar) {
+            setAvatarUrl(result.avatar);
+          } else {
+            setAvatarUrl(null);
+          }
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          console.error("Error fetching avatar:", error);
+          setAvatarUrl(null);
+        }
+      } finally {
+        if (!isCancelled) {
+          setAvatarLoading(false);
+        }
+      }
+    };
 
-  // Carregar avatar quando user muda
-  useEffect(() => {
-    if (user?.id) {
-      setAvatarUrl(null);
-      fetchUserAvatar(user.id);
-    }
+    fetchAvatar();
 
     return () => {
-      if (avatarUrl) {
+      isCancelled = true;
+      if (avatarUrl?.startsWith("blob:")) {
         URL.revokeObjectURL(avatarUrl);
       }
     };
-  }, [user?.id]);
+  }, [user?.id, user?.hasAvatar]);
 
-  // Fechar ao pressionar ESC
+  // Controlar scroll da página
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  // Fechar com ESC
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.keyCode === 27) onClose();
+      if (e.key === "Escape") {
+        onClose();
+      }
     };
+
     if (isOpen) {
       document.addEventListener("keydown", handleEsc);
-      document.body.style.overflow = "hidden";
     }
+
     return () => {
       document.removeEventListener("keydown", handleEsc);
-      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -114,117 +116,111 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
     }
   };
 
-  // ✅ FUNÇÃO para formatar role
+  // FUNÇÃO para formatar role - IGUAL ao UserCard
   const formatRole = (role) => {
-    console.log("🔍 OFFCANVAS - Formatting role:", role);
-    if (!role) {
-      console.log("🔍 OFFCANVAS - Role is null/undefined, returning N/A");
-      return "N/A";
-    }
-    const formatted = role.replace(/_/g, " ").toUpperCase();
-    console.log("🔍 OFFCANVAS - Formatted role:", formatted);
-    return formatted;
+    if (!role) return "N/A";
+    return role.replace(/_/g, " ");
   };
 
-  // ✅ FUNÇÃO para formatar office - VERSÃO INTELIGENTE
-  const formatOffice = () => {
-    console.log("🔍 OFFCANVAS - Debugging office properties:");
-    console.log("  - user.workplace:", user.workplace);
-    console.log("  - user.office:", user.office);
-
-    // Tentar múltiplas propriedades possíveis
-    const officeValue = user.workplace || user.office;
-
-    console.log("🔍 OFFCANVAS - Final office value:", officeValue);
-
-    if (!officeValue) {
-      console.log("🔍 OFFCANVAS - Office is null/undefined, returning N/A");
-      return "N/A";
-    }
-
-    const formatted = officeValue
-      .replace(/_/g, " ")
-      .toLowerCase()
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-    console.log("🔍 OFFCANVAS - Formatted office:", formatted);
-    return formatted;
+  // FUNÇÃO para formatar office - IGUAL ao UserCard
+  const formatOffice = (office) => {
+    if (!office) return "N/A";
+    return office.replace(/_/g, " ");
   };
 
-  if (!user) return null;
+  // FUNÇÃO para account state
+  const getAccountStateInfo = (accountState) => {
+    if (accountState === "COMPLETE") {
+      return {
+        text: "Complete",
+        className: "account-state-complete",
+      };
+    }
+    return {
+      text: "Incomplete",
+      className: "account-state-incomplete",
+    };
+  };
 
-  // ✅ NOMES INTELIGENTES - usar o que estiver disponível
-  const displayName =
-    user.firstName && user.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : `${user.name || ""} ${user.surname || ""}`.trim() || "N/A";
+  // NAVEGAÇÃO para profile
+  const handleViewProfile = () => {
+    window.location.href = `/profile?id=${user.id}`;
+  };
+
+  // ✅ NÃO RENDERIZAR se shouldRender for false
+  if (!user || !shouldRender) return null;
+
+  const accountStateInfo = getAccountStateInfo(user.accountState);
 
   return (
     <div
-      className={`user-offcanvas-backdrop ${isOpen ? "open" : ""}`}
+      className={`user-offcanvas-backdrop ${isAnimating ? "open" : ""}`} // ✅ USAR isAnimating
       onClick={handleBackdropClick}
     >
-      <div className={`user-offcanvas ${isOpen ? "open" : ""}`}>
-        {/* Botão fechar */}
+      <div className={`user-offcanvas ${isAnimating ? "open" : ""}`}>
+        {" "}
+        {/* ✅ USAR isAnimating */}
+        {/* Botão fechar X no canto superior direito */}
         <button className="user-offcanvas-close" onClick={onClose}>
           <FaTimes />
         </button>
-
         {/* Conteúdo centrado */}
         <div className="user-offcanvas-content">
-          {/* Foto de perfil */}
+          {/* Avatar 275px com especificações */}
           <div className="user-offcanvas-avatar">
             {avatarLoading ? (
-              <div className="avatar-loading">Loading...</div>
+              <div className="avatar-loading">Carregando...</div>
             ) : (
               <img
                 src={
-                  avatarUrl ||
-                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjc1IiBoZWlnaHQ9IjI3NSIgdmlld0JveD0iMCAwIDI3NSAyNzUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTM3LjUiIGN5PSIxMzcuNSIgcj0iMTM3LjUiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0iIzk5OSI+VVNFUjwvdGV4dD48L3N2Zz4="
+                  avatarUrl || generateInitialsAvatar(user.name, user.surname)
                 }
-                alt={displayName}
+                alt={`${user.name} ${user.surname}`}
                 onError={(e) => {
-                  console.log(
-                    "❌ OFFCANVAS - Image failed to load:",
-                    e.target.src
+                  e.target.src = generateInitialsAvatar(
+                    user.name,
+                    user.surname
                   );
-                  e.target.src =
-                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjc1IiBoZWlnaHQ9IjI3NSIgdmlld0JveD0iMCAwIDI3NSAyNzUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTM3LjUiIGN5PSIxMzcuNSIgcj0iMTM3LjUiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0iIzk5OSI+VVNFUjwvdGV4dD48L3N2Zz4=";
                 }}
               />
             )}
           </div>
 
-          {/* Nome completo */}
-          <h1 className="user-offcanvas-name">{displayName}</h1>
+          {/* Nome completo - font título */}
+          <h1 className="user-offcanvas-name">
+            {user.name} {user.surname}
+          </h1>
 
-          {/* Role */}
+          {/* Cargo - font secundária, preto */}
           <p className="user-offcanvas-role">{formatRole(user.role)}</p>
 
-          {/* Email */}
+          {/* Email - font secundária, cinza */}
           <p className="user-offcanvas-email">{user.email}</p>
 
-          {/* Informações em 2 colunas */}
+          {/* 2 colunas: Phone + Office */}
           <div className="user-offcanvas-info">
-            {/* Coluna 1: Telemóvel */}
             <div className="user-offcanvas-info-item">
               <FaPhoneAlt className="user-offcanvas-icon" />
               <span>{user.phone || "N/A"}</span>
             </div>
 
-            {/* Coluna 2: Localização */}
             <div className="user-offcanvas-info-item">
               <FaMapMarkerAlt className="user-offcanvas-icon" />
-              <span>{formatOffice()}</span>
+              <span>{formatOffice(user.office)}</span>
             </div>
           </div>
 
-          {/* Botão View Profile */}
+          {/* Account State - Verde/Vermelho conforme especificado */}
+          <div
+            className={`user-offcanvas-account-state ${accountStateInfo.className}`}
+          >
+            {accountStateInfo.text}
+          </div>
+
+          {/* Botão View Profile - estilização da app */}
           <button
-            className="user-offcanvas-profile-btn"
-            onClick={() => {
-              console.log("🔍 OFFCANVAS - Navigating to profile:", user.id);
-              window.location.href = `/profile?id=${user.id}`;
-            }}
+            className="main-button user-offcanvas-profile-btn"
+            onClick={handleViewProfile}
           >
             View Profile
           </button>
@@ -232,6 +228,19 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
       </div>
     </div>
   );
+};
+
+// FUNÇÃO para gerar avatar com iniciais
+const generateInitialsAvatar = (name, surname) => {
+  const initials = `${name?.[0] || ""}${surname?.[0] || ""}`.toUpperCase();
+  return `data:image/svg+xml;base64,${btoa(`
+    <svg width="275" height="275" viewBox="0 0 275 275" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="137.5" cy="137.5" r="137.5" fill="#f0f0f0"/>
+      <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-family="Arial" font-size="80" fill="#666">
+        ${initials}
+      </text>
+    </svg>
+  `)}`;
 };
 
 export default UserOffcanvas;
