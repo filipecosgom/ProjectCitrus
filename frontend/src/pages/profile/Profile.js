@@ -199,6 +199,14 @@ export default function Profile() {
     <div className="user-profile">
       <div className="profile-tabs-row">
         {user ? <UserIcon avatar={userAvatar} status="check" /> : null}
+
+        {/* ✅ ADICIONAR título do perfil */}
+        {user && (
+          <div className="profile-title">
+            Perfil de {user.name} {user.surname}
+          </div>
+        )}
+
         <div className="tabs">
           {renderTab("profile")}
           {renderTab("appraisals")}
@@ -271,11 +279,7 @@ export default function Profile() {
               <button
                 className={`icon-btn edit-save-btn`}
                 type={editMode ? "submit" : "button"}
-                title={
-                  editMode
-                    ? t("profileSave")
-                    : t("profileEdit")
-                }
+                title={editMode ? t("profileSave") : t("profileEdit")}
                 onClick={
                   editMode
                     ? handleSubmit(onSubmit)
