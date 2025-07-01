@@ -4,7 +4,7 @@ import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffca
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
 
-export default function UserIcon({ user, status }) {
+export default function UserIcon({ user}) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -45,11 +45,6 @@ export default function UserIcon({ user, status }) {
         src={user.hasAvatar ? avatarUrl : generateInitialsAvatar(user.name, user.surname)}
         alt={`${user.name} ${user.surname}`}
       />
-      <div className="status-badge">
-        {status === "check" && "✔"}
-        {status === "cross" && "✖"}
-        {status === "stroke" && "—"}
-      </div>
     </div>
   );
 }

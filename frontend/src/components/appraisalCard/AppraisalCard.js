@@ -12,48 +12,12 @@ import {
 
 const AppraisalCard = ({ appraisal }) => {
   const { t } = useTranslation();
-  const [appraisedAvatar, setAppraisedAvatar] = useState(null);
-  const [appraisingAvatar, setAppraisingAvatar] = useState(null);
-
-  // Fetch avatars
-  useEffect(() => {
-    let appraisedBlob = null;
-    let appraisingBlob = null;
-
-    const fetchAvatars = async () => {
-      if (appraisal.appraisedUser?.hasAvatar) {
-        const result = await handleGetUserAvatar(appraisal.appraisedUser.id);
-        if (result.success && result.avatar) {
-          setAppraisedAvatar(result.avatar);
-          appraisedBlob = result.avatar;
-        }
-      }
-      if (appraisal.appraisingUser?.hasAvatar) {
-        const result = await handleGetUserAvatar(appraisal.appraisingUser.id);
-        if (result.success && result.avatar) {
-          setAppraisingAvatar(result.avatar);
-          appraisingBlob = result.avatar;
-        }
-      }
-    };
-    fetchAvatars();
-
-    return () => {
-      if (appraisedBlob?.startsWith("blob:"))
-        URL.revokeObjectURL(appraisedBlob);
-      if (appraisingBlob?.startsWith("blob:"))
-        URL.revokeObjectURL(appraisingBlob);
-    };
-  }, [appraisal.appraisedUser, appraisal.appraisingUser]);
 
   return (
     <div className="appraisalCard-container">
       {/* Appraised User */}
       <div className="appraisalCard-user appraisalCard-appraised">
-        <UserIcon
-          avatar={appraisedAvatar}
-          status={appraisal.appraisedUser.accountState}
-        />
+        <UserIcon user={appraisal.appraisedUser} />
         <div className="appraisalCard-userInfo">
           <div className="appraisalCard-name">
             {appraisal.appraisedUser.name} {appraisal.appraisedUser.surname}
@@ -68,10 +32,7 @@ const AppraisalCard = ({ appraisal }) => {
 
       {/* Appraising User */}
       <div className="appraisalCard-user appraisalCard-appraising">
-        <UserIcon
-          avatar={appraisingAvatar}
-          status={appraisal.appraisingUser.accountState}
-        />
+        <UserIcon user={appraisal.appraisingUser} />
         <div className="appraisalCard-userInfo">
           <div className="appraisalCard-name">
             {appraisal.appraisingUser.name} {appraisal.appraisingUser.surname}
