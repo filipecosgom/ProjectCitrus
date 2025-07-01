@@ -26,7 +26,6 @@ public class MessageDTO {
      * Indicates whether the message has been read.
      * Must not be null.
      */
-    @NotNull(message = "Read status missing")
     private Boolean messageIsRead;
 
     /**

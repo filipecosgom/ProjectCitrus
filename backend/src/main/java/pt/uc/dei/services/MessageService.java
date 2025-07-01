@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.repositories.MessageRepository;
 import pt.uc.dei.repositories.NotificationRepository;
 import pt.uc.dei.repositories.UserRepository;
@@ -62,13 +63,13 @@ public class MessageService implements Serializable {
         }
     }
 
-    public List<UserDTO> getAllChats(Long userId) {
+    public List<UserResponseDTO> getAllChats(Long userId) {
         try {
             List<Long> userIds = messageRepository.getAllConversations(userId);
             return userIds.stream()
                     .map(userRepository::findUserById)
                     .filter(u -> u != null)
-                    .map(userMapper::toDto)
+                    .map(userMapper::toUserResponseDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e);

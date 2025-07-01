@@ -150,7 +150,7 @@ public class WsNotifications {
     /**
      * Envia uma notificação para todas as sessões abertas de um usuário específico.
      *
-     * @param recipientUsername O nome do usuário destinatário da notificação.
+     * @param recipientId O nome do usuário destinatário da notificação.
      * @param notification       A notificação que será enviada (em formato JSON String).
      * @return Retorna `true` se a notificação foi enviada com sucesso; caso contrário `false`.
      * @throws Exception Se ocorrer erro ao enviar a notificação.

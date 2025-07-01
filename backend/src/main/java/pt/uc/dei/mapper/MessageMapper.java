@@ -2,6 +2,7 @@ package pt.uc.dei.mapper;
 
 import org.mapstruct.*;
 import pt.uc.dei.dtos.MessageDTO;
+import pt.uc.dei.dtos.MessageSendDTO;
 import pt.uc.dei.entities.MessageEntity;
 import pt.uc.dei.entities.UserEntity;
 

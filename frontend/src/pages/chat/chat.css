@@ -1,0 +1,295 @@
+/* Chat.css */
+
+/* Main container */
+.chat-container {
+    display: flex;
+    padding: 20vh;
+    height: calc(100vh - 10vh); /* Adjust based on your navbar height */
+  }
+  
+  /* User list styles */
+  .user-list {
+    width: 300px;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+  }
+  
+  .user-list-header {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
+  }
+  
+  .user-list-items {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .user-item {
+    display: flex;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .user-item:hover {
+    background-color: #e9ecef;
+  }
+  
+  .user-item.selected {
+    background-color: #e3f2fd;
+  }
+  
+  .user-avatar {
+    margin-right: 12px;
+  }
+  
+  .user-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a6fa5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .user-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    color: #333;
+  }
+  
+  .last-message {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Chat area styles */
+  .chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f2f5;
+  }
+  
+  .chat-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
+  }
+  
+  .chat-user {
+    display: flex;
+    align-items: center;
+  }
+  
+  .chat-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+  }
+  
+  .chat-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a6fa5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+  }
+  
+  .chat-header h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #e5ddd5;
+    background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_a4be512e7195b6b733d9110b408f075d.png');
+    background-repeat: repeat;
+  }
+  
+  .message {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  
+  .message-content {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 7.5px;
+    position: relative;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+  }
+  
+  .message-time {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.45);
+    display: block;
+    text-align: right;
+    margin-top: 4px;
+  }
+  
+  .message.received {
+    justify-content: flex-start;
+  }
+  
+  .message.received .message-content {
+    background-color: #fff;
+  }
+  
+  .message.sent {
+    justify-content: flex-end;
+  }
+  
+  .message.sent .message-content {
+    background-color: #dcf8c6;
+  }
+  
+  .message-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #f0f2f5;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+  }
+  
+  .message-input-container textarea {
+    flex: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 15px;
+    resize: none;
+    max-height: 100px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    margin-right: 10px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  }
+
+  .message-status {
+    margin-left: 5px;
+    font-size: 0.8em;
+  }
+  
+  .message.sending .message-content {
+    opacity: 0.8;
+  }
+  
+  .message.failed .message-content {
+    background-color: #ffebee;
+  }
+
+  /* Add to your Chat.css */
+
+/* Status icons base style */
+.status-icon {
+  margin-left: 5px;
+  font-size: 1em;
+  opacity: 0.7;
+}
+
+/* Sent status (single check) */
+.message.sent .status-icon {
+  color: #999;
+}
+
+/* Read status (blue double check) */
+.status-icon-read {
+  margin-left: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  color: #0066ff;
+}
+
+/* Not read status (grey double check with lower opacity) */
+.status-icon-not_read {
+  margin-left: 5px;
+  font-size: 1em;
+  opacity: 0.7;
+  color: #999;
+  opacity: 0.5;
+}
+
+/* Failed message styling */
+.message.failed .message-content {
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+}
+
+/* Sending message styling */
+.message.sending .message-content {
+  opacity: 0.8;
+  background-color: #e3f2fd;
+}
+
+/* Add subtle animation when status changes to read */
+@keyframes readPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.message.sent .status-icon.read {
+  animation: readPulse 0.3s ease;
+}
+  
+  .send-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: #4a6fa5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .send-button:hover {
+    background-color: #3a5a80;
+  }
+  
+  .send-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .empty-chat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    background-color: #f0f2f5;
+  }
