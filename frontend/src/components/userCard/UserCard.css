@@ -52,7 +52,7 @@
 }
 
 .container-manager {
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .userCard-avatarContainer {
@@ -140,7 +140,7 @@
     gap: 0.5rem;
   }
   .container-manager {
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   /* ✅ CHECKBOX responsivo */
@@ -163,7 +163,7 @@
   }
 
   .container-manager {
-    justify-content: center;
+    justify-content: left;
   }
 
   .userCard-email {
