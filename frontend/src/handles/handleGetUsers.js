@@ -1,8 +1,7 @@
 import { fetchPaginatedUsers } from "../api/userApi";
-import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from "../utils/utilityFunctions";
+import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from '../utils/utilityFunctions';
 
 export const handleGetUsers = async (params = {}) => {
-  console.log(params);
   const response = await fetchPaginatedUsers(params);
   
   if (response.success) {

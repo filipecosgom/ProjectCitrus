@@ -5,12 +5,40 @@ import pt.uc.dei.enums.NotificationType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Entity representing a notification.
- * Stores details about notification type, content, status, and associated user.
- */
+
+@NamedQuery(
+        name = "NotificationEntity.getNotifications",
+        query = "SELECT n " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :id " +
+                "ORDER BY n.creationDate DESC")
+
+@NamedQuery(
+        name = "NotificationEntity.getTotalNotifications",
+        query = "SELECT COUNT(n) " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :id")
+
+@NamedQuery(
+        name = "NotificationEntity.readNotification",
+        query = "UPDATE NotificationEntity n " +
+                "SET notificationIsRead = true " +
+                "WHERE n.user.id = :userId " +
+                "AND n.id = :notificationId")
+
+@NamedQuery(
+        name = "NotificationEntity.checkIfNotificationExist",
+        query = "SELECT COUNT(n) " +
+                "FROM NotificationEntity n " +
+                "WHERE n.user.id = :userId " +
+                "AND n.id = :notificationId")
+
 @Entity
-@Table(name = "notification")
+@Table(name = "notification", indexes = {
+        @Index(name = "idx_notifications_recipient", columnList = "user"),
+        @Index(name = "idx_notification_recipient_id", columnList = "user, id"),
+        @Index(name = "idx_unread_messages", columnList = "user, type, isRead")
+})
 public class NotificationEntity implements Serializable {
 
     /**
@@ -49,10 +77,10 @@ public class NotificationEntity implements Serializable {
      * Can be updated.
      */
     @Column(name = "is_read", nullable = false, unique = false, updatable = true)
-    private Boolean isRead;
+    private Boolean notificationIsRead;
 
     @Column(name = "is_seen", nullable = false, unique = false, updatable = true)
-    private Boolean isSeen;
+    private Boolean notificationIsSeen;
 
     /**
      * The number of associated messages.
@@ -68,6 +96,13 @@ public class NotificationEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private UserEntity user;
+
+    /**
+     * The sender of the notification.
+     * Stored as a foreign key referencing the user table.
+     */
+    @Column(name = "sender_id", nullable = false, updatable = false)
+    private Long senderId;
 
     // Getters and Setters
 
@@ -136,38 +171,6 @@ public class NotificationEntity implements Serializable {
     }
 
     /**
-     * Gets whether the notification has been read.
-     * @return true if read, false otherwise
-     */
-    public Boolean getRead() {
-        return isRead;
-    }
-
-    /**
-     * Sets whether the notification has been read.
-     * @param read true if read, false otherwise
-     */
-    public void setRead(Boolean read) {
-        isRead = read;
-    }
-
-    /**
-     * Gets whether the notification has been seen.
-     * @return true if seen, false otherwise
-     */
-    public Boolean getSeen() {
-        return isSeen;
-    }
-
-    /**
-     * Sets whether the notification has been seen.
-     * @param seen true if seen, false otherwise
-     */
-    public void setSeen(Boolean seen) {
-        isSeen = seen;
-    }
-
-    /**
      * Gets the number of associated messages.
      * @return the message count
      */
@@ -197,5 +200,63 @@ public class NotificationEntity implements Serializable {
      */
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    /**
+     * Gets the sender of the notification.
+     * @return the sender ID
+     */
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    /**
+     * Sets the sender of the notification.
+     * @param senderId the sender ID
+     */
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    // Convenience for recipientId (user)
+    public Long getRecipientId() {
+        return user != null ? user.getId() : null;
+    }
+    public void setRecipientId(Long recipientId) {
+        // This should be set via setUser(UserEntity), but for DTO mapping, we allow this setter
+        if (this.user == null) this.user = new UserEntity();
+        this.user.setId(recipientId);
+    }
+
+    // Alias for timestamp
+    public LocalDateTime getTimestamp() {
+        return getCreationDate();
+    }
+    public void setTimestamp(LocalDateTime timestamp) {
+        setCreationDate(timestamp);
+    }
+
+    // Alias for unreadCount
+    public Integer getUnreadCount() {
+        return getMessageCount();
+    }
+    public void setUnreadCount(Integer unreadCount) {
+        setMessageCount(unreadCount);
+    }
+
+    public Boolean getNotificationIsRead() {
+        return notificationIsRead;
+    }
+
+    public void setNotificationIsRead(Boolean notificationIsRead) {
+        this.notificationIsRead = notificationIsRead;
+    }
+
+    public Boolean getNotificationIsSeen() {
+        return notificationIsSeen;
+    }
+
+    public void setNotificationIsSeen(Boolean notificationIsSeen) {
+        this.notificationIsSeen = notificationIsSeen;
     }
 }

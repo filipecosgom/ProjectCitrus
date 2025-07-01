@@ -130,18 +130,10 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
     ];
   }
   const filterOptions = {
-    state: stateOptions,
-    score: [
-      { value: "", label: t("filterMenuAllScores") },
-      { value: 0, label: "0 ⭐" },
-      { value: 1, label: "1 ⭐" },
-      { value: 2, label: "2 ⭐" },
-      { value: 3, label: "3 ⭐" },
-      { value: 4, label: "4 ⭐" },
-    ],
+    state: stateOptions
   };
   return {
-    filtersConfig: ["state", "score"],
+    filtersConfig: ["state"],
     filterOptions,
     defaultValues: {
       query: "",

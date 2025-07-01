@@ -4,10 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-
 /**
  * Data Transfer Object (DTO) representing a message.
  * Stores information related to message content, sender, receiver, and read status.
@@ -30,8 +26,7 @@ public class MessageDTO {
      * Indicates whether the message has been read.
      * Must not be null.
      */
-    @NotNull(message = "Read status missing")
-    private Boolean isRead;
+    private Boolean messageIsRead;
 
     /**
      * The content of the message.
@@ -97,17 +92,17 @@ public class MessageDTO {
      *
      * @return `true` if read, `false` if unread.
      */
-    public Boolean getIsRead() {
-        return isRead;
+    public Boolean getMessageIsRead() {
+        return messageIsRead;
     }
 
     /**
      * Sets the read status of the message.
      *
-     * @param isRead The read status to be set.
+     * @param messageIsRead The read status to be set.
      */
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
+    public void setMessageIsRead(Boolean messageIsRead) {
+        this.messageIsRead = messageIsRead;
     }
 
     /**
@@ -162,5 +157,21 @@ public class MessageDTO {
      */
     public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
+    }
+
+    // Alias for recipientId
+    public Long getRecipientId() {
+        return getReceiverId();
+    }
+    public void setRecipientId(Long recipientId) {
+        setReceiverId(recipientId);
+    }
+
+    // Alias for content
+    public String getContent() {
+        return getMessageContent();
+    }
+    public void setContent(String content) {
+        setMessageContent(content);
     }
 }

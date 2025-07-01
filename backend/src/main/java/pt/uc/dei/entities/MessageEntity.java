@@ -4,12 +4,55 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Entity representing a message.
- * Stores details about sender, receiver, content, and status.
- */
+@NamedQuery(
+        name = "MessageEntity.getMessageNotifications",
+        query = "SELECT m.sender, COUNT(m), MAX(m.sentDate) " +
+                "FROM MessageEntity m " +
+                "JOIN UserEntity u ON m.sender.id = u.id " +
+                "WHERE m.receiver.id = :recipient_id AND m.messageIsRead = false " +
+                "GROUP BY m.sender " +
+                "ORDER BY MAX(m.sentDate) DESC"
+)
+
+@NamedQuery(
+        name = "MessageEntity.getUnreadMessages",
+        query = "SELECT COUNT(m) " +
+                "FROM MessageEntity m " +
+                "WHERE m.receiver.id = :recipient_id " +
+                "AND m.sender.id = :sender_id " +
+                "AND m.messageIsRead = false"
+)
+
+@NamedQuery(
+        name = "MessageEntity.getConversation",
+        query = "SELECT m " +
+                "FROM MessageEntity m " +
+                "WHERE (m.receiver.id = :user_id AND m.sender.id = :otherUser_id) " +
+                "OR (m.receiver.id = :otherUser_id AND m.sender.id = :user_id) " +
+                "ORDER BY m.sentDate ASC"
+)
+
+@NamedQuery(
+        name = "MessageEntity.getAllChats",
+        query = "SELECT DISTINCT u.id " +
+                "FROM MessageEntity m " +
+                "JOIN UserEntity u ON (u.id = m.sender.id OR u.id = m.receiver.id) " +
+                "WHERE (m.receiver.id = :user_id OR m.sender.id = :user_id) " +
+                "AND u.id != :user_id " + // Exclude the current user
+                "ORDER BY u.id ASC"
+)
+
+@NamedQuery(
+        name = "MessageEntity.readConversation",
+        query = "UPDATE MessageEntity m " +
+                "SET m.messageIsRead = true " +
+                "WHERE m.receiver.id = :recipient_id AND m.sender.id = :sender_id"
+)
 @Entity
-@Table(name = "message")
+@Table(name="message", indexes = {
+        @Index(name = "idx_recipient_sender_unread", columnList = "recipient, sender, isRead"),
+        @Index(name = "idx_conversation_pair", columnList = "recipient, sender, timestamp"),
+})
 public class MessageEntity implements Serializable {
 
     /**
@@ -33,7 +76,7 @@ public class MessageEntity implements Serializable {
      * Can be updated.
      */
     @Column(name = "is_read", nullable = false, unique = false, updatable = true)
-    private Boolean isRead;
+    private Boolean messageIsRead;
 
     /**
      * The content of the message.
@@ -92,20 +135,12 @@ public class MessageEntity implements Serializable {
         this.sentDate = sentDate;
     }
 
-    /**
-     * Gets whether the message has been read.
-     * @return true if read, false otherwise
-     */
-    public Boolean getRead() {
-        return isRead;
+    public Boolean getMessageIsRead() {
+        return messageIsRead;
     }
 
-    /**
-     * Sets whether the message has been read.
-     * @param read true if read, false otherwise
-     */
-    public void setRead(Boolean read) {
-        isRead = read;
+    public void setMessageIsRead(Boolean messageIsRead) {
+        this.messageIsRead = messageIsRead;
     }
 
     /**

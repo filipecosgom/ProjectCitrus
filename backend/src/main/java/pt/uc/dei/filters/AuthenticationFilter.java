@@ -36,9 +36,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private JWTUtil jwtUtil;
 
     @Inject
-    private UserService userService;
-
-    @Inject
     private AuthenticationService authenticationService;
 
     @Inject
@@ -68,7 +65,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
 
         try {
-            Claims claims = jwtUtil.validateToken(jwtCookie.getValue());
+            Claims claims = JWTUtil.validateToken(jwtCookie.getValue());
 
             if (claims.getExpiration().before(new Date())) {
                 abort(requestContext, Response.Status.UNAUTHORIZED, "Token expired");
@@ -94,7 +91,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 String newToken = jwtUtil.generateToken(user);
                 NewCookie newCookie = new NewCookie("jwt", newToken, "/", null, null, (configuration.getLoginTime() * 60), true); // 1 hour
                 requestContext.setProperty("newCookie", newCookie);
-                requestContext.setProperty("newExpiration", jwtUtil.getExpiration(newToken));
+                requestContext.setProperty("newExpiration", JWTUtil.getExpiration(newToken));
             }
 
         } catch (JwtException e) {
