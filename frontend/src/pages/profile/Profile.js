@@ -12,8 +12,6 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import UserIcon from "../../components/userIcon/UserIcon";
-import ProfilePhoto from "../../assets/photos/teresamatos.png";
-import ManagerPhoto from "../../assets/photos/joseferreira.png";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import handleGetUserAvatar from "../../handles/handleGetUserAvatar";
@@ -25,12 +23,14 @@ import handleNotification from "../../handles/handleNotification";
 import { useTranslation } from "react-i18next";
 import AppraisalsTab from "./AppraisalsTab";
 import TrainingTab from "./TrainingTab";
+import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffcanvas";
 
 export default function Profile() {
   const { t } = useTranslation();
   const userId = new URLSearchParams(useLocation().search).get("id");
   const [user, setUser] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
+  const [managerAvatar, setManagerAvatar] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -69,6 +69,16 @@ export default function Profile() {
           const userAvatar = await handleGetUserAvatar(userId);
           if (userAvatar) {
             setUserAvatar(userAvatar.avatar);
+          }
+        }
+        if (userInfo.manager) {
+          if (userInfo.manager.hasAvatar) {
+            const managerAvatar = await handleGetUserAvatar(
+              userInfo.manager.id
+            );
+            if (managerAvatar) {
+              setManagerAvatar(managerAvatar.avatar);
+            }
           }
         }
       } catch (error) {
@@ -198,7 +208,7 @@ export default function Profile() {
   return (
     <div className="user-profile">
       <div className="profile-tabs-row">
-        {user ? <UserIcon avatar={userAvatar} status="check" /> : null}
+        {user ? <UserIcon user={user} status={user.status} /> : null}
 
         {/* ✅ ADICIONAR título do perfil */}
         {user && (
@@ -311,7 +321,10 @@ export default function Profile() {
                   alt="Profile"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = ProfilePhoto;
+                    e.target.src = generateInitialsAvatar(
+                      user.name,
+                      user.surname
+                    );
                   }}
                 />
                 <div className="profile-label">
@@ -342,15 +355,31 @@ export default function Profile() {
                 )}
               </div>
               {/* Manager card desktop/tablet */}
-              <div className="manager-card show-desktop">
-                <img src={user.manager?.avatar || ManagerPhoto} alt="Manager" />
-                <div className="profile-label small">
-                  <strong>
-                    {user.manager?.name} {user.manager?.surname}
-                  </strong>
-                  <div>{user.manager?.role}</div>
+              {user.manager ? (
+                <div className="manager-card show-desktop">
+                  {managerAvatar ? (
+                    <img
+                      src={managerAvatar}
+                      alt="Manager"
+                    />
+                  ) : (
+                    <img
+                      src={user.manager.avatar}
+                      alt="Manager"
+                    />
+                  )}
+                  <div className="profile-label small">
+                    <strong>
+                      {user.manager.name} {user.manager.surname}
+                    </strong>
+                    <div>{user.manager.role}</div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="manager-card show-desktop">
+                  <div className="profile-label small">No manager assigned</div>
+                </div>
+              )}
 
               {/* Manager card compacto mobile */}
               <div className="manager-compact-card show-mobile">
@@ -360,7 +389,9 @@ export default function Profile() {
                 </span>
                 <div className="manager-compact-avatar">
                   <img
-                    src={user.manager?.avatar || ManagerPhoto}
+                    src={managerAvatar
+                      ? managerAvatar
+                      : (user.manager?.avatar || generateInitialsAvatar(user.manager?.name, user.manager?.surname))}
                     alt="Manager"
                     className="manager-avatar"
                   />
