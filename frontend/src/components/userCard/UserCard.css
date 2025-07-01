@@ -63,7 +63,7 @@
 }
 
 .container-manager {
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .userCard-avatarContainer {
@@ -152,7 +152,7 @@
   }
 
   .container-manager {
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .userCard-noManager {
@@ -190,7 +190,7 @@
   }
 
   .container-manager {
-    justify-content: center;
+    justify-content: left;
   }
 
   .userCard-email {
