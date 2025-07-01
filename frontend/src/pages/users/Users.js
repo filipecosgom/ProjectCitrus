@@ -21,6 +21,7 @@ import {
   usersSortFields as sortFields,
 } from "../../utils/usersSearchUtils";
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
+import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 
 export default function Users() {
   const { t } = useTranslation();
@@ -177,6 +178,72 @@ export default function Users() {
 
   if (pageLoading) return <Spinner />;
 
+  // ✅ HANDLER para atribuir manager COM DEBUGGING
+  const handleAssignManagerAction = async (assignments) => {
+    console.log("🎯 Users.js - Starting assign manager process:", assignments);
+
+    try {
+      setResultsLoading(true);
+
+      const result = await handleAssignManager({
+        newManagerId: assignments.newManagerId,
+        userIds: assignments.userIds,
+      });
+
+      console.log("📦 Users.js - Full result received:", result);
+      console.log("📦 Users.js - Result.data:", result.data);
+      console.log("📦 Users.js - Result.success:", result.success);
+
+      // ✅ VERIFICAR se result.data existe antes de acessar propriedades
+      if (!result.data) {
+        console.error("❌ Users.js - result.data is undefined!");
+        alert(
+          `❌ Error: Response structure is invalid. Check console for details.`
+        );
+        return;
+      }
+
+      if (result.success) {
+        console.log("✅ Manager assignment successful:", result);
+
+        // ✅ FEEDBACK SUCCESS - com verificação segura
+        const totalSuccessful = result.data.totalSuccessful || 0;
+        alert(
+          `✅ Success!\n${assignments.newManagerName} is now the manager of ${totalSuccessful} user(s)`
+        );
+      } else {
+        console.error("❌ Manager assignment partially failed:", result);
+
+        // ✅ FEEDBACK PARCIAL - com verificação segura
+        const totalSuccessful = result.data.totalSuccessful || 0;
+        const totalFailed = result.data.totalFailed || 0;
+
+        if (totalSuccessful > 0) {
+          alert(
+            `⚠️ Partial Success!\n${assignments.newManagerName} assigned to ${totalSuccessful} user(s)\n${totalFailed} assignment(s) failed`
+          );
+        } else {
+          alert(`❌ Error: ${result.message}`);
+        }
+      }
+
+      // ✅ REFRESH da lista sempre (mesmo com falhas parciais)
+      await fetchUsers(pagination.offset);
+      setSelectedUsers(new Set());
+    } catch (error) {
+      console.error("❌ Users.js - Error in assign manager:", error);
+      console.error("❌ Users.js - Error details:", {
+        message: error.message,
+        stack: error.stack,
+        error: error,
+      });
+      alert(`❌ Unexpected error: ${error.message}`);
+    } finally {
+      setResultsLoading(false);
+      handleCloseAssignManager();
+    }
+  };
+
   return (
     <div className="users-container">
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
@@ -261,12 +328,7 @@ export default function Users() {
           console.log("🔍 DEBUG - Closing AssignManager offcanvas...");
           handleCloseAssignManager();
         }}
-        onAssign={(assignments) => {
-          console.log("🎯 Assign managers:", assignments);
-          // TODO: Implementar atribuição
-          handleCloseAssignManager();
-          setSelectedUsers(new Set()); // Limpar seleções
-        }}
+        onAssign={handleAssignManagerAction} // ✅ FUNÇÃO REAL ao invés de log
       />
     </div>
   );
