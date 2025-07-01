@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
-import { handleGetUsers } from "../../handles/handleGetUsers";
+import { handleGetUsers } from "../../handles/handleGetUsers"; // ✅ MESMO IMPORT que Users.js
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import UserIcon from "../userIcon/UserIcon";
 import Spinner from "../spinner/spinner";
-import "./UserSearchBar.css"; // ✅ CORRETO: próprio CSS
+import "./UserSearchBar.css";
 
 const UserSearchBar = ({
   selectedUser = null,
   onUserSelect,
   placeholder = "Search for users...",
   maxResults = 50,
-  showUserInfo = true, // Mostrar role/office
-  compact = false, // Versão compacta
+  showUserInfo = true,
+  compact = false,
   className = "",
-  excludeUserIds = [], // Excluir IDs específicos
-  filterOptions = {}, // Filtros adicionais (office, role, etc)
+  excludeUserIds = [],
+  filterOptions = {},
 }) => {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userAvatars, setUserAvatars] = useState({});
-  const [isOpen, setIsOpen] = useState(false); // Controlar dropdown
+  const [isOpen, setIsOpen] = useState(false);
 
   // ✅ DEBOUNCED SEARCH - busca após 300ms de pausa
   const debouncedSearch = useCallback(
@@ -31,31 +31,44 @@ const UserSearchBar = ({
     [excludeUserIds, maxResults, filterOptions]
   );
 
-  // ✅ BUSCAR USERS na API
+  // ✅ BUSCAR USERS - MESMA LÓGICA que Users.js
   const searchUsers = async (query = "") => {
     console.log("🔍 UserSearchBar - Searching with query:", query);
     setUsersLoading(true);
 
     try {
+      // ✅ USAR A MESMA ESTRUTURA que Users.js
       const searchParams = {
-        name: query, // Buscar por nome
-        limit: maxResults,
+        name: query, // ✅ BUSCAR APENAS NO CAMPO 'name'
         offset: 0,
-        ...filterOptions, // Aplicar filtros adicionais
+        limit: maxResults,
+        parameter: "name", // ✅ ORDENAR por nome
+        order: "ascending", // ✅ ORDEM crescente
+        ...filterOptions, // ✅ Aplicar filtros adicionais se houver
       };
 
+      console.log("🔍 UserSearchBar - Search params:", searchParams);
+
+      // ✅ USAR handleGetUsers igual ao Users.js
       const result = await handleGetUsers(searchParams);
 
-      // ✅ Filtrar IDs excluídos
-      const filteredUsers = (result.users || []).filter(
-        (user) => !excludeUserIds.includes(user.id)
-      );
+      console.log("🔍 UserSearchBar - API Result:", result);
 
-      console.log("👥 UserSearchBar - Users found:", filteredUsers.length);
-      setUsers(filteredUsers);
+      if (result && result.users) {
+        // ✅ Filtrar IDs excluídos
+        const filteredUsers = result.users.filter(
+          (user) => !excludeUserIds.includes(user.id)
+        );
 
-      // ✅ Carregar avatars
-      loadUserAvatars(filteredUsers);
+        console.log("👥 UserSearchBar - Users found:", filteredUsers.length);
+        setUsers(filteredUsers);
+
+        // ✅ Carregar avatars
+        loadUserAvatars(filteredUsers);
+      } else {
+        console.log("📭 UserSearchBar - No users in response");
+        setUsers([]);
+      }
     } catch (error) {
       console.error("❌ UserSearchBar - Error fetching users:", error);
       setUsers([]);
@@ -64,7 +77,7 @@ const UserSearchBar = ({
     }
   };
 
-  // ✅ CARREGAR AVATARS dos users
+  // ✅ CARREGAR AVATARS dos users (mantém igual)
   const loadUserAvatars = async (usersList) => {
     const avatarPromises = usersList
       .filter((user) => user.hasAvatar)
@@ -96,7 +109,7 @@ const UserSearchBar = ({
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    setIsOpen(query.length > 0); // Abrir dropdown quando há query
+    setIsOpen(query.length > 0);
 
     if (query.trim()) {
       debouncedSearch(query);
@@ -128,7 +141,7 @@ const UserSearchBar = ({
     }
   };
 
-  // ✅ HANDLER para blur (com delay para permitir cliques)
+  // ✅ HANDLER para blur
   const handleBlur = () => {
     setTimeout(() => {
       setIsOpen(false);
