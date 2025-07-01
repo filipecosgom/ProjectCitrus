@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes, FaUser } from "react-icons/fa";
-import UserSearchBar from "../userSearchBar/UserSearchBar"; // ✅ NOVO IMPORT
+import UserSearchBar from "../userSearchBar/UserSearchBar";
+import Spinner from "../spinner/spinner"; // ✅ ADICIONAR IMPORT
 import "./AssignManagerOffcanvas.css";
 
 const AssignManagerOffcanvas = ({
@@ -12,20 +13,23 @@ const AssignManagerOffcanvas = ({
 }) => {
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [selectedNewManager, setSelectedNewManager] = useState(null); // ✅ User que será promovido a manager
+  const [selectedNewManager, setSelectedNewManager] = useState(null);
+  const [isAssigning, setIsAssigning] = useState(false); // ✅ ADICIONAR estado de loading
 
-  // ✅ HANDLER para seleção de user (que será promovido a manager)
+  // ✅ HANDLER para seleção de user
   const handleUserSelect = (user) => {
     setSelectedNewManager(user);
     console.log("👤 AssignManager - User selected for promotion:", user);
   };
 
-  // ✅ HANDLER para assign (promover user a manager e atribuir aos users selecionados)
-  const handleAssignClick = () => {
-    if (!selectedNewManager) {
-      console.warn("❌ No user selected for manager promotion");
+  // ✅ ATUALIZAR handleAssignClick para mostrar loading
+  const handleAssignClick = async () => {
+    if (!selectedNewManager || isAssigning) {
+      console.warn("❌ No user selected or already assigning");
       return;
     }
+
+    setIsAssigning(true); // ✅ MOSTRAR LOADING
 
     const assignments = {
       newManagerId: selectedNewManager.id,
@@ -33,17 +37,25 @@ const AssignManagerOffcanvas = ({
       newManagerEmail: selectedNewManager.email,
       userIds: selectedUserIds,
       users: selectedUsers,
-      action: "promoteAndAssign", // Ação específica: promover a manager + atribuir
+      action: "promoteAndAssign",
     };
 
     console.log("🎯 Promoting user to manager and assigning:", assignments);
-    onAssign(assignments);
+
+    try {
+      await onAssign(assignments); // ✅ AGUARDAR conclusão
+    } catch (error) {
+      console.error("❌ Error in assignment:", error);
+    } finally {
+      setIsAssigning(false); // ✅ REMOVER LOADING
+    }
   };
 
-  // ✅ LIMPAR seleção quando fechar
+  // ✅ LIMPAR estados quando fechar
   useEffect(() => {
     if (!isOpen) {
       setSelectedNewManager(null);
+      setIsAssigning(false); // ✅ RESETAR loading
     }
   }, [isOpen]);
 
@@ -122,7 +134,11 @@ const AssignManagerOffcanvas = ({
           <h2 className="assign-manager-title">
             Assign Manager ({selectedUsers.length} users selected)
           </h2>
-          <button className="assign-manager-close" onClick={onClose}>
+          <button
+            className="assign-manager-close"
+            onClick={onClose}
+            disabled={isAssigning}
+          >
             <FaTimes />
           </button>
         </div>
@@ -166,12 +182,6 @@ const AssignManagerOffcanvas = ({
               showUserInfo={true}
               compact={true} // Versão compacta para offcanvas
               excludeUserIds={selectedUserIds} // Excluir users que estão sendo atribuídos
-              filterOptions={
-                {
-                  // Opcional: filtrar apenas users que não são managers ainda
-                  // isManager: false
-                }
-              }
               className="assign-manager-search"
             />
 
@@ -200,17 +210,26 @@ const AssignManagerOffcanvas = ({
           </div>
         </div>
 
-        {/* ✅ Footer com botões */}
+        {/* ✅ Footer com loading state */}
         <div className="assign-manager-footer">
-          <button className="cancel-btn" onClick={onClose}>
+          <button
+            className="cancel-btn"
+            onClick={onClose}
+            disabled={isAssigning}
+          >
             Cancel
           </button>
           <button
             className="assign-btn"
             onClick={handleAssignClick}
-            disabled={!selectedNewManager}
+            disabled={!selectedNewManager || isAssigning}
           >
-            {selectedNewManager ? (
+            {isAssigning ? (
+              <>
+                <Spinner size="small" />
+                Assigning...
+              </>
+            ) : selectedNewManager ? (
               <>
                 Promote & Assign
                 <span className="selected-manager-name">

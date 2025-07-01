@@ -228,7 +228,7 @@
 .assign-manager-footer {
   display: flex;
   gap: 12px;
-  padding: 20px 0 0 0;
+  padding: 20px 20px 20px 20px;
   border-top: 1px solid #eee;
   flex-shrink: 0;
 }
