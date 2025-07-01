@@ -3,17 +3,36 @@ import "./UserIcon.css";
 import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffcanvas";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
+import { FaUserCircle } from "react-icons/fa";
 
-export default function UserIcon({ user}) {
-  const [avatarUrl, setAvatarUrl] = useState(null);
+export default function UserIcon({ user, avatar, status }) {
+  // ✅ HOOKS PRIMEIRO - SEMPRE NA MESMA ORDEM
+  const [avatarUrl, setAvatarUrl] = useState(avatar || null);
   const [loading, setLoading] = useState(false);
 
+  // ✅ PROTEÇÃO DEFENSIVA para hasAvatar
+  const hasAvatar = user?.hasAvatar ?? false;
+  const userName = user?.name || "";
+  const userSurname = user?.surname || "";
+
   useEffect(() => {
-    let userBlobUrl = null;
-    if (!user || !user.hasAvatar) {
+    // ✅ VERIFICAÇÃO dentro do useEffect
+    if (!user || !user.id) {
       setAvatarUrl(null);
       return;
     }
+
+    if (avatar) {
+      setAvatarUrl(avatar);
+      return;
+    }
+
+    let userBlobUrl = null;
+    if (!hasAvatar) {
+      setAvatarUrl(null);
+      return;
+    }
+
     setLoading(true);
     handleGetUserAvatar(user.id)
       .then((result) => {
@@ -26,10 +45,21 @@ export default function UserIcon({ user}) {
       })
       .catch(() => setAvatarUrl(null))
       .finally(() => setLoading(false));
+
     return () => {
       if (userBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(userBlobUrl);
     };
-  }, [user?.id, user?.hasAvatar]);
+  }, [user?.id, hasAvatar, avatar]);
+
+  // ✅ VERIFICAÇÃO APÓS OS HOOKS
+  if (!user) {
+    console.warn("⚠️ UserIcon: user is null - rendering placeholder");
+    return (
+      <div className="user-icon user-icon-placeholder">
+        <FaUserCircle style={{ fontSize: "38px", color: "#ccc" }} />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -42,9 +72,19 @@ export default function UserIcon({ user}) {
   return (
     <div className="user-icon">
       <img
-        src={user.hasAvatar ? avatarUrl : generateInitialsAvatar(user.name, user.surname)}
-        alt={`${user.name} ${user.surname}`}
+        src={
+          hasAvatar && avatarUrl
+            ? avatarUrl
+            : generateInitialsAvatar(userName, userSurname)
+        }
+        alt={`${userName} ${userSurname}`}
+        onError={(e) => {
+          // ✅ FALLBACK se imagem falhar
+          e.target.src = generateInitialsAvatar(userName, userSurname);
+        }}
       />
+      {/* ✅ STATUS BADGE se fornecido */}
+      {status && <div className={`user-icon-status status-${status}`}></div>}
     </div>
   );
 }

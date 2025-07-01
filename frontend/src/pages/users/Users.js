@@ -9,7 +9,6 @@ import { handleGetOffices } from "../../handles/handleGetEnums";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
-import assignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas"; // ✅ NOVO IMPORT
 import { GrUserSettings } from "react-icons/gr";
 import useAuthStore from "../../stores/useAuthStore";
 import {
