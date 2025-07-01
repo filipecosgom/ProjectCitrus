@@ -145,8 +145,8 @@ public class UserService implements Serializable {
             return false;
         }
         // Update only those fields that are non-null in the DTO.
-        if (updateUserDTO.getManager() != null) {
-            UserEntity manager = userRepository.findUserById(updateUserDTO.getManager().getId());
+        if (updateUserDTO.getManagerId() != null) {
+            UserEntity manager = userRepository.findUserById(updateUserDTO.getManagerId());
             if(manager != null) {
                 user.setManagerUser(manager);
                 manager.setUserIsManager(true);

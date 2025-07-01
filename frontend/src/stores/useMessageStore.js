@@ -12,14 +12,13 @@ const useMessageStore = create((set, get) => ({
     fetchAllConversations: async () => {
       try {
         const conversationUsers = await handleFetchAllConversations();
-            const mergedUsers = [...conversationUsers];
+            const mergedUsers = [...(conversationUsers || [])];
             get().localUsers.forEach((localUser) => {
           // 🛠️ Add local users *only if they are missing* from fetched conversations
-          if (!mergedUsers.some(user => user.username === localUser.username)) {
+          if (!mergedUsers.some(user => user.id === localUser.id)) {
             mergedUsers.push(localUser);
           }
-        });
-    
+        });    
         set({ conversations: mergedUsers });
       } catch (error) {
         set({ error: error.message });
@@ -57,6 +56,7 @@ const useMessageStore = create((set, get) => ({
     },
 
     setSelectedUser: (user) => {
+      console.log("selectedUser just set to:", user);
       set({ selectedUser: user, messages: []});
       // Optionally clear messages when changing user
       // set({ selectedUser: username, messages: [] });

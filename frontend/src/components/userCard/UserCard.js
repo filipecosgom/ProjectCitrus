@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styles from "./UserCard.css";
 import UserIcon from "../userIcon/UserIcon";
-import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import Spinner from "../spinner/spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
@@ -10,15 +9,11 @@ import { useTranslation } from "react-i18next";
 const UserCard = ({
   user,
   onClick,
-  showCheckbox = false, // ✅ RENOMEADO: isSelectionMode → showCheckbox
+  showCheckbox = false,
   isSelected = false,
   onSelectionChange,
 }) => {
   const { t } = useTranslation();
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [managerAvatarUrl, setManagerAvatarUrl] = useState(null);
-  const [loadingAvatar, setLoadingAvatar] = useState(false);
-  const [loadingManagerAvatar, setLoadingManagerAvatar] = useState(false);
 
   // Determine status for UserIcon
   const getStatusIcon = () => {
@@ -27,54 +22,6 @@ const UserCard = ({
     if (user.accountState === "INCOMPLETE") return "stroke";
     return null;
   };
-
-  useEffect(() => {
-    if (!user) return;
-
-    let userBlobUrl = null;
-    let managerBlobUrl = null;
-
-    const fetchUserAvatar = async () => {
-      if (!user.hasAvatar) return;
-
-      setLoadingAvatar(true);
-      try {
-        const result = await handleGetUserAvatar(user.id);
-        if (!result.success || !result.avatar) throw new Error(result.error);
-        userBlobUrl = result.avatar;
-        setAvatarUrl(result.avatar);
-      } catch {
-        setAvatarUrl(null);
-      } finally {
-        setLoadingAvatar(false);
-      }
-    };
-
-    const fetchManagerAvatar = async () => {
-      if (!user.manager?.hasAvatar) return;
-
-      setLoadingManagerAvatar(true);
-      try {
-        const result = await handleGetUserAvatar(user.manager.id);
-        if (!result.success || !result.avatar) throw new Error(result.error);
-        managerBlobUrl = result.avatar;
-        setManagerAvatarUrl(result.avatar);
-      } catch {
-        setManagerAvatarUrl(null);
-      } finally {
-        setLoadingManagerAvatar(false);
-      }
-    };
-
-    fetchUserAvatar();
-    fetchManagerAvatar();
-
-    return () => {
-      if (userBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(userBlobUrl);
-      if (managerBlobUrl?.startsWith("blob:"))
-        URL.revokeObjectURL(managerBlobUrl);
-    };
-  }, [user.id, user.hasAvatar, user.manager]);
 
   const getStatusClass = () => {
     if (user.userIsAdmin) return styles.admin;
@@ -101,13 +48,7 @@ const UserCard = ({
   };
 
   return (
-    <div
-      className={`userCard-container ${getStatusClass()} ${
-        showCheckbox && isSelected ? "selected" : ""
-      }`} // ✅ USAR showCheckbox
-      onClick={handleCardClick}
-      style={{ cursor: onClick ? "pointer" : "default" }} // ✅ REMOVER condição isSelectionMode
-    >
+    <div className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}`}>
       {/* ✅ CHECKBOX - sempre visível para admins */}
       {showCheckbox && (
         <div className="userCard-checkbox">
@@ -119,63 +60,58 @@ const UserCard = ({
           />
         </div>
       )}
-
-      <div className="userCard-avatarAndInfoContainer container-user">
-        {/* User Avatar */}
-        <div className="userCard-avatarContainer">
-          {loadingAvatar ? (
-            <Spinner />
-          ) : (
-            <UserIcon avatar={avatarUrl} status={getStatusIcon()} />
-          )}
-        </div>
-
-        {/* User Info */}
-        <div className="userCard-userInfo">
-          <div className="userCard-name">
-            {user.name} {user.surname}
-          </div>
-          <div className="userCard-email">{user.email}</div>
-        </div>
-      </div>
-
-      {/* Role */}
-      <div className="userCard-role">
-        {user.role?.replace(/_/g, " ") || "N/A"}
-      </div>
-
-      {/* Office */}
-      <div className="userCard-office">
-        {user.office?.replace(/_/g, " ") || "N/A"}
-      </div>
-
-      {/* Manager Section */}
-      {user.manager ? (
-        <div className="userCard-avatarAndInfoContainer container-manager">
-          <div className="userCard-managerAvatar">
-            {loadingManagerAvatar ? (
-              <Spinner />
-            ) : (
-              <UserIcon
-                avatar={managerAvatarUrl}
-                status={user.manager.status}
-              />
-            )}
+      <div
+        className={`userCard-container ${getStatusClass()} ${
+          showCheckbox && isSelected ? "selected" : ""
+        }`} // ✅ USAR showCheckbox
+        onClick={handleCardClick}
+        style={{ cursor: onClick ? "pointer" : "default" }} // ✅ REMOVER condição isSelectionMode
+      >
+        <div className="userCard-avatarAndInfoContainer container-user">
+          {/* User Avatar */}
+          <div className="userCard-avatarContainer">
+            <UserIcon user={user} status={getStatusIcon()} />
           </div>
 
-          <div className="userCard-managerInfo">
-            <div className="userCard-managerName">
-              {user.manager.name} {user.manager.surname}
+          {/* User Info */}
+          <div className="userCard-userInfo">
+            <div className="userCard-name">
+              {user.name} {user.surname}
             </div>
-            <div className="userCard-managerEmail">{user.manager.email}</div>
+            <div className="userCard-email">{user.email}</div>
           </div>
         </div>
-      ) : (
-        <div className="userCard-noManager">
-          <ImCross title="No manager assigned" className="noManager-icon" />
-          <span className="noManager-label">{t("userCardNoManager")}</span>
+
+        {/* Role */}
+        <div className="userCard-role">
+          {user.role?.replace(/_/g, " ") || "N/A"}
         </div>
-      )}
+
+        {/* Office */}
+        <div className="userCard-office">
+          {user.office?.replace(/_/g, " ") || "N/A"}
+        </div>
+
+        {/* Manager Section */}
+        {user.manager ? (
+          <div className="userCard-avatarAndInfoContainer container-manager">
+            <div className="userCard-managerAvatar">
+              <UserIcon user={user.manager} status={user.manager.status} />
+            </div>
+            <div className="userCard-managerInfo">
+              <div className="userCard-managerName">
+                {user.manager.name} {user.manager.surname}
+              </div>
+              <div className="userCard-managerEmail">{user.manager.email}</div>
+            </div>
+          </div>
+        ) : (
+          <div className="userCard-noManager">
+            <ImCross title="No manager assigned" className="noManager-icon" />
+            <span className="noManager-label">{t("userCardNoManager")}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

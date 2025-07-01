@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class UpdateUserDTO {
 
     // The user's manager (if updating manager information)
-    private ManagerDTO manager;
+    private Long managerId;
 
     // The user's avatar URL or identifier.
     private Boolean hasAvatar;
@@ -58,13 +58,12 @@ public class UpdateUserDTO {
     }
 
     // Getters and Setters
-
-    public ManagerDTO getManager() {
-        return manager;
+    public Long getManagerId() {
+        return managerId;
     }
 
-    public void setManager(ManagerDTO manager) {
-        this.manager = manager;
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
     }
 
     public Boolean getHasAvatar() {

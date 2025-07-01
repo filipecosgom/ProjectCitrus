@@ -35,11 +35,6 @@ export default function Header({
     return () => window.removeEventListener("resize", handleResize);
   }, [showMenu]);
 
-  // Temporarily modify your Header component
-useEffect(() => {
-  console.log("Current auth store state:", useAuthStore.getState());
-}, []);
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
@@ -178,7 +173,8 @@ useEffect(() => {
             <NotificationDropdown notifications={notifications} />
           )}
         </div>
-       <UserIcon avatar={avatar} status="check"/>
+        {/* FIX: Pass the full user object to UserIcon, not just avatar */}
+        <UserIcon user={user} status="check"/>
       </div>
       {/* Nome e email do user (desktop apenas) */}
       <div className="header-cell header-user">

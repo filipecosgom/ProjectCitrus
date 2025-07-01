@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import useAuthStore from "../stores/useAuthStore";
 import handleNotification from "../handles/handleNotification";
 import { useTranslation } from "react-i18next";
-import { transformArrayDatetoDate, dateToFormattedTime } from "../Utils/utilityFunctions";
+import { transformArrayDatetoDate, dateToFormattedTime } from "../utils/utilityFunctions";
 
 function useWebSocketNotifications(isAuthenticated) {
     const { user } = useAuthStore(); // get user info, not token

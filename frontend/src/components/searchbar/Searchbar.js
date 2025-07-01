@@ -46,7 +46,7 @@ const SearchBar = ({
           className="searchBar-button"
           aria-label={t("searchBarSearchButton")}
         >
-          <FiSearch className="search-icon" />
+          <FiSearch className="searchBar-icon" />
         </button>
         <input
           {...register("query")}

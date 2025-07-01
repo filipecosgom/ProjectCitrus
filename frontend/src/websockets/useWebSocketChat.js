@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import useUserStore from "../Stores/useUserStore";
-import useMessageStore from "../Stores/useMessageStore";
+import useMessageStore from '../stores/useMessageStore';
 import { transformArrayDatetoDate } from "../utils/utilityFunctions";
 import useAuthStore from "../stores/useAuthStore";
 
@@ -48,9 +47,9 @@ function useWebSocketChat() {
 
     const ws = new WebSocket(WS_URL);
 
-    ws.current.onopen = () => {
+    ws.onopen = () => {
       console.log("WebSocket connected");
-    };
+    }
 
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);

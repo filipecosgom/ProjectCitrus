@@ -1,8 +1,17 @@
 /*----------------------------------------*/
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
+.userCard-wrapper {
+  display: flex;
+}
+
+.userCard-wrapper.with-checkbox {
+  display: flex;
+}
+
 .userCard-container {
   display: flex;
+  flex: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -39,6 +48,8 @@
   flex: 1;
   gap: 0.5rem;
 }
+
+
 
 .userCard-email {
   display: none;
@@ -81,13 +92,13 @@
 .userCard-role {
   flex: 1;
   min-width: 100px;
-  text-align: left;
+  text-align: center;
 }
 
 .userCard-office {
   flex: 1;
   min-width: 100px;
-  text-align: left;
+  text-align: center;
 }
 
 .userCard-managerAvatar {
@@ -131,7 +142,7 @@
 
   .userCard-office {
     display: block;
-    text-align: left;
+    text-align: center;
   }
 
   .userCard-avatarAndInfoContainer {
@@ -139,9 +150,18 @@
     flex: 1;
     gap: 0.5rem;
   }
+
   .container-manager {
     justify-content: flex-start;
   }
+
+  .userCard-noManager {
+    display: flex;
+  justify-content: end;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+}
 
   /* ✅ CHECKBOX responsivo */
   .userCard-checkbox {
@@ -158,8 +178,15 @@
 /*----------------DESKTOP------------------*/
 /*----------------------------------------*/
 @media (min-width: 1024px) {
-  .userCard-container {
-    padding: var(--padding-lg);
+  .userCard-wrapper.with-checkbox {
+    display: flex;
+    padding-left: calc(78px - 1rem - 45px);
+    padding-right: 78px;
+  }
+
+  .userCard-wrapper {
+    padding-left: 78px;
+    padding-right: 78px;
   }
 
   .container-manager {
@@ -180,13 +207,11 @@
 
   .userCard-noManager {
     display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    color: #888;
-    font-style: italic;
-  }
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+}
 
   /* ✅ CHECKBOX desktop */
   .userCard-checkbox {

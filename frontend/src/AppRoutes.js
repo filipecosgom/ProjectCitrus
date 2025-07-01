@@ -11,6 +11,7 @@ import Users from "./pages/users/Users";
 import Appraisals from "./pages/appraisals/Appraisals";
 import Cycles from "./pages/cycles/Cycles";
 import Settings from "./pages/settings/Settings";
+import Chat from "./pages/chat/Chat";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
@@ -51,6 +52,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/users",
     "/cycles",
     "/settings",
+    "/chat"
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -131,6 +133,12 @@ function AppRoutes({ currentLocale, setLocale }) {
             <AdminRoute>
               <Settings />
             </AdminRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+              <Chat />
           }
         />
         <Route

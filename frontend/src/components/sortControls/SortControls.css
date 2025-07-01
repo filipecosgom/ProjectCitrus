@@ -6,6 +6,7 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+  text-align: center;
 }
 
 .sortControls-div {
@@ -15,7 +16,7 @@
   font-family: var(--font-family-secondary);
   font-size: var(--font-size-main);
   transition: color 0.2s ease;
-  text-align: left; /* ✅ MUDANÇA: center → left */
+  text-align: center; /* ✅ MUDANÇA: center → left */
 }
 
 .sortControls-div.office {
@@ -36,7 +37,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  justify-content: flex-start; /* ✅ MUDANÇA: center → flex-start */
+  justify-content: center; /* ✅ MUDANÇA: center → flex-start */
 }
 
 .sort-icon {

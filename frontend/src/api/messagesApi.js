@@ -1,169 +1,104 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
-//axios - ordem: url, body, headers
 
-const messagesEndpoint = `${apiBaseUrl}messages/`;
+const messagesEndpoint = `${apiBaseUrl}/messages/`;
 
-export const fetchMessages = async (token, username) => {
-    try {
-      const response = await axios.get(`${messagesEndpoint}${username}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "token": token, 
-        },
-      });
-  
-      if (response.status === 200) {
-        return response.data; // Returning chat conversation data
-      } else {
-        throw new Error(`Unexpected response: ${response.status}`);
-      }
-    } catch (error) {
-      if (error.response) {
-        const status = error.response.status;
-        console.error(`Error fetching chat (${status}):`, error.response.data);
-  
-        if (status === 401) {
-          throw new Error("errorInvalidToken"); // 🔹 Token missing or invalid
-        }
-        if (status === 403) {
-          throw new Error("errorPermissionDenied"); // 🔹 User is inactive/excluded
-        }
-        if (status === 404) {
-          throw new Error("errorNonExistentConversation"); // 🔹 No conversation found
-        }
-      } else if (error.request) {
-        console.error("No response from server:", error.request);
-        throw new Error("errorNetwork_error"); // 🔹 Network issue
-      } else {
-        console.error("Unexpected error:", error.message);
-        throw new Error("errorUnexpected"); // 🔹 Any other unexpected issue
-      }
-    }
-  };
-
-  export const fetchAllConversations = async (token) => {
-    try {
-      const response = await axios.get(`${messagesEndpoint}all`, {
-        headers: {
-          "Content-Type": "application/json",
-          "token": token, 
-        },
-      });
-  
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        throw new Error(`Unexpected response: ${response.status}`);
-      }
-    } catch (error) {
-      if (error.response) {
-        const status = error.response.status;
-        console.error(`Error fetching all chats (${status}):`, error.response.data);
-  
-        if (status === 401) {
-          throw new Error("errorInvalidToken"); // 🔹 Token missing or invalid
-        }
-        if (status === 403) {
-          throw new Error("errorPermissionDenied"); // 🔹 User is inactive/excluded
-        }
-        if (status === 404) {
-          throw new Error("errorNoConversations"); // 🔹 No conversations found
-        }
-      } else if (error.request) {
-        console.error("No response from server:", error.request);
-        throw new Error("errorNetwork_error"); // 🔹 Network issue
-      } else {
-        console.error("Unexpected error:", error.message);
-        throw new Error("errorUnexpected"); // 🔹 Any other unexpected issue
-      }
-    }
-  };
-
-
-export const sendMessageApi = async (token, message, recipient) => {
-  console.log(token);
-  const payload = {
-    message: message,
-    recipient: recipient };
-  console.log("Sending message payload:", payload); // 🔹 Debugging log
+// Fetch messages between the current user and another user (by userId)
+export const fetchMessages = async (otherUserId) => {
   try {
-    const response = await axios.post(`${messagesEndpoint}`, payload, {
+    const response = await axios.get(`${messagesEndpoint}${otherUserId}`, {
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
-        "token": token,  // 🔹 Sending token in headers, matching backend's @HeaderParam("token")
       },
     });
-
-    if (response.status === 200) {
-      console.log("Message successfully sent:", response.data);
-      return response.data;
-    } else {
-      throw new Error(`Unexpected response: ${response.status}`);
-    }
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
-    if (error.response) {
-      const status = error.response.status;
-      console.error(`Error sending message (${status}):`, error.response.data);
-
-      if (status === 401) {
-        throw new Error("errorInvalidToken"); // 🔹 Token missing or invalid
-      }
-      if (status === 403) {
-        throw new Error("errorMessageFailed"); // 🔹 Server failed to send the message
-      }
-      if (status === 404) {
-        throw new Error("errorRecipientNotFound"); // 🔹 Recipient does not exist
-      }
-    } else if (error.request) {
-      console.error("No response from server:", error.request);
-      throw new Error("errorNetwork_error"); // 🔹 Network issue
-    } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error("errorUnexpected"); // 🔹 Any other unexpected issue
-    }
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
   }
 };
 
-export const readConversationApi = async (token, sender) => {
-  console.log("Reading conversation for sender:", sender); // Debugging log
+// Fetch all conversations for the current user
+export const fetchAllConversations = async () => {
+  try {
+    const response = await axios.get(`${messagesEndpoint}all`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+// Send a message to another user (by userId)
+export const sendMessageApi = async (receiverId, content) => {
+  try {
+    const payload = {
+      receiverId,
+      content,
+    };
+    const response = await axios.post(`${messagesEndpoint}`, payload, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+// Mark all messages in a conversation as read (senderId = other user's id)
+export const readConversationApi = async (senderId) => {
   try {
     const response = await axios.patch(
-        `${messagesEndpoint}conversation?username=${encodeURIComponent(sender)}`,
-        {},
-        {
-            headers: {
-                "Content-Type": "application/json",
-                "token": token, // 🔹 Authentication token
-            },
-        }
+      `${messagesEndpoint}${senderId}`,
+      {},
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
-    if (response.status === 200) {
-      console.log("Conversation successfully marked as read:", response.data);
-      return response.data;
-    } else {
-      throw new Error(`Unexpected response: ${response.status}`);
-    }
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
-    if (error.response) {
-      const status = error.response.status;
-      console.error(`Error reading conversation (${status}):`, error.response.data);
-
-      if (status === 400) {
-        throw new Error("errorInvalidSender"); // 🔹 Sender value is missing
-      }
-      if (status === 401) {
-        throw new Error("errorInvalidToken"); // 🔹 Token missing or invalid
-      }
-      if (status === 403) {
-        throw new Error("errorNoConversationFound"); // 🔹 No conversation found
-      }
-    } else if (error.request) {
-      console.error("No response from server:", error.request);
-      throw new Error("errorNetwork_error"); // 🔹 Network issue
-    } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error("errorUnexpected"); // 🔹 Any other unexpected issue
-    }
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
   }
 };
