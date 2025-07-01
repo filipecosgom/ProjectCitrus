@@ -9,8 +9,9 @@ import { handleGetOffices } from "../../handles/handleGetEnums";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
-import { GrUserSettings } from "react-icons/gr"; // ✅ ADICIONAR IMPORT
-import useAuthStore from "../../stores/useAuthStore"; // ✅ ADICIONAR IMPORT
+import assignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas"; // ✅ NOVO IMPORT
+import { GrUserSettings } from "react-icons/gr";
+import useAuthStore from "../../stores/useAuthStore";
 import {
   buildSearchParams,
   createPageChangeHandler,
@@ -19,6 +20,7 @@ import {
   userSearchFilters,
   usersSortFields as sortFields,
 } from "../../utils/usersSearchUtils";
+import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 
 export default function Users() {
   const { t } = useTranslation();
@@ -32,13 +34,13 @@ export default function Users() {
     total: 0,
   });
 
-  // Estados para offcanvas
+  // Estados para user offcanvas
   const [selectedUser, setSelectedUser] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-  // ✅ NOVOS ESTADOS para Assign Managers
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  // ✅ NOVOS ESTADOS para Assign Manager
   const [selectedUsers, setSelectedUsers] = useState(new Set());
+  const [assignManagerOpen, setAssignManagerOpen] = useState(false); // ✅ NOVO
 
   // Use null as initial value for searchParams
   const [searchParams, setSearchParams] = useState(null);
@@ -55,11 +57,8 @@ export default function Users() {
   // ✅ VERIFICAR se user é admin
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
 
-  // Handlers para offcanvas
+  // Handlers para user offcanvas
   const handleUserClick = (user) => {
-    // ✅ Se está em selection mode, não abrir offcanvas
-    if (isSelectionMode) return;
-
     console.log("🔍 USERS - User clicked:", user);
     setSelectedUser(user);
     setOffcanvasOpen(true);
@@ -72,13 +71,23 @@ export default function Users() {
     }, 300);
   };
 
-  // ✅ NOVOS HANDLERS para Selection Mode
-  const handleToggleSelectionMode = () => {
-    setIsSelectionMode(!isSelectionMode);
-    if (isSelectionMode) {
-      // Se está desativando, limpar seleções
-      setSelectedUsers(new Set());
+  // ✅ NOVOS HANDLERS para Assign Manager
+  const handleOpenAssignManager = () => {
+    console.log("🔍 DEBUG - Button clicked!");
+    console.log("🔍 DEBUG - Selected users count:", selectedUsers.size);
+    console.log("🔍 DEBUG - Selected users:", Array.from(selectedUsers));
+
+    if (selectedUsers.size === 0) {
+      console.warn("❌ Nenhum usuário selecionado");
+      return;
     }
+
+    console.log("✅ Opening AssignManager offcanvas...");
+    setAssignManagerOpen(true);
+  };
+
+  const handleCloseAssignManager = () => {
+    setAssignManagerOpen(false);
   };
 
   const handleUserSelection = (userId, isSelected) => {
@@ -91,6 +100,11 @@ export default function Users() {
     setSelectedUsers(newSelectedUsers);
   };
 
+  // ✅ LIMPAR seleções quando mudar de página
+  useEffect(() => {
+    setSelectedUsers(new Set());
+  }, [pagination.offset]);
+
   // Externalized: set searching parameters
   const setSearchingParameters = async (
     query,
@@ -98,7 +112,6 @@ export default function Users() {
     limit,
     filters = {}
   ) => {
-    // Validate inputs
     const search = buildSearchParams(query, searchType, limit, filters);
     setLastSearch(search);
     setCurrentPage(1);
@@ -177,12 +190,19 @@ export default function Users() {
         {/* ✅ BOTÃO Assign Managers - apenas para admins */}
         {isAdmin && (
           <button
-            className={`assign-managers-btn ${isSelectionMode ? "active" : ""}`}
-            onClick={handleToggleSelectionMode}
+            className={`assign-managers-btn ${
+              selectedUsers.size === 0 ? "disabled" : ""
+            }`}
+            onClick={() => {
+              console.log("🔍 DEBUG - Button onClick triggered!");
+              handleOpenAssignManager();
+            }}
+            disabled={selectedUsers.size === 0} // ✅ DISABLED se nenhum selecionado
           >
             <GrUserSettings className="assign-managers-icon" />
             <span className="assign-managers-text">
-              {isSelectionMode ? "Cancel Selection" : "Assign Managers"}
+              Assign Managers{" "}
+              {selectedUsers.size > 0 && `(${selectedUsers.size})`}
             </span>
           </button>
         )}
@@ -210,9 +230,9 @@ export default function Users() {
                 key={user.id}
                 user={user}
                 onClick={handleUserClick}
-                isSelectionMode={isSelectionMode} // ✅ NOVA PROP
-                isSelected={selectedUsers.has(user.id)} // ✅ NOVA PROP
-                onSelectionChange={handleUserSelection} // ✅ NOVA PROP
+                showCheckbox={isAdmin} // ✅ NOVA PROP: sempre visível para admins
+                isSelected={selectedUsers.has(user.id)}
+                onSelectionChange={handleUserSelection}
               />
             ))}
           </div>
@@ -225,10 +245,28 @@ export default function Users() {
         onChange={handlePageChange}
       />
 
+      {/* ✅ USER OFFCANVAS */}
       <UserOffcanvas
         user={selectedUser}
         isOpen={offcanvasOpen}
         onClose={handleCloseOffcanvas}
+      />
+
+      {/* ✅ NOVO: ASSIGN MANAGER OFFCANVAS */}
+      <AssignManagerOffcanvas
+        selectedUserIds={Array.from(selectedUsers)}
+        selectedUsers={users.filter((user) => selectedUsers.has(user.id))} // ✅ Users selecionados
+        isOpen={assignManagerOpen}
+        onClose={() => {
+          console.log("🔍 DEBUG - Closing AssignManager offcanvas...");
+          handleCloseAssignManager();
+        }}
+        onAssign={(assignments) => {
+          console.log("🎯 Assign managers:", assignments);
+          // TODO: Implementar atribuição
+          handleCloseAssignManager();
+          setSelectedUsers(new Set()); // Limpar seleções
+        }}
       />
     </div>
   );

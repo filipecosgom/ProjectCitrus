@@ -10,9 +10,9 @@ import { useTranslation } from "react-i18next";
 const UserCard = ({
   user,
   onClick,
-  isSelectionMode = false, // ✅ NOVA PROP
-  isSelected = false, // ✅ NOVA PROP
-  onSelectionChange, // ✅ NOVA PROP
+  showCheckbox = false, // ✅ RENOMEADO: isSelectionMode → showCheckbox
+  isSelected = false,
+  onSelectionChange,
 }) => {
   const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -103,13 +103,13 @@ const UserCard = ({
   return (
     <div
       className={`userCard-container ${getStatusClass()} ${
-        isSelectionMode && isSelected ? "selected" : ""
-      }`} // ✅ CLASSE CONDICIONAL para highlight
+        showCheckbox && isSelected ? "selected" : ""
+      }`} // ✅ USAR showCheckbox
       onClick={handleCardClick}
-      style={{ cursor: onClick && !isSelectionMode ? "pointer" : "default" }}
+      style={{ cursor: onClick ? "pointer" : "default" }} // ✅ REMOVER condição isSelectionMode
     >
-      {/* ✅ CHECKBOX - apenas em selection mode */}
-      {isSelectionMode && (
+      {/* ✅ CHECKBOX - sempre visível para admins */}
+      {showCheckbox && (
         <div className="userCard-checkbox">
           <input
             type="checkbox"
@@ -203,9 +203,9 @@ UserCard.propTypes = {
     }),
   }).isRequired,
   onClick: PropTypes.func,
-  isSelectionMode: PropTypes.bool, // ✅ NOVA PROP
-  isSelected: PropTypes.bool, // ✅ NOVA PROP
-  onSelectionChange: PropTypes.func, // ✅ NOVA PROP
+  showCheckbox: PropTypes.bool, // ✅ RENOMEADO
+  isSelected: PropTypes.bool,
+  onSelectionChange: PropTypes.func,
 };
 
 export default UserCard;

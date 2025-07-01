@@ -1,0 +1,225 @@
+/* Backdrop */
+.assign-manager-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.assign-manager-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ✅ Offcanvas - slide da direita */
+.assign-manager-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+  z-index: 1051;
+  display: flex;
+  flex-direction: column;
+}
+
+.assign-manager-offcanvas.open {
+  transform: translateX(0);
+}
+
+/* ✅ Header */
+.assign-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.assign-manager-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-subtitle, 1.2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+}
+
+.assign-manager-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #000000;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.assign-manager-close:hover {
+  background-color: #e9ecef;
+}
+
+/* ✅ Content */
+.assign-manager-content {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section-title {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0 0 12px 0;
+}
+
+/* ✅ Selected Users Section */
+.selected-users-section {
+  flex-shrink: 0;
+}
+
+.selected-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.selected-user-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid var(--red, #a44);
+}
+
+.user-icon {
+  color: var(--red, #a44);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  flex: 1;
+}
+
+.user-role {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 0.9rem;
+  color: var(--secondary, #88909f);
+}
+
+/* ✅ Managers Section */
+.managers-section {
+  flex: 1;
+}
+
+.managers-placeholder {
+  padding: 40px 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.managers-placeholder p {
+  margin: 8px 0;
+  color: var(--secondary, #88909f);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+}
+
+/* ✅ Footer */
+.assign-manager-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 0 0 0;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.cancel-btn,
+.assign-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background: var(--secondary, #88909f);
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #6d7a8a;
+}
+
+.assign-btn {
+  background: var(--red, #a44);
+  color: white;
+}
+
+.assign-btn:hover:not(:disabled) {
+  background: var(--red-dark, #933);
+}
+
+.assign-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ✅ Responsivo - Mobile */
+@media (max-width: 480px) {
+  .assign-manager-offcanvas {
+    width: 100vw;
+  }
+
+  .assign-manager-header {
+    padding: 16px 20px;
+  }
+
+  .assign-manager-title {
+    font-size: 1rem;
+  }
+
+  .assign-manager-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .assign-manager-offcanvas {
+    width: 90vw;
+  }
+}

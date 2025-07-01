@@ -37,22 +37,27 @@
   min-height: 48px; /* Mesmo height do SearchBar */
 }
 
-.assign-managers-btn:hover {
+.assign-managers-btn:hover:not(:disabled) {
   background-color: var(--red-dark, #933);
   transform: translateY(-1px);
 }
 
-.assign-managers-btn:active {
+.assign-managers-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-/* ✅ ESTADO ATIVO (Cancel Selection) */
-.assign-managers-btn.active {
+/* ✅ ESTADO DISABLED */
+.assign-managers-btn:disabled,
+.assign-managers-btn.disabled {
   background-color: var(--secondary, #88909f);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-.assign-managers-btn.active:hover {
-  background-color: #6d7a8a;
+.assign-managers-btn:disabled:hover,
+.assign-managers-btn.disabled:hover {
+  transform: none;
+  background-color: var(--secondary, #88909f);
 }
 
 .assign-managers-icon {
