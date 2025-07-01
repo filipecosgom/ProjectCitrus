@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { getLoggedUserInformation } from "../../Handles/handleLogin";
 import useMessageStore from "../../stores/useMessageStore";
 import useAuthStore from "../../stores/useAuthStore";
 import { FaPaperPlane } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import useWebSocketChat from "../../Websockets/useWebSocketChat";
-import { sendMessageApi, readConversationApi } from '../api/messagesApi';
+import useWebSocketChat from "../../websockets/useWebSocketChat";
 import "./Chat.css";
 import handleNotification from "../../handles/handleNotification";
 import { useLocation, useNavigate } from "react-router-dom";
+import { handleReadConversation } from '../../handles/handleReadConversation';
+import { handleSendMessageViaApi } from '../../handles/handleSendMessageViaApi';
+import UserIcon from "../../components/userIcon/UserIcon";
 
 export const Chat = () => {
   const navigate = useNavigate();
@@ -26,7 +27,10 @@ export const Chat = () => {
 
       if (userToChat) {
         const updatedConversations = useMessageStore.getState().conversations;
-        const userFromURL = updatedConversations.find(u => u.username === userToChat);
+        console.log(`User to chat: ${userToChat}`);
+        console.log(`Conversations:`, updatedConversations);
+        const userFromURL = updatedConversations.find(u => u.id === Number(userToChat));
+        console.log(`User from URL:`, userFromURL);
 
         if (!userFromURL) {
           console.log(`Adding new user to conversation: ${userToChat}`);
@@ -34,9 +38,9 @@ export const Chat = () => {
 
           setTimeout(() => { // Small delay to allow state to settle
             const finalConversations = useMessageStore.getState().conversations;
-            const addedUser = finalConversations.find(u => u.username === userToChat);
+            const addedUser = finalConversations.find(u => u.id === userToChat);
             
-            if (addedUser && (!selectedUser || selectedUser.username !== userToChat)) {
+            if (addedUser && (!selectedUser || selectedUser.id !== userToChat)) {
               setSelectedUser(addedUser);
             }
           }, 50);
@@ -51,16 +55,7 @@ export const Chat = () => {
 
     getUserInformation();
 }, [ userToChat]); 
-  
-
-  useEffect(() => {
-    if (selectedUser) {
-      navigate(`/chat?username=${selectedUser.username}`, { replace: true });
-      readConversationApi(token, selectedUser.username);
-      fetchUserConversation(token, selectedUser.username);
-    }
-  }, [selectedUser]);
-  
+    
 
 
   const handleSendMessage = async () => {
@@ -70,19 +65,19 @@ export const Chat = () => {
         const newMessage = {
           messageId: localId,
           message: messageInput,
-          sender: userUsername,
+          sender: user.username,
           formattedTimestamp: new Date(),
           status: 'sending'
         };
         addLocalMessage(newMessage);
         setMessageInput(""); // Clear input after sending
 
-          if(sendMessage(selectedUser.username, messageInput)) {
+          if(sendMessage(selectedUser.id, messageInput)) {
             updateMessageStatus(localId, 'not_read');
           }
           else {
             try {
-              const response = await sendMessageApi(token, messageInput, selectedUser.username);
+              await handleSendMessageViaApi(selectedUser.id, messageInput);
               handleNotification("success", "chatWsClosedMessageSent");
               updateMessageStatus(localId, 'sent');
               setMessageInput(""); // Clear input after sending
@@ -112,14 +107,14 @@ export const Chat = () => {
           {conversations.map((user) => (
             <div 
               key={user.username} 
-              className={`user-item ${selectedUser?.username === user.username ? 'selected' : ''}`}
+              className={`user-item ${selectedUser?.id === user.id ? 'selected' : ''}`}
               onClick={() => setSelectedUser(user)}
             >
               <div className="user-avatar">
                 {user.url ? (
-                  <img src={user.url} alt={user.username} />
+                  <img src={user.url} alt={user.name} />
                 ) : (
-                  <div className="avatar-placeholder">{user.username.charAt(0).toUpperCase()}</div>
+                  <div className="avatar-placeholder">{user.name.charAt(0).toUpperCase()}</div>
                 )}
               </div>
               <div className="user-info">
@@ -138,10 +133,10 @@ export const Chat = () => {
             <div className="chat-header">
               <div className="chat-user">
                 {selectedUser.url ? (
-                  <img src={selectedUser.url} alt={selectedUser.username} className="chat-user-avatar" />
+                  <img src={selectedUser.url} alt={selectedUser.name} className="chat-user-avatar" />
                 ) : (
                   <div className="chat-avatar-placeholder">
-                    {selectedUser.username.charAt(0).toUpperCase()}
+                    {selectedUser.name.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <h2>{selectedUser.username}</h2>

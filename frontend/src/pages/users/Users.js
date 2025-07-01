@@ -180,9 +180,9 @@ export default function Users() {
   return (
     <div className="users-container">
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
-      <div className="searchBar-container">
+      <div className="searchBar-containerAndButton">
         <div
-          className={`searchBar-wrapper ${isAdmin ? "with-assign-button" : ""}`}
+          className={`searchBar-wrapperAndButton ${isAdmin ? "with-assign-button" : ""}`}
         >
           <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
         </div>

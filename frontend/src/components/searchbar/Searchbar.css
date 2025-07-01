@@ -37,12 +37,12 @@
   gap: 0.5rem;
   transition: background 0.2s;
 }
-.search-icon {
+.searchBar-icon {
   color: var(--secondary);
   font-size: 1.5rem;
 }
 
-.search-icon:hover {
+.searchBar-icon:hover {
   color: var(--blue);
 }
 

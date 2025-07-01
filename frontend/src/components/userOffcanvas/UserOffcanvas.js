@@ -231,7 +231,8 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
 };
 
 // FUNÇÃO para gerar avatar com iniciais
-const generateInitialsAvatar = (name, surname) => {
+export const generateInitialsAvatar = (name, surname) => {
+  console.log("🔍 DEBUG - Generating initials avatar for:", { name, surname });
   const initials = `${name?.[0] || ""}${surname?.[0] || ""}`.toUpperCase();
   return `data:image/svg+xml;base64,${btoa(`
     <svg width="275" height="275" viewBox="0 0 275 275" fill="none" xmlns="http://www.w3.org/2000/svg">
