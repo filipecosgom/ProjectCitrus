@@ -1,66 +1,75 @@
-import { useState, useEffect, useRef } from "react";
-import useUserStore from "../Stores/useUserStore";
+import { useState, useEffect } from "react";
+import useAuthStore from "../stores/useAuthStore";
 import handleNotification from "../handles/handleNotification";
 import { useTranslation } from "react-i18next";
-import {
-  transformArrayDatetoDate,
-  dateToFormattedTime,
-} from "../Utils/utilityFunctions";
+import { transformArrayDatetoDate, dateToFormattedTime } from "../Utils/utilityFunctions";
 
 function useWebSocketNotifications(isAuthenticated) {
-  const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
-  const user = useUserStore((state) => state.user);
-  const [notificationCount, setNotificationCount] = useState(0);
-  const [websocket, setWebSocket] = useState(null);
-  const { t } = useTranslation();
+    const { user } = useAuthStore(); // get user info, not token
+    const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [websocket, setWebSocket] = useState(null);
+    const { t } = useTranslation();
 
-  useEffect(() => {
-    const ws = new WebSocket(WS_URL);
+    useEffect(() => {
+        if (!isAuthenticated || !user) {
+            if (websocket) {
+                websocket.close();
+                setWebSocket(null);
+            }
+            return;
+        }
+        if (websocket) return;
 
-    ws.current.onopen = () => {
-      console.log("WebSocket notifications connected");
-    };
+        const ws = new WebSocket(WS_URL);
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+        ws.onopen = () => {
+            console.log("WebSocket notifications connected");
+        };
 
-      if (data.type === "NOTIFICATION_COUNT") {
-        setNotificationCount(data.count);
-      }
-      if (data.type === "MESSAGE") {
-        let notification = data.notification;
-        let timestamp = transformArrayDatetoDate(notification.timestamp);
-        timestamp = dateToFormattedTime(timestamp);
-        console.log(notification);
-        handleNotification("success", "wsNotificationsLastMessage", {
-          sender: notification.senderUsername,
-          message: notification.content,
-          timestamp: timestamp,
-        });
-        handleNotification("success", "wsNotificationsUnreadMessages", {
-          numMessages: notification.messageCount,
-          sender: notification.senderUsername,
-        });
-      }
-      if (data.type === "PING") {
-        ws.send(JSON.stringify({ type: "PONG" }));
-      }
-    };
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
 
-    ws.onclose = () => {
-      console.log("WebSocket closed.");
-      setWebSocket(null);
-    };
+            if (data.type === "NOTIFICATION_COUNT") {
+                setNotificationCount(data.count);
+            }
+            if (data.type === "MESSAGE") {
+                let notification = data.notification;
+                let timestamp = transformArrayDatetoDate(notification.timestamp);
+                timestamp = dateToFormattedTime(timestamp);
+                handleNotification("success", "wsNotificationsLastMessage", {
+                    sender: notification.senderUsername,
+                    message: notification.content,
+                    timestamp: timestamp
+                });
+                handleNotification("success", "wsNotificationsUnreadMessages", {
+                    numMessages: notification.messageCount,
+                    sender: notification.senderUsername
+                });
+            }
+            if (data.type === "AUTH_FAILED") {
+                handleNotification("error", "WebSocket authentication failed");
+                ws.close();
+            }
+            if (data.type === "PING") {
+                ws.send(JSON.stringify({ type: "PONG" }));
+            }
+        };
 
-    setWebSocket(ws); // Persist the WebSocket instance
+        ws.onclose = () => {
+            console.log("WebSocket notifications closed.");
+            setWebSocket(null);
+        };
 
-    return () => {
-      console.log("Cleaning up WebSocket...");
-      ws.close();
-    };
-  }, [isAuthenticated, token]); // Dependencies
+        setWebSocket(ws);
 
-  return { notificationCount, websocket };
+        return () => {
+            console.log("Cleaning up WebSocket notifications...");
+            ws.close();
+        };
+    }, [isAuthenticated, user]);
+
+    return { notificationCount, websocket };
 }
 
 export default useWebSocketNotifications;

@@ -1,75 +1,109 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import useUserStore from "../Stores/useUserStore";
+import useMessageStore from "../Stores/useMessageStore";
+import { transformArrayDatetoDate } from "../utils/utilityFunctions";
 import useAuthStore from "../stores/useAuthStore";
-import handleNotification from "../handles/handleNotification";
-import { useTranslation } from "react-i18next";
-import { transformArrayDatetoDate, dateToFormattedTime } from "../Utils/utilityFunctions";
 
-function useWebSocketNotifications(isAuthenticated) {
-    const { user } = useAuthStore();
-    const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
-    const [notificationCount, setNotificationCount] = useState(0);
-    const [websocket, setWebSocket] = useState(null);
-    const { t } = useTranslation();
+function useWebSocketChat() {
+  const WS_URL = "wss://localhost:8443/projectcitrus/websocket/chat/";
+  const [websocket, setWebSocket] = useState(null);
+  const { user } = useAuthStore();
+  const {
+    selectedUser,
+    addLocalMessage,
+    isMessageAlreadyInQueue,
+    markConversationAsRead,
+  } = useMessageStore();
+  const currentChattingUser = useRef(selectedUser);
 
-    useEffect(() => {
-        if (!isAuthenticated || !user) {
-            if (websocket) {
-                websocket.close();
-                setWebSocket(null);
+  useEffect(() => {
+    currentChattingUser.user = selectedUser;
+  }, [selectedUser]);
+
+  const sendMessage = (userId, message) => {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      const messageJSON = JSON.stringify({
+        type: "MESSAGE",
+        recipientId: userId,
+        message: message,
+      });
+      websocket.send(messageJSON);
+      console.log("Message sent:", messageJSON);
+      return true;
+    } else {
+      console.error("WebSocket is not connected");
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    // Reconnect when user info changes (e.g., login/logout)
+    // If you want to reconnect on login/logout, add user as a dependency
+  }, [user]);
+
+  useEffect(() => {
+    if (websocket) {
+      return;
+    }
+
+    const ws = new WebSocket(WS_URL);
+
+    ws.current.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      console.log("WebSocket received:", data);
+
+      switch (data.type) {
+        case "MESSAGE":
+          if (data.sender === currentChattingUser.user.username) {
+            if (!isMessageAlreadyInQueue(data.id)) {
+              const newMessage = {
+                messageId: data.id,
+                message: data.message,
+                sender: data.sender,
+                formattedTimestamp: new Date(data.timestamp),
+                status: "read",
+              };
+              console.log(newMessage);
+              addLocalMessage(newMessage);
             }
-            return;
-        }
-        if (websocket) return;
+          }
+          break;
+        case "AUTHENTICATED":
+          console.log("Authenticated to websocket chat");
+          break;
+        case "AUTH_FAILED":
+          console.error("WebSocket authentication failed");
+          ws.close();
+          break;
+        case "CONVERSATION_READ":
+          if (data.sender === currentChattingUser.user.username) {
+            markConversationAsRead();
+          }
+          break;
+        case "PING":
+          ws.send(JSON.stringify({ type: "PONG" }));
+        default:
+          console.warn("Unknown message type:", data.type);
+      }
+    };
 
-        const ws = new WebSocket(WS_URL);
+    ws.onclose = () => {
+      console.log("WebSocket closed.");
+    };
 
-        ws.onopen = () => {
-            console.log("WebSocket notifications connected");
-        };
+    setWebSocket(ws);
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+    return () => {
+      console.log("Cleaning up WebSocket...");
+      ws.close();
+    };
+  }, []);
 
-            if (data.type === "NOTIFICATION_COUNT") {
-                setNotificationCount(data.count);
-            }
-            if (data.type === "MESSAGE") {
-                let notification = data.notification;
-                let timestamp = transformArrayDatetoDate(notification.timestamp);
-                timestamp = dateToFormattedTime(timestamp);
-                handleNotification("success", "wsNotificationsLastMessage", {
-                    sender: notification.senderUsername,
-                    message: notification.content,
-                    timestamp: timestamp
-                });
-                handleNotification("success", "wsNotificationsUnreadMessages", {
-                    numMessages: notification.messageCount,
-                    sender: notification.senderUsername
-                });
-            }
-            if (data.type === "AUTH_FAILED") {
-                handleNotification("error", "WebSocket authentication failed");
-                ws.close();
-            }
-            if (data.type === "PING") {
-                ws.send(JSON.stringify({ type: "PONG" }));
-            }
-        };
-
-        ws.onclose = () => {
-            console.log("WebSocket notifications closed.");
-            setWebSocket(null);
-        };
-
-        setWebSocket(ws);
-
-        return () => {
-            console.log("Cleaning up WebSocket notifications...");
-            ws.close();
-        };
-    }, [isAuthenticated, user]);
-
-    return { notificationCount, websocket };
+  return { sendMessage };
 }
 
-export default useWebSocketNotifications;
+export default useWebSocketChat;

@@ -149,6 +149,7 @@ public class UserService implements Serializable {
             UserEntity manager = userRepository.findUserById(updateUserDTO.getManager().getId());
             if(manager != null) {
                 user.setManagerUser(manager);
+                manager.setUserIsManager(true);
             }
         }
         if (updateUserDTO.getHasAvatar() != null) {

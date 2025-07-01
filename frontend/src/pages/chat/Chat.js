@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { getLoggedUserInformation } from "../../Handles/handleLogin";
-import useMessageStore from "../../Stores/useMessageStore";
-import useUserStore from "../../Stores/useUserStore";
+import useMessageStore from "../../stores/useMessageStore";
+import useAuthStore from "../../stores/useAuthStore";
 import { FaPaperPlane } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import useWebSocketChat from "../../Websockets/useWebSocketChat";
 import { sendMessageApi, readConversationApi } from '../api/messagesApi';
-import "./chat.css";
+import "./Chat.css";
 import handleNotification from "../../handles/handleNotification";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -14,18 +14,15 @@ export const Chat = () => {
   const navigate = useNavigate();
   const webSocketChat = useWebSocketChat();
   const { sendMessage } = useWebSocketChat();
-  const token = useUserStore((state) => state.token);
   const userToChat = new URLSearchParams(useLocation().search).get("id");
-  const [userUsername, setUsername ] = useState(null)
+  const { user } = useAuthStore();
   const { conversations, selectedUser, setSelectedUser, fetchAllConversations, messages, fetchUserConversation, addLocalMessage, updateMessageStatus  } = useMessageStore();
   const [messageInput, setMessageInput] = useState("");
   const { t } = useTranslation();
 
   useEffect(() => {
     const getUserInformation = async () => {
-      await fetchAllConversations(token);
-      let userInformation = await getLoggedUserInformation();
-      setUsername(userInformation.username);
+      await fetchAllConversations();
 
       if (userToChat) {
         const updatedConversations = useMessageStore.getState().conversations;
@@ -53,7 +50,7 @@ export const Chat = () => {
     };
 
     getUserInformation();
-}, [token, userToChat]); 
+}, [ userToChat]); 
   
 
   useEffect(() => {

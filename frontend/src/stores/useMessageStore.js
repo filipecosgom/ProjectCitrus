@@ -1,23 +1,19 @@
-import { fetchMessages, fetchAllConversations } from '../api/messagesApi';
+import { handleFetchAllConversations } from '../handles/handleFetchAllConversations';
+import { handleFetchMessages } from '../handles/handleFetchMessages';
 import { create } from "zustand";
-import { transformArrayDatetoDate } from "../Utils/utilityFunctions";
-import { useEffect } from "react";
-import User from "../Pages/User/User";
+import { transformArrayDatetoDate } from "../utils/utilityFunctions";
 
 const useMessageStore = create((set, get) => ({
     messages: [],
-    selectedUser: null,
+    selectedUserId: null,
     conversations: [],
     localUsers: [],
     
-    fetchAllConversations: async (token) => {
+    fetchAllConversations: async () => {
       try {
-        const conversationUsers = await fetchAllConversations(token);
-    
-        // 🔥 Ensure local users persist by merging them properly
-        const mergedUsers = [...conversationUsers];
-    
-        get().localUsers.forEach((localUser) => {
+        const conversationUsers = await handleFetchAllConversations();
+            const mergedUsers = [...conversationUsers];
+            get().localUsers.forEach((localUser) => {
           // 🛠️ Add local users *only if they are missing* from fetched conversations
           if (!mergedUsers.some(user => user.username === localUser.username)) {
             mergedUsers.push(localUser);
@@ -32,25 +28,29 @@ const useMessageStore = create((set, get) => ({
     
 
 
-  addNewUserToConversation: (username) => {
+  addNewUserToConversation: (userId) => {
     const { conversations, localUsers } = get();
-    if (!conversations.some(user => user.username === username)) {
-        const newUser = { username, url: null };
+    if (!conversations.some(user => user.id === userId)) {
+        const newUser = { userId, url: null };
         set({ conversations: [...conversations, newUser], localUsers: [...localUsers, newUser] });
     }
 },
 
     
     
-    fetchUserConversation: async (token, username) => {
+    fetchUserConversation: async (otherUserId) => {
       try {
-        const userMessages = await fetchMessages(token, username);
-        const formattedMessages = userMessages.map((message) => ({
-          ...message, // Keep original message properties
-          status: message.read ? "read" : "not_read",
-          formattedTimestamp: transformArrayDatetoDate(message.timestamp)
-        }));
-        set({ messages: formattedMessages }); // No need for extraction
+        const result = await handleFetchMessages(otherUserId);
+        if (result.success) {
+          const formattedMessages = result.messages.map((message) => ({
+            ...message,
+            status: message.read ? "read" : "not_read",
+            formattedTimestamp: transformArrayDatetoDate(message.timestamp),
+          }));
+          set({ messages: formattedMessages });
+        } else {
+          set({ error: result.error?.message || "Failed to fetch messages", loading: false });
+        }
       } catch (error) {
         set({ error: error.message, loading: false });
       }
@@ -94,4 +94,3 @@ const useMessageStore = create((set, get) => ({
   }));
   
   export default useMessageStore;
-  
