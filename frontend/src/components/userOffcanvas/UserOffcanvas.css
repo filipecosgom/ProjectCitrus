@@ -70,9 +70,9 @@
 
 /* ✅ Avatar 275px com especificações exatas */
 .user-offcanvas-avatar {
-  width: 275px;
-  height: 275px;
-  margin-bottom: 24px;
+  width: 250px;
+  height: 250px;
+  margin-bottom: 12px;
   flex-shrink: 0;
 }
 
@@ -136,7 +136,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
 }
 
 .user-offcanvas-info-item {
@@ -167,7 +167,6 @@
   font-family: var(--font-family-secondary, "Catamaran", sans-serif);
   font-size: var(--font-size-main, 1rem);
   font-weight: var(--font-weight-bold, 700);
-  margin-bottom: 32px;
   text-align: center;
 }
 

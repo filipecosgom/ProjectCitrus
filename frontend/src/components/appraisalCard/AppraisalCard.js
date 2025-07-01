@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import UserIcon from "../userIcon/UserIcon";
-import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import { useTranslation } from "react-i18next";
 import AppraisalScoreStarBadge from "../appraisalScoreStarBadge/AppraisalScoreStarBadge";
 import AppraisalStateBadge from "../appraisalStateBadge/AppraisalStateBadge";
 import "./AppraisalCard.css";
-import {
-  formatStringToDate,
-} from "../../utils/utilityFunctions";
+import { formatStringToDate } from "../../utils/utilityFunctions";
 
 const AppraisalCard = ({ appraisal }) => {
   const { t } = useTranslation();
 
   return (
     <div className="appraisalCard-container">
-      {/* Appraised User */}
-      <div className="appraisalCard-user appraisalCard-appraised">
+      {/* ✅ COLUNA 1: Appraised User */}
+      <div
+        className="appraisalCard-user appraisalCard-appraised"
+        data-label={t("user")} // Para mobile
+      >
         <UserIcon user={appraisal.appraisedUser} />
         <div className="appraisalCard-userInfo">
           <div className="appraisalCard-name">
@@ -28,10 +28,19 @@ const AppraisalCard = ({ appraisal }) => {
         </div>
       </div>
 
-      <AppraisalScoreStarBadge score={appraisal.score} />
+      {/* ✅ COLUNA 2: Score */}
+      <div
+        className="appraisalCard-score"
+        data-label={t("score")} // Para mobile
+      >
+        <AppraisalScoreStarBadge score={appraisal.score} />
+      </div>
 
-      {/* Appraising User */}
-      <div className="appraisalCard-user appraisalCard-appraising">
+      {/* ✅ COLUNA 3: Appraising User (Manager) */}
+      <div
+        className="appraisalCard-user appraisalCard-appraising"
+        data-label={t("manager")} // Para mobile
+      >
         <UserIcon user={appraisal.appraisingUser} />
         <div className="appraisalCard-userInfo">
           <div className="appraisalCard-name">
@@ -43,13 +52,21 @@ const AppraisalCard = ({ appraisal }) => {
         </div>
       </div>
 
-      {/* End Date */}
-      <div className="appraisalCard-endDate">
+      {/* ✅ COLUNA 4: End Date */}
+      <div
+        className="appraisalCard-endDate"
+        data-label={t("endDate")} // Para mobile
+      >
         {formatStringToDate(appraisal.endDate)}
       </div>
 
-      {/* State */}
-      <AppraisalStateBadge state={appraisal.state} />
+      {/* ✅ COLUNA 5: State */}
+      <div
+        className="appraisalCard-state"
+        data-label={t("state")} // Para mobile
+      >
+        <AppraisalStateBadge state={appraisal.state} />
+      </div>
     </div>
   );
 };

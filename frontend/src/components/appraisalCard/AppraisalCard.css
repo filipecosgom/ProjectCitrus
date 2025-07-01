@@ -1,67 +1,111 @@
 .appraisalCard-container {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr) /* User */
+    120px /* Score */
+    minmax(180px, 1fr) /* Manager */
+    120px /* End date */
+    120px; /* ✅ MANTER: 120px para combinar com SortControls */
   gap: 1.5rem;
+  align-items: center;
   background: #fff;
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  min-height: 60px;
 }
 
+/* ✅ COLUNAS ESPECÍFICAS */
 .appraisalCard-user {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-width: 180px;
 }
 
 .appraisalCard-userInfo {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Para truncar texto se necessário */
 }
 
 .appraisalCard-name {
   font-weight: bold;
   font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .appraisalCard-email {
   font-size: 0.85rem;
   color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* ✅ SCORE COLUMN */
 .appraisalCard-score {
-  min-width: 120px;
-  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.appraisal-stars {
-  display: flex;
-  gap: 2px;
-}
-
-.appraisal-star {
-  font-size: 1.2rem;
-}
-
-.appraisal-no-score {
-  color: #888;
-  font-style: italic;
-}
-
-.appraisalCard-endDate {
-  min-width: 120px;
   text-align: center;
+}
+
+/* ✅ END DATE COLUMN */
+.appraisalCard-endDate {
+  text-align: left;
   color: #555;
 }
 
+/* ✅ STATE COLUMN */
 .appraisalCard-state {
-  min-width: 120px;
-  text-align: center;
-  font-weight: bold;
-  color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+/* ✅ RESPONSIVE - TABLET */
+@media (max-width: 1024px) {
+  .appraisalCard-container {
+    grid-template-columns:
+      minmax(150px, 1fr) /* User */
+      100px /* Score */
+      minmax(150px, 1fr) /* Manager */
+      90px /* End date */
+      110px; /* ✅ AJUSTAR: para combinar com SortControls */
+    gap: 1rem;
+  }
+}
+
+/* ✅ RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+  .appraisalCard-container {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .appraisalCard-user,
+  .appraisalCard-score,
+  .appraisalCard-endDate,
+  .appraisalCard-state {
+    justify-self: start;
+    text-align: left;
+  }
+
+  /* ✅ MOBILE LAYOUT COM LABELS */
+  .appraisalCard-user::before,
+  .appraisalCard-score::before,
+  .appraisalCard-endDate::before,
+  .appraisalCard-state::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #555;
+    font-size: 0.8rem;
+  }
 }
