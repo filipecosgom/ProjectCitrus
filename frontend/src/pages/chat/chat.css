@@ -8,7 +8,7 @@
   }
   
   /* User list styles */
-  .user-list {
+  .chat-user-list {
     width: 300px;
     border-right: 1px solid #e0e0e0;
     display: flex;
@@ -16,19 +16,19 @@
     background-color: #f8f9fa;
   }
   
-  .user-list-header {
+  .chat-user-list-header {
     padding: 15px;
     margin: 0;
     border-bottom: 1px solid #e0e0e0;
     background-color: #fff;
   }
   
-  .user-list-items {
+  .chat-user-list-items {
     flex: 1;
     overflow-y: auto;
   }
   
-  .user-item {
+  .chat-user-item {
     display: flex;
     padding: 12px 15px;
     cursor: pointer;
@@ -36,26 +36,26 @@
     border-bottom: 1px solid #eee;
   }
   
-  .user-item:hover {
+  .chat-user-item:hover {
     background-color: #e9ecef;
   }
   
-  .user-item.selected {
+  .chat-user-item.selected {
     background-color: #e3f2fd;
   }
   
-  .user-avatar {
+  .chat-user-avatar {
     margin-right: 12px;
   }
   
-  .user-avatar img {
+  .chat-user-avatar img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
   }
   
-  .avatar-placeholder {
+  .chat-avatar-placeholder {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -67,13 +67,13 @@
     font-weight: bold;
   }
   
-  .user-info h3 {
+  .chat-user-info h3 {
     margin: 0 0 4px 0;
     font-size: 15px;
     color: #333;
   }
   
-  .last-message {
+  .chat-last-message {
     margin: 0;
     font-size: 13px;
     color: #666;
@@ -127,7 +127,7 @@
     font-size: 18px;
   }
   
-  .messages-container {
+  .chat-messages-container {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
@@ -136,12 +136,12 @@
     background-repeat: repeat;
   }
   
-  .message {
+  .chat-message {
     display: flex;
     margin-bottom: 15px;
   }
   
-  .message-content {
+  .chat-message-content {
     max-width: 70%;
     padding: 10px 15px;
     border-radius: 7.5px;
@@ -149,7 +149,7 @@
     box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
   }
   
-  .message-time {
+  .chat-message-time {
     font-size: 11px;
     color: rgba(0, 0, 0, 0.45);
     display: block;
@@ -157,23 +157,23 @@
     margin-top: 4px;
   }
   
-  .message.received {
+  .chat-message.received {
     justify-content: flex-start;
   }
   
-  .message.received .message-content {
+  .chat-message.received .message-content {
     background-color: #fff;
   }
   
-  .message.sent {
+  .chat-message.sent {
     justify-content: flex-end;
   }
   
-  .message.sent .message-content {
+  .chat-message.sent .message-content {
     background-color: #dcf8c6;
   }
   
-  .message-input-container {
+  .chat-message-input-container {
     display: flex;
     padding: 10px;
     background-color: #f0f2f5;
@@ -181,7 +181,7 @@
     align-items: center;
   }
   
-  .message-input-container textarea {
+  .chat-message-input-container textarea {
     flex: 1;
     border: none;
     border-radius: 20px;
@@ -195,35 +195,35 @@
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
   }
 
-  .message-status {
+  .chat-message-status {
     margin-left: 5px;
     font-size: 0.8em;
   }
   
-  .message.sending .message-content {
+  .chat-message.sending .message-content {
     opacity: 0.8;
   }
   
-  .message.failed .message-content {
+  .chat-message.failed .message-content {
     background-color: #ffebee;
   }
 
   /* Add to your Chat.css */
 
 /* Status icons base style */
-.status-icon {
+.chat-status-icon {
   margin-left: 5px;
   font-size: 1em;
   opacity: 0.7;
 }
 
 /* Sent status (single check) */
-.message.sent .status-icon {
+.chat-message.sent .status-icon {
   color: #999;
 }
 
 /* Read status (blue double check) */
-.status-icon-read {
+.chat-status-icon-read {
   margin-left: 5px;
   font-size: 1em;
   font-weight: bold;
@@ -231,7 +231,7 @@
 }
 
 /* Not read status (grey double check with lower opacity) */
-.status-icon-not_read {
+.chat-status-icon-not_read {
   margin-left: 5px;
   font-size: 1em;
   opacity: 0.7;
@@ -240,13 +240,13 @@
 }
 
 /* Failed message styling */
-.message.failed .message-content {
+.chat-message.failed .message-content {
   background-color: #ffebee;
   border: 1px solid #ffcdd2;
 }
 
 /* Sending message styling */
-.message.sending .message-content {
+.chat-message.sending .message-content {
   opacity: 0.8;
   background-color: #e3f2fd;
 }
@@ -258,11 +258,11 @@
   100% { transform: scale(1); }
 }
 
-.message.sent .status-icon.read {
+.chat-message.sent .status-icon.read {
   animation: readPulse 0.3s ease;
 }
   
-  .send-button {
+  .chat-send-button {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -276,16 +276,16 @@
     transition: background-color 0.2s;
   }
   
-  .send-button:hover {
+  .chat-send-button:hover {
     background-color: #3a5a80;
   }
   
-  .send-button:disabled {
+  .chat-send-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
   }
   
-  .empty-chat {
+  .chat-empty-chat {
     flex: 1;
     display: flex;
     align-items: center;

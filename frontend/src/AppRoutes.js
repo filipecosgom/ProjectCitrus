@@ -118,7 +118,6 @@ function AppRoutes({ currentLocale, setLocale }) {
             </ProtectedRoute>
           }
         />
-        {/* ✅ NOVAS ROTAS ADMIN */}
         <Route
           path="/cycles"
           element={

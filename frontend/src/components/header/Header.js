@@ -14,7 +14,7 @@ export default function Header({
   setLanguage,
 }) {
   // Lê o user do store global
-  const { user, avatar } = useAuthStore();
+  const { user } = useAuthStore();
 
   // Protege contra user null
   const firstName = user?.name || "";

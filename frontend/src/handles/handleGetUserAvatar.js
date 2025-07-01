@@ -14,8 +14,6 @@ export const handleGetUserAvatar = async (id) => {
     }
 
     const imageUrl = URL.createObjectURL(response.blob);
-    console.log("resposta", response);
-    console.log("imageUrl: ", imageUrl);
     return {
       success: true,
       avatar: imageUrl,

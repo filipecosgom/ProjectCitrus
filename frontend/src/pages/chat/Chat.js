@@ -17,7 +17,14 @@ export const Chat = () => {
   const { sendMessage } = useWebSocketChat();
   const userToChat = new URLSearchParams(useLocation().search).get("id");
   const { user } = useAuthStore();
-  const { conversations, selectedUser, setSelectedUser, fetchAllConversations, messages, fetchUserConversation, addLocalMessage, updateMessageStatus  } = useMessageStore();
+  const { conversations,
+     selectedUser,
+      setSelectedUser,
+       fetchAllConversations,
+        messages,
+         fetchUserConversation,
+          addLocalMessage,
+           updateMessageStatus  } = useMessageStore();
   const [messageInput, setMessageInput] = useState("");
   const { t } = useTranslation();
 
@@ -27,13 +34,9 @@ export const Chat = () => {
 
       if (userToChat) {
         const updatedConversations = useMessageStore.getState().conversations;
-        console.log(`User to chat: ${userToChat}`);
-        console.log(`Conversations:`, updatedConversations);
         const userFromURL = updatedConversations.find(u => u.id === Number(userToChat));
-        console.log(`User from URL:`, userFromURL);
 
         if (!userFromURL) {
-          console.log(`Adding new user to conversation: ${userToChat}`);
           useMessageStore.getState().addNewUserToConversation(userToChat);
 
           setTimeout(() => { // Small delay to allow state to settle
@@ -45,16 +48,22 @@ export const Chat = () => {
             }
           }, 50);
         } else {
-          console.log(`Selecting existing user: ${userToChat}`);
           if (!selectedUser || selectedUser.username !== userToChat) {
             setSelectedUser(userFromURL);
           }
         }
       }
     };
-
     getUserInformation();
 }, [ userToChat]); 
+
+useEffect(() => {
+    if (selectedUser) {
+      navigate(`/chat?id=${selectedUser.id}`, { replace: true });
+      handleReadConversation(selectedUser.id);
+      fetchUserConversation(selectedUser.id);
+    }
+  }, [selectedUser]);
     
 
 
@@ -65,12 +74,12 @@ export const Chat = () => {
         const newMessage = {
           messageId: localId,
           message: messageInput,
-          sender: user.username,
+          senderId: user.id,
           formattedTimestamp: new Date(),
           status: 'sending'
         };
         addLocalMessage(newMessage);
-        setMessageInput(""); // Clear input after sending
+        setMessageInput("");
 
           if(sendMessage(selectedUser.id, messageInput)) {
             updateMessageStatus(localId, 'not_read');
@@ -101,24 +110,20 @@ export const Chat = () => {
   return (
     <div className="chat-container">
       {/* Left sidebar - User list */}
-      <div className="user-list">
-        <h2 className="user-list-header">Conversations</h2>
-        <div className="user-list-items">
+      <div className="chat-user-list">
+        <h2 className="chat-user-list-header">Conversations</h2>
+        <div className="chat-user-list-items">
           {conversations.map((user) => (
             <div 
-              key={user.username} 
-              className={`user-item ${selectedUser?.id === user.id ? 'selected' : ''}`}
+              key={user.id} 
+              className={`chat-user-item ${selectedUser?.id === user.id ? 'selected' : ''}`}
               onClick={() => setSelectedUser(user)}
             >
               <div className="user-avatar">
-                {user.url ? (
-                  <img src={user.url} alt={user.name} />
-                ) : (
-                  <div className="avatar-placeholder">{user.name.charAt(0).toUpperCase()}</div>
-                )}
+                <UserIcon user={user} />
               </div>
-              <div className="user-info">
-                <h3>{user.username}</h3>
+              <div className="chat-user-info">
+                <h3>{user.name} {user.surname}</h3>
               </div>
             </div>
           ))}
@@ -132,30 +137,24 @@ export const Chat = () => {
             {/* Chat header */}
             <div className="chat-header">
               <div className="chat-user">
-                {selectedUser.url ? (
-                  <img src={selectedUser.url} alt={selectedUser.name} className="chat-user-avatar" />
-                ) : (
-                  <div className="chat-avatar-placeholder">
-                    {selectedUser.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                <UserIcon user={selectedUser}/>
                 <h2>{selectedUser.username}</h2>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="messages-container">
+            <div className="chat-messages-container">
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`message ${message.sender === selectedUser.username ? 'received' : 'sent'}`}
+                  className={`chat-message ${message.senderId === user.id ? 'sent' : 'received'}`}
                 >
-                  <div className="message-content">
+                  <div className="chat-message-content">
                     <p>{message.message}</p>
-                    <div className="message-meta">
-                      <span className="message-time">
+                    <div className="chat-message-meta">
+                      <span className="chat-message-time">
                         {new Date(message.formattedTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      <span className={`status-icon-${message.status}`}>
+                      <span className={`chat-status-icon-${message.status}`}>
                         {message.status === 'sending' && '⏳'}
                         {message.status === 'failed' && '❌'}
                         {message.status === 'sent' && '✓'}
@@ -170,7 +169,7 @@ export const Chat = () => {
             </div>
 
             {/* Message input */}
-            <div className="message-input-container">
+            <div className="chat-message-input-container">
               <textarea
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
@@ -188,7 +187,7 @@ export const Chat = () => {
             </div>
           </>
         ) : (
-          <div className="empty-chat">
+          <div className="chat-empty-chat">
             <h3>Select a conversation to start chatting</h3>
           </div>
         )}
