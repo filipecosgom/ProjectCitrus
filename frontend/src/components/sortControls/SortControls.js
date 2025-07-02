@@ -4,103 +4,77 @@ import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import "./SortControls.css";
 
-const SortControls = ({ sortCriteria, sortOrder, onSort, className = "" }) => {
+const SortControls = ({
+  fields,
+  sortBy,
+  sortOrder,
+  onSortChange,
+  className = "",
+}) => {
   const { t } = useTranslation();
 
   // ✅ DETECTAR se é modo Users
   const isUsersMode = className.includes("users-mode");
 
-  const handleSort = (criteria) => {
+  const handleSort = (fieldKey) => {
     const newOrder =
-      sortCriteria === criteria && sortOrder === "asc" ? "desc" : "asc";
-    onSort(criteria, newOrder);
+      sortBy === fieldKey && sortOrder === "ASCENDING"
+        ? "DESCENDING"
+        : "ASCENDING";
+    onSortChange({ sortBy: fieldKey, sortOrder: newOrder });
   };
 
-  const getSortIcon = (criteria) => {
-    if (sortCriteria !== criteria) return "↕️";
-    return sortOrder === "asc" ? "⬆️" : "⬇️";
+  const getSortIcon = (fieldKey) => {
+    if (sortBy !== fieldKey) return "↕️";
+    return sortOrder === "ASCENDING" ? "⬆️" : "⬇️";
   };
+
+  // ✅ MAPEAR fields baseado no modo
+  const getDisplayFields = () => {
+    if (isUsersMode) {
+      // ✅ PARA USERS: 4 colunas
+      return [
+        { key: "name", labelKey: "userName" },
+        { key: "role", labelKey: "userRole" },
+        { key: "office", labelKey: "userOffice" },
+        { key: "manager", labelKey: "userManager" },
+      ];
+    } else {
+      // ✅ PARA APPRAISALS: 5 colunas (usar fields do props)
+      return Object.entries(fields).map(([key, labelKey]) => ({
+        key,
+        labelKey,
+      }));
+    }
+  };
+
+  const displayFields = getDisplayFields();
 
   return (
     <div className={`sortControls-container ${className}`}>
-      {/* ✅ COLUNA 1: USER/NOME */}
-      <div
-        className={`sortControls-div ${
-          sortCriteria === "name" ? "active" : ""
-        }`}
-        onClick={() => handleSort("name")}
-      >
-        {isUsersMode ? t("name") : t("user")}
-        {sortCriteria === "name" && (
-          <span className="sort-icon">{getSortIcon("name")}</span>
-        )}
-      </div>
-
-      {/* ✅ COLUNA 2: SCORE/ROLE */}
-      <div
-        className={`sortControls-div ${
-          sortCriteria === (isUsersMode ? "role" : "score") ? "active" : ""
-        }`}
-        onClick={() => handleSort(isUsersMode ? "role" : "score")}
-      >
-        {isUsersMode ? t("role") : t("score")}
-        {sortCriteria === (isUsersMode ? "role" : "score") && (
-          <span className="sort-icon">
-            {getSortIcon(isUsersMode ? "role" : "score")}
-          </span>
-        )}
-      </div>
-
-      {/* ✅ COLUNA 3: MANAGER/OFFICE */}
-      <div
-        className={`sortControls-div manager ${
-          sortCriteria === (isUsersMode ? "office" : "manager") ? "active" : ""
-        }`}
-        onClick={() => handleSort(isUsersMode ? "office" : "manager")}
-      >
-        {isUsersMode ? t("office") : t("manager")}
-        {sortCriteria === (isUsersMode ? "office" : "manager") && (
-          <span className="sort-icon">
-            {getSortIcon(isUsersMode ? "office" : "manager")}
-          </span>
-        )}
-      </div>
-
-      {/* ✅ COLUNA 4: END DATE/MANAGER */}
-      <div
-        className={`sortControls-div ${
-          sortCriteria === (isUsersMode ? "manager" : "endDate") ? "active" : ""
-        }`}
-        onClick={() => handleSort(isUsersMode ? "manager" : "endDate")}
-      >
-        {isUsersMode ? t("manager") : t("endDate")}
-        {sortCriteria === (isUsersMode ? "manager" : "endDate") && (
-          <span className="sort-icon">
-            {getSortIcon(isUsersMode ? "manager" : "endDate")}
-          </span>
-        )}
-      </div>
-
-      {/* ✅ COLUNA 5: STATE - ESCONDIDA EM USERS MODE */}
-      <div
-        className={`sortControls-div ${
-          sortCriteria === "state" ? "active" : ""
-        }`}
-        onClick={() => handleSort("state")}
-      >
-        {t("state")}
-        {sortCriteria === "state" && (
-          <span className="sort-icon">{getSortIcon("state")}</span>
-        )}
-      </div>
+      {displayFields.map(({ key, labelKey }) => (
+        <div
+          key={key}
+          className={`sortControls-div ${
+            key === "office" || key === "manager" ? key : ""
+          } ${sortBy === key ? "active" : ""}`}
+          onClick={() => handleSort(key)}
+        >
+          {t(labelKey)}
+          {sortBy === key && (
+            <span className="sort-icon">{getSortIcon(key)}</span>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
 
 SortControls.propTypes = {
-  sortCriteria: PropTypes.string.isRequired,
-  sortOrder: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  onSort: PropTypes.func.isRequired,
+  fields: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  sortOrder: PropTypes.oneOf(["ASCENDING", "DESCENDING"]).isRequired,
+  onSortChange: PropTypes.func.isRequired,
   className: PropTypes.string,
 };
 
