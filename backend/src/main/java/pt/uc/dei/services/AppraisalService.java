@@ -510,3 +510,4 @@ public class AppraisalService implements Serializable {
             return false;
         }
 }
+}
