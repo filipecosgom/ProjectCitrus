@@ -166,7 +166,6 @@ public class MessageController {
         }
     }
 
-    @AnotherOnly
     @PATCH
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")

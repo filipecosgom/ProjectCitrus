@@ -63,14 +63,14 @@ public class AppraisalService implements Serializable {
      * @param createAppraisalDTO The DTO containing appraisal creation data
      * @return The created appraisal DTO
      * @throws IllegalArgumentException If validation fails
-     * @throws IllegalStateException If business rules are violated
+     * @throws IllegalStateException    If business rules are violated
      */
     @Transactional
     public AppraisalDTO createAppraisal(CreateAppraisalDTO createAppraisalDTO) {
-        LOGGER.info("Creating new appraisal for user {} by user {} in cycle {}", 
-                   createAppraisalDTO.getAppraisedUserId(), 
-                   createAppraisalDTO.getAppraisingUserId(),
-                   createAppraisalDTO.getCycleId());
+        LOGGER.info("Creating new appraisal for user {} by user {} in cycle {}",
+                createAppraisalDTO.getAppraisedUserId(),
+                createAppraisalDTO.getAppraisingUserId(),
+                createAppraisalDTO.getCycleId());
         // Validate users exist
         UserEntity appraisedUser = userRepository.find(createAppraisalDTO.getAppraisedUserId());
         if (appraisedUser == null) {
@@ -93,9 +93,9 @@ public class AppraisalService implements Serializable {
 
         // Check if appraisal already exists for this combination
         AppraisalEntity existingAppraisal = appraisalRepository.findAppraisalByUsersAndCycle(
-            createAppraisalDTO.getAppraisedUserId(),
-            createAppraisalDTO.getAppraisingUserId(),
-            createAppraisalDTO.getCycleId()
+                createAppraisalDTO.getAppraisedUserId(),
+                createAppraisalDTO.getAppraisingUserId(),
+                createAppraisalDTO.getCycleId()
         );
 
         if (existingAppraisal != null) {
@@ -116,7 +116,8 @@ public class AppraisalService implements Serializable {
         appraisalEntity.setScore(createAppraisalDTO.getScore());
         appraisalEntity.setState(AppraisalState.IN_PROGRESS);
         appraisalEntity.setCreationDate(LocalDate.now());
-        appraisalEntity.setEditedDate(LocalDate.now());        appraisalRepository.persist(appraisalEntity);
+        appraisalEntity.setEditedDate(LocalDate.now());
+        appraisalRepository.persist(appraisalEntity);
         LOGGER.info("Created appraisal with ID: {}", appraisalEntity.getId());
 
         return appraisalMapper.toDto(appraisalEntity);
@@ -128,7 +129,7 @@ public class AppraisalService implements Serializable {
      * @param updateAppraisalDTO The DTO containing updated appraisal data
      * @return The updated AppraisalDTO
      * @throws IllegalArgumentException If appraisal not found
-     * @throws IllegalStateException If appraisal cannot be modified
+     * @throws IllegalStateException    If appraisal cannot be modified
      */
     @Transactional
     public AppraisalDTO updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO) {
@@ -150,7 +151,8 @@ public class AppraisalService implements Serializable {
         // Update fields
         appraisal.setFeedback(updateAppraisalDTO.getFeedback());
         appraisal.setScore(updateAppraisalDTO.getScore());
-        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());
+        appraisalRepository.merge(appraisal);
         LOGGER.info("Updated appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);
@@ -216,12 +218,12 @@ public class AppraisalService implements Serializable {
     /**
      * Retrieves appraisals with advanced filtering options.
      *
-     * @param appraisedUserId Optional filter by appraised user ID
+     * @param appraisedUserId  Optional filter by appraised user ID
      * @param appraisingUserId Optional filter by appraising user ID
-     * @param cycleId Optional filter by cycle ID
-     * @param state Optional filter by appraisal state
-     * @param limit Maximum number of results
-     * @param offset Starting position for pagination
+     * @param cycleId          Optional filter by cycle ID
+     * @param state            Optional filter by appraisal state
+     * @param limit            Maximum number of results
+     * @param offset           Starting position for pagination
      * @return List of filtered appraisal DTOs
      */
     public Map<String, Object> getAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
@@ -255,7 +257,7 @@ public class AppraisalService implements Serializable {
      * @param appraisalId The appraisal ID
      * @return The updated appraisal DTO
      * @throws IllegalArgumentException If appraisal not found
-     * @throws IllegalStateException If appraisal cannot be completed
+     * @throws IllegalStateException    If appraisal cannot be completed
      */
     @Transactional
     public AppraisalDTO completeAppraisal(Long appraisalId) {
@@ -271,7 +273,8 @@ public class AppraisalService implements Serializable {
         }
 
         appraisal.setState(AppraisalState.COMPLETED);
-        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());
+        appraisalRepository.merge(appraisal);
         LOGGER.info("Completed appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);
@@ -294,7 +297,8 @@ public class AppraisalService implements Serializable {
         }
 
         appraisal.setState(AppraisalState.CLOSED);
-        appraisal.setEditedDate(LocalDate.now());        appraisalRepository.merge(appraisal);
+        appraisal.setEditedDate(LocalDate.now());
+        appraisalRepository.merge(appraisal);
         LOGGER.info("Closed appraisal with ID: {}", appraisal.getId());
 
         return appraisalMapper.toDto(appraisal);
@@ -305,7 +309,7 @@ public class AppraisalService implements Serializable {
      *
      * @param appraisalId The appraisal ID
      * @throws IllegalArgumentException If appraisal not found
-     * @throws IllegalStateException If appraisal cannot be deleted
+     * @throws IllegalStateException    If appraisal cannot be deleted
      */
     @Transactional
     public void deleteAppraisal(Long appraisalId) {
@@ -318,7 +322,8 @@ public class AppraisalService implements Serializable {
 
         if (appraisal.getState() == AppraisalState.CLOSED) {
             throw new IllegalStateException("Cannot delete a closed appraisal");
-        }        appraisalRepository.remove(appraisal);
+        }
+        appraisalRepository.remove(appraisal);
         LOGGER.info("Deleted appraisal with ID: {}", appraisalId);
     }
 
@@ -345,7 +350,7 @@ public class AppraisalService implements Serializable {
      * This is a simplified implementation - adjust based on your business logic.
      *
      * @param manager The potential manager
-     * @param user The user to check
+     * @param user    The user to check
      * @return True if manager is authorized to appraise the user
      */
     private boolean isManagerOfUser(UserEntity manager, UserEntity user) {
@@ -353,7 +358,7 @@ public class AppraisalService implements Serializable {
         // 1. Check if manager.getId().equals(user.getManagerUser().getId())
         // 2. Check role hierarchy
         // 3. Check organizational structure
-        
+
         // For now, we'll assume any user can appraise any other user
         // You should implement proper authorization logic here
         return !manager.getId().equals(user.getId()); // Can't appraise yourself
@@ -371,13 +376,13 @@ public class AppraisalService implements Serializable {
     @Transactional
     public int closeAppraisalsByIds(List<Long> appraisalIds) {
         LOGGER.info("Attempting to close appraisals by IDs: {}", appraisalIds);
-        
+
         if (appraisalIds == null || appraisalIds.isEmpty()) {
             throw new IllegalArgumentException("No appraisal IDs provided");
         }
 
         List<AppraisalEntity> validAppraisals = appraisalRepository.findValidAppraisalsForClosing(appraisalIds);
-        
+
         if (validAppraisals.isEmpty()) {
             LOGGER.warn("No valid COMPLETED appraisals found in OPEN cycles for IDs: {}", appraisalIds);
             throw new IllegalArgumentException("No valid appraisals found for closing. Only COMPLETED appraisals in OPEN cycles can be closed.");
@@ -390,7 +395,7 @@ public class AppraisalService implements Serializable {
             closedCount++;
             LOGGER.debug("Closed appraisal ID: {} for user: {}", appraisal.getId(), appraisal.getAppraisedUser().getId());
         }
-        
+
         LOGGER.info("Successfully closed {} appraisals by IDs", closedCount);
         return closedCount;
     }
@@ -417,7 +422,7 @@ public class AppraisalService implements Serializable {
         }
 
         List<AppraisalEntity> completedAppraisals = appraisalRepository.findCompletedAppraisalsByCycleId(cycleId);
-        
+
         if (completedAppraisals.isEmpty()) {
             LOGGER.info("No COMPLETED appraisals found in cycle ID: {}", cycleId);
             return 0;
@@ -430,7 +435,7 @@ public class AppraisalService implements Serializable {
             closedCount++;
             LOGGER.debug("Closed appraisal ID: {} in cycle: {}", appraisal.getId(), cycleId);
         }
-        
+
         LOGGER.info("Successfully closed {} COMPLETED appraisals in cycle ID: {}", closedCount, cycleId);
         return closedCount;
     }
@@ -454,7 +459,7 @@ public class AppraisalService implements Serializable {
         }
 
         List<AppraisalEntity> completedAppraisals = appraisalRepository.findCompletedAppraisalsByUserId(userId);
-        
+
         if (completedAppraisals.isEmpty()) {
             LOGGER.info("No COMPLETED appraisals found for user ID: {}", userId);
             return 0;
@@ -467,7 +472,7 @@ public class AppraisalService implements Serializable {
             closedCount++;
             LOGGER.debug("Closed appraisal ID: {} for user: {}", appraisal.getId(), userId);
         }
-        
+
         LOGGER.info("Successfully closed {} COMPLETED appraisals for user ID: {}", closedCount, userId);
         return closedCount;
     }
@@ -483,7 +488,7 @@ public class AppraisalService implements Serializable {
         LOGGER.info("Attempting to close ALL COMPLETED appraisals in OPEN cycles");
 
         List<AppraisalEntity> completedAppraisals = appraisalRepository.findAllCompletedAppraisalsInOpenCycles();
-        
+
         if (completedAppraisals.isEmpty()) {
             LOGGER.info("No COMPLETED appraisals found in OPEN cycles");
             return 0;
@@ -496,7 +501,7 @@ public class AppraisalService implements Serializable {
             closedCount++;
             LOGGER.debug("Closed appraisal ID: {} in cycle: {}", appraisal.getId(), appraisal.getCycle().getId());
         }
-        
+
         LOGGER.info("Successfully closed {} COMPLETED appraisals across all OPEN cycles", closedCount);
         return closedCount;
     }
@@ -509,5 +514,6 @@ public class AppraisalService implements Serializable {
             LOGGER.error("Error checking manager of user for appraisal ID: {}", appraisalId, e);
             return false;
         }
+    }
 }
 }

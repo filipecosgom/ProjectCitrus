@@ -51,44 +51,43 @@ public class AppraisalController {
 
     @PATCH
     public Response updateAppraisal(@Valid UpdateAppraisalDTO updateAppraisalDTO, @CookieParam("jwt") String jwtToken) {
-            if (jwtToken == null || jwtToken.isEmpty()) {
-                LOGGER.warn("Unauthorized chat request: missing JWT cookie");
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
-                        .build();
-            }
-            // Extract user ID from JWT
-            Long userId = JWTUtil.getUserIdFromToken(jwtToken);
-            if (userId == null) {
-                LOGGER.warn("Invalid JWT token in chat request");
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
-                        .build();
-            }
         try {
-            LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
+            Long managerId = JWTUtil.extractUserIdOrAbort(jwtToken);
+            if(appraisalService.checkIfManagerOfUser(updateAppraisalDTO.getId(), managerId)){
+                LOGGER.info("Manager with ID {} is authorized to update appraisal with ID: {}", managerId, updateAppraisalDTO.getId());
+            } else {
+                LOGGER.warn("Manager with ID {} is not authorized to update appraisal with ID: {}", managerId, updateAppraisalDTO.getId());
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity(new ApiResponse(false, "You are not authorized to update this appraisal", "errorUnauthorized", null))
+                        .build();
+            }
+            try {
+                LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
 
-            AppraisalDTO updatedAppraisal = appraisalService.updateAppraisal(updateAppraisalDTO);
-            return Response.ok(new ApiResponse(true, "Appraisal updated successfully", "success", updatedAppraisal))
-                    .build();
+                AppraisalDTO updatedAppraisal = appraisalService.updateAppraisal(updateAppraisalDTO);
+                return Response.ok(new ApiResponse(true, "Appraisal updated successfully", "success", updatedAppraisal))
+                        .build();
 
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("Invalid request for appraisal update: {}", e.getMessage());
-            String errorCode = getValidationErrorCode(e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
-                    .build();
-        } catch (IllegalStateException e) {
-            LOGGER.warn("Business rule violation for appraisal update: {}", e.getMessage());
-            String errorCode = getConflictErrorCode(e.getMessage());
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
-                    .build();
-        } catch (Exception e) {
-            LOGGER.error("Unexpected error updating appraisal", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
-                    .build();
+            } catch (IllegalArgumentException e) {
+                LOGGER.warn("Invalid request for appraisal update: {}", e.getMessage());
+                String errorCode = getValidationErrorCode(e.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                        .build();
+            } catch (IllegalStateException e) {
+                LOGGER.warn("Business rule violation for appraisal update: {}", e.getMessage());
+                String errorCode = getConflictErrorCode(e.getMessage());
+                return Response.status(Response.Status.CONFLICT)
+                        .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
+                        .build();
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error updating appraisal", e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                        .build();
+            }
+        } catch (JWTUtil.JwtValidationException ex) {
+            return JWTUtil.buildUnauthorizedResponse(ex.getMessage());
         }
     }
 

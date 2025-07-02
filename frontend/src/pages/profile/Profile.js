@@ -100,6 +100,7 @@ export default function Profile() {
   }, []);
 
   const onSubmit = async (data) => {
+    console.log(data);
     setLoading(true);
 
     try {

@@ -88,7 +88,6 @@
   /* Chat area styles */
   .chat-area {
     flex: 1;
-    padding: 10px;
     display: flex;
     flex-direction: column;
     background-color: white;
@@ -184,6 +183,8 @@
     padding: 10px;
     background-color: #D5D4DF;
     align-items: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
   
   .chat-message-input-container textarea {
@@ -313,7 +314,7 @@
 
 
   .chat-header-mobile {
-    display: flex !important;
+    display: flex;
     align-items: center;
     padding: 10px 10px 10px 10px;
     background: #FFFBF2;
@@ -321,6 +322,9 @@
     border-radius: 10px;
     border: 2px solid #cbb4b4;
   }
+
+
+
 
   
 
@@ -342,7 +346,13 @@
 
   .chat-area {
     padding: 0px;
+    border-radius: 10px;
   }
+
+  .chat-header-mobile {
+    display: none;
+  }
+  
 }
 
 
@@ -365,16 +375,3 @@
 }
 
 
-/* Hide user list items on mobile, but keep search bar visible */
-@media (max-width: 480px) {
-  .chat-user-list-items {
-    display: none !important;
-  }
-}
-
-/* Show user list on tablet/desktop */
-@media (min-width: 481px) {
-  .chat-header-mobile {
-    display: none !important;
-  }
-}

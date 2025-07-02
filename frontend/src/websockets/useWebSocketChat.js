@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import useMessageStore from '../stores/useMessageStore';
 import { transformArrayDatetoDate } from "../utils/utilityFunctions";
 import useAuthStore from "../stores/useAuthStore";
 
 function useWebSocketChat() {
   const WS_URL = "wss://localhost:8443/projectcitrus/websocket/chat/";
-  const [websocket, setWebSocket] = useState(null);
+  const websocketRef = useRef(null); // <-- Only use ref
   const { user } = useAuthStore();
   const {
     selectedUser,
@@ -20,13 +20,13 @@ function useWebSocketChat() {
   }, [selectedUser]);
 
   const sendMessage = (userId, message) => {
-    if (websocket && websocket.readyState === WebSocket.OPEN) {
+    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
       const messageJSON = JSON.stringify({
         type: "MESSAGE",
         recipientId: userId,
         message: message,
       });
-      websocket.send(messageJSON);
+      websocketRef.current.send(messageJSON);
       console.log("Message sent:", messageJSON);
       return true;
     } else {
@@ -41,11 +41,12 @@ function useWebSocketChat() {
   }, [user]);
 
   useEffect(() => {
-    if (websocket) {
+    if (websocketRef.current) {
       return;
     }
 
     const ws = new WebSocket(WS_URL);
+    websocketRef.current = ws;
 
     ws.onopen = () => {
       console.log("WebSocket connected");
@@ -89,8 +90,10 @@ function useWebSocketChat() {
           break;
         case "SUCCESS":
           markConversationAsRead();
+          break;
         default:
           console.warn("Unknown message type:", data.type);
+          break;
       }
     };
 
@@ -98,15 +101,21 @@ function useWebSocketChat() {
       console.log("WebSocket closed.");
     };
 
-    setWebSocket(ws);
-
     return () => {
       console.log("Cleaning up WebSocket...");
       ws.close();
+      websocketRef.current = null;
     };
-  }, []);
+  }, [addLocalMessage, isMessageAlreadyInQueue, markConversationAsRead]);
 
-  return { sendMessage };
+  const closeWebSocket = () => {
+    if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+      console.log("Closing WebSocket connection...");
+      websocketRef.current.close();
+    }
+  };
+
+  return { sendMessage, closeWebSocket };
 }
 
 export default useWebSocketChat;
