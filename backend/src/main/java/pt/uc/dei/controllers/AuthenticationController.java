@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import jakarta.inject.Inject;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.util.Map;
@@ -118,13 +119,44 @@ public class AuthenticationController {
     @POST
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response logout(@Context HttpServletResponse response) {
+    public Response logout(@Context HttpServletResponse response, @CookieParam("jwt") String jwtToken) {
         LOGGER.info("Logout request received");
-        // Use response.header to overwrite the previous cookie setting
-        response.setHeader("Set-Cookie",
-                "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
-        LOGGER.info("JWT cookie cleared for logout");
-        return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
+        try {
+            // Validate JWT cookie exists
+            if (jwtToken == null || jwtToken.isEmpty()) {
+                LOGGER.warn("Unauthorized logout request: missing JWT cookie");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                        .build();
+            }
+
+            // Extract user ID from JWT
+            Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+
+            if (userId == null) {
+                LOGGER.warn("Invalid JWT token in logout request");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                        .build();
+            }
+
+            if (authenticationService.logoutUser(userId)) {
+                // Use response.header to overwrite the previous cookie setting
+                response.setHeader("Set-Cookie",
+                        "jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;");
+                LOGGER.info("JWT cookie cleared for logout");
+                return Response.ok(new ApiResponse(true, "Logged out successfully", null, null)).build();
+            }
+            LOGGER.error("Logout failed for userId {}", userId);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Logout failed", "errorLogoutFailed", null))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Error logging out", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Server error during logout", "errorServer", null))
+                    .build();
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.repositories.MessageRepository;
 import pt.uc.dei.repositories.NotificationRepository;
 import pt.uc.dei.repositories.UserRepository;
@@ -21,7 +22,9 @@ import pt.uc.dei.entities.MessageEntity;
 import pt.uc.dei.dtos.MessageDTO;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -65,15 +68,18 @@ public class MessageService implements Serializable {
 
     public List<UserResponseDTO> getAllChats(Long userId) {
         try {
-            List<Long> userIds = messageRepository.getAllConversations(userId);
-            return userIds.stream()
-                    .map(userRepository::findUserById)
-                    .filter(u -> u != null)
-                    .map(userMapper::toUserResponseDto)
+            List<Object[]> results = messageRepository.getAllConversations(userId);
+            return results.stream()
+                    .map(arr -> {
+                        Long otherUserId = (Long) arr[0];
+                        UserEntity user = userRepository.findUserById(otherUserId);
+                        return user != null ? userMapper.toUserResponseDto(user) : null;
+                    })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            LOGGER.error(e);
-            return null;
+            LOGGER.error("Error fetching conversations", e);
+            return Collections.emptyList(); // Better than returning null
         }
     }
 

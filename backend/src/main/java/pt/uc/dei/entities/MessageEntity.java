@@ -34,12 +34,13 @@ import java.time.LocalDateTime;
 
 @NamedQuery(
         name = "MessageEntity.getAllChats",
-        query = "SELECT DISTINCT u.id " +
+        query = "SELECT u.id, MAX(m.sentDate) as lastMessageDate " +
                 "FROM MessageEntity m " +
                 "JOIN UserEntity u ON (u.id = m.sender.id OR u.id = m.receiver.id) " +
                 "WHERE (m.receiver.id = :user_id OR m.sender.id = :user_id) " +
-                "AND u.id != :user_id " + // Exclude the current user
-                "ORDER BY u.id ASC"
+                "AND u.id != :user_id " +
+                "GROUP BY u.id " +
+                "ORDER BY lastMessageDate DESC"
 )
 
 @NamedQuery(

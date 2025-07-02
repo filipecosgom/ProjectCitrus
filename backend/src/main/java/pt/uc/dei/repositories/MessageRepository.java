@@ -30,16 +30,10 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
         }
     }
 
-    public List<Long> getAllConversations(Long userId) {
-        try {
-            List<Long> usersWithChat = em.createNamedQuery("MessageEntity.getAllChats", Long.class)
-                    .setParameter("user_id", userId)
-                    .getResultList();
-            return usersWithChat;
-        } catch (Exception e) {
-            LOGGER.error("Error fetching conversation: ", e);
-            return Collections.emptyList();
-        }
+    public List<Object[]> getAllConversations(Long userId) {
+        return em.createNamedQuery("MessageEntity.getAllChats", Object[].class)
+                .setParameter("user_id", userId)
+                .getResultList();
     }
 
     public int getUnreadMessageCount(Long recipientId, Long senderId) {

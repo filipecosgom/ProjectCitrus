@@ -11,7 +11,7 @@ import Users from "./pages/users/Users";
 import Appraisals from "./pages/appraisals/Appraisals";
 import Cycles from "./pages/cycles/Cycles";
 import Settings from "./pages/settings/Settings";
-import Chat from "./pages/chat/Chat";
+import Chat from "./pages/messageCenter/MessageCenter";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
@@ -24,7 +24,6 @@ function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
- 
 
   const hideHeaderRoutes = [
     "/",
@@ -52,7 +51,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/users",
     "/cycles",
     "/settings",
-    "/chat"
+    "/messages",
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -135,9 +134,11 @@ function AppRoutes({ currentLocale, setLocale }) {
           }
         />
         <Route
-          path="/chat"
+          path="/messages"
           element={
+            <ProtectedRoute>
               <Chat />
+            </ProtectedRoute>
           }
         />
         <Route

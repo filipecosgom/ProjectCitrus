@@ -58,9 +58,12 @@ public interface UserMapper {
     @Mapping(target = "userIsAdmin", source = "userIsAdmin")
     @Mapping(target = "userIsManager", source = "userIsManager")
     @Mapping(target = "accountState", source = "accountState")
+    @Mapping(target = "role", source = "role")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "surname", source = "surname")
     @Mapping(target = "hasAvatar", source = "hasAvatar")
+    @Mapping(target = "lastSeen", source = "lastSeen")
+    @Mapping(target = "onlineStatus", source = "onlineStatus")
     UserResponseDTO toUserResponseDto(UserEntity entity);
 
     @Named("toManagerDto")

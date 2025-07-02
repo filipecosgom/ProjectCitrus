@@ -130,6 +130,15 @@ public class UserEntity implements Serializable {
     @Column(name = "secretKey", nullable = false, updatable = false)
     private String secretKey;
 
+    /** Account creation timestamp (auto-set) */
+    @Column(name = "lastseen", nullable = true, updatable = true)
+    private LocalDateTime lastSeen;
+
+    @Column(name = "onlineStatus", nullable = false, updatable = true)
+    private Boolean onlineStatus;
+
+
+
     /** Manager reference (self-relationship) */
     @ManyToOne
     @JoinColumn(name = "manager_id")
@@ -544,5 +553,21 @@ public class UserEntity implements Serializable {
      */
     public void setCompletedCourses(Set<FinishedCourseEntity> completedCourses) {
         this.completedCourses = completedCourses;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public Boolean getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(Boolean onlineStatus) {
+        this.onlineStatus = onlineStatus;
     }
 }

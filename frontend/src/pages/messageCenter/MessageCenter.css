@@ -1,10 +1,17 @@
 /* Chat.css */
 
 /* Main container */
+.message-center-container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding-lg);
+  }
+  
+  /* Chat container */
+
 .chat-container {
     display: flex;
-    padding: 20vh;
-    height: calc(100vh - 10vh); /* Adjust based on your navbar height */
+    height: 100vh; /* Adjust based on your navbar height */
   }
   
   /* User list styles */

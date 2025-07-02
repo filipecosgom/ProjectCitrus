@@ -30,3 +30,23 @@
 .user-icon-placeholder svg {
   opacity: 0.6;
 }
+
+
+.user-icon-status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+}
+
+.user-icon-status.online {
+  background-color: #4caf50; /* Green */
+}
+
+.user-icon-status.offline {
+  background-color: #bdbdbd; /* Gray */
+}

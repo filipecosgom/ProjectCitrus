@@ -2,6 +2,9 @@ package pt.uc.dei.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import pt.uc.dei.enums.AccountState;
+import pt.uc.dei.enums.Role;
+
+import java.time.LocalDateTime;
 
 public class UserResponseDTO {
     private Long id;
@@ -13,6 +16,9 @@ public class UserResponseDTO {
     private String surname;
     private Boolean hasAvatar;
     private AccountState accountState;
+    private Role role;
+    private LocalDateTime lastSeen;
+    private Boolean onlineStatus;
 
     public UserResponseDTO() {}
 
@@ -150,5 +156,29 @@ public class UserResponseDTO {
      */
     public void setHasAvatar(Boolean hasAvatar) {
         this.hasAvatar = hasAvatar;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public Boolean getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(Boolean onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

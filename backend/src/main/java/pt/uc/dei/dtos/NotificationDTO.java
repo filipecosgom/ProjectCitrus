@@ -59,13 +59,6 @@ public class NotificationDTO {
     @NotNull(message = "Message count is required")
     private Integer messageCount;
 
-    /**
-     * The email address of the user receiving the notification.
-     * Must always be sent and must not be blank.
-     */
-    @NotBlank(message = "User email is required")
-    private String userEmail;
-
     private Long senderId;
     private Long recipientId;
 
@@ -117,14 +110,6 @@ public class NotificationDTO {
 
     public void setMessageCount(Integer messageCount) {
         this.messageCount = messageCount;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
     }
 
     public Boolean getSeen() {

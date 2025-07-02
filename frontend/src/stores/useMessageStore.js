@@ -28,11 +28,13 @@ const useMessageStore = create((set, get) => ({
     
 
 
-  addNewUserToConversation: (userId) => {
+  addNewUserToConversation: (user) => {
     const { conversations, localUsers } = get();
-    if (!conversations.some(user => user.id === userId)) {
-        const newUser = { userId, url: null };
-        set({ conversations: [...conversations, newUser], localUsers: [...localUsers, newUser] });
+    if (!conversations.some(u => u.id === user.id)) {
+      set({
+        conversations: [user, ...conversations], // Add new user to the top
+        localUsers: [user, ...localUsers]
+      });
     }
 },
 
