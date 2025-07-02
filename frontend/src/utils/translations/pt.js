@@ -291,6 +291,35 @@ const pt = {
     typeMessage: "Escreva uma mensagem...",
     selectConversation: "Selecione uma conversa para começar a conversar",
   },
+
+  // Sort Controls - General
+  sortControls: {
+    name: "Nome",
+    user: "Utilizador",
+    score: "Pontuação",
+    manager: "Gestor",
+    endDate: "Data Fim",
+    state: "Estado",
+    role: "Cargo",
+    office: "Escritório",
+  },
+
+  // Sort Controls - Appraisals específico
+  appraisalSortControls: {
+    user: "Utilizador",
+    score: "Pontuação",
+    manager: "Gestor",
+    endDate: "Data Fim",
+    state: "Estado",
+  },
+
+  // Sort Controls - Users específico
+  userSpecificSortControls: {
+    name: "Nome",
+    role: "Cargo",
+    office: "Escritório",
+    manager: "Gestor",
+  },
 };
 
 export default pt;

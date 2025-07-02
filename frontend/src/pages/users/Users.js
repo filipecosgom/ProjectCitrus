@@ -248,7 +248,9 @@ export default function Users() {
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
       <div className="searchBar-containerAndButton">
         <div
-          className={`searchBar-wrapperAndButton ${isAdmin ? "with-assign-button" : ""}`}
+          className={`searchBar-wrapperAndButton ${
+            isAdmin ? "with-assign-button" : ""
+          }`}
         >
           <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
         </div>
@@ -275,6 +277,7 @@ export default function Users() {
       </div>
 
       <SortControls
+        className="users-mode" /* ✅ ADICIONAR classe modificadora */
         fields={usersSortFields}
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}
