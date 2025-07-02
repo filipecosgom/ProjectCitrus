@@ -1,37 +1,90 @@
 .appraisal-state-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
-  padding: 0.2em 0.7em;
+  gap: 0.2em;
+  padding: 0.15em 0.5em;
   border-radius: 1em;
   font-weight: 600;
-  font-size: 0.95em;
+  font-size: 0.8em;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 150px; /* ✅ AUMENTAR: 110px → 150px para usar espaço extra */
+  overflow: hidden; /* ✅ CORRIGIR: auto → hidden */
+  text-overflow: ellipsis;
 }
+
 .badge-icon {
-  font-size: 1.1em;
+  font-size: 1em;
+  flex-shrink: 0;
 }
+
 .badge-inprogress {
   background: var(--badge-red);
   color: var(--badge-red-stroke);
   border: 2px solid var(--badge-red-stroke);
 }
+
 .badge-completed {
   background: var(--badge-green);
   color: var(--badge-green-stroke);
   border: 2px solid var(--badge-green-stroke);
 }
+
 .badge-closed {
   background: var(--badge-yellow);
   color: var(--badge-yellow-stroke);
   border: 2px solid var(--badge-yellow-stroke);
 }
+
 .badge-unknown {
   background: #eee;
   color: #888;
   border: 1px solid #bbb;
 }
+
 .badge-label {
-  margin-left: 0.2em;
+  margin-left: 0.1em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ✅ VERSÃO EXTRA COMPACTA mantém texto completo */
+.appraisal-state-badge.compact {
+  gap: 0.1em;
+  padding: 0.1em 0.3em;
+  font-size: 0.7em;
+  max-width: 100px; /* ✅ AUMENTAR: 70px → 100px */
+}
+
+.appraisal-state-badge.compact .badge-label {
+  margin-left: 0;
+}
+
+/* ✅ RESPONSIVE para telas pequenas */
+@media (max-width: 1024px) {
+  .appraisal-state-badge {
+    gap: 0.1em;
+    padding: 0.1em 0.4em;
+    font-size: 0.75em;
+    max-width: 105px; /* ✅ AUMENTAR: 80px → 105px */
+  }
+
+  .badge-label {
+    margin-left: 0.05em;
+  }
+}
+
+@media (max-width: 768px) {
+  .appraisal-state-badge {
+    gap: 0.1em;
+    padding: 0.1em 0.3em;
+    font-size: 0.7em;
+    max-width: 95px; /* ✅ AUMENTAR: 60px → 95px */
+  }
+
+  .badge-icon {
+    font-size: 0.9em;
+  }
 }

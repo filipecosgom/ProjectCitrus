@@ -3,10 +3,19 @@
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
 .sortControls-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  text-align: center;
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 1fr) /* ✅ REDUZIR User: 180px → 160px */
+    120px /* Score */
+    minmax(160px, 1fr) /* ✅ REDUZIR Manager: 180px → 160px */
+    140px /* ✅ AUMENTAR End date: 120px → 140px */
+    160px; /* ✅ AUMENTAR State: 120px → 160px para "IN PROGRESS" */
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
 .sortControls-div {
@@ -16,7 +25,7 @@
   font-family: var(--font-family-secondary);
   font-size: var(--font-size-main);
   transition: color 0.2s ease;
-  text-align: center; /* ✅ MUDANÇA: center → left */
+  text-align: left;
 }
 
 .sortControls-div.office {
@@ -37,7 +46,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  justify-content: center; /* ✅ MUDANÇA: center → flex-start */
+  justify-content: flex-start; /* ✅ MUDANÇA: center → flex-start */
 }
 
 .sort-icon {
@@ -64,7 +73,7 @@
 /*----------------------------------------*/
 @media (min-width: 1024px) {
   .sortControls-container {
-    padding: var(--padding-lg);
+    /*padding: var(--padding-lg);*/
   }
 
   .sortControls-div {
@@ -76,5 +85,24 @@
   }
   .sortControls-div.manager {
     display: block;
+  }
+}
+
+/* ✅ RESPONSIVE - TABLET */
+@media (max-width: 1024px) {
+  .sortControls-container {
+    grid-template-columns:
+      minmax(140px, 1fr) /* ✅ REDUZIR User: 150px → 140px */
+      100px /* Score */
+      minmax(140px, 1fr) /* ✅ REDUZIR Manager: 150px → 140px */
+      120px /* ✅ AUMENTAR End date: 90px → 120px */
+      140px; /* ✅ AUMENTAR State: 110px → 140px */
+  }
+}
+
+/* ✅ RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+  .sortControls-container {
+    grid-template-columns: 1fr; /* Uma coluna no mobile */
   }
 }
