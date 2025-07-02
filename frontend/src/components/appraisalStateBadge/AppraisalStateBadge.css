@@ -9,7 +9,7 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
-  max-width: 110px; /* ✅ AUMENTAR: 90px → 110px para caber "IN PROGRESS" */
+  max-width: 150px; /* ✅ AUMENTAR: 110px → 150px para usar espaço extra */
   overflow: hidden; /* ✅ CORRIGIR: auto → hidden */
   text-overflow: ellipsis;
 }

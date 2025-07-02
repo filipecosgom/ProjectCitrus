@@ -5,11 +5,11 @@
 .sortControls-container {
   display: grid;
   grid-template-columns:
-    minmax(180px, 1fr) /* User */
+    minmax(160px, 1fr) /* ✅ REDUZIR User: 180px → 160px */
     120px /* Score */
-    minmax(180px, 1fr) /* Manager */
-    120px /* End date */
-    120px; /* ✅ MANTER: 120px para caber "IN PROGRESS" */
+    minmax(160px, 1fr) /* ✅ REDUZIR Manager: 180px → 160px */
+    140px /* ✅ AUMENTAR End date: 120px → 140px */
+    160px; /* ✅ AUMENTAR State: 120px → 160px para "IN PROGRESS" */
   gap: 1.5rem;
   align-items: center;
   padding: 1rem;
@@ -92,11 +92,11 @@
 @media (max-width: 1024px) {
   .sortControls-container {
     grid-template-columns:
-      minmax(150px, 1fr) /* User */
+      minmax(140px, 1fr) /* ✅ REDUZIR User: 150px → 140px */
       100px /* Score */
-      minmax(150px, 1fr) /* Manager */
-      90px /* End date */
-      110px; /* ✅ AJUSTAR: 80px → 110px */
+      minmax(140px, 1fr) /* ✅ REDUZIR Manager: 150px → 140px */
+      120px /* ✅ AUMENTAR End date: 90px → 120px */
+      140px; /* ✅ AUMENTAR State: 110px → 140px */
   }
 }
 

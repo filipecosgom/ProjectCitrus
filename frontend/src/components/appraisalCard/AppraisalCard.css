@@ -1,11 +1,11 @@
 .appraisalCard-container {
   display: grid;
   grid-template-columns:
-    minmax(180px, 1fr) /* User */
+    minmax(160px, 1fr) /* ✅ REDUZIR User: 180px → 160px */
     120px /* Score */
-    minmax(180px, 1fr) /* Manager */
-    120px /* End date */
-    120px; /* ✅ MANTER: 120px para combinar com SortControls */
+    minmax(160px, 1fr) /* ✅ REDUZIR Manager: 180px → 160px */
+    140px /* ✅ AUMENTAR End date: 120px → 140px */
+    160px; /* ✅ AUMENTAR State: 120px → 160px para "IN PROGRESS" */
   gap: 1.5rem;
   align-items: center;
   background: #fff;
@@ -20,25 +20,27 @@
 .appraisalCard-user {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem; /* ✅ REDUZIR: 0.5rem → 0.4rem */
+  min-width: 0; /* ✅ PERMITIR shrink */
 }
 
 .appraisalCard-userInfo {
   display: flex;
   flex-direction: column;
   min-width: 0; /* Para truncar texto se necessário */
+  flex: 1; /* ✅ OCUPAR espaço disponível */
 }
 
 .appraisalCard-name {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.95rem; /* ✅ REDUZIR: 1rem → 0.95rem */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .appraisalCard-email {
-  font-size: 0.85rem;
+  font-size: 0.8rem; /* ✅ REDUZIR: 0.85rem → 0.8rem */
   color: #666;
   white-space: nowrap;
   overflow: hidden;
@@ -71,11 +73,11 @@
 @media (max-width: 1024px) {
   .appraisalCard-container {
     grid-template-columns:
-      minmax(150px, 1fr) /* User */
+      minmax(140px, 1fr) /* ✅ REDUZIR User: 150px → 140px */
       100px /* Score */
-      minmax(150px, 1fr) /* Manager */
-      90px /* End date */
-      110px; /* ✅ AJUSTAR: para combinar com SortControls */
+      minmax(140px, 1fr) /* ✅ REDUZIR Manager: 150px → 140px */
+      120px /* ✅ AUMENTAR End date: 90px → 120px */
+      140px; /* ✅ AUMENTAR State: 110px → 140px */
     gap: 1rem;
   }
 }
