@@ -2,6 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import { FaSortAmountDown, FaSortAmountUp, FaSort } from "react-icons/fa"; // ✅ ADICIONAR
 import "./SortControls.css";
 
 const SortControls = ({
@@ -24,9 +25,16 @@ const SortControls = ({
     onSortChange({ sortBy: fieldKey, sortOrder: newOrder });
   };
 
+  // ✅ FUNÇÃO PARA RETORNAR ÍCONES REACT-ICONS
   const getSortIcon = (fieldKey) => {
-    if (sortBy !== fieldKey) return "↕️";
-    return sortOrder === "ASCENDING" ? "⬆️" : "⬇️";
+    if (sortBy !== fieldKey) {
+      return <FaSort className="sort-icon" />; // ✅ Ícone neutro
+    }
+    return sortOrder === "ASCENDING" ? (
+      <FaSortAmountUp className="sort-icon" /> // ✅ A-Z
+    ) : (
+      <FaSortAmountDown className="sort-icon" /> // ✅ Z-A
+    );
   };
 
   // ✅ DEFINIR fields baseado no modo
@@ -58,9 +66,8 @@ const SortControls = ({
           onClick={() => handleSort(key)}
         >
           {t(id)}
-          {sortBy === key && (
-            <span className="sort-icon">{getSortIcon(key)}</span>
-          )}
+          {/* ✅ SEMPRE MOSTRAR ÍCONE */}
+          {getSortIcon(key)}
         </div>
       ))}
     </div>
