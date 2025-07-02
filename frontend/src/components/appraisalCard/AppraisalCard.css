@@ -1,11 +1,11 @@
 .appraisalCard-container {
   display: grid;
   grid-template-columns:
-    minmax(160px, 1fr) /* ✅ REDUZIR User: 180px → 160px */
+    minmax(160px, 1fr) /* User */
     120px /* Score */
-    minmax(160px, 1fr) /* ✅ REDUZIR Manager: 180px → 160px */
-    140px /* ✅ AUMENTAR End date: 120px → 140px */
-    160px; /* ✅ AUMENTAR State: 120px → 160px para "IN PROGRESS" */
+    minmax(160px, 1fr) /* Manager */
+    140px /* End date */
+    160px; /* State */
   gap: 1.5rem;
   align-items: center;
   background: #fff;
@@ -20,27 +20,29 @@
 .appraisalCard-user {
   display: flex;
   align-items: center;
-  gap: 0.4rem; /* ✅ REDUZIR: 0.5rem → 0.4rem */
-  min-width: 0; /* ✅ PERMITIR shrink */
+  gap: 0.4rem;
+  min-width: 0;
 }
 
 .appraisalCard-userInfo {
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Para truncar texto se necessário */
-  flex: 1; /* ✅ OCUPAR espaço disponível */
+  min-width: 0;
+  flex: 1;
 }
 
 .appraisalCard-name {
-  font-weight: bold;
-  font-size: 0.95rem; /* ✅ REDUZIR: 1rem → 0.95rem */
+  font-weight: var(--font-weight-bold); /* ✅ USAR variável global */
+  font-size: var(--font-size-main); /* ✅ USAR variável global */
+  font-family: var(--font-family-secondary); /* ✅ USAR Catamaran */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .appraisalCard-email {
-  font-size: 0.8rem; /* ✅ REDUZIR: 0.85rem → 0.8rem */
+  font-size: 0.8rem;
+  font-family: var(--font-family-main); /* ✅ USAR Montserrat */
   color: #666;
   white-space: nowrap;
   overflow: hidden;
@@ -59,12 +61,14 @@
 .appraisalCard-endDate {
   text-align: left;
   color: #555;
+  font-family: var(--font-family-main); /* ✅ USAR Montserrat */
+  font-size: var(--font-size-main);
 }
 
 /* ✅ STATE COLUMN */
 .appraisalCard-state {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   min-width: 0;
 }
@@ -73,41 +77,214 @@
 @media (max-width: 1024px) {
   .appraisalCard-container {
     grid-template-columns:
-      minmax(140px, 1fr) /* ✅ REDUZIR User: 150px → 140px */
-      100px /* Score */
-      minmax(140px, 1fr) /* ✅ REDUZIR Manager: 150px → 140px */
-      120px /* ✅ AUMENTAR End date: 90px → 120px */
-      140px; /* ✅ AUMENTAR State: 110px → 140px */
+      minmax(140px, 1fr)
+      100px
+      minmax(140px, 1fr)
+      120px
+      140px;
     gap: 1rem;
+  }
+
+  .appraisalCard-name {
+    font-size: 0.9rem;
+  }
+
+  .appraisalCard-email {
+    font-size: 0.75rem;
   }
 }
 
-/* ✅ RESPONSIVE - MOBILE */
+/* ✅ RESPONSIVE - MOBILE CARDS */
 @media (max-width: 768px) {
   .appraisalCard-container {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
-    padding: 1rem;
+    /* ✅ DIMENSÕES FIXAS */
+    width: 100%; /* ✅ MESMA WIDTH QUE CONTAINER PAI */
+    max-width: 100%; /* ✅ REMOVER limitação 280px */
+    height: 280px; /* ✅ HEIGHT FIXA */
+    
+    /* ✅ LAYOUT CARD */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 16px;
+    margin-left: 0; /* ✅ REMOVER auto */
+    margin-right: 0; /* ✅ REMOVER auto */
+    position: relative;
+    gap: 0;
+    
+    /* ✅ FONT UNIFORMIZADA */
+    font-family: var(--font-family-main); /* ✅ Montserrat como base */
   }
 
-  .appraisalCard-user,
-  .appraisalCard-score,
-  .appraisalCard-endDate,
+  /* ✅ STATUS BADGE - Posição absoluta topo direito */
   .appraisalCard-state {
-    justify-self: start;
-    text-align: left;
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    order: unset !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
 
-  /* ✅ MOBILE LAYOUT COM LABELS */
-  .appraisalCard-user::before,
-  .appraisalCard-score::before,
-  .appraisalCard-endDate::before,
-  .appraisalCard-state::before {
-    content: attr(data-label);
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.3rem;
-    color: #555;
-    font-size: 0.8rem;
+  /* ✅ ESCONDER LABELS DESKTOP */
+  .appraisalCard-state[data-label]::before {
+    display: none;
+  }
+
+  /* ✅ AVATAR PRINCIPAL - User avaliado */
+  .appraisalCard-appraised {
+    order: 1;
+    margin: 24px auto 12px;
+    width: 100%;
+  }
+
+  .appraisalCard-appraised .appraisalCard-user {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ✅ UserIcon grande para mobile */
+  .appraisalCard-appraised .user-icon {
+    width: 80px !important;
+    height: 80px !important;
+    border: 3px solid #e05a4f;
+    border-radius: 50%;
+  }
+
+  .appraisalCard-appraised .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50%;
+  }
+
+  /* ✅ NOME do user avaliado */
+  .appraisalCard-appraised .appraisalCard-name {
+    font-size: 18px;
+    font-weight: var(--font-weight-bold); /* ✅ USAR variável */
+    font-family: var(--font-family-heading); /* ✅ USAR Istok Web para destaque */
+    color: #333;
+    margin: 8px 0;
+    white-space: normal;
+    text-align: center;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  /* ✅ ESCONDER email no mobile */
+  .appraisalCard-appraised .appraisalCard-email {
+    display: none;
+  }
+
+  /* ✅ RATING/SCORE - Apenas estrelas */
+  .appraisalCard-score {
+    order: 2;
+    margin: 8px 0;
+  }
+
+  .appraisalCard-score[data-label]::before {
+    display: none;
+  }
+
+  /* ✅ SEÇÃO INFO - Manager e Date */
+  .appraisalCard-appraising {
+    order: 3;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  /* ✅ ESCONDER componentes desktop do manager */
+  .appraisalCard-appraising .appraisalCard-user,
+  .appraisalCard-appraising .appraisalCard-userInfo {
+    display: none !important;
+  }
+
+  .appraisalCard-appraising[data-label]::before {
+    display: none;
+  }
+
+  /* ✅ MANAGER INFO ITEM */
+  .appraisalCard-appraising::after {
+    content: "👤 Manager: " attr(data-manager-name);
+    font-size: 14px;
+    font-family: var(--font-family-secondary); /* ✅ USAR Catamaran */
+    color: #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  /* ✅ END DATE como info item */
+  .appraisalCard-endDate {
+    order: 4;
+    font-size: 14px;
+    font-family: var(--font-family-secondary); /* ✅ USAR Catamaran */
+    color: #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .appraisalCard-endDate::before {
+    content: "📅";
+    font-size: 16px;
+  }
+
+  .appraisalCard-endDate[data-label]::before {
+    display: none;
+  }
+
+  /* ✅ BORDER COLORS baseados no state */
+  .appraisalCard-container[data-state="IN_PROGRESS"] .appraisalCard-appraised .user-icon,
+  .appraisalCard-container[data-state="in_progress"] .appraisalCard-appraised .user-icon {
+    border-color: var(--badge-red-stroke, #E20029);
+  }
+
+  .appraisalCard-container[data-state="COMPLETED"] .appraisalCard-appraised .user-icon,
+  .appraisalCard-container[data-state="completed"] .appraisalCard-appraised .user-icon {
+    border-color: var(--badge-green-stroke, #0FE16D);
+  }
+
+  .appraisalCard-container[data-state="CLOSED"] .appraisalCard-appraised .user-icon,
+  .appraisalCard-container[data-state="closed"] .appraisalCard-appraised .user-icon {
+    border-color: var(--badge-yellow-stroke, #FF7043);
+  }
+}
+
+/* ✅ RESETAR comportamento para DESKTOP/TABLET */
+@media (min-width: 769px) {
+  .appraisalCard-state {
+    position: static;
+    order: initial;
+  }
+
+  .appraisalCard-appraised {
+    order: initial;
+    margin: initial;
+  }
+
+  .appraisalCard-score {
+    order: initial;
+    margin: initial;
+  }
+
+  .appraisalCard-appraising {
+    order: initial;
+    margin: initial;
+  }
+
+  .appraisalCard-endDate {
+    order: initial;
+    margin: initial;
   }
 }
