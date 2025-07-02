@@ -64,6 +64,8 @@ public class UserInitializer {
             admin.setAccountState(AccountState.COMPLETE);
             admin.setRole(Role.WITHOUT_ROLE);
             admin.setCreationDate(LocalDateTime.now());
+            admin.setLastSeen(LocalDateTime.now());
+            admin.setOnlineStatus(false);
             GoogleAuthenticatorKey key = TwoFactorUtil.generateSecretKey();
             String secret = TwoFactorUtil.getSecretKeyString(key);
             admin.setSecretKey(secret);

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import pt.uc.dei.enums.AppraisalState;
 
 /**
  * Data Transfer Object (DTO) for updating an existing appraisal.
@@ -31,6 +32,8 @@ public class UpdateAppraisalDTO {
     @Min(value = 1, message = "Score must be at least 1")
     @Max(value = 4, message = "Score must be at most 4")
     private Integer score;
+
+    private AppraisalState state;
 
     // Getters and Setters
     /**

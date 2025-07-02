@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import ICU from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
 import en from './utils/translations/en';
 import pt from './utils/translations/pt';
@@ -9,6 +10,7 @@ const resources = {
 };
 
 i18n
+  .use(ICU)
   .use(initReactI18next)
   .init({
     resources,

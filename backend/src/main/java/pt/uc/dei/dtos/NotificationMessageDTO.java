@@ -1,18 +1,15 @@
 package pt.uc.dei.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-
-import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object (DTO) representing a notification.
  * Contains details such as notification type, content, timestamps, and recipient information.
  */
-public class NotificationDTO {
+public class NotificationMessageDTO {
 
     /**
      * The unique identifier for the notification.

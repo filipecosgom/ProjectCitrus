@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes, FaUser } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import UserSearchBar from "../userSearchBar/UserSearchBar";
 import Spinner from "../spinner/spinner"; // ✅ ADICIONAR IMPORT
 import "./AssignManagerOffcanvas.css";
@@ -11,6 +12,7 @@ const AssignManagerOffcanvas = ({
   onClose,
   onAssign,
 }) => {
+  const { t } = useTranslation();
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNewManager, setSelectedNewManager] = useState(null);
@@ -132,7 +134,7 @@ const AssignManagerOffcanvas = ({
         {/* ✅ Header com título e botão fechar */}
         <div className="assign-manager-header">
           <h2 className="assign-manager-title">
-            Assign Manager ({selectedUsers.length} users selected)
+            {t("users.assignManagerTitle", { count: selectedUsers.length })}
           </h2>
           <button
             className="assign-manager-close"
@@ -147,7 +149,7 @@ const AssignManagerOffcanvas = ({
         <div className="assign-manager-content">
           {/* ✅ Lista de users selecionados */}
           <div className="selected-users-section">
-            <h3 className="section-title">Selected Users:</h3>
+            <h3 className="section-title">{t("users.selectedUsers")}</h3>
             <div className="selected-users-list">
               {selectedUsers.map((user) => (
                 <div key={user.id} className="selected-user-item">
@@ -156,7 +158,7 @@ const AssignManagerOffcanvas = ({
                     {user.name} {user.surname}
                   </span>
                   <span className="user-role">
-                    {user.role?.replace(/_/g, " ") || "N/A"}
+                    {user.role?.replace(/_/g, " ") || t("users.na")}
                   </span>
                 </div>
               ))}
@@ -166,22 +168,21 @@ const AssignManagerOffcanvas = ({
           {/* ✅ NOVA: User Search Section */}
           <div className="new-manager-section">
             <h3 className="section-title">
-              Select User to Promote as Manager:
+              {t("users.selectUserToPromote")}
             </h3>
             <p className="section-description">
-              Search for a user who will be promoted to manager and assigned to
-              the selected users above.
+              {t("users.promoteDescription")}
             </p>
 
             {/* ✅ COMPONENTE REUTILIZÁVEL */}
             <UserSearchBar
               selectedUser={selectedNewManager}
               onUserSelect={handleUserSelect}
-              placeholder="Search for user to promote as manager..."
+              placeholder={t("users.searchPromotePlaceholder")}
               maxResults={30}
               showUserInfo={true}
-              compact={true} // Versão compacta para offcanvas
-              excludeUserIds={selectedUserIds} // Excluir users que estão sendo atribuídos
+              compact={true}
+              excludeUserIds={selectedUserIds}
               className="assign-manager-search"
             />
 
@@ -194,15 +195,14 @@ const AssignManagerOffcanvas = ({
                     <strong>
                       {selectedNewManager.name} {selectedNewManager.surname}
                     </strong>{" "}
-                    will be promoted to Manager
+                    {t("users.willBePromoted")}
                   </div>
                   <div className="feedback-secondary">
                     {selectedNewManager.email} •{" "}
                     {selectedNewManager.role?.replace(/_/g, " ")}
                   </div>
                   <div className="feedback-action">
-                    ↳ Will manage {selectedUsers.length} user
-                    {selectedUsers.length !== 1 ? "s" : ""}
+                    ↳ {t("users.willManage", { count: selectedUsers.length })}
                   </div>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const AssignManagerOffcanvas = ({
             onClick={onClose}
             disabled={isAssigning}
           >
-            Cancel
+            {t("users.cancel")}
           </button>
           <button
             className="assign-btn"
@@ -227,17 +227,17 @@ const AssignManagerOffcanvas = ({
             {isAssigning ? (
               <>
                 <Spinner size="small" />
-                Assigning...
+                {t("users.assigning")}
               </>
             ) : selectedNewManager ? (
               <>
-                Promote & Assign
+                {t("users.promoteAndAssign")}
                 <span className="selected-manager-name">
                   → {selectedNewManager.name}
                 </span>
               </>
             ) : (
-              "Select User First"
+              t("users.selectUserFirst")
             )}
           </button>
         </div>

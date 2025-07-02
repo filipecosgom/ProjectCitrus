@@ -500,4 +500,13 @@ public class AppraisalService implements Serializable {
         LOGGER.info("Successfully closed {} COMPLETED appraisals across all OPEN cycles", closedCount);
         return closedCount;
     }
+
+    public boolean checkIfManagerOfUser(Long appraisalId, Long managerId) {
+        try {
+            AppraisalEntity appraisal = appraisalRepository.find(appraisalId);
+            return appraisal.getAppraisingUser().getId().equals(managerId);
+        } catch (Exception e) {
+            LOGGER.error("Error checking manager of user for appraisal ID: {}", appraisalId, e);
+            return false;
+        }
 }

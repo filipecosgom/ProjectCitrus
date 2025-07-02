@@ -1,8 +1,8 @@
 import { login } from "../../api/authenticationApi";
 
 const en = {
-  welcomeMessage: "Welcome {{name}}",
-  goodByeMessage: "Goodbye {{name}}",
+  welcomeMessage: "Welcome {name}",
+  goodByeMessage: "Goodbye {name}",
   //Login
   loginLogo: "CITRUS",
   loginTitle: "Login",
@@ -54,15 +54,15 @@ const en = {
   activationTitle: "Account Activation",
   activationSuccessMessage: "Account successfully created!",
   activationEmailConfirmation:
-    "Your account with the email {{email}} has been created. " +
+    "Your account with the email {email} has been created. " +
     "We have sent a confirmation email with a link to verify your account. " +
     "Please check your inbox.",
-  activationRedirectMessage: "Redirecting to login in {{segundos}} seconds.",
+  activationRedirectMessage: "Redirecting to login in {segundos} seconds.",
   activatedAccountTitle: "Account activated!",
   activatedAccountMessage:
     "Your account has been activated, you can now log in.<br />Welcome to Citrus.",
   activatedAccountRedirectMessage:
-    "Redirecting to login in {{segundos}} seconds.",
+    "Redirecting to login in {segundos} seconds.",
   activatedAccountButton: "Back to Login",
 
   //Profile
@@ -147,7 +147,7 @@ const en = {
   // Not Found Page
   notfoundTitle: "404 Not Found",
   notfoundPhrase: "When life gives you lemons...",
-  notfoundRedirect: "Redirecting in {{segundos}} seconds.",
+  notfoundRedirect: "Redirecting in {segundos} seconds.",
 
   // PROFILE
   profileUpdateSuccess: "Profile updated successfully",
@@ -197,7 +197,25 @@ const en = {
   profileTabAppraisals: "Appraisals",
 
   //Users
-  usersNoResults: "No users found matching your criteria",
+  users: {
+    assignManagers: "Assign Managers",
+    assignManagerTitle: "Assign manager to {count, plural, one {# user} other {# users}}",
+    willManage: "Will manage {count, plural, one {# user} other {# users}}",
+    selectedUsers: "Selected users",
+    selectUserToPromote: "Select a user to promote",
+    promoteDescription: "Choose a user to promote to manager and assign selected users.",
+    searchPromotePlaceholder: "Search for a user to promote...",
+    willBePromoted: "will be promoted to manager.",
+    cancel: "Cancel",
+    assigning: "Assigning...",
+    promoteAndAssign: "Promote & Assign",
+    selectUserFirst: "Select a user first",
+    na: "N/A",
+    accountStateComplete: "Complete",
+    accountStateIncomplete: "Incomplete",
+    avatarLoading: "Loading...",
+    viewProfile: "View Profile",
+  },
   //Usercard
   userCardNoManager: "No manager",
   //Appraisal
@@ -209,7 +227,7 @@ const en = {
 
   //Searchbar
   searchBarSearchButton: "Search",
-  searchBarPlaceholder: "Search by {{type}}…",
+  searchBarPlaceholder: "Search by {type}…",
   searchBarAllStates: "All States",
   searchBarComplete: "Complete",
   searchBarIncomplete: "Incomplete",
@@ -257,5 +275,18 @@ const en = {
   menuDarkModeBeta: "Beta",
   menuLanguage: "Language",
   menuLogout: "Logout",
+
+  // Message Center
+  messageCenter: {
+    searchPlaceholder: "Search for user to start conversation...",
+    lastOnlineAt: "Last online at",
+    statusSending: "⏳",
+    statusFailed: "❌",
+    statusSent: "✓",
+    statusRead: "✓✓",
+    statusNotRead: "✓✓",
+    typeMessage: "Type a message...",
+    selectConversation: "Select a conversation to start chatting",
+  },
 };
 export default en;

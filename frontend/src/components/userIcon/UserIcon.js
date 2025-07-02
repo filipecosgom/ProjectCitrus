@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./UserIcon.css";
 import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffcanvas";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
-import Spinner from "../spinner/spinner";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function UserIcon({ user, avatar, status }) {
+export default function UserIcon({ user, avatar }) {
   // ✅ HOOKS PRIMEIRO - SEMPRE NA MESMA ORDEM
   const [avatarUrl, setAvatarUrl] = useState(avatar || null);
   const [loading, setLoading] = useState(false);
@@ -14,6 +13,7 @@ export default function UserIcon({ user, avatar, status }) {
   const hasAvatar = user?.hasAvatar ?? false;
   const userName = user?.name || "";
   const userSurname = user?.surname || "";
+  const onlineStatus = user?.onlineStatus || false;
 
   useEffect(() => {
     // ✅ VERIFICAÇÃO dentro do useEffect
@@ -61,14 +61,6 @@ export default function UserIcon({ user, avatar, status }) {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="user-icon">
-        <Spinner />
-      </div>
-    );
-  }
-
   return (
     <div className="user-icon">
       <img
@@ -83,8 +75,11 @@ export default function UserIcon({ user, avatar, status }) {
           e.target.src = generateInitialsAvatar(userName, userSurname);
         }}
       />
-      {/* ✅ STATUS BADGE se fornecido */}
-      {status && <div className={`user-icon-status status-${status}`}></div>}
+      {/* Status badge: green if online, gray if offline */}
+      <div
+        className={`user-icon-status ${onlineStatus ? "online" : "offline"}`}
+        title={onlineStatus ? "Online" : "Offline"}
+      />
     </div>
   );
 }

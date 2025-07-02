@@ -1,8 +1,10 @@
 package pt.uc.dei.websocket;
 
+import jakarta.ejb.EJB;
 import jakarta.json.JsonObject;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.HandshakeRequest;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.utils.JWTUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,9 @@ import java.util.Set;
  */
 public class WebSocketAuthentication {
 
+    @EJB
+    AuthenticationService authenticationService;
+
     // Logger para registrar eventos e erros relacionados à autenticação
     private static final Logger logger = LogManager.getLogger(WebSocketAuthentication.class);
 
@@ -33,8 +38,9 @@ public class WebSocketAuthentication {
      * @param sessions  The map of user IDs to their WebSocket sessions.
      * @return true if authentication is successful, false otherwise.
      */
-    public static boolean authenticate(Session session, HandshakeRequest request, HashMap<Long, Set<Session>> sessions) {
+    public boolean authenticate(Session session, HandshakeRequest request, HashMap<Long, Set<Session>> sessions) {
         Long userId = JWTUtil.getUserIdFromToken(request);
+        authenticationService.setUserOnline(userId);
         if (userId != null) {
             sessions.computeIfAbsent(userId, k -> new HashSet<>()).add(session);
             logger.info("User {} authenticated in WebSocket via cookie", userId);

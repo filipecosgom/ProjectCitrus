@@ -54,19 +54,20 @@ function useWebSocketChat() {
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
       console.log("WebSocket received:", data);
+      console.log("Current chatting user:", currentChattingUser.user);
 
       switch (data.type) {
         case "MESSAGE":
-          if (data.sender === currentChattingUser.user.username) {
-            if (!isMessageAlreadyInQueue(data.id)) {
+          let message = data.message;
+          if (message.senderId === currentChattingUser.user.id) {
+            if (!isMessageAlreadyInQueue(message.id)) {
               const newMessage = {
-                messageId: data.id,
-                message: data.message,
-                sender: data.sender,
-                formattedTimestamp: new Date(data.timestamp),
+                messageId: message.id,
+                message: message.messageContent,
+                sender: message.senderId,
+                formattedTimestamp: transformArrayDatetoDate(message.sentDate),
                 status: "read",
               };
-              console.log(newMessage);
               addLocalMessage(newMessage);
             }
           }
@@ -79,12 +80,15 @@ function useWebSocketChat() {
           ws.close();
           break;
         case "CONVERSATION_READ":
-          if (data.sender === currentChattingUser.user.username) {
+          if (data.senderId === currentChattingUser.user.userId) {
             markConversationAsRead();
           }
           break;
         case "PING":
           ws.send(JSON.stringify({ type: "PONG" }));
+          break;
+        case "SUCCESS":
+          markConversationAsRead();
         default:
           console.warn("Unknown message type:", data.type);
       }

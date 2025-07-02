@@ -12,11 +12,12 @@ const useMessageStore = create((set, get) => ({
     fetchAllConversations: async () => {
       try {
         const conversationUsers = await handleFetchAllConversations();
+        console.log("Fetched conversations:", conversationUsers);
             const mergedUsers = [...(conversationUsers || [])];
             get().localUsers.forEach((localUser) => {
           // 🛠️ Add local users *only if they are missing* from fetched conversations
           if (!mergedUsers.some(user => user.id === localUser.id)) {
-            mergedUsers.push(localUser);
+            mergedUsers.unshift(localUser); // Add to the top instead of the end
           }
         });    
         set({ conversations: mergedUsers });
@@ -27,11 +28,13 @@ const useMessageStore = create((set, get) => ({
     
 
 
-  addNewUserToConversation: (userId) => {
+  addNewUserToConversation: (user) => {
     const { conversations, localUsers } = get();
-    if (!conversations.some(user => user.id === userId)) {
-        const newUser = { userId, url: null };
-        set({ conversations: [...conversations, newUser], localUsers: [...localUsers, newUser] });
+    if (!conversations.some(u => u.id === user.id)) {
+      set({
+        conversations: [user, ...conversations], // Add new user to the top
+        localUsers: [user, ...localUsers]
+      });
     }
 },
 
@@ -40,11 +43,13 @@ const useMessageStore = create((set, get) => ({
     fetchUserConversation: async (otherUserId) => {
       try {
         const result = await handleFetchMessages(otherUserId);
+        console.log("Fetched messages for user:", otherUserId, result);
         if (result.success) {
           const formattedMessages = result.messages.map((message) => ({
             ...message,
-            status: message.read ? "read" : "not_read",
-            formattedTimestamp: transformArrayDatetoDate(message.timestamp),
+            message: message.messageContent,
+            status: message.messageIsRead ? "read" : "not_read",
+            formattedTimestamp: transformArrayDatetoDate(message.sentDate),
           }));
           set({ messages: formattedMessages });
         } else {
@@ -86,6 +91,7 @@ const useMessageStore = create((set, get) => ({
     },
 
     isMessageAlreadyInQueue: (messageId) => {
+      console.log("Checking if message is already in queue:", messageId);
       const { messages } = get();
       return messages.some(message => message.messageId === messageId);
     },

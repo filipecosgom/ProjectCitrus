@@ -131,6 +131,10 @@ public class UserDTO {
      */
     private LocalDateTime creationDate;
 
+    private boolean onlineStatus;
+
+    private LocalDateTime lastSeen;
+
     /**
      * The list of evaluations the user has received.
      */
@@ -525,5 +529,21 @@ public class UserDTO {
      */
     public void setCompletedCourses(Set<FinishedCourseDTO> completedCourses) {
         this.completedCourses = completedCourses;
+    }
+
+    public boolean isOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(boolean onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
     }
 }

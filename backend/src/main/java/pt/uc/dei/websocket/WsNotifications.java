@@ -9,7 +9,10 @@ import jakarta.json.JsonReader;
 import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
+import org.jboss.resteasy.annotations.LinkHeaderParam;
 import pt.uc.dei.dtos.NotificationDTO;
+import pt.uc.dei.services.AuthenticationService;
+import pt.uc.dei.services.NotificationService;
 import pt.uc.dei.utils.JsonCreator;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +41,13 @@ public class WsNotifications {
     private HashMap<Long, Set<Session>> sessions = new HashMap<>();
 
     @Inject
-    private pt.uc.dei.services.NotificationService notificationService;
+    private WebSocketAuthentication webSocketAuthentication;
+
+    @Inject
+    private AuthenticationService authenticationService;
+
+    @Inject
+    private NotificationService notificationService;
 
     /**
      * Método chamado automaticamente quando uma nova conexão WebSocket é estabelecida.
@@ -53,14 +62,14 @@ public class WsNotifications {
         try {
             // Tenta autenticar usando a solicitação de handshake (JWT nos cookies ou cabeçalhos)
             HandshakeRequest request = (HandshakeRequest) config.getUserProperties().get("HandshakeRequest");
-            boolean authenticated = WebSocketAuthentication.authenticate(session, request, sessions);
+            boolean authenticated = webSocketAuthentication.authenticate(session, request, sessions);
             if (!authenticated) {
                 logger.warn("WebSocket authentication failed: missing or invalid JWT/token");
                 session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT/token"));
                 return;
             }
             // Após a autenticação bem-sucedida, envia a contagem de notificações para o usuário
-            Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+            Long userId = webSocketAuthentication.findUserIdBySession(sessions, session);
             if (userId != null && notificationService != null) {
                 int notificationsCount = notificationService.getTotalNotifications(userId);
                 JsonObject notificationsJSON = Json.createObjectBuilder()
@@ -87,6 +96,7 @@ public class WsNotifications {
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+        authenticationService.setUserOffline(userId);
         if (userId != null) {
             Set<Session> userSessions = sessions.get(userId);
             if (userSessions != null) {

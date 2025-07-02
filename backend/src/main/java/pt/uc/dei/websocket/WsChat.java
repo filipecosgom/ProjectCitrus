@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.MessageDTO;
 import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.MessageService;
 import pt.uc.dei.services.NotificationService;
 import pt.uc.dei.services.UserService;
@@ -42,6 +43,10 @@ public class WsChat {
     private HashMap<Long, Set<Session>> sessions = new HashMap<>();
 
     @Inject
+    private WebSocketAuthentication webSocketAuthentication;
+    @Inject
+    private AuthenticationService authenticationService;
+    @Inject
     private UserService userService;
     @Inject
     private MessageService messageService;
@@ -60,7 +65,7 @@ public class WsChat {
     public void onOpen(Session session, EndpointConfig config) {
         try {
             HandshakeRequest request = (HandshakeRequest) config.getUserProperties().get("HandshakeRequest");
-            boolean authenticated = WebSocketAuthentication.authenticate(session, request, sessions);
+            boolean authenticated = webSocketAuthentication.authenticate(session, request, sessions);
             if (!authenticated) {
                 logger.warn("WebSocket authentication failed: missing or invalid JWT cookie");
                 session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT"));
@@ -83,6 +88,7 @@ public class WsChat {
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
+        authenticationService.setUserOffline(userId);
         if (userId != null) {
             Set<Session> userSessions = sessions.get(userId);
             if (userSessions != null) {
