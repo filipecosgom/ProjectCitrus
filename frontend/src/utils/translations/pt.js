@@ -205,18 +205,22 @@ const pt = {
   //Users
   users: {
     assignManagers: "Atribuir Gestores",
-    assignManagerTitle: "Atribuir Gestor a {count, plural, one {# utilizador} other {# utilizadores}}",
-    willManage: "Irá gerir {count, plural, one {# utilizador} other {# utilizadores}}",
+    assignManagerTitle:
+      "Atribuir Gestor a {count, plural, one {# utilizador} other {# utilizadores}}",
+    willManage:
+      "Irá gerir {count, plural, one {# utilizador} other {# utilizadores}}",
     selectedUsers: "Utilizadores Selecionados:",
     selectUserToPromote: "Selecionar Utilizador para Promover a Gestor:",
-    promoteDescription: "Procure um utilizador que será promovido a gestor e atribuído aos utilizadores selecionados acima.",
+    promoteDescription:
+      "Procure um utilizador que será promovido a gestor e atribuído aos utilizadores selecionados acima.",
     searchPromotePlaceholder: "Procurar utilizador para promover a gestor...",
     willBePromoted: "será promovido a Gestor",
     cancel: "Cancelar",
     assigning: "A atribuir...",
     promoteAndAssign: "Promover & Atribuir",
     selectUserFirst: "Selecione primeiro o utilizador",
-    noResults: "Nenhum utilizador encontrado que corresponda aos seus critérios",
+    noResults:
+      "Nenhum utilizador encontrado que corresponda aos seus critérios",
     na: "N/A",
     accountStateComplete: "Completo",
     accountStateIncomplete: "Incompleto",
@@ -320,6 +324,13 @@ const pt = {
     office: "Escritório",
     manager: "Gestor",
   },
+
+  // Appraisals Sort Controls
+  appraisalSortControlsUser: "Utilizador",
+  appraisalSortControlsScore: "Pontuação",
+  appraisalSortControlsManager: "Gestor",
+  appraisalSortControlsEndDate: "Data Fim",
+  appraisalSortControlsState: "Estado",
 };
 
 export default pt;

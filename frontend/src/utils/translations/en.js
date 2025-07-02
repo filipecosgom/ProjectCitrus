@@ -247,7 +247,7 @@ const en = {
   appraisalSortControlsUser: "User",
   appraisalSortControlsScore: "Score",
   appraisalSortControlsManager: "Manager",
-  appraisalSortControlsEndDate: "End date",
+  appraisalSortControlsEndDate: "End Date",
   appraisalSortControlsState: "State",
 
   //Filtermenu

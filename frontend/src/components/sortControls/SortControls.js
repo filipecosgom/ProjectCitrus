@@ -29,22 +29,19 @@ const SortControls = ({
     return sortOrder === "ASCENDING" ? "⬆️" : "⬇️";
   };
 
-  // ✅ MAPEAR fields baseado no modo
+  // ✅ DEFINIR fields baseado no modo
   const getDisplayFields = () => {
     if (isUsersMode) {
-      // ✅ PARA USERS: 4 colunas
+      // ✅ PARA USERS: 4 colunas (sem state)
       return [
-        { key: "name", labelKey: "userName" },
-        { key: "role", labelKey: "userRole" },
-        { key: "office", labelKey: "userOffice" },
-        { key: "manager", labelKey: "userManager" },
+        { id: "userSortControlsName", key: "name" },
+        { id: "userSortControlsRole", key: "role" },
+        { id: "userSortControlsOffice", key: "office" },
+        { id: "userSortControlsManager", key: "manager" },
       ];
     } else {
-      // ✅ PARA APPRAISALS: 5 colunas (usar fields do props)
-      return Object.entries(fields).map(([key, labelKey]) => ({
-        key,
-        labelKey,
-      }));
+      // ✅ PARA APPRAISALS: usar fields do props (5 colunas)
+      return fields;
     }
   };
 
@@ -52,7 +49,7 @@ const SortControls = ({
 
   return (
     <div className={`sortControls-container ${className}`}>
-      {displayFields.map(({ key, labelKey }) => (
+      {displayFields.map(({ id, key }) => (
         <div
           key={key}
           className={`sortControls-div ${
@@ -60,7 +57,7 @@ const SortControls = ({
           } ${sortBy === key ? "active" : ""}`}
           onClick={() => handleSort(key)}
         >
-          {t(labelKey)}
+          {t(id)}
           {sortBy === key && (
             <span className="sort-icon">{getSortIcon(key)}</span>
           )}
@@ -71,7 +68,12 @@ const SortControls = ({
 };
 
 SortControls.propTypes = {
-  fields: PropTypes.object.isRequired,
+  fields: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      key: PropTypes.string.isRequired,
+    })
+  ).isRequired,
   sortBy: PropTypes.string.isRequired,
   sortOrder: PropTypes.oneOf(["ASCENDING", "DESCENDING"]).isRequired,
   onSortChange: PropTypes.func.isRequired,
