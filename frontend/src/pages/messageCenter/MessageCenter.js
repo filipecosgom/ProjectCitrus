@@ -12,6 +12,7 @@ import { handleSendMessageViaApi } from "../../handles/handleSendMessageViaApi";
 import UserIcon from "../../components/userIcon/UserIcon";
 import UserSearchBar from "../../components/userSearchBar/UserSearchBar";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
+import { transformArrayDatetoDate, dateToFormattedTime } from "../../utils/utilityFunctions";
 
 export const MessageCenter = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export const MessageCenter = () => {
   const [messageInput, setMessageInput] = useState("");
   const [searchSelectedUser, setSearchSelectedUser] = useState(null);
   const { t } = useTranslation();
+  const messagesEndRef = React.useRef(null);
 
   useEffect(() => {
     const getUserInformation = async () => {
@@ -67,6 +69,12 @@ export const MessageCenter = () => {
       fetchUserConversation(selectedUser.id);
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedUser, messages]);
 
   const handleSendMessage = async () => {
     if (messageInput.trim() !== "") {
@@ -116,144 +124,188 @@ export const MessageCenter = () => {
     setSearchSelectedUser(null); // Clear search selection
   };
 
-  const sortedConversations = React.useMemo(() => {
-    if (!selectedUser) return conversations;
-    const others = conversations.filter((u) => u.id !== selectedUser.id);
-    return [selectedUser, ...others];
-  }, [conversations, selectedUser]);
+  // Helper to robustly convert any date (array or string) to JS Date
+  function toDateUniversal(date) {
+    if (!date) return null;
+    if (Array.isArray(date)) {
+      return transformArrayDatetoDate(date);
+    }
+    // If already a Date
+    if (date instanceof Date) return date;
+    // If string
+    return new Date(date);
+  }
+
+  // Formats message timestamps (today: HH:mm, else: DD/MM/YYYY HH:mm)
+  function formatMessageTimestamp(date) {
+    const d = toDateUniversal(date);
+    if (!d) return "";
+    const now = new Date();
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+    const pad = (n) => n.toString().padStart(2, "0");
+    if (isToday) {
+      return dateToFormattedTime(d);
+    } else {
+      return (
+        `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ` +
+        dateToFormattedTime(d)
+      );
+    }
+  }
+
+  // Formats last seen (today: HH:mm, else: DD/MM/YYYY HH:mm)
+  function formatLastSeen(date) {
+    if (!date) return "";
+    const d = toDateUniversal(date);
+    if (!d) return "";
+    const now = new Date();
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+    const pad = (n) => n.toString().padStart(2, "0");
+    if (isToday) {
+      return dateToFormattedTime(d);
+    } else {
+      return (
+        `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ` +
+        dateToFormattedTime(d)
+      );
+    }
+  }
 
   return (
-    <div className="message-center-container">
-      {/* User SearchBar for starting new conversations */}
-      <UserSearchBar
-        selectedUser={searchSelectedUser}
-        onUserSelect={handleSearchUserSelect}
-        placeholder="Search for user to start conversation..."
-        maxResults={30}
-        showUserInfo={true}
-        compact={true}
-        excludeUserIds={conversations.map((u) => u.id)}
-        className="message-center-search"
-      />
-      <div className="chat-container">
-        {/* Left sidebar - User list */}
-        <div className="chat-user-list">
-          <h2 className="chat-user-list-header">Message Center</h2>
-          <div className="chat-user-list-items">
-            {sortedConversations.map((user) => (
-              <div
-                key={user.id}
-                className={`chat-user-item ${
-                  selectedUser?.id === user.id ? "selected" : ""
-                }`}
-                onClick={() => setSelectedUser(user)}
-              >
-                <div className="userCard-avatarAndInfoContainer container-user">
-                  {/* User Avatar */}
-                  <div className="userCard-avatarContainer">
-                    <UserIcon user={user} />
+    <div className="chat-container">
+      {/* Left sidebar - User list (hidden on mobile) */}
+      <div className="chat-user-list">
+        {/* User SearchBar for starting new conversations */}
+        <UserSearchBar
+          selectedUser={searchSelectedUser}
+          onUserSelect={handleSearchUserSelect}
+          placeholder={t("messageCenter.searchPlaceholder")}
+          maxResults={30}
+          showUserInfo={true}
+          compact={true}
+          className="message-center-search"
+        />
+        <div className="chat-user-list-items">
+          {conversations.map((user) => (
+            <div
+              key={user.id}
+              className={`chat-user-item ${
+                selectedUser?.id === user.id ? "selected" : ""
+              }`}
+              onClick={() => setSelectedUser(user)}
+            >
+              <div className="userCard-avatarAndInfoContainer container-user">
+                {/* User Avatar */}
+                <div className="userCard-avatarContainer">
+                  <UserIcon user={user} />
+                </div>
+                {/* User Info */}
+                <div className="userCard-userInfo">
+                  <div className="userCard-name">
+                    {user.name} {user.surname}
                   </div>
-                  {/* User Info */}
-                  <div className="userCard-userInfo">
-                    <div className="userCard-name">
-                      {user.name} {user.surname}
-                    </div>
-                    <div className="userCard-email">
-                      {user.email}
-                      {!user.onlineStatus && user.lastSeen && (
-                        <div className="userCard-last-seen">
-                          Last online at{" "}
-                          {new Date(user.lastSeen).toLocaleString()}
-                        </div>
-                      )}
-                    </div>
+                  <div className="userCard-email">
+                    {user.email}
+                    {!user.onlineStatus && user.lastSeen && (
+                      <div className="userCard-last-seen">
+                        {t("messageCenter.lastOnlineAt")}{" "}
+                        {formatLastSeen(user.lastSeen)}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Main chat area */}
-        <div className="chat-area">
-          {selectedUser ? (
-            <>
-              {/* Chat header */}
-              <div className="chat-header">
-                <div className="chat-user">
-                  <div className="userCard-avatarAndInfoContainer container-user">
-                    {/* User Avatar */}
-                    <div className="userCard-avatarContainer">
-                      <UserIcon user={selectedUser} />
-                    </div>
-                    {/* User Info */}
-                    <div className="userCard-userInfo">
-                      <div className="userCard-name">
-                        {selectedUser.name} {selectedUser.surname}
-                      </div>
-                      <div className="userCard-email">{selectedUser.email}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="chat-messages-container">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`chat-message ${
-                      message.senderId === user.id ? "sent" : "received"
-                    }`}
-                  >
-                    <div className="chat-message-content">
-                      <p>{message.message}</p>
-                      <div className="chat-message-meta">
-                        <span className="chat-message-time">
-                          {new Date(
-                            message.formattedTimestamp
-                          ).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                          <span className={`chat-status-icon-${message.status}`}>
-                            {message.status === "sending" && "⏳"}
-                            {message.status === "failed" && "❌"}
-                            {message.status === "sent" && "✓"}
-                            {message.status === "read" && "✓✓"}
-                            {message.status === "not_read" && "✓✓"}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Message input */}
-              <div className="chat-message-input-container">
-                <textarea
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type a message..."
-                  rows={1}
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!messageInput.trim()}
-                  className="send-button"
-                >
-                  <FaPaperPlane />
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="chat-empty-chat">
-              <h3>Select a conversation to start chatting</h3>
             </div>
-          )}
+          ))}
         </div>
+      </div>
+
+      {/* Main chat area */}
+      <div className="chat-area">
+        {/* Mobile-only chat header for selected user */}
+        {selectedUser && (
+          <div className="chat-header-mobile">
+            <div className="userCard-avatarAndInfoContainer container-user">
+              <div className="userCard-avatarContainer">
+                <UserIcon user={selectedUser} />
+              </div>
+              <div className="userCard-userInfo">
+                <div className="userCard-name">
+                  {selectedUser.name} {selectedUser.surname}
+                </div>
+                <div className="userCard-email">{selectedUser.email}</div>
+                {!selectedUser.onlineStatus && selectedUser.lastSeen && (
+                  <div className="userCard-last-seen">
+                    {t("messageCenter.lastOnlineAt")}{" "}
+                    {formatLastSeen(selectedUser.lastSeen)}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        {selectedUser ? (
+          <>
+            {/* Messages */}
+            <div className="chat-messages-container">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`chat-message ${
+                    message.senderId === user.id ? "sent" : "received"
+                  }`}
+                >
+                  <div className="chat-message-content">
+                    <p>{message.message}</p>
+                    <div className="chat-message-meta">
+                      <span className="chat-message-time">
+                        {formatMessageTimestamp(message.formattedTimestamp)}
+                        <span
+                          className={`chat-status-icon-${message.status}`}
+                        >
+                          {message.status === "sending" && t("messageCenter.statusSending")}
+                          {message.status === "failed" && t("messageCenter.statusFailed")}
+                          {message.status === "sent" && t("messageCenter.statusSent")}
+                          {message.status === "read" && t("messageCenter.statusRead")}
+                          {message.status === "not_read" && t("messageCenter.statusNotRead")}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Message input */}
+            <div className="chat-message-input-container">
+              <textarea
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={t("messageCenter.typeMessage")}
+                rows={1}
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!messageInput.trim()}
+                className="chat-send-button"
+              >
+                <FaPaperPlane />
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="chat-empty-chat">
+            <h3>{t("messageCenter.selectConversation")}</h3>
+          </div>
+        )}
       </div>
     </div>
   );

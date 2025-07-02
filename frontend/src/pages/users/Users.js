@@ -263,12 +263,12 @@ export default function Users() {
               console.log("🔍 DEBUG - Button onClick triggered!");
               handleOpenAssignManager();
             }}
-            disabled={selectedUsers.size === 0} // ✅ DISABLED se nenhum selecionado
+            disabled={selectedUsers.size === 0}
           >
             <GrUserSettings className="assign-managers-icon" />
             <span className="assign-managers-text">
-              Assign Managers{" "}
-              {selectedUsers.size > 0 && `(${selectedUsers.size})`}
+              {t("users.assignManagers")}
+              {selectedUsers.size > 0 && ` (${selectedUsers.size})`}
             </span>
           </button>
         )}
@@ -286,7 +286,7 @@ export default function Users() {
         </div>
       ) : users.length === 0 ? (
         <div className="users-empty">
-          <p>{t("usersNoResults")}</p>
+          <p>{t("users.noResults")}</p>
         </div>
       ) : (
         <div>

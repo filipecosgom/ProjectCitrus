@@ -17,7 +17,7 @@ const useMessageStore = create((set, get) => ({
             get().localUsers.forEach((localUser) => {
           // 🛠️ Add local users *only if they are missing* from fetched conversations
           if (!mergedUsers.some(user => user.id === localUser.id)) {
-            mergedUsers.push(localUser);
+            mergedUsers.unshift(localUser); // Add to the top instead of the end
           }
         });    
         set({ conversations: mergedUsers });

@@ -350,7 +350,8 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         try {
             TypedQuery<UserEntity> query = em.createQuery(
                 "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false " +
-                "AND u.managerUser IS NULL ORDER BY u.email", 
+                        "AND u.userIsAdmin " +
+                " AND u.managerUser IS NULL ORDER BY u.email",
                 UserEntity.class
             );
             List<UserEntity> result = query.getResultList();

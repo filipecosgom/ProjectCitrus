@@ -15,6 +15,7 @@ import pt.uc.dei.enums.*;
 import pt.uc.dei.services.AppraisalService;
 import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.annotations.AdminOnly;
+import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.utils.SearchUtils;
 
 import java.util.Arrays;
@@ -42,51 +43,28 @@ public class AppraisalController {
     private AppraisalService appraisalService;
 
     /**
-     * Creates a new appraisal.
-     *
-     * @param createAppraisalDTO The appraisal creation data
-     * @return Response with the created appraisal DTO
-     */
-    @POST
-    public Response createAppraisal(@Valid CreateAppraisalDTO createAppraisalDTO) {
-        try {
-            LOGGER.info("Creating new appraisal for user {} by user {}",
-                    createAppraisalDTO.getAppraisedUserId(),
-                    createAppraisalDTO.getAppraisingUserId());
-
-            AppraisalDTO createdAppraisal = appraisalService.createAppraisal(createAppraisalDTO);
-            return Response.status(Response.Status.CREATED)
-                    .entity(new ApiResponse(true, "Appraisal created successfully", "success", createdAppraisal))
-                    .build();
-
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("Invalid request for appraisal creation: {}", e.getMessage());
-            String errorCode = getValidationErrorCode(e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
-                    .build();
-        } catch (IllegalStateException e) {
-            LOGGER.warn("Business rule violation for appraisal creation: {}", e.getMessage());
-            String errorCode = getConflictErrorCode(e.getMessage());
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))
-                    .build();
-        } catch (Exception e) {
-            LOGGER.error("Unexpected error creating appraisal", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
-                    .build();
-        }
-    }
-
-    /**
      * Updates an existing appraisal.
      *
      * @param updateAppraisalDTO The appraisal update data
      * @return Response with the updated appraisal DTO
      */
+
     @PATCH
-    public Response updateAppraisal(@Valid UpdateAppraisalDTO updateAppraisalDTO) {
+    public Response updateAppraisal(@Valid UpdateAppraisalDTO updateAppraisalDTO, @CookieParam("jwt") String jwtToken) {
+            if (jwtToken == null || jwtToken.isEmpty()) {
+                LOGGER.warn("Unauthorized chat request: missing JWT cookie");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                        .build();
+            }
+            // Extract user ID from JWT
+            Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+            if (userId == null) {
+                LOGGER.warn("Invalid JWT token in chat request");
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
+                        .build();
+            }
         try {
             LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
 
@@ -125,7 +103,6 @@ public class AppraisalController {
     public Response getAppraisalById(@PathParam("id") Long id) {
         try {
             LOGGER.debug("Retrieving appraisal with ID: {}", id);
-
             AppraisalDTO appraisal = appraisalService.getAppraisalById(id);
             return Response.ok(new ApiResponse(true, "Appraisal retrieved successfully", "success", appraisal))
                     .build();

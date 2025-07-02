@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import "./UserOffcanvas.css";
 
 const UserOffcanvas = ({ user, isOpen, onClose }) => {
+  const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [shouldRender, setShouldRender] = useState(false); // ✅ NOVO estado
@@ -118,13 +120,13 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
 
   // FUNÇÃO para formatar role - IGUAL ao UserCard
   const formatRole = (role) => {
-    if (!role) return "N/A";
+    if (!role) return t("users.na");
     return role.replace(/_/g, " ");
   };
 
   // FUNÇÃO para formatar office - IGUAL ao UserCard
   const formatOffice = (office) => {
-    if (!office) return "N/A";
+    if (!office) return t("users.na");
     return office.replace(/_/g, " ");
   };
 
@@ -132,12 +134,12 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
   const getAccountStateInfo = (accountState) => {
     if (accountState === "COMPLETE") {
       return {
-        text: "Complete",
+        text: t("users.accountStateComplete"),
         className: "account-state-complete",
       };
     }
     return {
-      text: "Incomplete",
+      text: t("users.accountStateIncomplete"),
       className: "account-state-incomplete",
     };
   };
@@ -169,7 +171,7 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
           {/* Avatar 275px com especificações */}
           <div className="user-offcanvas-avatar">
             {avatarLoading ? (
-              <div className="avatar-loading">Carregando...</div>
+              <div className="avatar-loading">{t("users.avatarLoading")}</div>
             ) : (
               <img
                 src={
@@ -201,7 +203,7 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
           <div className="user-offcanvas-info">
             <div className="user-offcanvas-info-item">
               <FaPhoneAlt className="user-offcanvas-icon" />
-              <span>{user.phone || "N/A"}</span>
+              <span>{user.phone || t("users.na")}</span>
             </div>
 
             <div className="user-offcanvas-info-item">
@@ -222,7 +224,7 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
             className="main-button user-offcanvas-profile-btn"
             onClick={handleViewProfile}
           >
-            View Profile
+            {t("users.viewProfile")}
           </button>
         </div>
       </div>
