@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useMessageStore from "../../stores/useMessageStore";
 import useAuthStore from "../../stores/useAuthStore";
-import { FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane, FaArrowLeft } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import useWebSocketChat from "../../websockets/useWebSocketChat";
 import "./MessageCenter.css";
@@ -12,11 +12,13 @@ import { handleSendMessageViaApi } from "../../handles/handleSendMessageViaApi";
 import UserIcon from "../../components/userIcon/UserIcon";
 import UserSearchBar from "../../components/userSearchBar/UserSearchBar";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import { transformArrayDatetoDate, dateToFormattedTime } from "../../utils/utilityFunctions";
+import {
+  transformArrayDatetoDate,
+  dateToFormattedTime,
+} from "../../utils/utilityFunctions";
 
 export const MessageCenter = () => {
   const navigate = useNavigate();
-  const webSocketChat = useWebSocketChat();
   const { sendMessage } = useWebSocketChat();
   const userToChat = new URLSearchParams(useLocation().search).get("id");
   const { user } = useAuthStore();
@@ -34,19 +36,25 @@ export const MessageCenter = () => {
   const [searchSelectedUser, setSearchSelectedUser] = useState(null);
   const { t } = useTranslation();
   const messagesEndRef = React.useRef(null);
+  const [showUserListMobile, setShowUserListMobile] = useState(true);
+
+  // Detect mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const getUserInformation = async () => {
       await fetchAllConversations();
-
       if (userToChat) {
         const updatedConversations = useMessageStore.getState().conversations;
         const userFromURL = updatedConversations.find(
           (u) => u.id === Number(userToChat)
         );
-
         if (!userFromURL) {
-          // Fetch full user info before adding
           const userInfo = await handleGetUserInformation(userToChat);
           if (userInfo) {
             useMessageStore.getState().addNewUserToConversation(userInfo);
@@ -67,8 +75,12 @@ export const MessageCenter = () => {
       navigate(`/messages?id=${selectedUser.id}`, { replace: true });
       handleReadConversation(selectedUser.id);
       fetchUserConversation(selectedUser.id);
+      if (isMobile) setShowUserListMobile(false);
+    } else {
+      navigate(`/messages`, { replace: true });
+      if (isMobile) setShowUserListMobile(true);
     }
-  }, [selectedUser]);
+  }, [selectedUser, isMobile]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -78,7 +90,6 @@ export const MessageCenter = () => {
 
   const handleSendMessage = async () => {
     if (messageInput.trim() !== "") {
-      // Create a temporary message with a local ID
       const localId = `localId-${Date.now()}`;
       const newMessage = {
         messageId: localId,
@@ -89,7 +100,6 @@ export const MessageCenter = () => {
       };
       addLocalMessage(newMessage);
       setMessageInput("");
-
       if (sendMessage(selectedUser.id, messageInput)) {
         updateMessageStatus(localId, "not_read");
       } else {
@@ -97,7 +107,7 @@ export const MessageCenter = () => {
           await handleSendMessageViaApi(selectedUser.id, messageInput);
           handleNotification("success", "chatWsClosedMessageSent");
           updateMessageStatus(localId, "sent");
-          setMessageInput(""); // Clear input after sending
+          setMessageInput("");
         } catch (error) {
           handleNotification("error", "chatWsClosedMessageSent");
           updateMessageStatus(localId, "failed");
@@ -115,28 +125,22 @@ export const MessageCenter = () => {
 
   const handleSearchUserSelect = (user) => {
     if (!user) return;
-    // Add to conversations if not present
     if (!conversations.some((u) => u.id === user.id)) {
-      // Add the full user object, not just the ID
       useMessageStore.getState().addNewUserToConversation(user);
     }
     setSelectedUser(user);
-    setSearchSelectedUser(null); // Clear search selection
+    setSearchSelectedUser(null);
   };
 
-  // Helper to robustly convert any date (array or string) to JS Date
   function toDateUniversal(date) {
     if (!date) return null;
     if (Array.isArray(date)) {
       return transformArrayDatetoDate(date);
     }
-    // If already a Date
     if (date instanceof Date) return date;
-    // If string
     return new Date(date);
   }
 
-  // Formats message timestamps (today: HH:mm, else: DD/MM/YYYY HH:mm)
   function formatMessageTimestamp(date) {
     const d = toDateUniversal(date);
     if (!d) return "";
@@ -156,7 +160,6 @@ export const MessageCenter = () => {
     }
   }
 
-  // Formats last seen (today: HH:mm, else: DD/MM/YYYY HH:mm)
   function formatLastSeen(date) {
     if (!date) return "";
     const d = toDateUniversal(date);
@@ -177,11 +180,162 @@ export const MessageCenter = () => {
     }
   }
 
+  // Mobile: show user list or chat area
+  if (isMobile) {
+    if (showUserListMobile) {
+      return (
+        <div className="chat-container">
+          <div className="chat-user-list">
+            <UserSearchBar
+              selectedUser={searchSelectedUser}
+              onUserSelect={handleSearchUserSelect}
+              placeholder={t("messageCenter.searchPlaceholder")}
+              maxResults={30}
+              showUserInfo={true}
+              compact={true}
+              className="message-center-search"
+            />
+            <div className="chat-user-list-items">
+              {conversations.map((user) => (
+                <div
+                  key={user.id}
+                  className={`chat-user-item ${
+                    selectedUser?.id === user.id ? "selected" : ""
+                  }`}
+                  onClick={() => setSelectedUser(user)}
+                >
+                  <div className="userCard-avatarAndInfoContainer container-user">
+                    <div className="userCard-avatarContainer">
+                      <UserIcon user={user} />
+                    </div>
+                    <div className="userCard-userInfo">
+                      <div className="userCard-name">
+                        {user.name} {user.surname}
+                      </div>
+                      <div className="userCard-email">
+                        {user.email}
+                        {!user.onlineStatus && user.lastSeen && (
+                          <div className="userCard-last-seen">
+                            {t("messageCenter.lastOnlineAt")}{" "}
+                            {formatLastSeen(user.lastSeen)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // Show chat area for selected user
+    if (selectedUser) {
+      return (
+        <div className="chat-container">
+          <div className="chat-area">
+            <div className="chat-header-mobile">
+              <button
+                className="chat-back-button"
+                onClick={() => {
+                  setSelectedUser(null);
+                  setShowUserListMobile(true);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  marginRight: 10,
+                  fontSize: 20,
+                  cursor: "pointer",
+                }}
+                aria-label={t("Back")}
+              >
+                <FaArrowLeft />
+              </button>
+              <div className="userCard-avatarAndInfoContainer container-user">
+                <div className="userCard-avatarContainer">
+                  <UserIcon user={selectedUser} />
+                </div>
+                <div className="userCard-userInfo">
+                  <div className="userCard-name">
+                    {selectedUser.name} {selectedUser.surname}
+                  </div>
+                  <div className="userCard-email">{selectedUser.email}</div>
+                  {!selectedUser.onlineStatus && selectedUser.lastSeen && (
+                    <div className="userCard-last-seen">
+                      {t("messageCenter.lastOnlineAt")}{" "}
+                      {formatLastSeen(selectedUser.lastSeen)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="chat-messages-container">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`chat-message ${
+                    message.senderId === user.id ? "sent" : "received"
+                  }`}
+                >
+                  <div className="chat-message-content">
+                    <p>{message.message}</p>
+                    <div className="chat-message-meta">
+                      <span className="chat-message-time">
+                        {formatMessageTimestamp(message.formattedTimestamp)}
+                        <span className={`chat-status-icon-${message.status}`}>
+                          {message.status === "sending" &&
+                            t("messageCenter.statusSending")}
+                          {message.status === "failed" &&
+                            t("messageCenter.statusFailed")}
+                          {message.status === "sent" &&
+                            t("messageCenter.statusSent")}
+                          {message.status === "read" &&
+                            t("messageCenter.statusRead")}
+                          {message.status === "not_read" &&
+                            t("messageCenter.statusNotRead")}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="chat-message-input-container">
+              <textarea
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={t("messageCenter.typeMessage")}
+                rows={1}
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!messageInput.trim()}
+                className="chat-send-button"
+              >
+                <FaPaperPlane />
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // Fallback
+    return (
+      <div className="chat-empty-chat">
+        <h3>{t("messageCenter.selectConversation")}</h3>
+      </div>
+    );
+  }
+
+  // Desktop/tablet: show both user list and chat area
   return (
+    
     <div className="chat-container">
-      {/* Left sidebar - User list (hidden on mobile) */}
       <div className="chat-user-list">
-        {/* User SearchBar for starting new conversations */}
         <UserSearchBar
           selectedUser={searchSelectedUser}
           onUserSelect={handleSearchUserSelect}
@@ -201,11 +355,9 @@ export const MessageCenter = () => {
               onClick={() => setSelectedUser(user)}
             >
               <div className="userCard-avatarAndInfoContainer container-user">
-                {/* User Avatar */}
                 <div className="userCard-avatarContainer">
                   <UserIcon user={user} />
                 </div>
-                {/* User Info */}
                 <div className="userCard-userInfo">
                   <div className="userCard-name">
                     {user.name} {user.surname}
@@ -225,10 +377,7 @@ export const MessageCenter = () => {
           ))}
         </div>
       </div>
-
-      {/* Main chat area */}
       <div className="chat-area">
-        {/* Mobile-only chat header for selected user */}
         {selectedUser && (
           <div className="chat-header-mobile">
             <div className="userCard-avatarAndInfoContainer container-user">
@@ -252,7 +401,6 @@ export const MessageCenter = () => {
         )}
         {selectedUser ? (
           <>
-            {/* Messages */}
             <div className="chat-messages-container">
               {messages.map((message, index) => (
                 <div
@@ -266,14 +414,17 @@ export const MessageCenter = () => {
                     <div className="chat-message-meta">
                       <span className="chat-message-time">
                         {formatMessageTimestamp(message.formattedTimestamp)}
-                        <span
-                          className={`chat-status-icon-${message.status}`}
-                        >
-                          {message.status === "sending" && t("messageCenter.statusSending")}
-                          {message.status === "failed" && t("messageCenter.statusFailed")}
-                          {message.status === "sent" && t("messageCenter.statusSent")}
-                          {message.status === "read" && t("messageCenter.statusRead")}
-                          {message.status === "not_read" && t("messageCenter.statusNotRead")}
+                        <span className={`chat-status-icon-${message.status}`}>
+                          {message.status === "sending" &&
+                            t("messageCenter.statusSending")}
+                          {message.status === "failed" &&
+                            t("messageCenter.statusFailed")}
+                          {message.status === "sent" &&
+                            t("messageCenter.statusSent")}
+                          {message.status === "read" &&
+                            t("messageCenter.statusRead")}
+                          {message.status === "not_read" &&
+                            t("messageCenter.statusNotRead")}
                         </span>
                       </span>
                     </div>
@@ -282,8 +433,6 @@ export const MessageCenter = () => {
               ))}
               <div ref={messagesEndRef} />
             </div>
-
-            {/* Message input */}
             <div className="chat-message-input-container">
               <textarea
                 value={messageInput}

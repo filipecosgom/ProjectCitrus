@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.websocket.server.HandshakeRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.Response;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.ConfigurationEntity;
 import pt.uc.dei.repositories.ConfigurationRepository;
@@ -134,5 +135,34 @@ public class JWTUtil {
             return null;
         }
     }
+
+    public static Long extractUserIdOrAbort(String jwtToken) throws JwtValidationException {
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            throw new JwtValidationException("Unauthorized: missing JWT token");
+        }
+
+        Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+        if (userId == null) {
+            throw new JwtValidationException("Unauthorized: invalid JWT token");
+        }
+
+        return userId;
+    }
+
+    public static Response buildUnauthorizedResponse(String message) {
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity(new ApiResponse(false, message, "errorUnauthorized", null))
+                .build();
+    }
+
+    // Custom exception to handle auth errors
+    public static class JwtValidationException extends Exception {
+        public JwtValidationException(String message) {
+            super(message);
+        }
+    }
+
+
+
 
 }
