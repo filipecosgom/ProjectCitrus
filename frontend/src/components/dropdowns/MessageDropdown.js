@@ -12,6 +12,13 @@ export default function MessageDropdown({ isVisible }) {
   useEffect(() => {
     if (isVisible) {
       loadConversations();
+
+      // Auto-refresh a cada 30 segundos
+      const interval = setInterval(() => {
+        loadConversations();
+      }, 30000);
+
+      return () => clearInterval(interval);
     }
   }, [isVisible]);
 
