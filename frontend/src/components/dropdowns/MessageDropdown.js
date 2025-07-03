@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { fetchConversationPreviews } from "../../api/messagesApi";
 import "./NotificationDropdown.css";
 
-export default function MessageDropdown({ isVisible }) {
+export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +21,17 @@ export default function MessageDropdown({ isVisible }) {
       return () => clearInterval(interval);
     }
   }, [isVisible]);
+
+  useEffect(() => {
+    if (conversations.length > 0) {
+      const totalUnread = conversations.reduce(
+        (sum, conv) => sum + conv.unreadCount,
+        0
+      );
+      // Notificar o Header sobre o total
+      onUnreadCountChange?.(totalUnread);
+    }
+  }, [conversations]);
 
   const loadConversations = async () => {
     try {
