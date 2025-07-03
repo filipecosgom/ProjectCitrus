@@ -96,10 +96,9 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
             List<MessageEntity> messages = em.createNamedQuery("MessageEntity.getConversation", MessageEntity.class)
                     .setParameter("user_id", userId)
                     .setParameter("otherUser_id", otherUserId)
-                    .setMaxResults(1) // ✅ Só queremos a última
-                    .getResultList();
+                    .getResultList(); // ✅ Pegar todas as mensagens (sem setMaxResults)
 
-            return messages.isEmpty() ? null : messages.get(messages.size() - 1); // Última mensagem
+            return messages.isEmpty() ? null : messages.get(messages.size() - 1); // ✅ Última mensagem da lista
         } catch (Exception e) {
             LOGGER.error("Error getting last message between {} and {}", userId, otherUserId, e);
             return null;
