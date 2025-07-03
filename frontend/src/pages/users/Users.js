@@ -6,7 +6,8 @@ import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
-import SortControls from "../../components/sortControls/SortControls";
+import SortControls from "../../components/sortControls/SortControls"; // ✅ CORRIGIDO
+import { usersSortFields } from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
 import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
 import { GrUserSettings } from "react-icons/gr";
@@ -17,8 +18,7 @@ import {
   createSortHandler,
   fetchInitialUsers,
   userSearchFilters,
-  usersSortFields as sortFields,
-} from "../../utils/usersSearchUtils";
+} from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 
@@ -52,7 +52,6 @@ export default function Users() {
   });
   const lastSearchRef = useRef(lastSearch);
   const usersFilters = userSearchFilters(t, offices);
-  const usersSortFields = sortFields;
 
   // ✅ VERIFICAR se user é admin
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
@@ -234,7 +233,9 @@ export default function Users() {
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
       <div className="searchBar-containerAndButton">
         <div
-          className={`searchBar-wrapperAndButton ${isAdmin ? "with-assign-button" : ""}`}
+          className={`searchBar-wrapperAndButton ${
+            isAdmin ? "with-assign-button" : ""
+          }`}
         >
           <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
         </div>
@@ -260,6 +261,7 @@ export default function Users() {
       </div>
 
       <SortControls
+        className="users-mode"
         fields={usersSortFields}
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}

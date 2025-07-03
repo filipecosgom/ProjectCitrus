@@ -205,18 +205,22 @@ const pt = {
   //Users
   users: {
     assignManagers: "Atribuir Gestores",
-    assignManagerTitle: "Atribuir Gestor a {count, plural, one {# utilizador} other {# utilizadores}}",
-    willManage: "Irá gerir {count, plural, one {# utilizador} other {# utilizadores}}",
+    assignManagerTitle:
+      "Atribuir Gestor a {count, plural, one {# utilizador} other {# utilizadores}}",
+    willManage:
+      "Irá gerir {count, plural, one {# utilizador} other {# utilizadores}}",
     selectedUsers: "Utilizadores Selecionados:",
     selectUserToPromote: "Selecionar Utilizador para Promover a Gestor:",
-    promoteDescription: "Procure um utilizador que será promovido a gestor e atribuído aos utilizadores selecionados acima.",
+    promoteDescription:
+      "Procure um utilizador que será promovido a gestor e atribuído aos utilizadores selecionados acima.",
     searchPromotePlaceholder: "Procurar utilizador para promover a gestor...",
     willBePromoted: "será promovido a Gestor",
     cancel: "Cancelar",
     assigning: "A atribuir...",
     promoteAndAssign: "Promover & Atribuir",
     selectUserFirst: "Selecione primeiro o utilizador",
-    noResults: "Nenhum utilizador encontrado que corresponda aos seus critérios",
+    noResults:
+      "Nenhum utilizador encontrado que corresponda aos seus critérios",
     na: "N/A",
     accountStateComplete: "Completo",
     accountStateIncomplete: "Incompleto",
@@ -290,38 +294,6 @@ const pt = {
     statusNotRead: "✓✓",
     typeMessage: "Escreva uma mensagem...",
     selectConversation: "Selecione uma conversa para começar a conversar",
-  },
-
-  // Avaliações
-  appraisalsSearchTypeUserName: "Nome do utilizador",
-  appraisalsSearchTypeUserEmail: "Email do utilizador",
-  appraisalsSearchTypeManagerName: "Nome do gestor",
-  appraisalsSearchTypeManagerEmail: "Email do gestor",
-  appraisalStateAllStates: "Todos os estados",
-  appraisalStateInProgress: "Em curso",
-  appraisalStateCompleted: "Completo",
-  appraisalStateClosed: "Fechado",
-
-  appraisal: {
-    scoreVerbose: {
-      null: "Nenhuma pontuação atribuída",
-      1: "Contribuição baixa",
-      2: "Contribuição parcial",
-      3: "Contribuição conforme o esperado",
-      4: "Contribuição excedida"
-    },
-    submit: "Submeter",
-    save: "Guardar",
-    saved: "Avaliação guardada. Pode submeter até {endDate}",
-    saving: "Salvando...",
-    cancel: "Cancelar",
-    edit: "Editar",
-    feedback: "Feedback",
-    feedbackText: "Texto do feedback",
-    score: "Pontuação",
-    noFeedback: "Nenhum feedback fornecido.",
-    saveError: "Erro ao salvar feedback.",
-    error: "Falha ao guardar avaliação.",
   },
 };
 

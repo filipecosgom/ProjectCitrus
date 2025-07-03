@@ -1,6 +1,6 @@
 /* src/components/userOffcanvas/UserOffcanvas.css */
 
-/* Backdrop */
+/* Backdrop com blur effect */
 .user-offcanvas-backdrop {
   position: fixed;
   top: 0;
@@ -8,15 +8,30 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px); /* ✅ BLUR EFFECT */
+  -webkit-backdrop-filter: blur(8px); /* ✅ SAFARI SUPPORT */
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .user-offcanvas-backdrop.open {
   opacity: 1;
   visibility: visible;
+  backdrop-filter: blur(8px); /* ✅ GARANTIR blur quando aberto */
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ✅ FALLBACK para browsers que não suportam backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .user-offcanvas-backdrop {
+    background-color: rgba(0, 0, 0, 0.7); /* ✅ BACKDROP mais escuro */
+  }
+
+  .user-offcanvas-backdrop.open {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }
 
 /* ✅ Offcanvas - slide da direita */
@@ -46,7 +61,7 @@
   background: none;
   border: none;
   font-size: 24px;
-  color: #000000; /* ✅ PRETO conforme especificado */
+  color: #000000;
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
@@ -210,23 +225,56 @@
     grid-template-columns: 1fr;
     gap: 20px;
   }
+
+  /* ✅ BLUR menos intenso no mobile para performance */
+  .user-offcanvas-backdrop {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .user-offcanvas-backdrop.open {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
 }
 
 @media (max-width: 768px) and (min-width: 481px) {
   .user-offcanvas {
     width: 90vw;
   }
+
+  /* ✅ BLUR moderado no tablet */
+  .user-offcanvas-backdrop {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .user-offcanvas-backdrop.open {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 }
 
-/* ✅ NOVO: Smooth animation overrides */
+/* ✅ SMOOTH animation overrides */
 @media (prefers-reduced-motion: no-preference) {
   .user-offcanvas {
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .user-offcanvas-backdrop {
+    transition: opacity 0.3s ease, visibility 0.3s ease,
+      backdrop-filter 0.3s ease;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .user-offcanvas {
     transition: transform 0.2s ease;
+  }
+
+  .user-offcanvas-backdrop {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: none !important; /* ✅ REMOVER blur se motion reduzido */
+    -webkit-backdrop-filter: none !important;
   }
 }

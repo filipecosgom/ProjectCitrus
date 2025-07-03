@@ -199,11 +199,13 @@ const en = {
   //Users
   users: {
     assignManagers: "Assign Managers",
-    assignManagerTitle: "Assign manager to {count, plural, one {# user} other {# users}}",
+    assignManagerTitle:
+      "Assign manager to {count, plural, one {# user} other {# users}}",
     willManage: "Will manage {count, plural, one {# user} other {# users}}",
     selectedUsers: "Selected users",
     selectUserToPromote: "Select a user to promote",
-    promoteDescription: "Choose a user to promote to manager and assign selected users.",
+    promoteDescription:
+      "Choose a user to promote to manager and assign selected users.",
     searchPromotePlaceholder: "Search for a user to promote...",
     willBePromoted: "will be promoted to manager.",
     cancel: "Cancel",
@@ -240,12 +242,12 @@ const en = {
   userSortControlsManager: "Manager",
   userSortControlsSortAscending: "Sort ascending",
   userSortControlsSortDescending: "Sort descending",
-  
+
   //Appraisal Sort Controls
   appraisalSortControlsUser: "User",
   appraisalSortControlsScore: "Score",
   appraisalSortControlsManager: "Manager",
-  appraisalSortControlsEndDate: "End date",
+  appraisalSortControlsEndDate: "End Date",
   appraisalSortControlsState: "State",
 
   //Filtermenu
@@ -287,34 +289,6 @@ const en = {
     statusNotRead: "✓✓",
     typeMessage: "Type a message...",
     selectConversation: "Select a conversation to start chatting",
-  },
-
-  // Appraisals Search
-  appraisalsSearchTypeUserName: "user name",
-  appraisalsSearchTypeUserEmail: "user email",
-  appraisalsSearchTypeManagerName: "manager name",
-  appraisalsSearchTypeManagerEmail: "manager email",
-  appraisalStateAllStates: "all states",
-
-  appraisal: {
-    scoreVerbose: {
-      null: "No score assigned",
-      1: "Low contribution",
-      2: "Partial contribution",
-      3: "Expected contribution",
-      4: "Exceeded contribution"
-    },
-    submit: "Submit",
-    save: "Save",
-    saved: "Saved appraisal. You can submit until {endDate}",
-    saving: "Saving...",
-    cancel: "Cancel",
-    edit: "Edit",
-    feedback: "Feedback",
-    feedbackText: "Feedback text",
-    score: "Score",
-    noFeedback: "No feedback provided.",
-    saveError: "Failed to save appraisal.",
   },
 };
 export default en;
