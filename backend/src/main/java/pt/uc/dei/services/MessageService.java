@@ -20,8 +20,11 @@ import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.entities.MessageEntity;
 import pt.uc.dei.dtos.MessageDTO;
+import pt.uc.dei.dtos.ConversationPreviewDTO;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -154,5 +157,77 @@ public class MessageService implements Serializable {
         return false;
     }
 
-
+    /**
+     * Obtém previews das conversas para o dropdown de mensagens
+     * Combina dados de utilizador + última mensagem + contador não lidas
+     * @param userId ID do utilizador logado
+     * @return Lista de ConversationPreviewDTO ordenada por data da última mensagem
+     */
+    public List<ConversationPreviewDTO> getConversationPreviews(Long userId) {
+        LOGGER.info("Getting conversation previews for userId: {}", userId);
+        
+        try {
+            // 1. Buscar conversas básicas (UserEntity + LastMessageDate)
+            List<Object[]> conversationData = messageRepository.getConversationPreviews(userId, 6);
+            
+            if (conversationData.isEmpty()) {
+                LOGGER.info("No conversations found for userId: {}", userId);
+                return new ArrayList<>();
+            }
+            
+            // 2. Mapear cada conversa para ConversationPreviewDTO
+            List<ConversationPreviewDTO> conversationPreviews = new ArrayList<>();
+            
+            for (Object[] data : conversationData) {
+                try {
+                    // Extrair dados da query
+                    UserEntity otherUser = (UserEntity) data[0];
+                    LocalDateTime lastMessageDate = (LocalDateTime) data[1];
+                    
+                    // 3. Buscar última mensagem específica
+                    MessageEntity lastMessage = messageRepository.getLastMessageBetween(userId, otherUser.getId());
+                    
+                    if (lastMessage == null) {
+                        LOGGER.warn("No last message found between userId {} and {}", userId, otherUser.getId());
+                        continue; // Pular esta conversa
+                    }
+                    
+                    // 4. Buscar contador de mensagens não lidas
+                    int unreadCount = messageRepository.getUnreadMessageCount(userId, otherUser.getId());
+                    
+                    // 5. Determinar se a última mensagem é do utilizador logado
+                    boolean isLastMessageFromMe = lastMessage.getSender().getId().equals(userId);
+                    
+                    // 6. Determinar se a última mensagem está lida
+                    boolean isLastMessageRead = isLastMessageFromMe ? true : lastMessage.getMessageIsRead();
+                    
+                    // 7. Criar ConversationPreviewDTO
+                    ConversationPreviewDTO preview = new ConversationPreviewDTO(
+                        otherUser.getId(),
+                        otherUser.getName(),
+                        otherUser.getSurname(),
+                        otherUser.getHasAvatar(),
+                        lastMessage.getMessageContent(),
+                        lastMessage.getSentDate(),
+                        isLastMessageRead,
+                        Math.max(0, unreadCount), // Garantir que não é negativo
+                        isLastMessageFromMe
+                    );
+                    
+                    conversationPreviews.add(preview);
+                    
+                } catch (Exception e) {
+                    LOGGER.error("Error processing conversation data for userId {}", userId, e);
+                    // Continuar com próxima conversa se uma falhar
+                }
+            }
+            
+            LOGGER.info("Successfully created {} conversation previews for userId {}", conversationPreviews.size(), userId);
+            return conversationPreviews;
+            
+        } catch (Exception e) {
+            LOGGER.error("Error getting conversation previews for userId {}", userId, e);
+            return new ArrayList<>();
+        }
+    }
 }
