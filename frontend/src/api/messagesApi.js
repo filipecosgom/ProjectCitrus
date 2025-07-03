@@ -102,3 +102,29 @@ export const readConversationApi = async (senderId) => {
     };
   }
 };
+
+/**
+ * Busca previews das conversas para o dropdown de mensagens
+ * @returns {Promise<Object>} Response com lista de ConversationPreviewDTO
+ */
+export const fetchConversationPreviews = async () => {
+  try {
+    const response = await axios.get(`${messagesEndpoint}conversations`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
