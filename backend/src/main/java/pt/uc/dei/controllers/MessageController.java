@@ -21,8 +21,10 @@ import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.dtos.MessageDTO;
 import pt.uc.dei.dtos.UserDTO;
+import pt.uc.dei.dtos.ConversationPreviewDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/messages")
@@ -201,6 +203,41 @@ public class MessageController {
             }
         } catch (Exception e) {
             LOGGER.error("Exception in readConversation", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
+                    .build();
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("conversations")
+    public Response getConversationPreviews(@CookieParam("jwt") String jwtToken) {
+        LOGGER.info("Request to get conversation previews");
+
+        // Validate JWT
+        Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+        if (userId == null) {
+            LOGGER.warn("Missing or invalid JWT in getConversationPreviews");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Missing token", "errorMissingToken", null))
+                    .build();
+        }
+
+        try {
+            List<ConversationPreviewDTO> conversationPreviews = messageService.getConversationPreviews(userId);
+            
+            if (conversationPreviews == null || conversationPreviews.isEmpty()) {
+                LOGGER.info("No conversation previews found for userId {}", userId);
+                return Response.ok(new ApiResponse(true, "No conversations found", "successNoConversations", new ArrayList<>()))
+                        .build();
+            }
+
+            LOGGER.info("Conversation previews retrieved for userId {}: {} conversations", userId, conversationPreviews.size());
+            return Response.ok(new ApiResponse(true, "Conversation previews retrieved", "successConversationPreviewsRetrieved", conversationPreviews))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Error in getConversationPreviews", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
                     .build();
