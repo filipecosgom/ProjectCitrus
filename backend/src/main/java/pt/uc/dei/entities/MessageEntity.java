@@ -49,6 +49,18 @@ import java.time.LocalDateTime;
                 "SET m.messageIsRead = true " +
                 "WHERE m.receiver.id = :recipient_id AND m.sender.id = :sender_id"
 )
+
+@NamedQuery(
+    name = "MessageEntity.getConversationPreviews",
+    query = "SELECT DISTINCT " +
+            "CASE WHEN m.sender.id = :userId THEN m.receiver ELSE m.sender END as otherUser, " +
+            "MAX(m.sentDate) as lastMessageDate " +
+            "FROM MessageEntity m " +
+            "WHERE (m.sender.id = :userId OR m.receiver.id = :userId) " +
+            "GROUP BY CASE WHEN m.sender.id = :userId THEN m.receiver.id ELSE m.sender.id END " +
+            "ORDER BY lastMessageDate DESC"
+)
+
 @Entity
 @Table(name="message", indexes = {
         @Index(name = "idx_recipient_sender_unread", columnList = "recipient, sender, isRead"),
