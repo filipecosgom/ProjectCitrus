@@ -33,12 +33,13 @@ export async function fetchInitialAppraisals({
   sort,
   handleGetAppraisalStates,
   handleGetAppraisals,
+  t,
 }) {
   setPageLoading(true);
   let appraisalStates = await handleGetAppraisalStates();
   // Ensure all states option is present and value is null or ""
   if (!appraisalStates.some(s => s.value === "" || s.value === null)) {
-    appraisalStates = [{ label: "All states", value: "" }, ...appraisalStates];
+    appraisalStates = [{ label: t("appraisalStateAllStates"), value: "" }, ...appraisalStates];
   }
   const initialSearch = { query: "", searchType: "appraisedUserName", limit: 10, filters: {} };
   setSearchParams(initialSearch);
@@ -62,12 +63,12 @@ export async function fetchInitialAppraisals({
   setPageLoading(false);
 }
 
-// Search types for appraisals
-export const appraisalsSearchTypes = [
-  { value: "appraisedUserName", label: "appraisalsSearchTypeUserName" },
-  { value: "appraisedUserEmail", label: "appraisalsSearchTypeUserEmail" },
-  { value: "managerName", label: "appraisalsSearchTypeManagerName" },
-  { value: "managerEmail", label: "appraisalsSearchTypeManagerEmail" },
+// Search types for appraisals (internationalized)
+export const appraisalsSearchTypes = (t) => [
+  { value: "appraisedUserName", label: t("appraisalsSearchTypeUserName") },
+  { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
+  { value: "managerName", label: t("appraisalsSearchTypeManagerName") },
+  { value: "managerEmail", label: t("appraisalsSearchTypeManagerEmail") },
 ];
 
 // Build params for backend
@@ -88,8 +89,8 @@ export function buildAppraisalsSearchParams({ query, searchType, limit, offset, 
   };
   // Map frontend searchType to backend param names
   if (query && searchType) {
-  params[searchType] = query;
-}
+    params[searchType] = query;
+  }
   // Map state and score if needed
   if (state) {
     params.state = state;
@@ -100,7 +101,7 @@ export function buildAppraisalsSearchParams({ query, searchType, limit, offset, 
   return params;
 }
 
-// Externalized search filter config for appraisals
+// Externalized search filter config for appraisals (internationalized)
 export const appraisalSearchFilters = (t, appraisalStates) => {
   let stateOptions = appraisalStates;
   if (!stateOptions || !Array.isArray(stateOptions) || !stateOptions.length) {
@@ -145,10 +146,11 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
   };
 };
 
-export const appraisalsSortFields = [
-  { id: "appraisalSortControlsUser", key: "user" },
-  { id: "appraisalSortControlsScore", key: "score" },
-  { id: "appraisalSortControlsManager", key: "manager" },
-  { id: "appraisalSortControlsEndDate", key: "endDate" },
-  { id: "appraisalSortControlsState", key: "state" }
+// Appraisals sort fields (internationalized)
+export const appraisalsSortFields = (t) => [
+  { id: "appraisalSortControlsUser", key: "user", label: t("appraisalSortControlsUser") },
+  { id: "appraisalSortControlsScore", key: "score", label: t("appraisalSortControlsScore") },
+  { id: "appraisalSortControlsManager", key: "manager", label: t("appraisalSortControlsManager") },
+  { id: "appraisalSortControlsEndDate", key: "endDate", label: t("appraisalSortControlsEndDate") },
+  { id: "appraisalSortControlsState", key: "state", label: t("appraisalSortControlsState") },
 ];

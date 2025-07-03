@@ -290,28 +290,5 @@ const en = {
     typeMessage: "Type a message...",
     selectConversation: "Select a conversation to start chatting",
   },
-
-  // Sort Controls - General
-  name: "Name",
-  user: "User",
-  score: "Score",
-  manager: "Manager",
-  endDate: "End Date",
-  state: "State",
-  role: "Role",
-  office: "Office",
-
-  // Sort Controls - Appraisals específico
-  appraisalUser: "User",
-  appraisalScore: "Score",
-  appraisalManager: "Manager",
-  appraisalEndDate: "End Date",
-  appraisalState: "State",
-
-  // Sort Controls - Users específico
-  userName: "Name",
-  userRole: "Role",
-  userOffice: "Office",
-  userManager: "Manager",
 };
 export default en;

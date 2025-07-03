@@ -51,12 +51,18 @@ const SearchBar = ({
         <input
           {...register("query")}
           placeholder={t("searchBarPlaceholder", {
-            type: t(
-              `filterMenuOption${
-                (watch("searchType") || "name").charAt(0).toUpperCase() +
-                (watch("searchType") || "name").slice(1)
-              }`
-            ).toLowerCase(),
+            type: (
+              (props.searchTypes &&
+                props.searchTypes.find(
+                  (type) => type.value === watch("searchType")
+                )?.label) ||
+              t(
+                `filterMenuOption${
+                  (watch("searchType") || "name").charAt(0).toLowerCase() +
+                  (watch("searchType") || "name").slice(1)
+                }`
+              )
+            )?.toLowerCase(),
           })}
           className="searchBar-input"
         />
@@ -64,11 +70,9 @@ const SearchBar = ({
           <select {...register("searchType")} className="searchBar-select">
             {props.searchTypes.map((type) => (
               <option key={type.value} value={type.value}>
-                {t(
-                  `filterMenuOption${
-                    type.value.charAt(0).toUpperCase() + type.value.slice(1)
-                  }`
-                )}
+                {type.label
+                  ? type.label
+                  : t(`filterMenuOption${type.value.toLowerCase()}`)}
               </option>
             ))}
           </select>

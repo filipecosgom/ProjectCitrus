@@ -76,10 +76,11 @@ api.interceptors.response.use(
 
 export const handleApiError = (error) => {
   if (error.response) {
+    console.log("API Error:", error.response.data.message);
     const { success, message, errorCode } = error.response.data;
 
     if (!success) {
-      handleNotification("error", errorCode || "errorUnexpected");
+      handleNotification("error", error.response.message || "errorUnexpected");
     }
   } else {
     handleNotification("error", "errorNetworkError");

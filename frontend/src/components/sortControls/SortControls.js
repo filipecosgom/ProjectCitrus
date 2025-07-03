@@ -66,8 +66,12 @@ const SortControls = ({
           onClick={() => handleSort(key)}
         >
           {t(id)}
-          {/* ✅ SEMPRE MOSTRAR ÍCONE */}
-          {getSortIcon(key)}
+          {sortBy === key &&
+            (sortOrder === "ascending" ? (
+              <FaSortAmountDown  className="sort-icon" />
+            ) : (
+              <FaSortAmountUp  className="sort-icon" />
+            ))}
         </div>
       ))}
     </div>

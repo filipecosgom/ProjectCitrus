@@ -152,6 +152,7 @@ public class AppraisalService implements Serializable {
         appraisal.setFeedback(updateAppraisalDTO.getFeedback());
         appraisal.setScore(updateAppraisalDTO.getScore());
         appraisal.setEditedDate(LocalDate.now());
+
         appraisalRepository.merge(appraisal);
         LOGGER.info("Updated appraisal with ID: {}", appraisal.getId());
 
@@ -516,4 +517,4 @@ public class AppraisalService implements Serializable {
         }
     }
 }
-
+}

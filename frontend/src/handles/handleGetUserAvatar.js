@@ -1,6 +1,7 @@
 import { fetchUserAvatar } from "../api/userApi";
 
 export const handleGetUserAvatar = async (id) => {
+  console.log("Fetching avatar for user ID:", id);
   try {
 
     const response = await fetchUserAvatar(id);
