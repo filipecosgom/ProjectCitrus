@@ -23,6 +23,7 @@ import pt.uc.dei.utils.ApiResponse;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.utils.TwoFactorUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -102,8 +103,12 @@ public class AuthenticationController {
         // Retrieve configuration settings
         ConfigurationDTO configuration = configurationService.getLatestConfiguration();
         // Prepare the response with JWT in headers and structured body
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("sessionDuration", configuration.getLoginTime()); // <-- Add this line
+        // Prepare the response with JWT in headers and structured body
         Response.ResponseBuilder response = Response
-                .ok(new ApiResponse(true, "Login successful", null, Map.of("token", token)));
+                .ok(new ApiResponse(true, "Login successful", null, data));
         response.header("Set-Cookie",
                 "jwt=" + token +
                         "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + (configuration.getLoginTime() * 60));

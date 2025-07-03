@@ -33,7 +33,6 @@ const UserSearchBar = ({
 
   // ✅ BUSCAR USERS - MESMA LÓGICA que Users.js
   const searchUsers = async (query = "") => {
-    console.log("🔍 UserSearchBar - Searching with query:", query);
     setUsersLoading(true);
 
     try {
@@ -47,12 +46,10 @@ const UserSearchBar = ({
         ...filterOptions, // ✅ Aplicar filtros adicionais se houver
       };
 
-      console.log("🔍 UserSearchBar - Search params:", searchParams);
 
       // ✅ USAR handleGetUsers igual ao Users.js
       const result = await handleGetUsers(searchParams);
 
-      console.log("🔍 UserSearchBar - API Result:", result);
 
       if (result && result.users) {
         // ✅ Filtrar IDs excluídos
@@ -60,17 +57,14 @@ const UserSearchBar = ({
           (user) => !excludeUserIds.includes(user.id)
         );
 
-        console.log("👥 UserSearchBar - Users found:", filteredUsers.length);
         setUsers(filteredUsers);
 
         // ✅ Carregar avatars
         loadUserAvatars(filteredUsers);
       } else {
-        console.log("📭 UserSearchBar - No users in response");
         setUsers([]);
       }
     } catch (error) {
-      console.error("❌ UserSearchBar - Error fetching users:", error);
       setUsers([]);
     } finally {
       setUsersLoading(false);
@@ -123,7 +117,6 @@ const UserSearchBar = ({
     setSearchQuery(`${user.name} ${user.surname}`);
     setIsOpen(false);
     onUserSelect(user);
-    console.log("👤 UserSearchBar - User selected:", user);
   };
 
   // ✅ HANDLER para limpar

@@ -50,7 +50,9 @@ public class AppraisalController {
      */
 
     @PATCH
-    public Response updateAppraisal(@Valid UpdateAppraisalDTO updateAppraisalDTO, @CookieParam("jwt") String jwtToken) {
+    public Response updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO, @CookieParam("jwt") String jwtToken) {
+        Response validationResponse = validateUpdateAppraisalDTO(updateAppraisalDTO);
+        if (validationResponse != null) return validationResponse;
         try {
             Long managerId = JWTUtil.extractUserIdOrAbort(jwtToken);
             if(appraisalService.checkIfManagerOfUser(updateAppraisalDTO.getId(), managerId)){
@@ -63,7 +65,6 @@ public class AppraisalController {
             }
             try {
                 LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
-
                 AppraisalDTO updatedAppraisal = appraisalService.updateAppraisal(updateAppraisalDTO);
                 return Response.ok(new ApiResponse(true, "Appraisal updated successfully", "success", updatedAppraisal))
                         .build();
@@ -522,6 +523,43 @@ public class AppraisalController {
                     .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
                     .build();
         }
+    }
+
+    private Response validateUpdateAppraisalDTO(UpdateAppraisalDTO dto) {
+        if (dto.getId() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Appraisal ID is required", "errorMissingId", null))
+                    .build();
+        }
+        if (dto.getFeedback() != null && dto.getFeedback().isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Feedback must not be blank if provided", "errorFeedbackBlank", null))
+                    .build();
+        }
+        if (dto.getScore() != null) {
+            int score = dto.getScore();
+            if (score < 1 || score > 4) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, "Score must be between 1 and 4 if provided", "errorScoreOutOfBounds", null))
+                        .build();
+            }
+        }
+        if (dto.getState() == AppraisalState.COMPLETED) {
+            String feedback = dto.getFeedback();
+            if (feedback == null || feedback.trim().isBlank()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, "Completed appraisal must have feedback", "errorFeedbackBlank", null))
+                        .build();
+            }
+
+            Integer score = dto.getScore();
+            if (score == null || score < 1 || score > 4) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, "Completed appraisal must have a valid score between 1 and 4", "errorScoreOutOfBounds", null))
+                        .build();
+            }
+        }
+        return null; // No validation issues
     }
 
     // Métodos helper para determinar códigos de erro

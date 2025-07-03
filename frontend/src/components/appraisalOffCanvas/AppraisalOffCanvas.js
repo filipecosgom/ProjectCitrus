@@ -11,11 +11,13 @@ import AppraisalScoreStarBadge from "../appraisalScoreStarBadge/AppraisalScoreSt
 import AppraisalScoreVerbose from "../appraisalScoreVerbose/AppraisalScoreVerbose";
 import handleNotification from "../../handles/handleNotification";
 import { handleUpdateAppraisal } from "../../handles/handleUpdateAppraisal";
+import useAuthStore from "../../stores/useAuthStore";
 
 const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   const { t } = useTranslation();
   const user = appraisal?.appraisedUser || {};
-  const manager = appraisal?.appraisingUser || {};
+  const isTheManager = appraisal?.appraisingUser.id === useAuthStore((state) => state.user?.id);
+  const isAdmin = useAuthStore((state) => state.isUserAdmin());
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [shouldRender, setShouldRender] = useState(false); // ✅ NOVO estado
@@ -53,7 +55,6 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   // Buscar avatar quando user muda
   useEffect(() => {
     if (!user?.id) {
-      console.log("set to null");
       setAvatarUrl(null);
       return;
     }
@@ -62,7 +63,6 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
 
     const fetchAvatar = async () => {
       if (!user.hasAvatar) {
-        console.log("user has no avatar");
         setAvatarUrl(null);
         return;
       }
@@ -142,39 +142,28 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     return role.replace(/_/g, " ");
   };
 
-  // FUNÇÃO para account state
-  const getAccountStateInfo = (state) => {
-    if (state === "COMPLETED") {
-      return {
-        text: t("appraisal.appraisalStateComplete"),
-        className: "appraisal-state-complete",
-      };
-    }
-    if (state === "IN_PROGRESS") {
-      return {
-        text: t("appraisal.appraisalStateInProgress"),
-        className: "appraisal-state-in-progress",
-      };
-    }
-    if (state === "CLOSED") {
-      return {
-        text: t("appraisal.appraisalStateClosed"),
-        className: "appraisal-state-closed",
-      };
-    }
-  };
-
   // When appraisal changes, reset edit state
   useEffect(() => {
+    console.log(appraisal?.state);
     setEditMode(false);
     setEditedFeedback(appraisal?.feedback || "");
     setEditedScore(appraisal?.score ?? 0);
     setError(null);
   }, [appraisal]);
 
+  // Validation function for submit only
+  const validateAppraisal = (data) => {
+    if (!data.feedback || data.feedback.trim().length === 0) {
+      return t("appraisal.validation.feedbackRequired");
+    }
+    if (!data.score || data.score < 1) {
+      return t("appraisal.validation.scoreRequired");
+    }
+    return null;
+  };
+
   // Replace handleSave with API call and notification
   const handleSave = async (appraisalData) => {
-    console.log("handleSave called with:", appraisalData);
     setSaving(true);
     setError(null);
     try {
@@ -183,20 +172,52 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
         state: "IN_PROGRESS",
         ...appraisalData,
       };
-      console.log("updatePayload:", updatePayload);
       const response = await handleUpdateAppraisal(updatePayload);
       if (response.success) {
         handleNotification("success", "appraisal.saved", { endDate: appraisal.endDate });
         const editedAppraisal = { ...appraisal, ...appraisalData };
         if (onSave) onSave(editedAppraisal);
+        Object.assign(appraisal, editedAppraisal);
         setEditMode(false);
+        onClose();
       } else {
         setError(t("appraisal.saveError"));
-        handleNotification("error", "appraisal.saveError");
       }
     } catch (e) {
       setError(t("appraisal.saveError"));
-      handleNotification("error", "appraisal.saveError");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Separate handleSubmit for submitting as COMPLETE, with validation
+  const handleSubmit = async (appraisalData) => {
+    const validationError = validateAppraisal(appraisalData);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const updatePayload = {
+        id: appraisal.id,
+        state: "COMPLETED",
+        ...appraisalData,
+      };
+      const response = await handleUpdateAppraisal(updatePayload);
+      if (response.success) {
+        handleNotification("success", "appraisal.submitted", { endDate: appraisal.endDate });
+        const editedAppraisal = { ...appraisal, ...appraisalData, state: "COMPLETED" };
+        if (onSave) onSave(editedAppraisal);
+        Object.assign(appraisal, editedAppraisal);
+        setEditMode(false);
+        onClose();
+      } else {
+        setError(t("appraisal.saveError"));
+      }
+    } catch (e) {
+      setError(t("appraisal.saveError"));
     } finally {
       setSaving(false);
     }
@@ -217,8 +238,6 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
 
   // ✅ NÃO RENDERIZAR se shouldRender for false
   if (!appraisal || !shouldRender) return null;
-
-  const appraisalState = getAccountStateInfo(appraisal.state);
 
   const profileItems = [
     {
@@ -362,9 +381,9 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                   className="appraisal-offcanvas-feedback-textarea"
                   disabled={saving}
                 />
-                {error && <div className="appraisal-offcanvas-feedback-error">{error}</div>}
+                <div className="appraisal-offcanvas-feedback-error">{error || "\u00A0"}</div>
                 <div className="appraisal-offcanvas-feedback-buttons">
-                  <button type="button" onClick={() => alert('Submit logic here')} disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-submit">
+                  <button type="button" onClick={() => handleSubmit({ feedback: editedFeedback, score: editedScore })} disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-submit">
                     {t("appraisal.submit")}
                   </button>
                   <button type="submit" disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-save">
@@ -382,10 +401,13 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                     {appraisal.feedback || t("appraisal.noFeedback")}
                   </p>
                 </div>
+                <div className="appraisal-offcanvas-feedback-error">{error || "\u00A0"}</div>
                 <div className="appraisal-offcanvas-feedback-buttons appraisal-offcanvas-feedback-buttons-view">
+                  {((isAdmin) || (isTheManager && (appraisal.state !== "CLOSED" && appraisal.state !== "COMPLETED"))) && 
                   <button onClick={() => setEditMode(true)} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-edit">
                     {t("appraisal.edit")}
                   </button>
+                  }
                 </div>
               </>
             )}

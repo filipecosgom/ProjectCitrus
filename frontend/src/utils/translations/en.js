@@ -290,5 +290,35 @@ const en = {
     typeMessage: "Type a message...",
     selectConversation: "Select a conversation to start chatting",
   },
+
+  // Appraisals Search
+  appraisalsSearchTypeUserName: "user name",
+  appraisalsSearchTypeUserEmail: "user email",
+  appraisalsSearchTypeManagerName: "manager name",
+  appraisalsSearchTypeManagerEmail: "manager email",
+  appraisalStateAllStates: "all states",
+
+  appraisal: {
+    scoreVerbose: {
+      null: "No score assigned",
+      1: "Low contribution",
+      2: "Partial contribution",
+      3: "Expected contribution",
+      4: "Exceeded contribution"
+    },
+    submit: "Submit",
+    save: "Save",
+    saved: "Saved appraisal. You can submit until {endDate}",
+    saving: "Saving...",
+    submitted: "Appraisal submitted successfully.",
+    cancel: "Cancel",
+    edit: "Edit",
+    feedback: "Feedback",
+    feedbackText: "Feedback text",
+    score: "Score",
+    noFeedback: "No feedback provided.",
+    saveError: "Failed to save appraisal.",
+  },
+
 };
 export default en;

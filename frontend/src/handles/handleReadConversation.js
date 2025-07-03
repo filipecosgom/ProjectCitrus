@@ -2,7 +2,6 @@ import { readConversationApi } from "../api/messagesApi";
 
 export const handleReadConversation = async (senderId) => {
   const response = await readConversationApi(senderId);
-  console.log("handleReadConversation response:", response);
 
   if (response.success) {
     return {

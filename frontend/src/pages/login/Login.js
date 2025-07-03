@@ -43,9 +43,6 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    // Removed console.log("Current locale:", locale);
-  }, [locale]);
 
   useEffect(() => {
     if (user) {
@@ -188,8 +185,7 @@ export default function Login() {
                     cursor: "pointer",
                   }}
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent event bubbling
-                    // Removed console.log(...);
+                    e.stopPropagation();
                     setShowAuth(true);
                   }}
                 >

@@ -4,7 +4,6 @@ export const handleChangePassword = async (passwordResetToken, newPassword) => {
         password: newPassword
     };
     const response = await changePassword(passwordResetToken, password);
-    console.log("Change Password Response:", response); // Debugging log
     return response.success;
 }
 

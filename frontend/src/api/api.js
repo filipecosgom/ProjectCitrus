@@ -78,9 +78,10 @@ export const handleApiError = (error) => {
   if (error.response) {
     console.log("API Error:", error.response.data.message);
     const { success, message, errorCode } = error.response.data;
+    console.log(message)
 
     if (!success) {
-      handleNotification("error", error.response.message || "errorUnexpected");
+      handleNotification("error", message || "errorUnexpected");
     }
   } else {
     handleNotification("error", "errorNetworkError");
