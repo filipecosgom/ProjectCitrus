@@ -156,7 +156,7 @@ export default function Header({
           {unreadMessages > 0 && (
             <span className="header-badge">{unreadMessages}</span>
           )}
-          {showMessages && <MessageDropdown messages={messages} />}
+          {showMessages && <MessageDropdown isVisible={showMessages} />}
         </div>
         <div className="header-icon-wrapper" ref={notifRef}>
           <FaRegBell
@@ -174,7 +174,7 @@ export default function Header({
           )}
         </div>
         {/* FIX: Pass the full user object to UserIcon, not just avatar */}
-        <UserIcon user={user} status="check"/>
+        <UserIcon user={user} status="check" />
       </div>
       {/* Nome e email do user (desktop apenas) */}
       <div className="header-cell header-user">
