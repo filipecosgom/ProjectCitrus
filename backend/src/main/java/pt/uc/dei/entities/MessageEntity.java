@@ -50,21 +50,22 @@ import java.time.LocalDateTime;
                 "WHERE m.receiver.id = :recipient_id AND m.sender.id = :sender_id"
 )
 
+// SUBSTITUIR a NamedQuery existente por:
+
 @NamedQuery(
     name = "MessageEntity.getConversationPreviews",
-    query = "SELECT DISTINCT " +
-            "CASE WHEN m.sender.id = :userId THEN m.receiver ELSE m.sender END as otherUser, " +
-            "MAX(m.sentDate) as lastMessageDate " +
+    query = "SELECT m.sender.id, m.receiver.id, MAX(m.sentDate) as lastMessageDate " +
             "FROM MessageEntity m " +
-            "WHERE (m.sender.id = :userId OR m.receiver.id = :userId) " +
-            "GROUP BY CASE WHEN m.sender.id = :userId THEN m.receiver.id ELSE m.sender.id END " +
+            "WHERE (m.sender.id = :user_id OR m.receiver.id = :user_id) " +
+            "GROUP BY m.sender.id, m.receiver.id " +
             "ORDER BY lastMessageDate DESC"
 )
 
 @Entity
 @Table(name="message", indexes = {
-        @Index(name = "idx_recipient_sender_unread", columnList = "recipient, sender, isRead"),
-        @Index(name = "idx_conversation_pair", columnList = "recipient, sender, timestamp"),
+
+    @Index(name = "idx_recipient_sender_unread", columnList = "receiver_id, sender_id, is_read"),
+    @Index(name = "idx_conversation_pair", columnList = "receiver_id, sender_id, sent_date"),
 })
 public class MessageEntity implements Serializable {
 

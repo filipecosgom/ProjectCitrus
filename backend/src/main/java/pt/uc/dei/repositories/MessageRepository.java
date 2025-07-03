@@ -4,7 +4,10 @@ import jakarta.ejb.Stateless;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.MessageEntity;
+import pt.uc.dei.entities.UserEntity;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,13 +74,29 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
      */
     public List<Object[]> getConversationPreviews(Long userId, int limit) {
         try {
-            List<Object[]> results = em.createNamedQuery("MessageEntity.getConversationPreviews", Object[].class)
-                    .setParameter("userId", userId)
-                    .setMaxResults(limit) // ✅ LIMIT aplicado na query
+            // Usar a query que já funciona (getAllChats)
+            List<Object[]> results = em.createNamedQuery("MessageEntity.getAllChats", Object[].class)
+                    .setParameter("user_id", userId)
+                    .setMaxResults(limit)
                     .getResultList();
 
-            LOGGER.info("Found {} conversation previews for userId {}", results.size(), userId);
-            return results;
+            // Converter para o formato esperado: [UserEntity, LocalDateTime]
+            List<Object[]> convertedResults = new ArrayList<>();
+
+            for (Object[] result : results) {
+                Long otherUserId = (Long) result[0];
+                LocalDateTime lastMessageDate = (LocalDateTime) result[1];
+
+                // Buscar o UserEntity
+                UserEntity otherUser = em.find(UserEntity.class, otherUserId);
+                if (otherUser != null) {
+                    convertedResults.add(new Object[]{otherUser, lastMessageDate});
+                }
+            }
+
+            LOGGER.info("Found {} conversation previews for userId {}", convertedResults.size(), userId);
+            return convertedResults;
+
         } catch (Exception e) {
             LOGGER.error("Error getting conversation previews for userId {}", userId, e);
             return Collections.emptyList();

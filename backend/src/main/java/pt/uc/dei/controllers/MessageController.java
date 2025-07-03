@@ -237,7 +237,7 @@ public class MessageController {
             return Response.ok(new ApiResponse(true, "Conversation previews retrieved", "successConversationPreviewsRetrieved", conversationPreviews))
                     .build();
         } catch (Exception e) {
-            LOGGER.error("Error in getConversationPreviews", e);
+            LOGGER.error("Error in getConversationPreviews for userId {}", userId, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
                     .build();
