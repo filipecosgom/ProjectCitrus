@@ -4,7 +4,6 @@ import { FiChevronLeft } from "react-icons/fi";
 import { GiSettingsKnobs } from "react-icons/gi";
 import { useTranslation } from "react-i18next";
 import "./FilterMenu.css";
-import useAuthStore from "../../stores/useAuthStore";
 import { FaCheck, FaTimes, FaMinus } from "react-icons/fa";
 
 const FilterMenu = ({
@@ -31,6 +30,7 @@ const FilterMenu = ({
   });
 
   const getOptionLabel = (key, opt) => {
+    if (typeof opt === "object" && opt.label) return opt.label;
     if (key === "searchType") {
       const cap = typeof opt === "string" ? opt.charAt(0).toUpperCase() + opt.slice(1) : "";
       return t(`filterMenuOption${cap}`);
@@ -39,7 +39,6 @@ const FilterMenu = ({
       if (typeof opt === "object" && opt.label) return opt.label;
       return opt ? opt : t("filterMenuAllOffices");
     }
-    if (typeof opt === "object" && opt.label) return opt.label;
     return typeof opt === "object" ? opt.label : opt;
   };
 

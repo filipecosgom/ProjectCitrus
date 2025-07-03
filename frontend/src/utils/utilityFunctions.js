@@ -31,7 +31,7 @@ export function checkIfNumeric(string) {
 export function transformArrayDatetoDate(arrayDate){
   const date = new Date(
     arrayDate[0],
-    arrayDate[1], //ajustado pois o mês é como GregorianCalendar
+    arrayDate[1] - 1, //ajustado pois o mês é como GregorianCalendar
     arrayDate[2],
     arrayDate[3],
     arrayDate[4],

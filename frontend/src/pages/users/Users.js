@@ -73,16 +73,10 @@ export default function Users() {
 
   // ✅ NOVOS HANDLERS para Assign Manager
   const handleOpenAssignManager = () => {
-    console.log("🔍 DEBUG - Button clicked!");
-    console.log("🔍 DEBUG - Selected users count:", selectedUsers.size);
-    console.log("🔍 DEBUG - Selected users:", Array.from(selectedUsers));
-
     if (selectedUsers.size === 0) {
       console.warn("❌ Nenhum usuário selecionado");
       return;
     }
-
-    console.log("✅ Opening AssignManager offcanvas...");
     setAssignManagerOpen(true);
   };
 
@@ -179,8 +173,6 @@ export default function Users() {
 
   // ✅ HANDLER para atribuir manager COM DEBUGGING
   const handleAssignManagerAction = async (assignments) => {
-    console.log("🎯 Users.js - Starting assign manager process:", assignments);
-
     try {
       setResultsLoading(true);
 
@@ -188,10 +180,6 @@ export default function Users() {
         newManagerId: assignments.newManagerId,
         userIds: assignments.userIds,
       });
-
-      console.log("📦 Users.js - Full result received:", result);
-      console.log("📦 Users.js - Result.data:", result.data);
-      console.log("📦 Users.js - Result.success:", result.success);
 
       // ✅ VERIFICAR se result.data existe antes de acessar propriedades
       if (!result.data) {
@@ -203,8 +191,6 @@ export default function Users() {
       }
 
       if (result.success) {
-        console.log("✅ Manager assignment successful:", result);
-
         // ✅ FEEDBACK SUCCESS - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;
         alert(
@@ -260,7 +246,6 @@ export default function Users() {
               selectedUsers.size === 0 ? "disabled" : ""
             }`}
             onClick={() => {
-              console.log("🔍 DEBUG - Button onClick triggered!");
               handleOpenAssignManager();
             }}
             disabled={selectedUsers.size === 0}

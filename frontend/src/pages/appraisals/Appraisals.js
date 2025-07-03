@@ -14,6 +14,7 @@ import {
   appraisalsSortFields,
   buildAppraisalsSearchParams,
 } from "../../utils/appraisalsSearchUtils";
+import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 
 export default function Appraisals() {
   const { t } = useTranslation();
@@ -38,7 +39,14 @@ export default function Appraisals() {
     sortBy: "creationDate",
     sortOrder: "DESCENDING",
   });
+  const [selectedAppraisals, setSelectedAppraisals] = useState(new Set());
   const lastSearchRef = useRef(searchParams);
+
+  // Estados para appraisal offcanvas
+    const [selectedAppraisal, setSelectedAppraisal] = useState(null);
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
+
   useEffect(() => {
     lastSearchRef.current = searchParams;
   }, [searchParams]);
@@ -87,16 +95,18 @@ export default function Appraisals() {
     // eslint-disable-next-line
   }, []);
 
-  // Handlers
-  const handleSearch = (query, searchType, limit, filters = {}) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      query,
-      searchType,
-      limit,
-      ...filters,
-    }));
-    setPagination((prev) => ({ ...prev, offset: 0 }));
+  // Handlers para appraisal off canvas
+  const handleAppraisalClick = (appraisal) => {
+    console.log("Appraisal clicked:", appraisal);
+    setSelectedAppraisal(appraisal);
+    setOffcanvasOpen(true);
+  };
+
+  const handleCloseOffcanvas = () => {
+    setOffcanvasOpen(false);
+    setTimeout(() => {
+    setSelectedAppraisal(null);
+    }, 300);
   };
 
   const handleSortChange = (newSort) => {
@@ -108,19 +118,35 @@ export default function Appraisals() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
+  // Handler for selecting/deselecting appraisals
+  const handleAppraisalSelection = (appraisalId, isSelected) => {
+    const newSelected = new Set(selectedAppraisals);
+    if (isSelected) {
+      newSelected.add(appraisalId);
+    } else {
+      newSelected.delete(appraisalId);
+    }
+    setSelectedAppraisals(newSelected);
+  };
+
+  // Clear selection on page change
+  useEffect(() => {
+    setSelectedAppraisals(new Set());
+  }, [pagination.offset]);
+
   if (pageLoading) return <Spinner />;
 
   const filtersConfig = appraisalSearchFilters(t, appraisalStates);
 
   return (
     <div className="appraisals-container">
-      <SearchBar
+      {/* <SearchBar
         onSearch={handleSearch}
-        searchTypes={appraisalsSearchTypes}
+        searchTypes={appraisalsSearchTypes(t)}
         {...filtersConfig}
-      />
+      /> */}
       <SortControls
-        fields={appraisalsSortFields}
+        fields={appraisalsSortFields(t)}
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}
         onSortChange={handleSortChange}
@@ -140,11 +166,21 @@ export default function Appraisals() {
               <AppraisalCard
                 key={appraisal.id}
                 appraisal={appraisal}
+                onClick={handleAppraisalClick}
+                showCheckbox={true}
+                isSelected={selectedAppraisals.has(appraisal.id)}
+                onSelectionChange={handleAppraisalSelection}
+                // Optionally, add onClick if you want card click
               />
             ))}
           </div>
         </div>
       )}
+      <AppraisalOffCanvas
+        appraisal={selectedAppraisal}
+        isOpen={offcanvasOpen}
+        onClose={handleCloseOffcanvas}
+      />
       <Pagination
         offset={pagination.offset}
         limit={pagination.limit}

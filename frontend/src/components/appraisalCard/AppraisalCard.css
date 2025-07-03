@@ -1,4 +1,19 @@
+.appraisalCard-wrapper {
+  display: flex;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  min-height: 60px;
+  
+}
+
+.appraisalCard-wrapper.with-checkbox {
+  display: flex;
+  padding-left: calc(78px - 1rem - 45px);
+  padding-right: 78px;
+}
+
 .appraisalCard-container {
+  flex: 1;
   display: grid;
   grid-template-columns:
     minmax(160px, 1fr) /* User */
@@ -8,12 +23,8 @@
     160px; /* State */
   gap: 1.5rem;
   align-items: center;
-  background: #fff;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  min-height: 60px;
+  
+  
 }
 
 /* ✅ COLUNAS ESPECÍFICAS */
@@ -200,13 +211,12 @@
 
   /* ✅ MANAGER LINE - "Manager: [Avatar Real] Nome Real" */
   .appraisalCard-appraising {
+    display: flex;
+    flex-direction: column;
     order: 3;
     margin: 0 0 0px 0;
     width: 100%;
-    display: block;
-    justify-content: center !important;
     align-items: center !important;
-    gap: 6px !important; /* ✅ GAP entre elementos */
   }
 
   /* ✅ MOSTRAR componentes reais do manager */
@@ -224,18 +234,6 @@
     min-width: 0 !important;
   }
 
-  /* ✅ AVATAR DO MANAGER real e pequeno */
-  .appraisalCard-appraising .user-icon {
-    border: 2px solid #ccc !important;
-    border-radius: 50% !important;
-    flex-shrink: 0 !important;
-  }
-
-  .appraisalCard-appraising .user-icon img {
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 50% !important;
-  }
 
   /* ✅ NOME DO MANAGER real */
   .appraisalCard-appraising .appraisalCard-name {
@@ -353,4 +351,26 @@
     order: initial;
     margin: initial;
   }
+}
+
+
+
+.appraisalCard-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  padding: 0 1rem;
+}
+
+
+.appraisalCard-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--blue, #007bff);
+}
+
+.appraisalCard-container.selected {
+  background-color: #eebbbb;
 }

@@ -3,7 +3,6 @@ import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from '../util
 
 export const handleGetUsers = async (params = {}) => {
   const response = await fetchPaginatedUsers(params);
-  console.log("handleGetUsers response:", response);
   
   if (response.success) {
     // Process the response data if needed

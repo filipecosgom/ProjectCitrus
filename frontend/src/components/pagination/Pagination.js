@@ -1,6 +1,7 @@
 // Pagination.jsx
 import React from "react";
 import PropTypes from "prop-types";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import "./Pagination.css";
 
 const Pagination = ({ offset, limit, total, onChange }) => {
@@ -95,7 +96,7 @@ const Pagination = ({ offset, limit, total, onChange }) => {
         className="pagination-arrow"
         aria-label="Previous page"
       >
-        &lt;
+        <IoIosArrowBack />
       </button>
     <button className="pagination-number active" disabled>
       1
@@ -106,7 +107,7 @@ const Pagination = ({ offset, limit, total, onChange }) => {
         className="pagination-arrow"
         aria-label="Next page"
       >
-        &gt;
+      <IoIosArrowForward />
       </button>
     </div>
   );
@@ -122,7 +123,7 @@ const Pagination = ({ offset, limit, total, onChange }) => {
         className="pagination-arrow"
         aria-label="Previous page"
       >
-        &lt;
+        <IoIosArrowBack />
       </button>
 
       {renderPageNumbers()}
@@ -133,7 +134,7 @@ const Pagination = ({ offset, limit, total, onChange }) => {
         className="pagination-arrow"
         aria-label="Next page"
       >
-        &gt;
+        <IoIosArrowForward />
       </button>
     </div>
   );

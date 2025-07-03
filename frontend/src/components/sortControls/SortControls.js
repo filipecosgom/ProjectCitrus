@@ -30,9 +30,9 @@ const SortControls = ({ fields, sortBy, sortOrder, onSortChange }) => {
           {t(id)}
           {sortBy === key &&
             (sortOrder === "ascending" ? (
-              <FaSortAmountDown  className="sort-icon" />
-            ) : (
               <FaSortAmountUp  className="sort-icon" />
+            ) : (
+              <FaSortAmountDown  className="sort-icon" />
             ))}
         </div>
       ))}

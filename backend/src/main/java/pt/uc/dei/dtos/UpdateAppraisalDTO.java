@@ -83,4 +83,12 @@ public class UpdateAppraisalDTO {
     public void setScore(Integer score) {
         this.score = score;
     }
+
+    public AppraisalState getState() {
+        return state;
+    }
+
+    public void setState(AppraisalState state) {
+        this.state = state;
+    }
 }

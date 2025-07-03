@@ -291,6 +291,38 @@ const pt = {
     typeMessage: "Escreva uma mensagem...",
     selectConversation: "Selecione uma conversa para começar a conversar",
   },
+
+  // Avaliações
+  appraisalsSearchTypeUserName: "Nome do utilizador",
+  appraisalsSearchTypeUserEmail: "Email do utilizador",
+  appraisalsSearchTypeManagerName: "Nome do gestor",
+  appraisalsSearchTypeManagerEmail: "Email do gestor",
+  appraisalStateAllStates: "Todos os estados",
+  appraisalStateInProgress: "Em curso",
+  appraisalStateCompleted: "Completo",
+  appraisalStateClosed: "Fechado",
+
+  appraisal: {
+    scoreVerbose: {
+      null: "Nenhuma pontuação atribuída",
+      1: "Contribuição baixa",
+      2: "Contribuição parcial",
+      3: "Contribuição conforme o esperado",
+      4: "Contribuição excedida"
+    },
+    submit: "Submeter",
+    save: "Guardar",
+    saved: "Avaliação guardada. Pode submeter até {endDate}",
+    saving: "Salvando...",
+    cancel: "Cancelar",
+    edit: "Editar",
+    feedback: "Feedback",
+    feedbackText: "Texto do feedback",
+    score: "Pontuação",
+    noFeedback: "Nenhum feedback fornecido.",
+    saveError: "Erro ao salvar feedback.",
+    error: "Falha ao guardar avaliação.",
+  },
 };
 
 export default pt;

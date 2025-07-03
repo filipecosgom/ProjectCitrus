@@ -12,8 +12,7 @@
     160px; /* ✅ AUMENTAR State: 120px → 160px para "IN PROGRESS" */
   gap: 1.5rem;
   align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
+  padding: var(--padding-lg);
   border-radius: 8px;
   font-weight: bold;
 }
