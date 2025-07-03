@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { fetchConversationPreviews } from "../../api/messagesApi";
 import "./NotificationDropdown.css";
@@ -8,6 +8,7 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Hook para navegação programática
 
   useEffect(() => {
     if (isVisible) {
@@ -31,7 +32,7 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
       // Notificar o Header sobre o total
       onUnreadCountChange?.(totalUnread);
     }
-  }, [conversations]);
+  }, [conversations, onUnreadCountChange]); // Adicionar onUnreadCountChange às dependências
 
   const loadConversations = async () => {
     try {
@@ -85,6 +86,12 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
     }
   };
 
+  // Função para navegar para a conversa específica
+  const handleConversationClick = (userId) => {
+    // Navegar para a página de mensagens com o userId específico
+    navigate(`/messages?user=${userId}`);
+  };
+
   // Limitar a 6 conversas
   const visibleConversations = conversations.slice(0, 6);
 
@@ -99,7 +106,12 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
           <div className="notification-empty">No conversations found</div>
         ) : (
           visibleConversations.map((conversation, idx) => (
-            <div className="notification-item" key={conversation.userId || idx}>
+            <div
+              className="notification-item"
+              key={conversation.userId || idx}
+              onClick={() => handleConversationClick(conversation.userId)}
+              style={{ cursor: "pointer" }} // Indicar que é clicável
+            >
               <div className="notification-icon-cell">
                 {/* Avatar do user */}
                 <FaUserCircle className="notif-icon" color="#818488" />
@@ -121,6 +133,7 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
                     !conversation.isLastMessageRead ? "unread" : ""
                   }`}
                 >
+                  {/* Prefixo "You: " para mensagens enviadas pelo utilizador atual */}
                   {conversation.isLastMessageFromMe ? "You: " : ""}
                   {conversation.lastMessage}
                 </div>
@@ -133,6 +146,7 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
           ))
         )}
       </div>
+      {/* Botão para navegar para o centro de mensagens */}
       <Link to="/messages" className="notification-center-btn">
         TO MESSAGES CENTER <span className="notification-center-arrow">↗</span>
       </Link>
