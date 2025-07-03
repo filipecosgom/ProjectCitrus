@@ -40,6 +40,7 @@
   align-items: center;
   justify-content: center;
   margin-top: 3px;
+  position: relative;
 }
 
 .notif-icon {
@@ -67,6 +68,26 @@
   text-overflow: ellipsis;
 }
 
+.notification-message.unread {
+  font-weight: 600;
+  color: #000;
+}
+
+.message-unread-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+  line-height: 1;
+}
+
 .notification-timestamp {
   font-family: var(--font-family-secondary);
   font-size: 11px;
@@ -76,6 +97,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.notification-timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
 }
 
 .notification-empty {
@@ -113,4 +140,17 @@
 .notification-center-arrow {
   font-size: 1.2em;
   margin-left: 10px;
+}
+
+/* Sender name styling */
+.notification-sender {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+/* Blur effect for read messages */
+.notification-message:not(.unread) {
+  opacity: 0.7;
 }
