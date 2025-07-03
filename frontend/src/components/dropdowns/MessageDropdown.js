@@ -17,26 +17,20 @@ export default function MessageDropdown({ isVisible }) {
 
   const loadConversations = async () => {
     try {
-      console.log("🔍 DEBUG: Starting loadConversations");
       setLoading(true);
       setError(null);
 
       const result = await fetchConversationPreviews();
-      console.log("🔍 DEBUG: API result:", result);
 
       if (result.success && result.data.success) {
-        console.log("🔍 DEBUG: Conversations data:", result.data.data);
         setConversations(result.data.data || []);
       } else {
-        console.log("🔍 DEBUG: API error:", result.error);
         setError(result.error?.message || "Failed to load conversations");
       }
     } catch (err) {
-      console.log("🔍 DEBUG: Catch error:", err);
       setError("Failed to load conversations");
       console.error("Error loading conversations:", err);
     } finally {
-      console.log("🔍 DEBUG: Finally block - setting loading to false");
       setLoading(false);
     }
   };

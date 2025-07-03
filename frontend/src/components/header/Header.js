@@ -114,18 +114,6 @@ export default function Header({
     },
   ];
 
-  const messages = [
-    {
-      id: 1,
-      message_content: "Olá! Como estás?",
-      sent_date: "2025-06-10 10:00",
-      is_read: false,
-      sender_id: 2,
-      receiver_id: 1,
-    },
-    // ...mais mensagens
-  ];
-
   return (
     <header className="citrus-header">
       {/* Logotipo + CITRUS (desktop) ou burger menu (tablet/mobile) */}
