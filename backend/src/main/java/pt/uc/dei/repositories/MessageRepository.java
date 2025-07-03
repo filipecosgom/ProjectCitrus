@@ -60,4 +60,49 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
             return false;
         }
     }
+
+    /**
+     * Obtém previews das conversas para o dropdown de mensagens
+     * Retorna as últimas conversas do utilizador ordenadas por data
+     *
+     * @param userId ID do utilizador logado
+     * @param limit  Número máximo de conversas a retornar
+     * @return Lista de Object[] contendo [UserEntity otherUser, LocalDateTime lastMessageDate]
+     */
+    public List<Object[]> getConversationPreviews(Long userId, int limit) {
+        try {
+            List<Object[]> results = em.createNamedQuery("MessageEntity.getConversationPreviews", Object[].class)
+                    .setParameter("userId", userId)
+                    .setMaxResults(limit) // ✅ LIMIT aplicado na query
+                    .getResultList();
+
+            LOGGER.info("Found {} conversation previews for userId {}", results.size(), userId);
+            return results;
+        } catch (Exception e) {
+            LOGGER.error("Error getting conversation previews for userId {}", userId, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Obtém a última mensagem entre dois utilizadores
+     *
+     * @param userId     ID do utilizador logado
+     * @param otherUserId ID do outro utilizador
+     * @return MessageEntity da última mensagem ou null se não houver
+     */
+    public MessageEntity getLastMessageBetween(Long userId, Long otherUserId) {
+        try {
+            List<MessageEntity> messages = em.createNamedQuery("MessageEntity.getConversation", MessageEntity.class)
+                    .setParameter("user_id", userId)
+                    .setParameter("otherUser_id", otherUserId)
+                    .setMaxResults(1) // ✅ Só queremos a última
+                    .getResultList();
+
+            return messages.isEmpty() ? null : messages.get(messages.size() - 1); // Última mensagem
+        } catch (Exception e) {
+            LOGGER.error("Error getting last message between {} and {}", userId, otherUserId, e);
+            return null;
+        }
+    }
 }
