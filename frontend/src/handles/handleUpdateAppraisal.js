@@ -1,10 +1,8 @@
 import { updateAppraisal } from "../api/appraisalsApi";
 
 export const handleUpdateAppraisal = async (appraisal) => {
-  console.log("handleUpdateAppraisal called with:", appraisal);
   try {
     const response = await updateAppraisal(appraisal);
-    console.log("API response:", response);
     // Only treat as success if status is 200-299 and success is true
     if (response && response.success === true && (!response.status || (response.status >= 200 && response.status < 300))) {
       return {

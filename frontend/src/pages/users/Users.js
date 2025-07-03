@@ -58,7 +58,6 @@ export default function Users() {
 
   // Handlers para user offcanvas
   const handleUserClick = (user) => {
-    console.log("🔍 USERS - User clicked:", user);
     setSelectedUser(user);
     setOffcanvasOpen(true);
   };
@@ -311,7 +310,6 @@ export default function Users() {
         selectedUsers={users.filter((user) => selectedUsers.has(user.id))} // ✅ Users selecionados
         isOpen={assignManagerOpen}
         onClose={() => {
-          console.log("🔍 DEBUG - Closing AssignManager offcanvas...");
           handleCloseAssignManager();
         }}
         onAssign={handleAssignManagerAction} // ✅ FUNÇÃO REAL ao invés de log

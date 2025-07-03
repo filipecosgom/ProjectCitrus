@@ -31,7 +31,6 @@ export default function LanguageDropdown() {
   const selectedLang = LANGUAGES.find((lang) => lang.code === locale) || LANGUAGES[0];
 
   const handleChangeLanguage = (newLocale) => {
-    console.log('Changing language to:', newLocale);
     setLocale(newLocale); // Update the store directly
     setShowDropdown(false);
   };

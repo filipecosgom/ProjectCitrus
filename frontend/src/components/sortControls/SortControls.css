@@ -130,9 +130,11 @@
   }
 }
 
-/* ✅ MOBILE - ESCONDER COMPLETAMENTE */
+/* ✅ MOBILE - ESCONDER COMPLETAMENTE
 @media (max-width: 768px) {
   .sortControls-container {
     display: none;
   }
+  
 }
+*/

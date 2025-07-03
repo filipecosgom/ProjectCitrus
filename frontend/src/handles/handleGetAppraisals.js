@@ -24,8 +24,6 @@ export const handleGetAppraisals = async (params = {}) => {
       }
       return processed;
     });
-    console.log("Processed Appraisals:", processedAppraisals);
-    console.log("Pagination Info:", paginationInfo);
 
     return {
       appraisals: processedAppraisals,

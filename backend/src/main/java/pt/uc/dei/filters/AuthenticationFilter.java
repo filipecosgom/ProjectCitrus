@@ -13,9 +13,12 @@ import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pt.uc.dei.annotations.AllowAnonymous;
 import pt.uc.dei.dtos.ConfigurationDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.services.ConfigurationService;
 import pt.uc.dei.services.UserService;
@@ -31,6 +34,8 @@ import java.util.Date;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
+
+    private static final Logger LOGGER = LogManager.getLogger(AuthenticationFilter.class);
 
     @Inject
     private JWTUtil jwtUtil;
@@ -92,6 +97,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 NewCookie newCookie = new NewCookie("jwt", newToken, "/", null, null, (configuration.getLoginTime() * 60), true); // 1 hour
                 requestContext.setProperty("newCookie", newCookie);
                 requestContext.setProperty("newExpiration", JWTUtil.getExpiration(newToken));
+                LOGGER.info("Storing new jwt cookie (expires in {} ms): {}", timeLeft, newCookie);
             }
 
         } catch (JwtException e) {

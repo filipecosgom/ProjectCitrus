@@ -21,7 +21,6 @@ const AssignManagerOffcanvas = ({
   // ✅ HANDLER para seleção de user
   const handleUserSelect = (user) => {
     setSelectedNewManager(user);
-    console.log("👤 AssignManager - User selected for promotion:", user);
   };
 
   // ✅ ATUALIZAR handleAssignClick para mostrar loading
@@ -42,7 +41,6 @@ const AssignManagerOffcanvas = ({
       action: "promoteAndAssign",
     };
 
-    console.log("🎯 Promoting user to manager and assigning:", assignments);
 
     try {
       await onAssign(assignments); // ✅ AGUARDAR conclusão
@@ -63,7 +61,6 @@ const AssignManagerOffcanvas = ({
 
   // ✅ CONTROLAR renderização e animação
   useEffect(() => {
-    console.log("🔍 AssignManager - isOpen changed:", isOpen);
 
     if (isOpen) {
       setShouldRender(true);
@@ -119,11 +116,9 @@ const AssignManagerOffcanvas = ({
 
   // ✅ ADICIONAR LOG quando não renderizar
   if (!shouldRender) {
-    console.log("🔍 AssignManager - Not rendering (shouldRender: false)");
     return null;
   }
 
-  console.log("🔍 AssignManager - Rendering offcanvas!");
 
   return (
     <div

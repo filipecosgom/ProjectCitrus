@@ -95,9 +95,20 @@ export default function Appraisals() {
     // eslint-disable-next-line
   }, []);
 
+// Handlers
+  const handleSearch = (query, searchType, limit, filters = {}) => {
+    setSearchParams((prev) => ({
+      ...prev,
+      query,
+      searchType,
+      limit,
+      ...filters,
+    }));
+    setPagination((prev) => ({ ...prev, offset: 0 }));
+  };
+
   // Handlers para appraisal off canvas
   const handleAppraisalClick = (appraisal) => {
-    console.log("Appraisal clicked:", appraisal);
     setSelectedAppraisal(appraisal);
     setOffcanvasOpen(true);
   };
@@ -107,7 +118,7 @@ export default function Appraisals() {
     setTimeout(() => {
     setSelectedAppraisal(null);
     }, 300);
-  };
+  }
 
   const handleSortChange = (newSort) => {
     setSort(newSort);
@@ -140,11 +151,11 @@ export default function Appraisals() {
 
   return (
     <div className="appraisals-container">
-      {/* <SearchBar
+      <SearchBar
         onSearch={handleSearch}
         searchTypes={appraisalsSearchTypes(t)}
         {...filtersConfig}
-      /> */}
+      />
       <SortControls
         fields={appraisalsSortFields(t)}
         sortBy={sort.sortBy}

@@ -27,7 +27,6 @@ function useWebSocketChat() {
         message: message,
       });
       websocketRef.current.send(messageJSON);
-      console.log("Message sent:", messageJSON);
       return true;
     } else {
       console.error("WebSocket is not connected");
@@ -54,8 +53,6 @@ function useWebSocketChat() {
 
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
-      console.log("WebSocket received:", data);
-      console.log("Current chatting user:", currentChattingUser.user);
 
       switch (data.type) {
         case "MESSAGE":

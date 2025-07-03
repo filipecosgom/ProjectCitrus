@@ -34,7 +34,6 @@ export const requestPasswordReset = async (email, lang) => {
         "Accept-Language": lang,
       },
     });
-    console.log("API Response:", response); // Debugging log
     return { success: true, status: response.status, data: response.data };
   } catch (error) {
     return { success: false, status: error.response?.status || 500, error };
@@ -73,7 +72,6 @@ export const changePassword = async (passwordResetToken, newPassword) => {
         "token": passwordResetToken,
       }
   });
-    console.log("API Response:", response); // Debugging log
     // If response.data is present, assume the successful format
     if (response.data) {
       // Normalize to a common format:

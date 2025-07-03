@@ -8,16 +8,12 @@ import { fetchUserInformation, updateUserInformation } from "../api/userApi"; //
  * @returns {Promise<Object>} Resultado da operação
  */
 export const handleAssignManager = async (assignmentData) => {
-  console.log("🎯 handleAssignManager - Starting assignment:", assignmentData);
 
   try {
     const { newManagerId, userIds } = assignmentData;
 
-    // ✅ PASSO 1: Buscar user usando userApi (MESMA FORMA que funciona)
-    console.log("🔍 Step 1: Getting user data...");
     const getUserResult = await fetchUserInformation(newManagerId);
 
-    console.log("📦 GET User Result:", getUserResult);
 
     if (!getUserResult.success) {
       throw new Error(
@@ -34,18 +30,15 @@ export const handleAssignManager = async (assignmentData) => {
       throw new Error("User not found in response");
     }
 
-    console.log("👤 Current user data:", currentUser);
 
     // ✅ PASSO 2: Promover a manager (se ainda não for)
     let promotionResult = null;
     if (!currentUser.userIsManager) {
-      console.log("🚀 Step 2: Promoting user to manager...");
 
       promotionResult = await updateUserInformation(newManagerId, {
         userIsManager: true,
       });
 
-      console.log("📦 Promotion result:", promotionResult);
 
       // ✅ VERIFICAR se a response do updateUserInformation tem success
       if (!promotionResult || promotionResult.success === false) {
@@ -56,15 +49,10 @@ export const handleAssignManager = async (assignmentData) => {
         );
       }
     } else {
-      console.log("✅ User is already a manager, skipping promotion");
     }
-
-    // ✅ PASSO 3: Atribuir manager_id aos users selecionados
-    console.log("🚀 Step 3: Assigning manager to users...");
 
     const assignmentPromises = userIds.map(async (userId) => {
       try {
-        console.log(`📡 Assigning manager to user ${userId}...`);
 
         const result = await updateUserInformation(userId, {
           manager: {
@@ -75,7 +63,6 @@ export const handleAssignManager = async (assignmentData) => {
           },
         });
 
-        console.log(`📦 Assignment result for user ${userId}:`, result);
 
         // ✅ VERIFICAR se assignment foi bem-sucedida
         if (!result || result.success === false) {
@@ -88,13 +75,11 @@ export const handleAssignManager = async (assignmentData) => {
 
         return { userId, success: true, data: result.data };
       } catch (error) {
-        console.error(`❌ Error assigning manager to user ${userId}:`, error);
         return { userId, success: false, error: error.message };
       }
     });
 
     // ✅ AGUARDAR todas as atribuições
-    console.log("⏳ Waiting for all assignments to complete...");
     const assignmentResults = await Promise.all(assignmentPromises);
 
     const successfulAssignments = assignmentResults.filter((r) => r.success);
@@ -124,8 +109,6 @@ export const handleAssignManager = async (assignmentData) => {
       },
     };
   } catch (error) {
-    console.error("❌ handleAssignManager - Error:", error);
-    console.error("❌ Error stack:", error.stack);
 
     return {
       success: false,

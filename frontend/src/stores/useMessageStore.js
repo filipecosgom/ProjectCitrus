@@ -12,7 +12,6 @@ const useMessageStore = create((set, get) => ({
     fetchAllConversations: async () => {
       try {
         const conversationUsers = await handleFetchAllConversations();
-        console.log("Fetched conversations:", conversationUsers);
             const mergedUsers = [...(conversationUsers || [])];
             get().localUsers.forEach((localUser) => {
           // 🛠️ Add local users *only if they are missing* from fetched conversations
@@ -43,7 +42,6 @@ const useMessageStore = create((set, get) => ({
     fetchUserConversation: async (otherUserId) => {
       try {
         const result = await handleFetchMessages(otherUserId);
-        console.log("Fetched messages for user:", otherUserId, result);
         if (result.success) {
           const formattedMessages = result.messages.map((message) => ({
             ...message,
@@ -61,7 +59,6 @@ const useMessageStore = create((set, get) => ({
     },
 
     setSelectedUser: (user) => {
-      console.log("selectedUser just set to:", user);
       set({ selectedUser: user, messages: []});
       // Optionally clear messages when changing user
       // set({ selectedUser: username, messages: [] });
@@ -91,7 +88,6 @@ const useMessageStore = create((set, get) => ({
     },
 
     isMessageAlreadyInQueue: (messageId) => {
-      console.log("Checking if message is already in queue:", messageId);
       const { messages } = get();
       return messages.some(message => message.messageId === messageId);
     },

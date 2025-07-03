@@ -18,6 +18,7 @@ const useAuthStore = create((set, get) => {
     avatarBlob: null, // Stores original blob if needed
     tokenExpiration: null,
     remainingTime: null,
+    sessionDuration: null, // Store session duration
 
     // ✅ NOVA FUNÇÃO: Verifica se user é admin
     isUserAdmin: () => {
@@ -31,7 +32,10 @@ const useAuthStore = create((set, get) => {
 
     setUserAndExpiration: (user, tokenExpiration) => {
       clearTimers();
-      set({ user, tokenExpiration });
+      // Calculate and store session duration if not already set
+      const state = get();
+      const sessionDuration = state.sessionDuration || (tokenExpiration - Date.now());
+      set({ user, tokenExpiration, sessionDuration });
 
       const updateRemainingTime = () => {
         const timeLeft = tokenExpiration - Date.now();
@@ -60,14 +64,9 @@ const useAuthStore = create((set, get) => {
 
     // Refresh session timer (called by API interceptor)
     refreshSessionTimer: () => {
-      const { user, tokenExpiration } = get();
-      if (user && tokenExpiration) {
-        // Assume session duration is the same as last time
-        const sessionDuration = tokenExpiration - Date.now();
-        // If session is still valid, reset the timer
-        if (sessionDuration > 0) {
-          get().setUserAndExpiration(user, Date.now() + sessionDuration);
-        }
+      const { user, sessionDuration } = get();
+      if (user && sessionDuration) {
+        get().setUserAndExpiration(user, Date.now() + sessionDuration);
       }
     },
 
