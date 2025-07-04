@@ -88,8 +88,8 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
 
   // Função para navegar para a conversa específica
   const handleConversationClick = (userId) => {
-    // Navegar para a página de mensagens com o userId específico
-    navigate(`/messages?user=${userId}`);
+    // Navegar para a página de mensagens com o parâmetro correto (id em vez de user)
+    navigate(`/messages?id=${userId}`);
   };
 
   // Limitar a 6 conversas
