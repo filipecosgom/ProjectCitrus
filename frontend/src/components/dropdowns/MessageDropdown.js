@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { fetchConversationPreviews } from "../../api/messagesApi";
+import UserIcon from "../userIcon/UserIcon"; // ✅ ADICIONAR IMPORT
 import "./NotificationDropdown.css";
 
-export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
+export default function MessageDropdown({
+  isVisible,
+  onUnreadCountChange,
+  onClose,
+}) {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -90,6 +95,9 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
   const handleConversationClick = (userId) => {
     // Navegar para a página de mensagens com o parâmetro correto (id em vez de user)
     navigate(`/messages?id=${userId}`);
+
+    // Fechar o dropdown após navegação
+    onClose?.();
   };
 
   // Limitar a 6 conversas
@@ -113,8 +121,18 @@ export default function MessageDropdown({ isVisible, onUnreadCountChange }) {
               style={{ cursor: "pointer" }} // Indicar que é clicável
             >
               <div className="notification-icon-cell">
-                {/* Avatar do user */}
-                <FaUserCircle className="notif-icon" color="#818488" />
+                {/* ✅ AVATAR REAL COM UserIcon */}
+                <div className="message-user-icon">
+                  <UserIcon
+                    user={{
+                      id: conversation.userId,
+                      name: conversation.userName,
+                      surname: conversation.userSurname,
+                      hasAvatar: conversation.hasAvatar,
+                      onlineStatus: false, // Não mostrar status online no dropdown
+                    }}
+                  />
+                </div>
                 {/* Badge de unread count */}
                 {conversation.unreadCount > 0 && (
                   <span className="message-unread-badge">
