@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
-import { handleGetUsers } from "../../handles/handleGetUsers"; // ✅ MESMO IMPORT que Users.js
+import { handleGetUsers } from "../../handles/handleGetUsers";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import UserIcon from "../userIcon/UserIcon";
 import Spinner from "../spinner/spinner";
@@ -36,30 +36,23 @@ const UserSearchBar = ({
     setUsersLoading(true);
 
     try {
-      // ✅ USAR A MESMA ESTRUTURA que Users.js
       const searchParams = {
-        name: query, // ✅ BUSCAR APENAS NO CAMPO 'name'
+        name: query,
         offset: 0,
         limit: maxResults,
-        parameter: "name", // ✅ ORDENAR por nome
-        order: "ascending", // ✅ ORDEM crescente
-        ...filterOptions, // ✅ Aplicar filtros adicionais se houver
+        parameter: "name",
+        order: "ascending",
+        ...filterOptions,
       };
 
-
-      // ✅ USAR handleGetUsers igual ao Users.js
       const result = await handleGetUsers(searchParams);
 
-
       if (result && result.users) {
-        // ✅ Filtrar IDs excluídos
         const filteredUsers = result.users.filter(
           (user) => !excludeUserIds.includes(user.id)
         );
 
         setUsers(filteredUsers);
-
-        // ✅ Carregar avatars
         loadUserAvatars(filteredUsers);
       } else {
         setUsers([]);
@@ -141,14 +134,6 @@ const UserSearchBar = ({
     }, 200);
   };
 
-  // ✅ DETERMINAR status icon para UserIcon
-  const getUserStatus = (user) => {
-    if (user.userIsAdmin) return "check";
-    if (user.userIsDeleted) return "cross";
-    if (user.accountState === "INCOMPLETE") return "stroke";
-    return null;
-  };
-
   return (
     <div className={`user-search-bar ${compact ? "compact" : ""} ${className}`}>
       {/* ✅ SEARCH INPUT */}
@@ -200,10 +185,17 @@ const UserSearchBar = ({
                     selectedUser?.id === user.id ? "selected" : ""
                   }`}
                 >
+                  {/* ✅ AVATAR CORRIGIDO COM UserIcon */}
                   <div className="user-avatar">
                     <UserIcon
-                      avatar={userAvatars[user.id]}
-                      status={getUserStatus(user)}
+                      user={{
+                        id: user.id,
+                        name: user.name,
+                        surname: user.surname,
+                        hasAvatar: user.hasAvatar || user.avatar, // Compatibilidade
+                        onlineStatus: user.onlineStatus || false,
+                      }}
+                      avatar={userAvatars[user.id]} // Manter para cache
                     />
                   </div>
                   <div className="user-info">

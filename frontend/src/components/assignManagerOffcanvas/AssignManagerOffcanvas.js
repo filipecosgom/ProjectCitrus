@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FaTimes, FaUser } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import UserSearchBar from "../userSearchBar/UserSearchBar";
 import Spinner from "../spinner/spinner"; // ✅ ADICIONAR IMPORT
+import UserIcon from "../userIcon/UserIcon";
 import "./AssignManagerOffcanvas.css";
 
 const AssignManagerOffcanvas = ({
@@ -41,7 +42,6 @@ const AssignManagerOffcanvas = ({
       action: "promoteAndAssign",
     };
 
-
     try {
       await onAssign(assignments); // ✅ AGUARDAR conclusão
     } catch (error) {
@@ -61,7 +61,6 @@ const AssignManagerOffcanvas = ({
 
   // ✅ CONTROLAR renderização e animação
   useEffect(() => {
-
     if (isOpen) {
       setShouldRender(true);
       const timer = setTimeout(() => {
@@ -119,7 +118,6 @@ const AssignManagerOffcanvas = ({
     return null;
   }
 
-
   return (
     <div
       className={`assign-manager-backdrop ${isAnimating ? "open" : ""}`}
@@ -148,7 +146,18 @@ const AssignManagerOffcanvas = ({
             <div className="selected-users-list">
               {selectedUsers.map((user) => (
                 <div key={user.id} className="selected-user-item">
-                  <FaUser className="user-icon" />
+                  {/* ✅ AVATAR REAL COM UserIcon */}
+                  <div className="selected-user-avatar">
+                    <UserIcon
+                      user={{
+                        id: user.id,
+                        name: user.name,
+                        surname: user.surname,
+                        hasAvatar: user.hasAvatar || user.avatar,
+                        onlineStatus: user.onlineStatus || false,
+                      }}
+                    />
+                  </div>
                   <span className="user-name">
                     {user.name} {user.surname}
                   </span>
@@ -162,9 +171,7 @@ const AssignManagerOffcanvas = ({
 
           {/* ✅ NOVA: User Search Section */}
           <div className="new-manager-section">
-            <h3 className="section-title">
-              {t("users.selectUserToPromote")}
-            </h3>
+            <h3 className="section-title">{t("users.selectUserToPromote")}</h3>
             <p className="section-description">
               {t("users.promoteDescription")}
             </p>

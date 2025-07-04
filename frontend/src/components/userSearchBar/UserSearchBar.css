@@ -131,12 +131,31 @@
 }
 
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.user-avatar .user-icon {
+  width: 50px;
+  height: 50px;
+  margin-top: 0;
+}
+
+.user-avatar .user-icon img {
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar .user-icon-status {
+  width: 8px;
+  height: 8px;
+  border-width: 1px;
+  bottom: 1px;
+  right: 1px;
 }
 
 .user-info {
@@ -225,8 +244,13 @@
 }
 
 .user-search-bar.compact .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 45px;
+  height: 45px;
+}
+
+.user-search-bar.compact .user-avatar .user-icon {
+  width: 45px;
+  height: 45px;
 }
 
 .user-search-bar.compact .user-search-item {
