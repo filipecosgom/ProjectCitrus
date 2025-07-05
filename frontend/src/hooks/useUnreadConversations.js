@@ -7,6 +7,7 @@ function useUnreadConversations() {
   const [conversationCount, setConversationCount] = useState(0);
   const [websocket, setWebSocket] = useState(null);
 
+  // ✅ REMOVER isActive - USAR user DIRETAMENTE
   const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
 
   // ✅ ATUALIZAR CONTADOR
@@ -17,7 +18,7 @@ function useUnreadConversations() {
   // ✅ ADICIONAR NOVA CONVERSA
   const addUnreadConversation = useCallback(
     (senderId) => {
-      if (!senderId) return;
+      if (!senderId || !user) return; // ✅ USAR user DIRETAMENTE
 
       setUnreadConversations((prev) => {
         const newSet = new Set(prev);
@@ -31,32 +32,50 @@ function useUnreadConversations() {
         return newSet;
       });
     },
-    [updateConversationCount]
+    [updateConversationCount, user] // ✅ USAR user DIRETAMENTE
   );
 
-  // ✅ RESETAR CONTADOR (quando abre dropdown)
+  // ✅ RESETAR CONTADOR
   const resetConversationCount = useCallback(() => {
     setUnreadConversations(new Set());
     setConversationCount(0);
     console.log("🔄 Contador de conversas resetado");
   }, []);
 
-  // ✅ CONECTAR WEBSOCKET
+  // ✅ WEBSOCKET CONTROLADO
   useEffect(() => {
+    // ✅ LIMPAR WEBSOCKET SE NÃO TIVER USER
     if (!user) {
+      // ✅ USAR user DIRETAMENTE
+      console.log("❌ Sem user ativo, fechando WebSocket");
       if (websocket) {
-        websocket.close();
+        websocket.close(1000, "No user");
         setWebSocket(null);
       }
+      // ✅ RESETAR CONTADOR
+      setUnreadConversations(new Set());
+      setConversationCount(0);
       return;
     }
 
-    if (websocket) return; // Já conectado
+    // ✅ NÃO CONECTAR SE JÁ TIVER WEBSOCKET ATIVO
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      console.log("✅ WebSocket já ativo, não duplicar");
+      return;
+    }
 
+    // ✅ FECHAR WEBSOCKET ANTERIOR SE EXISTIR
+    if (websocket) {
+      websocket.close(1000, "Reconnecting");
+      setWebSocket(null);
+    }
+
+    console.log("🔗 Conectando WebSocket para conversas...");
     const ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
-      console.log("🔗 WebSocket conectado para conversas");
+      console.log("✅ WebSocket conectado para conversas");
+      setWebSocket(ws);
     };
 
     ws.onmessage = (event) => {
@@ -67,7 +86,6 @@ function useUnreadConversations() {
         if (data.type === "MESSAGE") {
           const notification = data.notification;
           if (notification && notification.senderId) {
-            // ✅ ADICIONAR CONVERSA SE NOVA
             addUnreadConversation(notification.senderId);
           }
         }
@@ -81,26 +99,29 @@ function useUnreadConversations() {
       }
     };
 
-    ws.onclose = () => {
-      console.log("🔌 WebSocket desconectado");
+    ws.onclose = (event) => {
+      console.log(`🔌 WebSocket fechado: ${event.code} - ${event.reason}`);
       setWebSocket(null);
     };
 
     ws.onerror = (error) => {
       console.error("❌ Erro WebSocket:", error);
+      setWebSocket(null);
     };
 
-    setWebSocket(ws);
-
+    // ✅ CLEANUP FUNCTION
     return () => {
       console.log("🧹 Limpando WebSocket...");
-      ws.close();
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close(1000, "Component cleanup");
+      }
     };
-  }, [user, websocket, addUnreadConversation]);
+  }, [user]); // ✅ APENAS user COMO DEPENDÊNCIA
 
+  // ✅ SEMPRE RETORNAR OS VALORES
   return {
-    conversationCount,
-    unreadConversations,
+    conversationCount: user ? conversationCount : 0, // ✅ USAR user DIRETAMENTE
+    unreadConversations: user ? unreadConversations : new Set(),
     addUnreadConversation,
     resetConversationCount,
   };

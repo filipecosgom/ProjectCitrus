@@ -7,7 +7,7 @@ import MessageDropdown from "../dropdowns/MessageDropdown";
 import Menu from "../menu/Menu";
 import useAuthStore from "../../stores/useAuthStore"; // <-- Importa o store
 import UserIcon from "../userIcon/UserIcon";
-import useUnreadConversations from "../hooks/useUnreadConversations";
+import useUnreadConversations from "../../hooks/useUnreadConversations";
 
 export default function Header({
   unreadMessages = 0,
@@ -28,7 +28,7 @@ export default function Header({
   const messagesRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
 
-  // ✅ USAR HOOK DE CONVERSAS
+  // ✅ DESCOMENTAR ESTAS LINHAS:
   const { conversationCount, resetConversationCount } =
     useUnreadConversations();
 
@@ -163,7 +163,6 @@ export default function Header({
             <MessageDropdown
               isVisible={showMessages}
               onClose={() => setShowMessages(false)}
-              onUnreadCountChange={setUnreadMessages}
             />
           )}
         </div>
