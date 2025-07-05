@@ -71,4 +71,25 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
             return false;
         }
     }
+
+    public boolean markMessageNotificationsAsRead(Long userId) {
+        try {
+            int updatedCount = em.createQuery(
+                "UPDATE NotificationEntity n " +
+                "SET n.notificationIsRead = true " +
+                "WHERE n.user.id = :userId " +
+                "AND n.type = :messageType " +
+                "AND n.notificationIsRead = false"
+            )
+            .setParameter("userId", userId)
+            .setParameter("messageType", NotificationType.MESSAGE)
+            .executeUpdate();
+            
+            LOGGER.info("Marked {} MESSAGE notifications as read for user {}", updatedCount, userId);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error marking MESSAGE notifications as read for user {}", userId, e);
+            return false;
+        }
+    }
 }
