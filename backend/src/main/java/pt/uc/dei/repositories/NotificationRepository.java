@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.NotificationEntity;
 import java.util.Collections;
 import java.util.List;
+import pt.uc.dei.enums.NotificationType;
 
 @Stateless
 public class NotificationRepository extends AbstractRepository<NotificationEntity> {

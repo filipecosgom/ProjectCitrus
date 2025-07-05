@@ -1,4 +1,4 @@
-// ✅ FUNÇÃO PARA MARCAR NOTIFICAÇÕES MESSAGE COMO LIDAS
+// ✅ FUNÇÃO CORRIGIDA PARA USAR JWT
 export const markMessageNotificationsAsRead = async () => {
   try {
     const response = await fetch(
@@ -8,7 +8,7 @@ export const markMessageNotificationsAsRead = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        credentials: "include", // ✅ ENVIA COOKIE JWT AUTOMATICAMENTE
       }
     );
 

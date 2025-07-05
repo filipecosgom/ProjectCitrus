@@ -100,36 +100,34 @@ public class NotificationController {
     @Path("/mark-messages-read")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response markMessageNotificationsAsRead(@CookieParam("session") String sessionId) {
+    public Response markMessageNotificationsAsRead(@CookieParam("jwt") String jwtToken) {
         try {
-            if (sessionId == null) {
+            // ✅ USAR MESMO PADRÃO DOS OUTROS MÉTODOS
+            Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+            if (userId == null) {
+                LOGGER.warn("Unauthorized markMessageNotificationsAsRead request: missing or invalid JWT");
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ResponseMessageDTO("Unauthorized", "Session not found"))
-                        .build();
-            }
-
-            UserDTO user = authenticationService.getUserBySessionId(sessionId);
-            if (user == null) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(new ResponseMessageDTO("Unauthorized", "Invalid session"))
+                        .entity(new ApiResponse(false, "Unauthorized", "errorUnauthorized", null))
                         .build();
             }
 
             // ✅ MARCAR TODAS AS NOTIFICAÇÕES MESSAGE COMO LIDAS
-            boolean success = notificationService.markMessageNotificationsAsRead(user.getId());
+            boolean success = notificationService.markMessageNotificationsAsRead(userId);
 
             if (success) {
-                return Response.ok(new ResponseMessageDTO("Success", "Message notifications marked as read"))
+                LOGGER.info("User {} marked all MESSAGE notifications as read", userId);
+                return Response.ok(new ApiResponse(true, "Message notifications marked as read", "successNotificationsMarkedRead", null))
                         .build();
             } else {
+                LOGGER.error("Failed to mark MESSAGE notifications as read for user {}", userId);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(new ResponseMessageDTO("Error", "Failed to mark notifications as read"))
+                        .entity(new ApiResponse(false, "Failed to mark notifications as read", "errorMarkingNotifications", null))
                         .build();
             }
         } catch (Exception e) {
-            logger.error("Error marking message notifications as read", e);
+            LOGGER.error("Error marking message notifications as read", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new ResponseMessageDTO("Error", "Internal server error"))
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternal", null))
                     .build();
         }
     }
