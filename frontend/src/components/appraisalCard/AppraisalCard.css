@@ -8,6 +8,7 @@
   padding-top: 8px;
   padding-bottom: 8px;
   box-shadow: var(--shadow-card);
+  border-radius: var(--border-radius-default, 10px);
 }
 
 .appraisalCard-wrapper:hover {
@@ -16,7 +17,7 @@
 
 .appraisalCard-wrapper.with-checkbox {
   display: flex;
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
   padding-top: 8px;
   padding-bottom: 8px;
   box-shadow: var(--shadow-card);

@@ -1,0 +1,48 @@
+/* AppraisalsTab.css - mimics Appraisals.css, can be customized for profile tab context */
+
+.appraisalsTab-container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-sm);
+  gap: var(--gap-vertical-mobile);
+}
+
+.appraisalsTab-searchBarAndButton {
+  flex: 1;
+}
+
+.appraisalsTab-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-vertical-mobile);
+}
+
+.appraisalsTab-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Tablet */
+@media (min-width: 480px) {
+  .appraisalsTab-container {
+    padding: var(--padding-sm);
+    gap: var(--gap-vertical-tablet);
+  }
+  .appraisalsTab-grid {
+    gap: var(--gap-vertical-tablet);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .appraisalsTab-container {
+    padding: var(--padding-lg);
+    gap: var(--gap-vertical-desktop);
+  }
+  .appraisalsTab-grid {
+    gap: var(--gap-vertical-desktop);
+  }
+}
+

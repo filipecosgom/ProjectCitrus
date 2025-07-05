@@ -22,6 +22,7 @@ export default function Menu({
   const { t } = useTranslation();
   const userId = useAuthStore((state) => state.user?.id);
   const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
+  const isUserManager = useAuthStore((state) => state.isUserManager());
 
   // Internationalized menu labels
   const menuDashboard = t("menuDashboard");
@@ -50,6 +51,7 @@ export default function Menu({
       color: "#B61B23",
       route: "/dashboard",
       adminOnly: false,
+      managerOnly: false,
     },
     {
       key: "profile",
@@ -58,6 +60,7 @@ export default function Menu({
       color: "#9747FF",
       route: userId ? `/profile?id=${userId}` : "/profile",
       adminOnly: false,
+      managerOnly: false,
     },
     {
       key: "users",
@@ -66,6 +69,7 @@ export default function Menu({
       color: "#3F861E",
       route: "/users",
       adminOnly: false,
+      managerOnly: false,
     },
     {
       key: "training",
@@ -74,6 +78,7 @@ export default function Menu({
       color: "#FF5900",
       route: "/training",
       adminOnly: false,
+      managerOnly: false,
     },
     {
       key: "appraisal",
@@ -82,6 +87,7 @@ export default function Menu({
       color: "#FDD835",
       route: "/appraisals",
       adminOnly: false,
+      managerOnly: true,
     },
     {
       key: "cycles",
@@ -90,6 +96,7 @@ export default function Menu({
       color: "#00B9CD",
       route: "/cycles",
       adminOnly: true,
+      managerOnly: false,
     },
     {
       key: "settings",
@@ -98,6 +105,7 @@ export default function Menu({
       color: "#1976d2",
       route: "/settings",
       adminOnly: true,
+      managerOnly: false,
     },
     {
       key: "darkmode",
@@ -106,6 +114,7 @@ export default function Menu({
       color: "#818488",
       route: null,
       adminOnly: false,
+      managerOnly: false,
       isToggle: true,
     },
     {
@@ -115,6 +124,7 @@ export default function Menu({
       color: null,
       route: null,
       adminOnly: false,
+      managerOnly: false,
       isLanguage: true,
     },
     {
@@ -124,11 +134,15 @@ export default function Menu({
       color: "#818488",
       route: null,
       adminOnly: false,
+      managerOnly: false,
       isLogout: true,
     },
   ];
 
   const filteredItems = menuItems.filter((item) => {
+    if(item.managerOnly && !(isUserManager || isUserAdmin)) {
+      return false;
+    }
     if (item.adminOnly && !isUserAdmin) {
       return false;
     }

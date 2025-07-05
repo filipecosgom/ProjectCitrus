@@ -11,7 +11,7 @@
   flex: 1;
   display: flex;
   border: 2px solid #cbb4b4;
-  border-radius: 10px;
+  border-radius: var(--border-radius-default, 10px);
   box-shadow: var(--shadow-text);
   padding: 0rem 0.5rem;
 }

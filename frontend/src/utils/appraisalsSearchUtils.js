@@ -38,10 +38,18 @@ export async function fetchInitialAppraisals({
   setPageLoading(true);
   let appraisalStates = await handleGetAppraisalStates();
   // Ensure all states option is present and value is null or ""
-  if (!appraisalStates.some(s => s.value === "" || s.value === null)) {
-    appraisalStates = [{ label: t("appraisalStateAllStates"), value: "" }, ...appraisalStates];
+  if (!appraisalStates.some((s) => s.value === "" || s.value === null)) {
+    appraisalStates = [
+      { label: t("appraisalStateAllStates"), value: "" },
+      ...appraisalStates,
+    ];
   }
-  const initialSearch = { query: "", searchType: "appraisedUserName", limit: 10, filters: {} };
+  const initialSearch = {
+    query: "",
+    searchType: "appraisedUserName",
+    limit: 10,
+    filters: {},
+  };
   setSearchParams(initialSearch);
   setLastSearch(initialSearch);
   const result = await handleGetAppraisals({
@@ -64,12 +72,27 @@ export async function fetchInitialAppraisals({
 }
 
 // Search types for appraisals (internationalized)
-export const appraisalsSearchTypes = (t) => [
-  { value: "appraisedUserName", label: t("appraisalsSearchTypeUserName") },
-  { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
-  { value: "appraisingUserName", label: t("appraisalsSearchTypeManagerName") },
-  { value: "appraisingUserEmail", label: t("appraisalsSearchTypeManagerEmail") },
-];
+export const appraisalsSearchTypes = (t, isAdmin = false) => {
+  const types = [
+    { value: "appraisedUserName", label: t("appraisalsSearchTypeUserName") },
+    { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
+    {
+      value: "appraisingUserName",
+      label: t("appraisalsSearchTypeManagerName"),
+    },
+    {
+      value: "appraisingUserEmail",
+      label: t("appraisalsSearchTypeManagerEmail"),
+    },
+  ];
+  if (isAdmin) return types;
+  // Only allow user name/email for non-admins
+  return types.filter(
+    (type) =>
+      type.value !== "appraisingUserName" &&
+      type.value !== "appraisingUserEmail"
+  );
+};
 
 // Build params for backend
 const sortKeyMap = {
@@ -77,15 +100,26 @@ const sortKeyMap = {
   score: "score",
   manager: "manager_name",
   endDate: "endDate",
-  state: "state"
+  state: "state",
 };
 
-export function buildAppraisalsSearchParams({ query, searchType, limit, offset, state, score, sortBy, sortOrder }) {
+export function buildAppraisalsSearchParams({
+  query,
+  searchType,
+  limit,
+  offset,
+  state,
+  score,
+  sortBy,
+  sortOrder,
+  appraisingUserId,
+  appraisedUserId,
+}) {
   const params = {
     limit: limit ?? 10,
     offset: offset ?? 0,
     parameter: sortKeyMap[sortBy] || sortBy,
-    order: sortOrder,  // Rename if needed
+    order: sortOrder, // Rename if needed
   };
   // Map frontend searchType to backend param names
   if (query && searchType) {
@@ -97,6 +131,14 @@ export function buildAppraisalsSearchParams({ query, searchType, limit, offset, 
   }
   if (score !== undefined && score !== "") {
     params.score = score;
+  }
+  // Always include appraisingUserId if present (for non-admins)
+  if (appraisingUserId) {
+    params.appraisingUserId = appraisingUserId;
+  }
+  // Always include appraisedUserId if present
+  if (appraisedUserId) {
+    params.appraisedUserId = appraisedUserId;
   }
   return params;
 }
@@ -116,7 +158,7 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
   if (typeof stateOptions[0] === "string") {
     stateOptions = [
       { value: "", label: t("appraisalStateAllStates") },
-      ...stateOptions.map(s => ({
+      ...stateOptions.map((s) => ({
         value: s,
         label: t(
           s === "IN_PROGRESS"
@@ -131,7 +173,7 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
     ];
   }
   const filterOptions = {
-    state: stateOptions
+    state: stateOptions,
   };
   return {
     filtersConfig: ["state"],
@@ -148,9 +190,29 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
 
 // Appraisals sort fields (internationalized)
 export const appraisalsSortFields = (t) => [
-  { id: "appraisalSortControlsUser", key: "user", label: t("appraisalSortControlsUser") },
-  { id: "appraisalSortControlsScore", key: "score", label: t("appraisalSortControlsScore") },
-  { id: "appraisalSortControlsManager", key: "manager", label: t("appraisalSortControlsManager") },
-  { id: "appraisalSortControlsEndDate", key: "endDate", label: t("appraisalSortControlsEndDate") },
-  { id: "appraisalSortControlsState", key: "state", label: t("appraisalSortControlsState") },
+  {
+    id: "appraisalSortControlsUser",
+    key: "user",
+    label: t("appraisalSortControlsUser"),
+  },
+  {
+    id: "appraisalSortControlsScore",
+    key: "score",
+    label: t("appraisalSortControlsScore"),
+  },
+  {
+    id: "appraisalSortControlsManager",
+    key: "manager",
+    label: t("appraisalSortControlsManager"),
+  },
+  {
+    id: "appraisalSortControlsEndDate",
+    key: "endDate",
+    label: t("appraisalSortControlsEndDate"),
+  },
+  {
+    id: "appraisalSortControlsState",
+    key: "state",
+    label: t("appraisalSortControlsState"),
+  },
 ];

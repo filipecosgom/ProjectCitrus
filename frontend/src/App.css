@@ -61,6 +61,8 @@
   /* Spacing */
   --gap-sm: 8px;
   --gap-md: 16px;
+
+  --border-radius-default: 10px;
 }
 
 /* Input fields for text input by the user */

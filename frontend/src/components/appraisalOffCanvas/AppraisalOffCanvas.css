@@ -185,7 +185,7 @@
 }
 
 .appraisal-offcanvas-feedback-box {
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
   border: 1px solid #CBB4B4;
   width: 100%;
   text-align: left;
@@ -200,7 +200,7 @@
   font-size: 1rem;
   font-family: var(--font-family-secondary, "Catamaran", sans-serif);
   border: 1px solid var(--primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
   outline: none;
   box-shadow: none;
   resize: vertical;
@@ -231,7 +231,7 @@
 
 .appraisal-offcanvas-btn {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-default, 10px);
   padding: 6px 16px;
   font-weight: 600;
   font-size: 1rem;
@@ -243,7 +243,7 @@
 .appraisal-offcanvas-btn-edit {
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-default, 10px);
   padding: 6px 16px;
   font-weight: 600;
   font-size: 1rem;
