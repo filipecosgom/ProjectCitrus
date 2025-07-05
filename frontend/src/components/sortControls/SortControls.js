@@ -34,7 +34,6 @@ const SortControls = ({
 
   // ✅ FUNÇÃO PARA RETORNAR ÍCONES REACT-ICONS
   const getSortIcon = (fieldKey) => {
-    console.log(sortBy, fieldKey, sortOrder);
     if (sortBy !== fieldKey) {
       return <FaSort className="sort-icon" />; // ✅ Ícone neutro
     }

@@ -23,7 +23,8 @@ export default function Appraisals() {
   const { t } = useTranslation();
   const [appraisals, setAppraisals] = useState([]);
   const [appraisalStates, setAppraisalStates] = useState([]);
-  const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
+  const user = useAuthStore((state) => state.user);
+  const isAdmin = user?.userIsAdmin;
   const [resultsLoading, setResultsLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -72,12 +73,18 @@ export default function Appraisals() {
     offset = pagination.offset,
     overrideParams = null
   ) {
+    // Always ensure appraisingUserId is present for non-admins
+    let baseParams = overrideParams || searchParams;
+    if (!isAdmin) {
+      baseParams = { ...baseParams, appraisingUserId: user?.id };
+    }
     const params = buildAppraisalsSearchParams({
-      ...(overrideParams || searchParams),
+      ...baseParams,
       offset,
       sortBy: sort.sortBy,
       sortOrder: sort.sortOrder,
     });
+    console.log('Params sent to backend:', params); // Debug log
     setResultsLoading(true);
     const result = await handleGetAppraisals(params);
     setAppraisals(result.appraisals || []);
@@ -104,7 +111,10 @@ export default function Appraisals() {
       setPageLoading(true);
       const appraisalStates = await handleGetAppraisalStates();
       setAppraisalStates(appraisalStates);
-      setSearchParams((prev) => ({ ...prev })); // triggers initial fetch
+      // If not admin, set initial search to only appraisals where user is manager
+      setSearchParams((prev) =>
+        isAdmin ? { ...prev } : { ...prev, appraisingUserId: user?.id }
+      );
       setPageLoading(false);
     }
     fetchInitial();
@@ -113,13 +123,17 @@ export default function Appraisals() {
 
   // Handlers
   const handleSearch = (query, searchType, limit, filters = {}) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      query,
-      searchType,
-      limit,
-      ...filters,
-    }));
+    setSearchParams((prev) => {
+      const nextParams = {
+        ...prev,
+        query,
+        searchType,
+        limit,
+        ...filters,
+      };
+      // Always ensure appraisingUserId is present for non-admins
+      return isAdmin ? nextParams : { ...nextParams, appraisingUserId: user?.id };
+    });
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
 
@@ -170,7 +184,7 @@ export default function Appraisals() {
       <div className="appraisals-searchBarAndButton">
         <SearchBar
           onSearch={handleSearch}
-          searchTypes={appraisalsSearchTypes(t)}
+          searchTypes={appraisalsSearchTypes(t, isAdmin)}
           {...filtersConfig}
           actions={
             isAdmin && (

@@ -23,7 +23,12 @@ const useAuthStore = create((set, get) => {
     // ✅ NOVA FUNÇÃO: Verifica se user é admin
     isUserAdmin: () => {
       const user = get().user;
-      return user?.userIsAdmin === true;
+      return user?.userIsAdmin;
+    },
+
+    isUserManager: () => {
+      const user = get().user;
+      return user?.userIsManager;
     },
 
     setAvatar: (avatarUrl, blob = null) => {

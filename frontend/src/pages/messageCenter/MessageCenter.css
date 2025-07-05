@@ -43,7 +43,7 @@
   
   .chat-user-item.selected {
     background-color: #FFFBF2;
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
     border: 2px solid #cbb4b4;
   }
   
@@ -92,7 +92,7 @@
     flex-direction: column;
     background-color: white;
     box-shadow: var(--shadow-text);
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
   }
   
   .chat-user {
@@ -143,7 +143,7 @@
   .chat-message-content {
     max-width: 70%;
     padding: 10px 15px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
     position: relative;
     box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
   }
@@ -319,7 +319,7 @@
     padding: 10px 10px 10px 10px;
     background: #FFFBF2;
     margin-bottom: 0;
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
     border: 2px solid #cbb4b4;
   }
 
@@ -346,7 +346,7 @@
 
   .chat-area {
     padding: 0px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
   }
 
   .chat-header-mobile {

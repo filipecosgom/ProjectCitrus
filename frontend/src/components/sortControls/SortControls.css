@@ -5,7 +5,7 @@
 .sortControls-container {
   display: flex;
   align-items: center;
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
   font-weight: bold;
 }
 
@@ -48,6 +48,62 @@
   font-size: 0.9rem;
 }
 
+/* Mobile dropdown styles */
+.sortControls-mobile {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.sortControls-mobile > button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-default, 10px);
+  font-size: 1rem;
+  font-family: var(--font-family-secondary);
+  font-weight: 600;
+  color: var(--blue, #2a4d8f);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.sortControls-dropdown {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-default, 10px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  margin-top: 0.25rem;
+  z-index: 100;
+  position: absolute;
+}
+
+.sortControls-dropdown > div {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: var(--font-family-secondary);
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sortControls-dropdown > div:hover {
+  background: var(--blue, #e6f0ff);
+  color: var(--blue, #2a4d8f);
+}
+
 /*----------------------------------------*/
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
@@ -83,5 +139,17 @@
   }
   .sortControls-div.manager {
     display: block;
+  }
+}
+
+@media (min-width: 481px) {
+  .sortControls-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .sortControls-container {
+    display: none;
   }
 }

@@ -5,7 +5,7 @@
   width: 64px;
   /*height: 560px; porquê altura fixa? */
   background: #fff;
-  border-radius: 10px;
+  border-radius: var(--border-radius-default, 10px);
   box-shadow: none; /* porque não sombra? */
   transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 300;
@@ -42,7 +42,7 @@
   align-items: center;
   gap: 12px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-default, 10px);
   background: #fff;
   border: 1px solid transparent;
   cursor: pointer;
@@ -221,7 +221,7 @@ input:checked + .slider:before {
     max-width: none;
     height: 420px;
     flex-direction: column;
-    border-radius: 10px 10px 10px 10px;
+    border-radius: var(--border-radius-default, 10px);
     box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
     padding: 0;
     z-index: 1200;
@@ -253,7 +253,7 @@ input:checked + .slider:before {
     max-width: none;
     height: 40px;
     padding: 0 12px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-default, 10px);
     font-size: 12px;
     justify-content: flex-start;
     border: 1px solid transparent;

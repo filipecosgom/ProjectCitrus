@@ -20,7 +20,7 @@
   background-color: var(--red, #a44);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
   font-family: var(--font-family-secondary, "Catamaran", sans-serif);
   font-size: var(--font-size-main, 1rem);
   font-weight: var(--font-weight-regular, 400);

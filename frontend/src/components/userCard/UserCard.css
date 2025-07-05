@@ -6,7 +6,7 @@
   padding-left: 0;
   padding-right: 0;
   box-shadow: var(--shadow-card);
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
 }
 
 .userCard-wrapper:hover {
@@ -18,7 +18,7 @@
   padding-left: 0;
   padding-right: 0;
   box-shadow: var(--shadow-card);
-  border-radius: 8px;
+  border-radius: var(--border-radius-default, 10px);
 }
 
 .userCard-container {
