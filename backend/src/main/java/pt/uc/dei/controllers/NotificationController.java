@@ -95,4 +95,42 @@ public class NotificationController {
                     .build();
         }
     }
+
+    @PUT
+    @Path("/mark-messages-read")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response markMessageNotificationsAsRead(@CookieParam("session") String sessionId) {
+        try {
+            if (sessionId == null) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ResponseMessageDTO("Unauthorized", "Session not found"))
+                        .build();
+            }
+
+            UserDTO user = authenticationService.getUserBySessionId(sessionId);
+            if (user == null) {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new ResponseMessageDTO("Unauthorized", "Invalid session"))
+                        .build();
+            }
+
+            // ✅ MARCAR TODAS AS NOTIFICAÇÕES MESSAGE COMO LIDAS
+            boolean success = notificationService.markMessageNotificationsAsRead(user.getId());
+
+            if (success) {
+                return Response.ok(new ResponseMessageDTO("Success", "Message notifications marked as read"))
+                        .build();
+            } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new ResponseMessageDTO("Error", "Failed to mark notifications as read"))
+                        .build();
+            }
+        } catch (Exception e) {
+            logger.error("Error marking message notifications as read", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ResponseMessageDTO("Error", "Internal server error"))
+                    .build();
+        }
+    }
 }
