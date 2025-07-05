@@ -2,7 +2,10 @@
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
 .appraisals-container {
+  display: flex;
+  flex-direction: column;
     padding: var(--padding-sm);
+    gap: var(--gap-vertical-mobile);
 }
 
 .appraisals-wrapperAndButton {
@@ -66,7 +69,7 @@
 .appraisals-grid {
     display: flex;
     flex-direction: column;
-    margin-bottom: 2rem;
+    gap: var(--gap-vertical-mobile);
 }
 
 .appraisals-empty {
@@ -82,6 +85,7 @@
 @media (min-width: 480px) {
   .appraisals-container {
     padding: var(--padding-sm);
+    gap: var(--gap-vertical-tablet);
   }
 
   .appraisals-wrapperAndButton.with-completeAppraisals-button {
@@ -99,6 +103,10 @@
     font-weight: var(--font-weight-bold, 700);
     font-size: 0.9rem;
   }
+
+  .appraisals-grid {
+    gap: var(--gap-vertical-tablet);
+}
 }
 
 /*----------------------------------------*/
@@ -107,6 +115,7 @@
 @media (min-width: 1024px) {
   .appraisals-container {
     padding: var(--padding-lg);
+    gap: var(--gap-vertical-desktop);
   }
 
   .appraisals-wrapperAndButton.with-completeAppraisals-button {
@@ -117,4 +126,8 @@
     min-width: 130px;
     padding: 0.875rem 1.25rem;
   }
+
+  .appraisals-grid {
+    gap: var(--gap-vertical-desktop);
+}
 }

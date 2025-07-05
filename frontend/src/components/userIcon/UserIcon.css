@@ -3,7 +3,6 @@
   width: 46px;
   height: 46px;
   overflow: hidden;
-  margin-top: 2px;
 }
 
 .user-icon img {
@@ -12,12 +11,15 @@
   object-fit: cover;
   border-radius: 50%;
   border: 3px solid #ff0000; /* Replace with your desired stroke color */
+  font-size: 1.5rem;
+  box-sizing: border-box;
+
 }
 
 /* ✅ PLACEHOLDER quando user é null */
 .user-icon-placeholder {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background-color: #f5f5f5;
   border: 2px solid #e0e0e0;

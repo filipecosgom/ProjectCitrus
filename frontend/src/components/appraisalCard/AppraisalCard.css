@@ -5,7 +5,9 @@
   display: flex;
   padding-left: 0;
   padding-right: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  box-shadow: var(--shadow-card);
 }
 
 .appraisalCard-wrapper:hover {
@@ -15,7 +17,9 @@
 .appraisalCard-wrapper.with-checkbox {
   display: flex;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  box-shadow: var(--shadow-card);
 }
 
 .appraisalCard-checkbox {
@@ -112,6 +116,7 @@
 }
 
 
+
 /*----------------------------------------*/
 /*----------------MOBILE CARDS------------------*/
 /*----------------------------------------*/
@@ -142,6 +147,8 @@
 
   .appraisalCard-appraised {
   flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
   order: 2;
 }
   .appraisalCard-state {
@@ -155,17 +162,6 @@
   .appraisalCard-appraised .appraisalCard-user {
     flex-direction: column;
     align-items: center;
-  }
-  .appraisalCard-appraised .user-icon {
-    width: 100px !important;
-    height: 100px !important;
-    border: 4px solid #e05a4f;
-    border-radius: 50%;
-  }
-  .appraisalCard-appraised .user-icon img {
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 50%;
   }
   .appraisalCard-appraised .appraisalCard-name {
     font-size: 20px;
@@ -208,7 +204,7 @@
   .appraisalCard-appraising .appraisalCard-userInfo {
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     min-width: 0 !important;
   }
   .appraisalCard-appraising .appraisalCard-name {
@@ -280,6 +276,31 @@
     .user-icon {
     border-color: var(--badge-yellow-stroke, #ff7043);
   }
+
+  .appraisalCard-appraised .user-icon {
+    width: 100px !important;
+    height: 100px !important;
+    border-width: 4px !important;
+    /* If you want to scale everything, you can use transform: scale(2); but it's better to override sizes directly for clarity */
+  }
+  .appraisalCard-appraised .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
+    border-width: 4px !important;
+  }
+  .appraisalCard-appraised .user-icon-placeholder {
+    width: 100% !important;
+    height: 100% !important;
+    border-width: 3px !important;
+    font-size: 2rem !important;
+  }
+  .appraisalCard-appraised .user-icon-status {
+    width: 20px !important;
+    height: 20px !important;
+    border-width: 3px !important;
+    bottom: 4px !important;
+    right: 4px !important;
+  }
 }
 
 /*----------------------------------------*/
@@ -291,6 +312,24 @@
 @media (min-width: 480px) and (max-width: 1024px) {
   .appraisalCard-email {
     display: none !important;
+  }
+
+  .appraisalCard-appraised .user-icon {
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1;
+  }
+  .appraisalCard-appraised .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .appraisalCard-appraising .user-icon {
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1;
+  }
+  .appraisalCard-appraising .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
   }
 }
 
@@ -363,5 +402,23 @@
   .appraisalCard-endDate {
     flex: 1 1 0;
   text-align: start;
+  }
+
+  .appraisalCard-appraised .user-icon {
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1;
+  }
+  .appraisalCard-appraised .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .appraisalCard-appraising .user-icon {
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1;
+  }
+  .appraisalCard-appraising .user-icon img {
+    width: 100% !important;
+    height: 100% !important;
   }
 }

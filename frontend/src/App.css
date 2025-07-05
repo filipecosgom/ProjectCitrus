@@ -52,6 +52,10 @@
   --padding-md: 0px 32px;    /* Tablet */
   --padding-lg: 0px 78px; /* Desktop */
 
+  /* Global gaps*/
+  --gap-vertical-mobile: 0.5rem;
+  --gap-vertical-tablet: 1rem;
+  --gap-vertical-desktop: 1.5rem;
 
   
   /* Spacing */
