@@ -257,7 +257,6 @@ input:checked + .slider:before {
     font-size: 12px;
     justify-content: flex-start;
     border: 1px solid transparent;
-    background: #fff;
     margin: 0 auto;
   }
   /* CORREÇÃO: Força as labels a aparecerem SEMPRE no mobile quando o menu está aberto */

@@ -13,8 +13,7 @@
   border: 2px solid #cbb4b4;
   border-radius: 10px;
   box-shadow: var(--shadow-text);
-  padding: 0rem 0rem;
-  align-items: center;
+  padding: 0rem 0.5rem;
 }
 
 .searchBar-input {
@@ -108,11 +107,9 @@
 
 /* ===== Select Elements ===== */
 .searchBar-select {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
   background: white;
-  min-width: 120px;
+  min-width: 100px;
   cursor: pointer;
 }
 
@@ -125,11 +122,6 @@
   .searchBar-dropdown {
     width: auto;
   }
-
-  .searchBar-dropdownToggle,
-  .searchBar-select {
-    width: 100%;
-  }
 }
 /*----------------------------------------*/
 /*----------------DESKTOP------------------*/
@@ -139,10 +131,6 @@
   padding: var(--padding-lg)
 }
 
-.searchBar-dropdownToggle,
-  .searchBar-select {
-    width: auto;
-  }
   
 
 }

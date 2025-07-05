@@ -21,6 +21,7 @@ import {
 } from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
+import handleNotification from "../../handles/handleNotification";
 
 export default function Users() {
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ export default function Users() {
   // ✅ NOVOS HANDLERS para Assign Manager
   const handleOpenAssignManager = () => {
     if (selectedUsers.size === 0) {
-      console.warn("❌ Nenhum usuário selecionado");
+      handleNotification("info", t("users.noUsersSelected"));
       return;
     }
     setAssignManagerOpen(true);
@@ -231,32 +232,29 @@ export default function Users() {
     <div className="users-container">
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
       <div className="searchBar-containerAndButton">
-        <div
-          className={`searchBar-wrapperAndButton ${
-            isAdmin ? "with-assign-button" : ""
-          }`}
-        >
-          <SearchBar onSearch={setSearchingParameters} {...usersFilters} />
-        </div>
-
-        {/* ✅ BOTÃO Assign Managers - apenas para admins */}
-        {isAdmin && (
-          <button
-            className={`assign-managers-btn ${
-              selectedUsers.size === 0 ? "disabled" : ""
-            }`}
-            onClick={() => {
-              handleOpenAssignManager();
-            }}
-            disabled={selectedUsers.size === 0}
-          >
-            <GrUserSettings className="assign-managers-icon" />
-            <span className="assign-managers-text">
-              {t("users.assignManagers")}
-              {selectedUsers.size > 0 && ` (${selectedUsers.size})`}
-            </span>
-          </button>
-        )}
+        <SearchBar
+          onSearch={setSearchingParameters}
+          {...usersFilters}
+          actions={
+            isAdmin && (
+              <button
+                className={`assign-managers-btn ${
+                  selectedUsers.size === 0 ? "disabled" : ""
+                }`}
+                onClick={handleOpenAssignManager}
+                disabled={selectedUsers.size === 0}
+              >
+                <GrUserSettings className="assign-managers-icon" />
+                <span className="assign-managers-text">
+                  {t("users.assignManagers")}
+                </span>
+                <span className="assign-managers-count">
+                  {selectedUsers.size > 0 && ` (${selectedUsers.size})`}
+                </span>
+              </button>
+            )
+          }
+        />
       </div>
 
       <SortControls

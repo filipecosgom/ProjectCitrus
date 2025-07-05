@@ -3,33 +3,10 @@
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
 .sortControls-container {
-  display: grid;
-  grid-template-columns:
-    minmax(160px, 1fr) /* User */
-    120px /* Score */
-    minmax(160px, 1fr) /* Manager */
-    140px /* End date */
-    160px; /* State */
-  gap: 1.5rem;
+  display: flex;
   align-items: center;
-  padding: var(--padding-lg);
   border-radius: 8px;
   font-weight: bold;
-}
-
-/* ✅ CLASSE MODIFICADORA PARA USERS - ESCONDER ÚLTIMA COLUNA */
-.sortControls-container.users-mode {
-  grid-template-columns:
-    minmax(160px, 1fr) /* Nome */
-    120px /* Cargo */
-    minmax(160px, 1fr) /* Escritório */
-    160px; /* Gestor */
-  /* ✅ REMOVE a 5ª coluna (State) */
-}
-
-/* ✅ ESCONDER o elemento State quando em users-mode */
-.sortControls-container.users-mode .sortControls-div:last-child {
-  display: none;
 }
 
 .sortControls-div {
@@ -40,6 +17,10 @@
   font-size: var(--font-size-main);
   transition: color 0.2s ease;
   text-align: left;
+}
+
+.sortControls-container .sortControls-div:first-child {
+  margin-left: calc(20px + 0.5rem);
 }
 
 .sortControls-div.office {
@@ -71,30 +52,13 @@
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 @media (min-width: 480px) and (max-width: 1024px) {
-  .sortControls-container {
-    grid-template-columns:
-      minmax(140px, 1fr) /* User */
-      100px /* Score */
-      minmax(140px, 1fr) /* Manager */
-      120px /* End date */
-      140px; /* State */
-    gap: 1rem;
-  }
-
-  /* ✅ TABLET - USERS MODE */
-  .sortControls-container.users-mode {
-    grid-template-columns:
-      minmax(140px, 1fr) /* Nome */
-      100px /* Cargo */
-      minmax(140px, 1fr) /* Escritório */
-      140px; /* Gestor */
-  }
-
+  
   .sortControls-div.office {
     display: block;
   }
-  .sortControls-div.manager {
-    display: block;
+
+  .sortControls-div.endDate {
+    display: none;
   }
   .sortControls-div {
     font-size: var(--font-size-main);
@@ -106,16 +70,8 @@
 /*----------------------------------------*/
 @media (min-width: 1025px) {
   .sortControls-container {
-    /* ✅ MANTER grid padrão para Appraisals */
-  }
-
-  /* ✅ DESKTOP - USERS MODE */
-  .sortControls-container.users-mode {
-    grid-template-columns:
-      minmax(160px, 1fr) /* Nome */
-      120px /* Cargo */
-      minmax(160px, 1fr) /* Escritório */
-      160px; /* Gestor */
+    padding-left: calc(78px - 1rem - 45px);
+    padding-right: 78px;
   }
 
   .sortControls-div {
@@ -129,12 +85,3 @@
     display: block;
   }
 }
-
-/* ✅ MOBILE - ESCONDER COMPLETAMENTE
-@media (max-width: 768px) {
-  .sortControls-container {
-    display: none;
-  }
-  
-}
-*/

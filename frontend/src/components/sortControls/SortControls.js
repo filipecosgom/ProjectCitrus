@@ -60,9 +60,7 @@ const SortControls = ({
       {displayFields.map(({ id, key }) => (
         <div
           key={key}
-          className={`sortControls-div ${
-            key === "office" || key === "manager" ? key : ""
-          } ${sortBy === key ? "active" : ""}`}
+          className={`sortControls-div ${key} ${sortBy === key ? "active" : ""}`}
           onClick={() => handleSort(key)}
         >
           {t(id)}

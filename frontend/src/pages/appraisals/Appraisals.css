@@ -5,6 +5,64 @@
     padding: var(--padding-sm);
 }
 
+.appraisals-wrapperAndButton {
+  flex: 1;
+}
+
+.complete-appraisals-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--red, #a44);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  font-weight: var(--font-weight-regular, 400);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 48px; /* Same height as SearchBar */
+  max-height: 48px;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.complete-appraisals-btn:hover:not(:disabled) {
+  background-color: var(--red-dark, #933);
+  transform: translateY(-1px);
+}
+
+.complete-appraisals-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.complete-appraisals-btn:disabled,
+.complete-appraisals-btn.disabled {
+  background-color: var(--secondary, #88909f);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.complete-appraisals-btn:disabled:hover,
+.complete-appraisals-btn.disabled:hover {
+  transform: none;
+  background-color: var(--secondary, #88909f);
+}
+
+.complete-appraisals-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.complete-appraisals-text {
+  display: none;
+  font-weight: var(--font-weight-bold, 700);
+  font-size: 0.9rem;
+}
+
 .appraisals-grid {
     display: flex;
     flex-direction: column;
@@ -18,23 +76,45 @@
     font-size: 1.1rem;
 }
 
-
 /*----------------------------------------*/
 /*----------------TABLET------------------*/
 /*----------------------------------------*/
 @media (min-width: 480px) {
-    .appraisals-container {
+  .appraisals-container {
     padding: var(--padding-sm);
-}
-    
+  }
+
+  .appraisals-wrapperAndButton.with-completeAppraisals-button {
+    flex: 1;
+    max-width: calc(100% - 200px); /* Leave space for the button */
+  }
+
+  .complete-appraisals-btn {
+    flex-shrink: 0;
+    min-width: 130px;
+  }
+
+  .complete-appraisals-text {
+    display: block;
+    font-weight: var(--font-weight-bold, 700);
+    font-size: 0.9rem;
+  }
 }
 
 /*----------------------------------------*/
-/*----------------DESKTOP------------------*/
+/*----------------DESKTOP-----------------*/
 /*----------------------------------------*/
 @media (min-width: 1024px) {
-.appraisals-container {
+  .appraisals-container {
     padding: var(--padding-lg);
-}
+  }
 
+  .appraisals-wrapperAndButton.with-completeAppraisals-button {
+    max-width: calc(100% - 220px);
+  }
+
+  .complete-appraisals-btn {
+    min-width: 130px;
+    padding: 0.875rem 1.25rem;
+  }
 }

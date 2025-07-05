@@ -15,11 +15,15 @@ import {
   buildAppraisalsSearchParams,
 } from "../../utils/appraisalsSearchUtils";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
+import useAuthStore from "../../stores/useAuthStore";
+import handleNotification from "../../handles/handleNotification";
+import { GrDocumentVerified } from "react-icons/gr";
 
 export default function Appraisals() {
   const { t } = useTranslation();
   const [appraisals, setAppraisals] = useState([]);
   const [appraisalStates, setAppraisalStates] = useState([]);
+  const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -40,12 +44,24 @@ export default function Appraisals() {
     sortOrder: "DESCENDING",
   });
   const [selectedAppraisals, setSelectedAppraisals] = useState(new Set());
+  const [completeAppraisalsOpen, setCompleteAppraisalsOpen] = useState(false);
   const lastSearchRef = useRef(searchParams);
 
-  // Estados para appraisal offcanvas
-    const [selectedAppraisal, setSelectedAppraisal] = useState(null);
-    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+  const handleOpenCompleteAppraisals = () => {
+    if (selectedAppraisals.size === 0) {
+      handleNotification("info", t("appraisal.noAppraisalsSelected"));
+      return;
+    }
+    setCompleteAppraisalsOpen(true);
+  };
 
+  const handleCloseCompleteAppraisals = () => {
+    setCompleteAppraisalsOpen(false);
+  };
+
+  // Estados para appraisal offcanvas
+  const [selectedAppraisal, setSelectedAppraisal] = useState(null);
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
   useEffect(() => {
     lastSearchRef.current = searchParams;
@@ -95,7 +111,7 @@ export default function Appraisals() {
     // eslint-disable-next-line
   }, []);
 
-// Handlers
+  // Handlers
   const handleSearch = (query, searchType, limit, filters = {}) => {
     setSearchParams((prev) => ({
       ...prev,
@@ -116,9 +132,9 @@ export default function Appraisals() {
   const handleCloseOffcanvas = () => {
     setOffcanvasOpen(false);
     setTimeout(() => {
-    setSelectedAppraisal(null);
+      setSelectedAppraisal(null);
     }, 300);
-  }
+  };
 
   const handleSortChange = (newSort) => {
     setSort(newSort);
@@ -151,17 +167,41 @@ export default function Appraisals() {
 
   return (
     <div className="appraisals-container">
-      <SearchBar
-        onSearch={handleSearch}
-        searchTypes={appraisalsSearchTypes(t)}
-        {...filtersConfig}
-      />
+      <div className="appraisals-searchBarAndButton">
+        <SearchBar
+          onSearch={handleSearch}
+          searchTypes={appraisalsSearchTypes(t)}
+          {...filtersConfig}
+          actions={
+            isAdmin && (
+              <button
+                className={`complete-appraisals-btn${
+                  selectedAppraisals.size === 0 ? " disabled" : ""
+                }`}
+                onClick={handleOpenCompleteAppraisals}
+                disabled={selectedAppraisals.size === 0}
+              >
+                <GrDocumentVerified className="complete-appraisals-icon" />
+                <span className="complete-appraisals-text">
+                  {t("appraisal.completeAppraisals")}
+                </span>
+                <span className="complete-appraisals-count">
+                  {selectedAppraisals.size > 0
+                    ? ` (${selectedAppraisals.size})`
+                    : ""}
+                </span>
+              </button>
+            )
+          }
+        />
+      </div>
       <SortControls
         fields={appraisalsSortFields(t)}
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}
         onSortChange={handleSortChange}
       />
+
       {resultsLoading ? (
         <div className="appraisals-loading">
           <Spinner />
@@ -178,7 +218,7 @@ export default function Appraisals() {
                 key={appraisal.id}
                 appraisal={appraisal}
                 onClick={handleAppraisalClick}
-                showCheckbox={true}
+                showCheckbox={isAdmin}
                 isSelected={selectedAppraisals.has(appraisal.id)}
                 onSelectionChange={handleAppraisalSelection}
                 // Optionally, add onClick if you want card click

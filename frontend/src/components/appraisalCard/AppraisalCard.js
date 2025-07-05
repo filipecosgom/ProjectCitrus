@@ -34,22 +34,20 @@ const AppraisalCard = ({
     <div
       className={`appraisalCard-wrapper${
         showCheckbox ? " with-checkbox" : ""
-      }`}
+      }${showCheckbox && isSelected ? " selected" : ""}`}
     >
-      {showCheckbox && (
-        <div className="appraisalCard-checkbox">
+      <div className="appraisalCard-checkbox">
+        {showCheckbox && (
           <input
             type="checkbox"
             checked={isSelected}
             onChange={handleCheckboxChange}
             onClick={(e) => e.stopPropagation()}
           />
-        </div>
-      )}
+        )}
+      </div>
       <div
-        className={`appraisalCard-container${
-          showCheckbox && isSelected ? " selected" : ""
-        }`}
+        className={`appraisalCard-container`}
         onClick={handleCardClick}
         style={{ cursor: onClick ? "pointer" : "default" }}
       >

@@ -3,14 +3,14 @@ import { api } from "./api";
 const appraisalsEndpoint = "/appraisals";
 
 export const fetchPaginatedAppraisals = async ({
-  id = null,
-  email = null,
-  name = null,
-  phone = null,
-  accountState = null,
-  role = null,
-  office = null,
-  isManager = null,
+  appraisedUserId = null,
+  appraisedUserEmail = null,
+  appraisedUserName = null,
+  appraisingUserId = null,
+  appraisingUserName = null,
+  appraisingUserEmail = null,
+  cycleId = null,
+  state = null,
   isAdmin = null,
   isManaged = null,
   parameter = "name",
@@ -22,22 +22,21 @@ export const fetchPaginatedAppraisals = async ({
     const params = new URLSearchParams();
 
     // Add optional parameters if they exist
-    if (id) params.append("id", id);
-    if (email) params.append("email", email);
-    if (name) params.append("name", name);
-    if (phone) params.append("phone", phone);
-    if (accountState) params.append("accountState", accountState);
-    if (role) params.append("role", role);
-    if (office) params.append("office", office);
-    if (isManager !== null) params.append("isManager", isManager);
-    if (isAdmin !== null) params.append("isAdmin", isAdmin);
-    if (isManaged !== null) params.append("isManaged", isManaged);
+    if (appraisedUserId) params.append("appraisedUserId", appraisedUserId);
+    if (appraisedUserEmail) params.append("appraisedUserEmail", appraisedUserEmail);
+    if (appraisedUserName) params.append("appraisedUserName", appraisedUserName);
+    if (appraisingUserId) params.append("appraisingUserId", appraisingUserId);
+    if (appraisingUserName) params.append("appraisingUserName", appraisingUserName);
+    if (appraisingUserEmail) params.append("appraisingUserEmail", appraisingUserEmail);
+    if (cycleId) params.append("cycleId", cycleId);
+    if (state) params.append("state", state);
 
     // Add pagination and sorting parameters
     params.append("parameter", parameter);
     params.append("order", order);
     params.append("offset", offset);
     params.append("limit", limit);
+    console.log("apiFetchParams", params.toString())
 
     const response = await api.get(`${appraisalsEndpoint}?${params.toString()}`);
     return {

@@ -13,6 +13,7 @@ const SearchBar = ({
   defaultValues = {},
   limitOptions = [5, 10, 20],
   tristateFilters = [],
+  actions, // <-- new prop for custom actions/buttons
   ...props
 }) => {
   const { t } = useTranslation();
@@ -117,6 +118,8 @@ const SearchBar = ({
           </div>
         )}
       </div>
+      {/* Render custom actions/buttons if provided */}
+      {actions && <div className="searchBar-actions">{actions}</div>}
     </form>
   );
 };

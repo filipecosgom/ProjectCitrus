@@ -48,18 +48,19 @@ const UserCard = ({
   };
 
   return (
-    <div className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}`}>
+    <div className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}
+      ${showCheckbox && isSelected ? " selected" : ""}`}>
       {/* ✅ CHECKBOX - sempre visível para admins */}
-      {showCheckbox && (
-        <div className="userCard-checkbox">
+      <div className="userCard-checkbox">
+        {showCheckbox && (
           <input
             type="checkbox"
             checked={isSelected}
             onChange={handleCheckboxChange}
-            onClick={(e) => e.stopPropagation()} // Evitar propagação dupla
+            onClick={(e) => e.stopPropagation()}
           />
-        </div>
-      )}
+        )}
+      </div>
       <div
         className={`userCard-container ${getStatusClass()} ${
           showCheckbox && isSelected ? "selected" : ""

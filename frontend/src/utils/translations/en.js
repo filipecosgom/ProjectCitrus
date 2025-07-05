@@ -217,6 +217,7 @@ const en = {
     accountStateIncomplete: "Incomplete",
     avatarLoading: "Loading...",
     viewProfile: "View Profile",
+    noUsersSelected: "No users selected",
   },
   //Usercard
   userCardNoManager: "No manager",
@@ -234,6 +235,10 @@ const en = {
   searchBarComplete: "Complete",
   searchBarIncomplete: "Incomplete",
   searchBarLimitToggle: "Results per page",
+  searchByEmail: "email",
+  searchByName: "name",
+  searchByRole: "role",
+
 
   //User Sort Controls
   userSortControlsName: "Name",
@@ -256,6 +261,7 @@ const en = {
   filterMenuOptionName: "Name",
   filterMenuOptionEmail: "Email",
   filterMenuOptionRole: "Role",
+  filterMenuState: "State",
   filterMenuOffice: "Office",
   filterMenuAllOffices: "All Offices",
   filterMenuAccountState: "Account State",
@@ -318,6 +324,8 @@ const en = {
     score: "Score",
     noFeedback: "No feedback provided.",
     saveError: "Failed to save appraisal.",
+    noAppraisalsSelected: "No appraisals selected",
+    completeAppraisals: "Complete",
   },
 
 };

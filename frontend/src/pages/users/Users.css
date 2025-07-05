@@ -5,17 +5,10 @@
   padding: var(--padding-sm);
 }
 
-/* ✅ NOVO: Container para SearchBar e botão */
-.searchBar-containerAndButton {
-  display: flex;
-}
-
-/* ✅ NOVO: Wrapper do SearchBar */
 .searchBar-wrapperAndButton {
   flex: 1;
 }
 
-/* ✅ NOVO: Botão Assign Managers */
 .assign-managers-btn {
   display: flex;
   align-items: center;
@@ -32,6 +25,9 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   min-height: 48px; /* Mesmo height do SearchBar */
+  max-height: 48px;
+  justify-content: center;
+  min-width: 100px;
 }
 
 .assign-managers-btn:hover:not(:disabled) {
@@ -63,7 +59,9 @@
 }
 
 .assign-managers-text {
+  display: none;
   font-weight: var(--font-weight-bold, 700);
+  font-size: 0.9rem;
 }
 
 .users-grid {
@@ -87,14 +85,7 @@
     padding: var(--padding-sm);
   }
 
-  /* ✅ TABLET: SearchBar e botão lado a lado */
-  .searchBar-container {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .searchBar-wrapper.with-assign-button {
+  .searchBar-wrapperAndButton.with-assign-button {
     flex: 1;
     max-width: calc(100% - 200px); /* Deixar espaço para o botão */
   }
@@ -103,43 +94,28 @@
     flex-shrink: 0;
     min-width: 180px;
   }
+
+  .assign-managers-text {
+  display: block;
+  font-weight: var(--font-weight-bold, 700);
+  font-size: 0.9rem;
+}
 }
 
 /*----------------------------------------*/
-/*----------------DESKTOP------------------*/
+/*----------------DESKTOP-----------------*/
 /*----------------------------------------*/
 @media (min-width: 1024px) {
   .users-container {
     padding: var(--padding-lg);
   }
 
-  .searchBar-wrapper.with-assign-button {
+  .searchBar-wrapperAndButton.with-assign-button {
     max-width: calc(100% - 220px);
   }
 
   .assign-managers-btn {
     min-width: 200px;
     padding: 0.875rem 1.25rem;
-  }
-}
-
-/* ✅ MOBILE: Botão abaixo do SearchBar */
-@media (max-width: 479px) {
-  .searchBar-container {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .searchBar-wrapper {
-    width: 100%;
-  }
-
-  .assign-managers-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .assign-managers-text {
-    font-size: 0.9rem;
   }
 }

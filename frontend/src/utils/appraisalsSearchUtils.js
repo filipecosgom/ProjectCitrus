@@ -67,8 +67,8 @@ export async function fetchInitialAppraisals({
 export const appraisalsSearchTypes = (t) => [
   { value: "appraisedUserName", label: t("appraisalsSearchTypeUserName") },
   { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
-  { value: "managerName", label: t("appraisalsSearchTypeManagerName") },
-  { value: "managerEmail", label: t("appraisalsSearchTypeManagerEmail") },
+  { value: "appraisingUserName", label: t("appraisalsSearchTypeManagerName") },
+  { value: "appraisingUserEmail", label: t("appraisalsSearchTypeManagerEmail") },
 ];
 
 // Build params for backend
@@ -150,7 +150,7 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
 export const appraisalsSortFields = (t) => [
   { id: "appraisalSortControlsUser", key: "user", label: t("appraisalSortControlsUser") },
   { id: "appraisalSortControlsScore", key: "score", label: t("appraisalSortControlsScore") },
-  { id: "appraisalSortControlsManager", key: "manager", label: t("appraisalSortControlsManager") },
+  { id: "appraisalSortControlsManager", key: "appraisalsManager", label: t("appraisalSortControlsManager") },
   { id: "appraisalSortControlsEndDate", key: "endDate", label: t("appraisalSortControlsEndDate") },
   { id: "appraisalSortControlsState", key: "state", label: t("appraisalSortControlsState") },
 ];

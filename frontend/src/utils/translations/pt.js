@@ -226,6 +226,7 @@ const pt = {
     accountStateIncomplete: "Incompleto",
     avatarLoading: "A carregar...",
     viewProfile: "Ver Perfil",
+    noUsersSelected: "Nenhum utilizador selecionado",
   },
 
   //Usercard
@@ -245,6 +246,9 @@ const pt = {
   searchBarComplete: "Completo",
   searchBarIncomplete: "Incompleto",
   searchBarLimitToggle: "Resultados por página",
+  searchByEmail: "email",
+  searchByName: "nome",
+  searchByRole: "cargo",
 
   //Usercontrols
   userSortControlsName: "Nome",
@@ -261,6 +265,7 @@ const pt = {
   filterMenuOptionEmail: "E-mail",
   filterMenuOptionRole: "Cargo",
   filterMenuOffice: "Escritório",
+  filterMenuState: "Estado",
   filterMenuAllOffices: "Todos os escritórios",
   filterMenuAccountState: "Estado da conta",
   filterMenuOptionComplete: "Completo",
@@ -324,6 +329,8 @@ const pt = {
     noFeedback: "Nenhum feedback fornecido.",
     saveError: "Erro ao salvar feedback.",
     error: "Falha ao guardar avaliação.",
+    noAppraisalsSelected: "Nenhuma avaliação selecionada",
+    completeAppraisals: "Completar",
   },
 };
 
