@@ -150,7 +150,7 @@ export const appraisalSearchFilters = (t, appraisalStates) => {
 export const appraisalsSortFields = (t) => [
   { id: "appraisalSortControlsUser", key: "user", label: t("appraisalSortControlsUser") },
   { id: "appraisalSortControlsScore", key: "score", label: t("appraisalSortControlsScore") },
-  { id: "appraisalSortControlsManager", key: "appraisalsManager", label: t("appraisalSortControlsManager") },
+  { id: "appraisalSortControlsManager", key: "manager", label: t("appraisalSortControlsManager") },
   { id: "appraisalSortControlsEndDate", key: "endDate", label: t("appraisalSortControlsEndDate") },
   { id: "appraisalSortControlsState", key: "state", label: t("appraisalSortControlsState") },
 ];

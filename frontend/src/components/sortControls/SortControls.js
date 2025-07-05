@@ -1,8 +1,8 @@
 // sortControls.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-import { FaSortAmountDown, FaSortAmountUp, FaSort } from "react-icons/fa"; // ✅ ADICIONAR
+import { FaSortAmountDownAlt , FaSortAmountUpAlt , FaSort } from "react-icons/fa"; // ✅ ADICIONAR
 import "./SortControls.css";
 
 const SortControls = ({
@@ -13,9 +13,16 @@ const SortControls = ({
   className = "",
 }) => {
   const { t } = useTranslation();
-
-  // ✅ DETECTAR se é modo Users
   const isUsersMode = className.includes("users-mode");
+
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSort = (fieldKey) => {
     const newOrder =
@@ -27,13 +34,14 @@ const SortControls = ({
 
   // ✅ FUNÇÃO PARA RETORNAR ÍCONES REACT-ICONS
   const getSortIcon = (fieldKey) => {
+    console.log(sortBy, fieldKey, sortOrder);
     if (sortBy !== fieldKey) {
       return <FaSort className="sort-icon" />; // ✅ Ícone neutro
     }
     return sortOrder === "ASCENDING" ? (
-      <FaSortAmountUp className="sort-icon" /> // ✅ A-Z
+      <FaSortAmountDownAlt className="sort-icon" /> // ✅ A-Z
     ) : (
-      <FaSortAmountDown className="sort-icon" /> // ✅ Z-A
+      <FaSortAmountUpAlt className="sort-icon" /> // ✅ Z-A
     );
   };
 
@@ -54,7 +62,37 @@ const SortControls = ({
   };
 
   const displayFields = getDisplayFields();
+  const currentSortField = displayFields.find(f => f.key === sortBy)?.id || displayFields[0].id;
 
+  if (isMobile) {
+    return (
+      <div className="sortControls-mobile">
+        <button type="button" onClick={() => setShowDropdown(!showDropdown)}>
+          {t(currentSortField)} {getSortIcon(sortBy)}
+        </button>
+        {showDropdown && (
+          <div className="sortControls-dropdown">
+            {displayFields.map(field => (
+              <div
+                key={field.key}
+                onClick={() => {
+                  onSortChange({
+                    sortBy: field.key,
+                    sortOrder: sortBy === field.key && sortOrder === "ASCENDING" ? "DESCENDING" : "ASCENDING"
+                  });
+                  setShowDropdown(false);
+                }}
+              >
+                {t(field.id)} {sortBy === field.key && getSortIcon(field.key)}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop/tablet version
   return (
     <div className={`sortControls-container ${className}`}>
       {displayFields.map(({ id, key }) => (
@@ -64,12 +102,7 @@ const SortControls = ({
           onClick={() => handleSort(key)}
         >
           {t(id)}
-          {sortBy === key &&
-            (sortOrder === "ascending" ? (
-              <FaSortAmountDown  className="sort-icon" />
-            ) : (
-              <FaSortAmountUp  className="sort-icon" />
-            ))}
+          {getSortIcon(key)}
         </div>
       ))}
     </div>
