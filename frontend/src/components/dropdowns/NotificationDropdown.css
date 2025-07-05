@@ -79,8 +79,8 @@
 }
 
 .message-user-icon {
-  width: 36px;
-  height: 36px;
+  width: 50px; /* ← AUMENTAR de 36px para 50px */
+  height: 50px; /* ← AUMENTAR de 36px para 50px */
   position: relative;
   display: flex;
   align-items: center;
@@ -88,13 +88,19 @@
 }
 
 .message-user-icon .user-icon {
-  width: 36px;
-  height: 36px;
+  width: 50px; /* ← AUMENTAR de 36px para 50px */
+  height: 50px; /* ← AUMENTAR de 36px para 50px */
   margin-top: 0;
   margin-bottom: 0;
 }
 
-.message-user-icon .user-icon img {
+.message-user-icon .user-icon img,
+.message-user-icon .user-icon .user-initials {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: top; /* ← CORRIGIR ALINHAMENTO */
   border: 2px solid #e0e0e0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -184,4 +190,18 @@
 /* Blur effect for read messages */
 .notification-message:not(.unread) {
   opacity: 0.7;
+}
+
+/* ✅ CLASSE ESPECÍFICA APENAS PARA DROPDOWN DE MENSAGENS */
+.notification-dropdown .message-user-icon .user-icon img {
+  vertical-align: top !important; /* ← SOBRESCREVER vertical-align: middle */
+  display: block; /* ← GARANTIR DISPLAY CORRETO */
+}
+
+/* ✅ FALLBACK PARA INITIALS */
+.notification-dropdown .message-user-icon .user-icon .user-initials {
+  vertical-align: top !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
