@@ -7,6 +7,8 @@ import MessageDropdown from "../dropdowns/MessageDropdown";
 import Menu from "../menu/Menu";
 import useAuthStore from "../../stores/useAuthStore"; // <-- Importa o store
 import UserIcon from "../userIcon/UserIcon";
+import useUnreadConversations from "../hooks/useUnreadConversations";
+
 export default function Header({
   unreadMessages = 0,
   unreadNotifications = 0,
@@ -25,6 +27,10 @@ export default function Header({
   const [showMessages, setShowMessages] = useState(false);
   const messagesRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
+
+  // ✅ USAR HOOK DE CONVERSAS
+  const { conversationCount, resetConversationCount } =
+    useUnreadConversations();
 
   // Fecha o menu se deixares de estar em mobile
   useEffect(() => {
@@ -114,6 +120,15 @@ export default function Header({
     },
   ];
 
+  // ✅ FUNÇÃO PARA ABRIR DROPDOWN
+  const handleOpenMessageDropdown = () => {
+    setShowMessages(true);
+    setShowNotifications(false);
+
+    // ✅ RESETAR CONTADOR IMEDIATAMENTE
+    resetConversationCount();
+  };
+
   return (
     <header className="citrus-header">
       {/* Logotipo + CITRUS (desktop) ou burger menu (tablet/mobile) */}
@@ -135,16 +150,22 @@ export default function Header({
       <div className="header-cell header-icons">
         <div className="header-icon-wrapper" ref={messagesRef}>
           <FaRegComments
-            onClick={() => {
-              setShowMessages((v) => !v);
-              setShowNotifications(false); // Fecha notificações ao abrir mensagens
-            }}
+            onClick={handleOpenMessageDropdown}
             style={{ cursor: "pointer" }}
           />
-          {unreadMessages > 0 && (
-            <span className="header-badge">{unreadMessages}</span>
+          {/* ✅ MOSTRAR CONTADOR DE CONVERSAS */}
+          {conversationCount > 0 && (
+            <span className="header-badge header-conversation-badge">
+              {conversationCount}
+            </span>
           )}
-          {showMessages && <MessageDropdown isVisible={showMessages} />}
+          {showMessages && (
+            <MessageDropdown
+              isVisible={showMessages}
+              onClose={() => setShowMessages(false)}
+              onUnreadCountChange={setUnreadMessages}
+            />
+          )}
         </div>
         <div className="header-icon-wrapper" ref={notifRef}>
           <FaRegBell
