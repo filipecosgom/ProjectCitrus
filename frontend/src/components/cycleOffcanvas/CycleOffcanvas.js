@@ -3,11 +3,13 @@ import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import Calendar from "react-calendar";
 import { createCycle, fetchActiveUsersCount } from "../../api/cyclesApi";
+import useLocaleStore from "../../stores/useLocaleStore";
 import "react-calendar/dist/Calendar.css";
 import "./CycleOffcanvas.css";
 
 const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   const { t } = useTranslation();
+  const locale = useLocaleStore((state) => state.locale); // Adicionar esta linha
   const [selectedRange, setSelectedRange] = useState([new Date(), new Date()]);
   const [activeUsersCount, setActiveUsersCount] = useState(0);
   const [shouldRender, setShouldRender] = useState(false);
@@ -109,7 +111,13 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString("pt-PT", {
+    // MUDANÇA: Usar o locale do store em vez de hardcoded "pt-PT"
+    const localeMap = {
+      pt: "pt-PT",
+      en: "en-US",
+    };
+
+    return date.toLocaleDateString(localeMap[locale] || "pt-PT", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -173,7 +181,7 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
               selectRange={true}
               className="cycle-calendar"
               minDate={new Date()}
-              locale="pt-PT"
+              locale={locale === "en" ? "en-US" : "pt-PT"} // MUDANÇA: Usar o locale dinamicamente
             />
           </div>
 
