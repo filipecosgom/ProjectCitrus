@@ -127,6 +127,35 @@ export default function AppraisalsTab() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
+  // PDF export handler
+  const handleGetPdf = async () => {
+    let params = buildAppraisalsSearchParams({
+      ...searchParams,
+      sortBy: sort.sortBy,
+      sortOrder: sort.sortOrder,
+      appraisedUserId: user?.id, // always lock to profile user
+    });
+    // Remove pagination params
+    delete params.limit;
+    delete params.offset;
+    const { handleGeneratePdfOfAppraisals } = await import("../../handles/handleGeneratePdfOfAppraisals");
+    const result = await handleGeneratePdfOfAppraisals(params);
+    if (result.success) {
+      const url = window.URL.createObjectURL(
+        new Blob([result.blob], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "appraisals.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert(t("exportPdfError") || "Failed to generate PDF");
+    }
+  };
+
   if (pageLoading) return <Spinner />;
 
   const filtersConfig = appraisalSearchFilters(t, appraisalStates);
@@ -142,6 +171,7 @@ export default function AppraisalsTab() {
             { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
           ]}
           {...filtersConfig}
+          onExportPdf={handleGetPdf}
         />
       </div>
       <SortControls
