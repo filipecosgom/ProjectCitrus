@@ -227,6 +227,8 @@ const pt = {
     avatarLoading: "A carregar...",
     viewProfile: "Ver Perfil",
     noUsersSelected: "Nenhum utilizador selecionado",
+    managerAssignSuccess:
+      "{managerName} agora é o gestor de {total} utilizador(es)",
   },
 
   //Usercard
@@ -238,6 +240,7 @@ const pt = {
   appraisalStateCompleted: "Completo",
   appraisalStateInProgress: "Em curso",
   appraisalStateClosed: "Fechado",
+  appraisalsPdfExportError: "Falha ao exportar avaliações para PDF. Por favor, tente novamente mais tarde.",
 
   //SearchBar
   searchBarSearchButton: "Pesquisar",

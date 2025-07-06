@@ -5,6 +5,7 @@ import UserSearchBar from "../userSearchBar/UserSearchBar";
 import Spinner from "../spinner/spinner"; // ✅ ADICIONAR IMPORT
 import UserIcon from "../userIcon/UserIcon";
 import "./AssignManagerOffcanvas.css";
+import handleNotification from "../../handles/handleNotification";
 
 const AssignManagerOffcanvas = ({
   selectedUserIds = [],
@@ -27,12 +28,10 @@ const AssignManagerOffcanvas = ({
   // ✅ ATUALIZAR handleAssignClick para mostrar loading
   const handleAssignClick = async () => {
     if (!selectedNewManager || isAssigning) {
-      console.warn("❌ No user selected or already assigning");
+      handleNotification("info", "users.selectUserFirst");
       return;
     }
-
     setIsAssigning(true); // ✅ MOSTRAR LOADING
-
     const assignments = {
       newManagerId: selectedNewManager.id,
       newManagerName: `${selectedNewManager.name} ${selectedNewManager.surname}`,

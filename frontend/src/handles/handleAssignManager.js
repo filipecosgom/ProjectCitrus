@@ -14,7 +14,6 @@ export const handleAssignManager = async (assignmentData) => {
 
     const getUserResult = await fetchUserInformation(newManagerId);
 
-
     if (!getUserResult.success) {
       throw new Error(
         `Failed to get user data: ${
@@ -30,15 +29,12 @@ export const handleAssignManager = async (assignmentData) => {
       throw new Error("User not found in response");
     }
 
-
     // ✅ PASSO 2: Promover a manager (se ainda não for)
     let promotionResult = null;
     if (!currentUser.userIsManager) {
-
       promotionResult = await updateUserInformation(newManagerId, {
         userIsManager: true,
       });
-
 
       // ✅ VERIFICAR se a response do updateUserInformation tem success
       if (!promotionResult || promotionResult.success === false) {
@@ -53,16 +49,9 @@ export const handleAssignManager = async (assignmentData) => {
 
     const assignmentPromises = userIds.map(async (userId) => {
       try {
-
         const result = await updateUserInformation(userId, {
-          manager: {
-            id: parseInt(newManagerId),
-            name: currentUser.name,
-            surname: currentUser.surname,
-            email: currentUser.email,
-          },
+          managerId: parseInt(newManagerId),
         });
-
 
         // ✅ VERIFICAR se assignment foi bem-sucedida
         if (!result || result.success === false) {
@@ -79,7 +68,6 @@ export const handleAssignManager = async (assignmentData) => {
       }
     });
 
-    // ✅ AGUARDAR todas as atribuições
     const assignmentResults = await Promise.all(assignmentPromises);
 
     const successfulAssignments = assignmentResults.filter((r) => r.success);
@@ -109,7 +97,6 @@ export const handleAssignManager = async (assignmentData) => {
       },
     };
   } catch (error) {
-
     return {
       success: false,
       message: error.message || "Failed to assign manager",

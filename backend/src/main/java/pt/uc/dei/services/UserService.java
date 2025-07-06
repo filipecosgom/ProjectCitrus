@@ -33,10 +33,12 @@ import java.util.stream.Collectors;
  * <p>
  * Provides functionality for user verification, registration, activation,
  * and temporary user management. Utilizes {@link UserRepository},
- * {@link TemporaryUserRepository}, and {@link ActivationTokenRepository} for persistence operations.
+ * {@link TemporaryUserRepository}, and {@link ActivationTokenRepository} for
+ * persistence operations.
  *
- * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
- * and transaction management by the EJB container.
+ * @Stateless Marks this class as a stateless EJB, making it eligible for
+ *            dependency injection
+ *            and transaction management by the EJB container.
  */
 @Stateless
 public class UserService implements Serializable {
@@ -89,11 +91,14 @@ public class UserService implements Serializable {
     /**
      * Checks if a user with the given email exists in the system.
      * <p>
-     * Searches both permanent and temporary repositories to verify whether the email is registered.
+     * Searches both permanent and temporary repositories to verify whether the
+     * email is registered.
      *
      * @param email The email address to check for existence.
-     * @return {@code true} if a user (permanent or temporary) exists with the email, {@code false} otherwise.
-     * @throws jakarta.persistence.PersistenceException If an error occurs during database operations.
+     * @return {@code true} if a user (permanent or temporary) exists with the
+     *         email, {@code false} otherwise.
+     * @throws jakarta.persistence.PersistenceException If an error occurs during
+     *                                                  database operations.
      */
     public boolean findIfUserExists(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
@@ -101,11 +106,11 @@ public class UserService implements Serializable {
         return (temporaryUser != null || user != null);
     }
 
-
     /**
      * Registers a new temporary user in the system.
      * <p>
-     * Generates an activation token and persists the temporary user in the repository.
+     * Generates an activation token and persists the temporary user in the
+     * repository.
      *
      * @param newUser The temporary user data transfer object.
      * @return The generated activation token for the new user.
@@ -128,7 +133,8 @@ public class UserService implements Serializable {
         codes.put("token", token.getTokenValue());
         codes.put("secretKey", secretKey);
 
-        LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(), token.getTokenValue());
+        LOGGER.info("New user created with email {} and activation token {}", newUser.getEmail(),
+                token.getTokenValue());
         return codes;
     }
 
@@ -150,19 +156,23 @@ public class UserService implements Serializable {
         }
         // Update only those fields that are non-null in the DTO.
         if (updateUserDTO.getManagerId() != null) {
-            if(user.getManagerUser() != null) {
-                if(!checkIfUserStillIsManager(user.getManagerUser().getId())) {
-                    UserEntity previousManager = user.getManagerUser();
-                    updateManagerStatus(previousManager);
-                }
+            UserEntity previousManager = user.getManagerUser();
+            UserEntity newManager = userRepository.findUserById(updateUserDTO.getManagerId());
+            if (newManager != null) {
+                // 1. Move all appraisals to new manager
+                appraisalRepository.setAppraisalsToNewManager(user.getId(), newManager.getId());
+                // 2. Set new manager as user's manager
+                user.setManagerUser(newManager);
+                newManager.setUserIsManager(true);
+                userRepository.merge(user);
+                userRepository.merge(newManager);
             }
-            UserEntity manager = userRepository.findUserById(updateUserDTO.getManagerId());
-            if (manager != null) {
-                user.setManagerUser(manager);
-                manager.setUserIsManager(true);
-                appraisalRepository.setAppraisalsToNewManager(manager.getId(), updateUserDTO.getManagerId());
+            // 3. If there was a previous manager, check if they still manage anyone
+            if (previousManager != null && !checkIfUserStillIsManager(previousManager.getId())) {
+                updateManagerStatus(previousManager);
             }
         }
+
         if (updateUserDTO.getUserIsManager() != null) {
             user.setUserIsManager(updateUserDTO.getUserIsManager());
         }
@@ -231,7 +241,8 @@ public class UserService implements Serializable {
     }
 
     /**
-     * Retrieves a paginated and filtered list of users as DTOs, with total count and pagination info.
+     * Retrieves a paginated and filtered list of users as DTOs, with total count
+     * and pagination info.
      *
      * @param id           User ID to filter (optional)
      * @param email        Email to filter (optional)
@@ -247,9 +258,9 @@ public class UserService implements Serializable {
      * @return Map containing the list of users, total count, offset, and limit
      */
     public Map<String, Object> getUsers(Long id, String email, String name, String phone,
-                                        AccountState accountState, String roleStr, Office office,
-                                        Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
-                                        Parameter parameter, OrderBy orderBy, int offset, int limit) {
+            AccountState accountState, String roleStr, Office office,
+            Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
+            Parameter parameter, OrderBy orderBy, int offset, int limit) {
 
         List<UserEntity> users = userRepository.getUsers(id, email, name, phone,
                 accountState, roleStr, office,
@@ -270,7 +281,6 @@ public class UserService implements Serializable {
         responseData.put("limit", limit);
         return responseData;
     }
-
 
     /**
      * Deletes temporary user information, removing associated activation tokens.
@@ -300,7 +310,8 @@ public class UserService implements Serializable {
      */
     private boolean deleteTemporaryUser(TemporaryUserDTO userToDelete) {
         try {
-            TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(userToDelete.getEmail());
+            TemporaryUserEntity temporaryUser = temporaryUserRepository
+                    .findTemporaryUserByEmail(userToDelete.getEmail());
             temporaryUserRepository.remove(temporaryUser);
             return true;
         } catch (Exception e) {
@@ -319,7 +330,6 @@ public class UserService implements Serializable {
         UserEntity user = userRepository.findUserByEmail(email);
         return userMapper.toUserResponseDto(user);
     }
-
 
     /**
      * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.
@@ -340,7 +350,8 @@ public class UserService implements Serializable {
      * Checks and updates the account state of a user based on profile completeness.
      *
      * @param userId The user ID to check
-     * @return true if the account state was updated or already correct, false otherwise
+     * @return true if the account state was updated or already correct, false
+     *         otherwise
      */
     @Transactional
     public boolean checkAndUpdateAccountState(Long userId) {
@@ -348,16 +359,15 @@ public class UserService implements Serializable {
         if (user == null)
             return false;
 
-        boolean isComplete =
-                user.getHasAvatar() &&
-                        user.getBiography() != null &&
-                        user.getBirthdate() != null &&
-                        user.getMunicipality() != null &&
-                        user.getName() != null &&
-                        user.getPhone() != null &&
-                        user.getPostalCode() != null &&
-                        user.getStreet() != null &&
-                        user.getSurname() != null;
+        boolean isComplete = user.getHasAvatar() &&
+                user.getBiography() != null &&
+                user.getBirthdate() != null &&
+                user.getMunicipality() != null &&
+                user.getName() != null &&
+                user.getPhone() != null &&
+                user.getPostalCode() != null &&
+                user.getStreet() != null &&
+                user.getSurname() != null;
 
         if (isComplete && user.getAccountState() == AccountState.INCOMPLETE) {
             user.setAccountState(AccountState.COMPLETE);

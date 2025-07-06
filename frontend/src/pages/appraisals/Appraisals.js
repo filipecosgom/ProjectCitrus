@@ -18,6 +18,7 @@ import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOff
 import useAuthStore from "../../stores/useAuthStore";
 import { GrDocumentPdf } from "react-icons/gr";
 import { handleGeneratePdfOfAppraisals } from "../../handles/handleGeneratePdfOfAppraisals";
+import handleNotification from "../../handles/handleNotification";
 
 export default function Appraisals() {
   const { t } = useTranslation();
@@ -175,7 +176,7 @@ export default function Appraisals() {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } else {
-      alert(t("exportPdfError") || "Failed to generate PDF");
+      handleNotification("error", "appraisalsPdfExportError");
     }
   };
 

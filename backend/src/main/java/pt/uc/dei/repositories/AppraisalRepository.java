@@ -1,6 +1,7 @@
 package pt.uc.dei.repositories;
 
 import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
@@ -528,10 +529,9 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
 
     public boolean setAppraisalsToNewManager(Long userId, Long newManagerId) {
         try {
-            TypedQuery<AppraisalEntity> query = em.createQuery(
+            Query query = em.createQuery(
                     "UPDATE AppraisalEntity a SET a.appraisingUser.id = :newManagerId " +
-                            "WHERE a.appraisedUser.id = :userId",
-                    AppraisalEntity.class
+                            "WHERE a.appraisedUser.id = :userId"
             );
             query.setParameter("newManagerId", newManagerId);
             query.setParameter("userId", userId);
