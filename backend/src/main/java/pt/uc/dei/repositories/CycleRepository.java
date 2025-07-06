@@ -5,6 +5,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.CycleState;
@@ -46,7 +47,10 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
 
     public List<CycleEntity> getAllCycles() {
         TypedQuery<CycleEntity> query = em.createQuery(
-                "SELECT DISTINCT c FROM CycleEntity c LEFT JOIN FETCH c.evaluations ORDER BY c.startDate DESC",
+                "SELECT DISTINCT c FROM CycleEntity c " +
+                "LEFT JOIN FETCH c.evaluations " +
+                "LEFT JOIN FETCH c.evaluations.appraisedUser " +
+                "ORDER BY c.startDate DESC",
                 CycleEntity.class
         );
         return query.getResultList();
@@ -242,7 +246,11 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<CycleEntity> cq = cb.createQuery(CycleEntity.class);
             Root<CycleEntity> cycle = cq.from(CycleEntity.class);
-            cycle.fetch("evaluations", JoinType.LEFT);
+            
+            // CORREÇÃO: Usar Fetch sem aliases
+            cycle.fetch("evaluations", JoinType.LEFT)
+                 .fetch("appraisedUser", JoinType.LEFT);
+            
             cq.select(cycle).distinct(true);
 
             List<Predicate> predicates = new ArrayList<>();
@@ -267,7 +275,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));
             }
             
-            // MUDANÇA: Ordenar por startDate descendente (mais recente primeiro)
+            // Ordenar por startDate descendente (mais recente primeiro)
             cq.orderBy(cb.desc(cycle.get("startDate")));
             
             TypedQuery<CycleEntity> query = em.createQuery(cq);

@@ -116,52 +116,32 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
 
   // MUDANÇA: Função para obter o nome do usuário da appraisal
   const getAppraisalUserName = (appraisal) => {
-    // Debug: Para ver a estrutura real dos dados
+    // Debug: Para ver a estrutura real dos dados (remover depois)
     console.log("Appraisal data:", appraisal);
 
-    // A estrutura real do backend só tem IDs, não objetos de usuário
-    // Vamos mostrar uma mensagem mais informativa com o ID
-    if (appraisal.appraisedUserId) {
-      return `${t("cycles.userId")} ${appraisal.appraisedUserId}`;
-    }
-
-    // Fallback para estruturas completas (caso o backend mude no futuro)
+    // Agora deve receber o objeto completo do usuário
     if (appraisal.appraisedUser) {
       const user = appraisal.appraisedUser;
 
+      // Tenta nome completo (nome + surname)
       if (user.name && user.surname) {
         return `${user.name} ${user.surname}`;
       }
 
+      // Apenas nome
       if (user.name) {
         return user.name;
       }
 
+      // Fallback para email
       if (user.email) {
         return user.email;
       }
     }
 
-    // Fallback para outras estruturas possíveis
-    if (appraisal.user) {
-      const user = appraisal.user;
-
-      if (user.name && user.surname) {
-        return `${user.name} ${user.surname}`;
-      }
-
-      if (user.name) {
-        return user.name;
-      }
-
-      if (user.email) {
-        return user.email;
-      }
-    }
-
-    // Se tiver campos diretos na appraisal
-    if (appraisal.userName) {
-      return appraisal.userName;
+    // Fallback para ID caso o objeto não venha completo
+    if (appraisal.appraisedUserId) {
+      return `${t("cycles.userId")} ${appraisal.appraisedUserId}`;
     }
 
     return t("cycles.na");
