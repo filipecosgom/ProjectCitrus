@@ -36,7 +36,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: #00b9cd;
+  background: var(--primary, #9c2f31);
   color: white;
   border: none;
   border-radius: var(--border-radius-default, 10px);
@@ -48,7 +48,7 @@
 }
 
 .btn-create-cycle:hover {
-  background: #0090a3;
+  background: var(--light-red, #b61b23);
 }
 
 .cycles-content {
