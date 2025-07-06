@@ -354,6 +354,8 @@ const en = {
     next: "Next",
     pageInfo: "Page {current} of {total}",
     na: "N/A",
+    appraisals: "Appraisals",
+    appraisalsList: "Appraisals List",
     appraisalsToComplete: "{count} appraisals to complete",
     daysDuration: "{days} days",
     createCycle: "Create Cycle",

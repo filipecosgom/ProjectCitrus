@@ -158,7 +158,7 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
                 </div>
                 <div className="cycle-details-summary-item">
                   <span className="cycle-details-summary-label">
-                    {t("cycles.evaluations")}:
+                    {t("cycles.appraisals")}:
                   </span>
                   <span className="cycle-details-summary-value">
                     {cycle.evaluations?.length || 0}
@@ -178,7 +178,7 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
             {cycle.evaluations && cycle.evaluations.length > 0 && (
               <div className="cycle-details-section">
                 <h3 className="cycle-details-section-title">
-                  {t("cycles.evaluationsList")}
+                  {t("cycles.appraisalsList")}
                 </h3>
                 <div className="cycle-details-evaluations">
                   {cycle.evaluations.map((evaluation, index) => (

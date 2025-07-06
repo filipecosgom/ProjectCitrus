@@ -342,7 +342,7 @@ const pt = {
     createNewCycle: "Criar Novo Ciclo",
     startDate: "Data de Início",
     endDate: "Data de Fim",
-    evaluations: "Avaliações",
+    appraisals: "Avaliações",
     statusOpen: "Aberto",
     statusClosed: "Fechado",
     cycleTitle: "Ciclo {id}",
@@ -373,7 +373,7 @@ const pt = {
     summary: "Resumo",
     duration: "Duração",
     status: "Estado",
-    evaluationsList: "Lista de Avaliações",
+    appraisalsList: "Lista de Avaliações",
     statusCompleted: "Concluído",
     statusPending: "Pendente",
 

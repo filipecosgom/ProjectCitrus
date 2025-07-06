@@ -61,7 +61,7 @@ const CycleCard = ({ cycle, onCloseCycle, onCardClick }) => {
             <strong>{t("cycles.endDate")}:</strong> {formatDate(cycle.endDate)}
           </p>
           <p>
-            <strong>{t("cycles.evaluations")}:</strong>{" "}
+            <strong>{t("cycles.appraisals")}:</strong>{" "}
             {cycle.evaluations?.length || 0}
           </p>
         </div>
