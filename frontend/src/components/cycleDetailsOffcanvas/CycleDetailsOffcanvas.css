@@ -1,0 +1,312 @@
+/* Backdrop com blur effect */
+.cycle-details-offcanvas-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.cycle-details-offcanvas-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Fallback para browsers que não suportam backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .cycle-details-offcanvas-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .cycle-details-offcanvas-backdrop.open {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Offcanvas - slide da direita */
+.cycle-details-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.cycle-details-offcanvas.open {
+  transform: translateX(0);
+}
+
+/* Botão X - preto, canto superior direito */
+.cycle-details-offcanvas-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #000000;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+}
+
+.cycle-details-offcanvas-close:hover {
+  background-color: #f0f0f0;
+}
+
+/* Conteúdo do offcanvas */
+.cycle-details-offcanvas-content {
+  padding: 40px 32px 12px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header com título e status */
+.cycle-details-header {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espaçamento entre título e badge */
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-right: 60px; /* Espaço para o botão de fecho */
+}
+
+.cycle-details-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-title, 2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+  flex-shrink: 0; /* Evita que o título encolha */
+}
+
+.cycle-details-status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  text-transform: uppercase;
+  flex-shrink: 0; /* Evita que o badge encolha */
+}
+
+.cycle-details-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-title, 2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+}
+
+.cycle-details-status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  text-transform: uppercase;
+}
+
+.cycle-details-status.open {
+  background: var(--badge-green, #b7f9bf);
+  color: #2e7d2e;
+  border: 1px solid var(--badge-green-stroke, #0fe16d);
+}
+
+.cycle-details-status.closed {
+  background: var(--badge-red, #f8d1d1);
+  color: #721c24;
+  border: 1px solid var(--badge-red-stroke, #e20029);
+}
+
+/* Informações do ciclo */
+.cycle-details-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cycle-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cycle-details-section-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+}
+
+/* Informações das datas - LADO A LADO */
+.cycle-details-date-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-default, 10px);
+}
+
+.cycle-details-date-item {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  color: var(--text, #000000);
+  text-align: center;
+  padding: 8px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.cycle-details-date-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--secondary, #88909f);
+  font-size: 0.9rem;
+}
+
+/* Resumo do ciclo */
+.cycle-details-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-default, 10px);
+}
+
+.cycle-details-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+}
+
+.cycle-details-summary-label {
+  color: var(--secondary, #88909f);
+  font-weight: var(--font-weight-regular, 400);
+}
+
+.cycle-details-summary-value {
+  color: var(--text, #000000);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* Lista de avaliações */
+.cycle-details-evaluations {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-default, 10px);
+}
+
+.cycle-details-evaluation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+}
+
+.cycle-details-evaluation-user {
+  color: var(--text, #000000);
+  font-weight: var(--font-weight-regular, 400);
+}
+
+.cycle-details-evaluation-status {
+  color: var(--secondary, #88909f);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold, 700);
+  text-transform: uppercase;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .cycle-details-offcanvas {
+    width: 100vw;
+    right: 0;
+  }
+
+  .cycle-details-offcanvas-content {
+    padding: 60px 20px 32px 20px;
+  }
+
+  .cycle-details-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    padding-right: 20px; /* Menos padding no mobile */
+  }
+
+  /* Datas em coluna no mobile */
+  .cycle-details-date-info {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .cycle-details-offcanvas-backdrop {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .cycle-details-offcanvas-backdrop.open {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .cycle-details-offcanvas {
+    width: 90vw;
+  }
+
+  .cycle-details-offcanvas-backdrop {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .cycle-details-offcanvas-backdrop.open {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-details-offcanvas {
+    transition: transform 0.2s ease;
+  }
+  .cycle-details-offcanvas-backdrop {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}

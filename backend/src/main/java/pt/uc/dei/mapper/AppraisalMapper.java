@@ -38,12 +38,15 @@ public interface AppraisalMapper {
     @Mapping(source = "appraisedUser.id", target = "appraisedUserId")
     @Mapping(source = "appraisingUser.id", target = "appraisingUserId")
     @Mapping(source = "cycle.id", target = "cycleId")
+    // CORREÇÃO: Remover qualifiedByName e deixar o MapStruct mapear automaticamente
+    @Mapping(source = "appraisedUser", target = "appraisedUser")
+    @Mapping(source = "appraisingUser", target = "appraisingUser")
     AppraisalDTO toDto(AppraisalEntity appraisalEntity);
 
     @Mapping(source = "cycle.id", target = "cycleId")
     @Mapping(source = "cycle.endDate", target = "endDate")
-    @Mapping(source = "appraisedUser", target = "appraisedUser", qualifiedByName = "toResponseDto")
-    @Mapping(source = "appraisingUser", target = "appraisingUser", qualifiedByName = "toResponseDto")
+    @Mapping(source = "appraisedUser", target = "appraisedUser")
+    @Mapping(source = "appraisingUser", target = "appraisingUser")
     AppraisalResponseDTO toResponseDto(AppraisalEntity appraisalEntity);
 
     /**

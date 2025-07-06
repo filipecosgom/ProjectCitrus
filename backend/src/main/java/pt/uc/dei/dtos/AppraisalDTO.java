@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
  * Data Transfer Object (DTO) representing an appraisal.
  * Stores information related to user feedback and scoring within a cycle.
  */
-public class AppraisalDTO {    /**
+public class AppraisalDTO {
+    /**
      * The unique identifier for the appraisal.
      * Auto-generated, not required for creation.
      */
@@ -60,7 +61,18 @@ public class AppraisalDTO {    /**
 
     private LocalDate submissionDate;
 
-    // Getters and Setters
+    // NOVOS CAMPOS: Objetos completos dos usuários
+    /**
+     * The complete user object being appraised.
+     */
+    private UserResponseDTO appraisedUser;
+
+    /**
+     * The complete user object performing the appraisal.
+     */
+    private UserResponseDTO appraisingUser;
+
+    // Getters and Setters existentes
     /**
      * Retrieves the unique identifier for the appraisal.
      * @return the appraisal ID.
@@ -195,5 +207,38 @@ public class AppraisalDTO {    /**
 
     public void setSubmissionDate(LocalDate submissionDate) {
         this.submissionDate = submissionDate;
+    }
+
+    // NOVOS GETTERS E SETTERS: Para os objetos completos dos usuários
+    /**
+     * Retrieves the complete user object being appraised.
+     * @return the appraised user object.
+     */
+    public UserResponseDTO getAppraisedUser() {
+        return appraisedUser;
+    }
+
+    /**
+     * Sets the complete user object being appraised.
+     * @param appraisedUser the appraised user object to set.
+     */
+    public void setAppraisedUser(UserResponseDTO appraisedUser) {
+        this.appraisedUser = appraisedUser;
+    }
+
+    /**
+     * Retrieves the complete user object performing the appraisal.
+     * @return the appraising user object.
+     */
+    public UserResponseDTO getAppraisingUser() {
+        return appraisingUser;
+    }
+
+    /**
+     * Sets the complete user object performing the appraisal.
+     * @param appraisingUser the appraising user object to set.
+     */
+    public void setAppraisingUser(UserResponseDTO appraisingUser) {
+        this.appraisingUser = appraisingUser;
     }
 }
