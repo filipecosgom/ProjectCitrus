@@ -3,6 +3,7 @@ import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { fetchCycles, closeCycle } from "../../api/cyclesApi";
 import CycleOffcanvas from "../../components/cycleOffcanvas/CycleOffcanvas";
+import CycleDetailsOffcanvas from "../../components/cycleDetailsOffcanvas/CycleDetailsOffcanvas";
 import CycleCard from "../../components/cycleCard/CycleCard";
 import ConfirmModal from "../../components/confirmModal/ConfirmModal";
 import {
@@ -17,6 +18,8 @@ const Cycles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+  const [isDetailsOffcanvasOpen, setIsDetailsOffcanvasOpen] = useState(false);
+  const [selectedCycle, setSelectedCycle] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCycles, setTotalCycles] = useState(0);
   const [filters, setFilters] = useState({
@@ -66,15 +69,18 @@ const Cycles = () => {
   };
 
   const handleCloseCycle = (cycleId) => {
-    // Abrir modal de confirmação em vez de window.confirm
     setCycleToClose(cycleId);
     setIsConfirmModalOpen(true);
+  };
+
+  const handleCardClick = (cycle) => {
+    setSelectedCycle(cycle);
+    setIsDetailsOffcanvasOpen(true);
   };
 
   const confirmCloseCycle = async () => {
     if (!cycleToClose) return;
 
-    // Encontrar o ciclo que está sendo fechado para mostrar informações específicas
     const cycleData = cycles.find((cycle) => cycle.id === cycleToClose);
 
     try {
@@ -82,7 +88,6 @@ const Cycles = () => {
 
       if (response.success) {
         loadCycles();
-        // Toast de sucesso com informações específicas do ciclo
         showSuccessToast(
           t("cycles.cycleClosedSuccessToast", {
             id: cycleData?.id || cycleToClose,
@@ -183,6 +188,7 @@ const Cycles = () => {
                   key={cycle.id}
                   cycle={cycle}
                   onCloseCycle={handleCloseCycle}
+                  onCardClick={handleCardClick}
                 />
               ))}
             </div>
@@ -221,6 +227,15 @@ const Cycles = () => {
         isOpen={isOffcanvasOpen}
         onClose={() => setIsOffcanvasOpen(false)}
         onCycleCreated={handleCycleCreated}
+      />
+
+      <CycleDetailsOffcanvas
+        isOpen={isDetailsOffcanvasOpen}
+        onClose={() => {
+          setIsDetailsOffcanvasOpen(false);
+          setSelectedCycle(null);
+        }}
+        cycle={selectedCycle}
       />
 
       <ConfirmModal
