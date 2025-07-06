@@ -3,8 +3,9 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "./AppraisalStateBadge.css";
+import { IoMdArrowDropdown } from "react-icons/io";
 
-const AppraisalStateBadge = ({ state }) => {
+const AppraisalStateBadge = ({ state, dropdownOption }) => {
   const { t } = useTranslation();
   let badgeClass = "appraisal-state-badge ";
   let label = "";
@@ -31,6 +32,7 @@ const AppraisalStateBadge = ({ state }) => {
     <span className={badgeClass}>
       <span className="badge-label">{label}</span>
       {icon}
+      {dropdownOption && <IoMdArrowDropdown />}
     </span>
   );
 };

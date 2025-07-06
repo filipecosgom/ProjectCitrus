@@ -148,6 +148,16 @@ export default function Appraisals() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
+  
+  const handleAppraisalSave = (updatedAppraisal) => {
+  setAppraisals((prev) =>
+    prev.map((a) => (a.id === updatedAppraisal.id ? { ...a, ...updatedAppraisal } : a))
+  );
+  setSelectedAppraisal((prev) =>
+    prev && prev.id === updatedAppraisal.id ? { ...prev, ...updatedAppraisal } : prev
+  );
+};
+
   // PDF export handler
   const handleGetPdf = async () => {
     let params = buildAppraisalsSearchParams({
@@ -227,6 +237,7 @@ export default function Appraisals() {
         appraisal={selectedAppraisal}
         isOpen={offcanvasOpen}
         onClose={handleCloseOffcanvas}
+        onSave={handleAppraisalSave}
       />
       <Pagination
         offset={pagination.offset}

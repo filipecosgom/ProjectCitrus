@@ -201,7 +201,6 @@ export default function Users() {
           })
         );
       } else {
-        console.error("❌ Manager assignment partially failed:", result);
 
         // ✅ FEEDBACK PARCIAL - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;

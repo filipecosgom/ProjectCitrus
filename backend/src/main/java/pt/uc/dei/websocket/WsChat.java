@@ -211,6 +211,7 @@ public class WsChat {
      * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário, `false`.
      */
     public boolean sendJsonToUser(JsonObject json, Long recipientUserId) {
+        System.out.println("Sending JSON to user: " + recipientUserId + ", JSON: " + json);
         Set<Session> recipientSessions = sessions.get(recipientUserId);
         if (recipientSessions != null) {
             for (Session recipientSession : recipientSessions) {

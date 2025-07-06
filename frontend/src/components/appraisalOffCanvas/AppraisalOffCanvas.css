@@ -307,6 +307,56 @@
   outline: none;
 }
 
+/* Dropdown styles */
+.appraisal-offcanvas-state-dropdown-wrapper {
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 10;
+}
+
+.appraisal-offcanvas-state-dropdown-container {
+  display: inline-block;
+}
+
+.appraisal-offcanvas-state-dropdown-trigger {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.appraisal-offcanvas-state-dropdown-menu {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-top: 4px;
+  min-width: 160px;
+  padding: 8px;
+}
+
+.appraisal-offcanvas-state-dropdown-option {
+  margin-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+.appraisal-offcanvas-state-dropdown-option:last-child {
+  margin-bottom: 0;
+}
+.appraisal-offcanvas-state-dropdown-option:hover,
+.appraisal-offcanvas-state-dropdown-option:focus {
+  background: #f0f4fa;
+}
+
+.appraisal-offcanvas-state-dropdown-label {
+  margin-left: 8px;
+  font-size: 1rem;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+}
+
 /* Responsive - keep at end */
 @media (max-width: 480px) {
   .appraisal-offcanvas {

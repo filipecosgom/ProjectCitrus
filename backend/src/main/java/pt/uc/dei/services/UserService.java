@@ -320,16 +320,17 @@ public class UserService implements Serializable {
         }
     }
 
-    /**
-     * Retrieves a user response DTO by email.
-     *
-     * @param email The email address to search for
-     * @return The mapped UserResponseDTO, or null if not found
-     */
-    public UserResponseDTO getResponseUserByEmail(String email) {
-        UserEntity user = userRepository.findUserByEmail(email);
-        return userMapper.toUserResponseDto(user);
+    public boolean checkIfUserIsAdmin(Long userId) {
+        UserEntity user = userRepository.findUserById(userId);
+        if (user == null) {
+            LOGGER.error("User with ID {} not found", userId);
+            return false;
+        }
+        boolean isAdmin = user.getUserIsAdmin();
+        LOGGER.info("User with ID {} is admin: {}", userId, isAdmin);
+        return isAdmin;
     }
+
 
     /**
      * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.

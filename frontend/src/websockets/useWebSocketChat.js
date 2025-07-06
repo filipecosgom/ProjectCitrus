@@ -78,7 +78,10 @@ function useWebSocketChat() {
           ws.close();
           break;
         case "CONVERSATION_READ":
-          if (data.senderId === currentChattingUser.user.userId) {
+          console.log("Conversation read", data);
+          console.log("Current chatting user:", currentChattingUser.user);
+          if (data.readerId === currentChattingUser.user.id) {
+            console.log("SAME USER, marking conversation as read");
             markConversationAsRead();
           }
           break;

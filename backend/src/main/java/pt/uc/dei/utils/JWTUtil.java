@@ -136,6 +136,15 @@ public class JWTUtil {
         }
     }
 
+    public static boolean isUserAdmin(String jwtToken) {
+        try {
+            Claims claims = validateToken(jwtToken);
+            return claims.get("userIsAdmin", Boolean.class);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static Long extractUserIdOrAbort(String jwtToken) throws JwtValidationException {
         if (jwtToken == null || jwtToken.isEmpty()) {
             throw new JwtValidationException("Unauthorized: missing JWT token");

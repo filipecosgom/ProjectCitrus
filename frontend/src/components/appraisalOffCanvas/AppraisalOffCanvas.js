@@ -25,8 +25,14 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedFeedback, setEditedFeedback] = useState("");
   const [editedScore, setEditedScore] = useState(appraisal?.score ?? 0);
+  const [editedState, setEditedState] = useState(appraisal?.state || "IN_PROGRESS"); // Add state for editable appraisal state (for admin in edit mode)
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [showStateDropdown, setShowStateDropdown] = useState(false);
+  // Only show validation errors after submit, not after save
+  // error: holds the error message (validation or backend)
+  // showValidationError: true only if last action was submit and error is a validation error
+  const [showValidationError, setShowValidationError] = useState(false);
   const navigate = useNavigate();
 
   // ✅ CONTROLAR renderização e animação
@@ -148,6 +154,7 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     setEditMode(false);
     setEditedFeedback(appraisal?.feedback || "");
     setEditedScore(appraisal?.score ?? 0);
+    setEditedState(appraisal?.state || "IN_PROGRESS");
     setError(null);
   }, [appraisal]);
 
@@ -162,20 +169,30 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     return null;
   };
 
-  // Replace handleSave with API call and notification
+  // Helper: is the error a validation error?
+  const isValidationError = (err) => {
+    if (!err) return false;
+    return (
+      err === t("appraisal.validation.feedbackRequired") ||
+      err === t("appraisal.validation.scoreRequired")
+    );
+  };
+
+  // Save as draft: no validation, no validation errors shown
   const handleSave = async (appraisalData) => {
     setSaving(true);
-    setError(null);
+    setError(null); // Clear error on save
+    setShowValidationError(false); // Hide validation errors on save
     try {
       const updatePayload = {
         id: appraisal.id,
-        state: "IN_PROGRESS",
+        state: editedState, // Use selected state from dropdown
         ...appraisalData,
       };
       const response = await handleUpdateAppraisal(updatePayload);
       if (response.success) {
         handleNotification("success", "appraisal.saved", { endDate: appraisal.endDate });
-        const editedAppraisal = { ...appraisal, ...appraisalData };
+        const editedAppraisal = { ...appraisal, ...appraisalData, state: editedState }; // <-- FIXED
         if (onSave) onSave(editedAppraisal);
         Object.assign(appraisal, editedAppraisal);
         setEditMode(false);
@@ -190,19 +207,21 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     }
   };
 
-  // Separate handleSubmit for submitting as COMPLETE, with validation
+  // Submit: validate, show validation errors if any
   const handleSubmit = async (appraisalData) => {
     const validationError = validateAppraisal(appraisalData);
     if (validationError) {
       setError(validationError);
+      setShowValidationError(true); // Show validation error
       return;
     }
     setSaving(true);
     setError(null);
+    setShowValidationError(false); // Hide validation error on successful submit
     try {
       const updatePayload = {
         id: appraisal.id,
-        state: "COMPLETED",
+        state: "COMPLETED", // Always set to COMPLETED on submit
         ...appraisalData,
       };
       const response = await handleUpdateAppraisal(updatePayload);
@@ -223,11 +242,13 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     }
   };
 
+  // Cancel: reset error and validation error display
   const handleCancel = () => {
     setEditMode(false);
     setEditedFeedback(appraisal?.feedback || "");
     setEditedScore(appraisal?.score ?? 0);
     setError(null);
+    setShowValidationError(false);
   };
 
   // Separate form submit handler for future extensibility
@@ -289,6 +310,15 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
     );
   };
 
+  // State for showing/hiding the custom badge dropdown
+  
+  // List of possible states
+  const stateOptions = [
+    { value: "IN_PROGRESS", label: t("appraisalStateInProgress") },
+    { value: "COMPLETED", label: t("appraisalStateCompleted") },
+    { value: "CLOSED", label: t("appraisalStateClosed") },
+  ];
+
   return (
     <div
       className={`appraisal-offcanvas-backdrop ${isAnimating ? "open" : ""}`}
@@ -297,7 +327,36 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
       <div className={`appraisal-offcanvas ${isAnimating ? "open" : ""}`}>
         {/* Botão fechar X no canto superior direito */}
         <div className="appraisal-offcanvas-header">
-          <AppraisalStateBadge state={appraisal.state} />
+          {/* State badge or dropdown for admin in edit mode */}
+          <div className="appraisal-offcanvas-state-dropdown-wrapper">
+            {editMode && isAdmin ? (
+              <div className="appraisal-offcanvas-state-dropdown-container">
+                <div
+                  className="appraisal-offcanvas-state-dropdown-trigger"
+                  onClick={() => setShowStateDropdown((v) => !v)}
+                  tabIndex={0}
+                  onBlur={() => setTimeout(() => setShowStateDropdown(false), 150)}
+                >
+                  <AppraisalStateBadge state={editedState} dropdownOption={true} />
+                </div>
+                {showStateDropdown && (
+                  <div className="appraisal-offcanvas-state-dropdown-menu">
+                    {stateOptions.map(opt => (
+                      <div
+                        key={opt.value}
+                        className="appraisal-offcanvas-state-dropdown-option"
+                        onClick={() => { setEditedState(opt.value); setShowStateDropdown(false); }}
+                      >
+                        <AppraisalStateBadge state={opt.value} dropdownOption={true} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <AppraisalStateBadge state={appraisal.state} />
+            )}
+          </div>
           <button className="appraisal-offcanvas-close" onClick={onClose}>
             <FaTimes />
           </button>
@@ -336,6 +395,8 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
 
           {/* Email - font secundária, cinza */}
           <p className="appraisal-offcanvas-email">{user.email}</p>
+
+          
 
           <div className="appraisal-offcanvas-profileIcons">
             {profileItems.map((item) => (
@@ -381,7 +442,8 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                   className="appraisal-offcanvas-feedback-textarea"
                   disabled={saving}
                 />
-                <div className="appraisal-offcanvas-feedback-error">{error || "\u00A0"}</div>
+                {/* Show validation error only after submit, never after save */}
+                <div className="appraisal-offcanvas-feedback-error">{showValidationError && error && isValidationError(error) ? error : "\u00A0"}</div>
                 <div className="appraisal-offcanvas-feedback-buttons">
                   <button type="button" onClick={() => handleSubmit({ feedback: editedFeedback, score: editedScore })} disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-submit">
                     {t("appraisal.submit")}
@@ -401,10 +463,10 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                     {appraisal.feedback || t("appraisal.noFeedback")}
                   </p>
                 </div>
-                <div className="appraisal-offcanvas-feedback-error">{error || "\u00A0"}</div>
+                <div className="appraisal-offcanvas-feedback-error">{error && !isValidationError(error) ? error : "\u00A0"}</div>
                 <div className="appraisal-offcanvas-feedback-buttons appraisal-offcanvas-feedback-buttons-view">
                   {((isAdmin) || (isTheManager && (appraisal.state !== "CLOSED" && appraisal.state !== "COMPLETED"))) && 
-                  <button onClick={() => setEditMode(true)} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-edit">
+                  <button onClick={() => { setEditMode(true); setError(null); setShowValidationError(false); }} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-edit">
                     {t("appraisal.edit")}
                   </button>
                   }

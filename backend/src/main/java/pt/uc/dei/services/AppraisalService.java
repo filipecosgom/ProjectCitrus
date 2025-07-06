@@ -135,19 +135,17 @@ public class AppraisalService implements Serializable {
      * @throws IllegalStateException    If appraisal cannot be modified
      */
     @Transactional
-    public AppraisalDTO updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO) {
+    public AppraisalDTO updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO, boolean isAdmin) {
         LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
 
         AppraisalEntity appraisal = appraisalRepository.find(updateAppraisalDTO.getId());
         if (appraisal == null) {
             throw new IllegalArgumentException("Appraisal not found");
         }
-
-        if (appraisal.getState() == AppraisalState.CLOSED) {
+        if (appraisal.getState() == AppraisalState.CLOSED && !isAdmin) {
             throw new IllegalStateException("Cannot modify a closed appraisal");
         }
-
-        if (appraisal.getCycle().getState() != CycleState.OPEN) {
+        if (appraisal.getCycle().getState() != CycleState.OPEN && !isAdmin) {
             throw new IllegalStateException("Cannot modify appraisal in a closed cycle");
         }
 
@@ -562,6 +560,10 @@ public class AppraisalService implements Serializable {
     public boolean checkIfManagerOfUser(Long appraisalId, Long managerId) {
         try {
             AppraisalEntity appraisal = appraisalRepository.find(appraisalId);
+            if (appraisal == null) {
+                LOGGER.warn("Appraisal not found with ID: {}", appraisalId);
+                return false;
+            }
             return appraisal.getAppraisingUser().getId().equals(managerId);
         } catch (Exception e) {
             LOGGER.error("Error checking manager of user for appraisal ID: {}", appraisalId, e);
