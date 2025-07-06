@@ -175,15 +175,9 @@ public class AppraisalController {
                 @CookieParam("jwt") String jwtToken){
             if(!JWTUtil.isUserAdmin(jwtToken)){
                 Long userId = JWTUtil.getUserIdFromToken(jwtToken);
-                if((appraisedUserId != null) && appraisedUserId != userId){
-                    LOGGER.warn("User ID {} tried to access appraisals of {}", userId, appraisedUserId);
-                    return Response.status(Response.Status.FORBIDDEN)
-                            .entity(new ApiResponse(false, "You are not authorized to access these appraisals",
-                                    "errorUnauthorized", null))
-                            .build();
-                }
-                if((appraisingUserId != null) && appraisingUserId != userId){
-                    LOGGER.warn("User ID {} tried to access appraisals of manager {}", userId, appraisingUserId);
+                if ((appraisedUserId != null && !appraisedUserId.equals(userId)) ||
+                        (appraisingUserId != null && !appraisingUserId.equals(userId))) {
+                    LOGGER.warn("User ID {} tried to access appraisals of appraisedUser {} or appraisingUser {}", userId, appraisedUserId, appraisingUserId);
                     return Response.status(Response.Status.FORBIDDEN)
                             .entity(new ApiResponse(false, "You are not authorized to access these appraisals",
                                     "errorUnauthorized", null))

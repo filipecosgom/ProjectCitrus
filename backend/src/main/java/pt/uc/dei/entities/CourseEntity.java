@@ -72,15 +72,15 @@ public class CourseEntity implements Serializable {
      * The URL of the image representing the course.
      * Must be unique and can be updated.
      */
-    @Column(name = "image_link", nullable = false, unique = true, updatable = true)
-    private String imageLink;
+    @Column(name = "image", nullable = false, unique = true, updatable = true)
+    private Boolean courseHasImage;
 
     /**
      * Indicates whether the course is active.
      * Must always be sent and can be updated.
      */
     @Column(name = "is_active", nullable = false, unique = false, updatable = true)
-    private Boolean isActive;
+    private Boolean courseIsActive;
 
     /**
      * The administrator responsible for managing the course.
@@ -207,20 +207,20 @@ public class CourseEntity implements Serializable {
         this.link = link;
     }
 
-    /**
-     * Gets the URL of the image representing the course.
-     * @return the image link
-     */
-    public String getImageLink() {
-        return imageLink;
+    public Boolean getCourseHasImage() {
+        return courseHasImage;
     }
 
-    /**
-     * Sets the URL of the image representing the course.
-     * @param imageLink the image link
-     */
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
+    public void setCourseHasImage(Boolean courseHasImage) {
+        this.courseHasImage = courseHasImage;
+    }
+
+    public Set<FinishedCourseEntity> getUserCompletions() {
+        return userCompletions;
+    }
+
+    public void setUserCompletions(Set<FinishedCourseEntity> userCompletions) {
+        this.userCompletions = userCompletions;
     }
 
     /**
@@ -228,7 +228,7 @@ public class CourseEntity implements Serializable {
      * @return true if the course is active, false otherwise
      */
     public Boolean getActive() {
-        return isActive;
+        return courseIsActive;
     }
 
     /**
@@ -236,7 +236,7 @@ public class CourseEntity implements Serializable {
      * @param active true if the course is active, false otherwise
      */
     public void setActive(Boolean active) {
-        isActive = active;
+        courseIsActive = active;
     }
 
     /**
