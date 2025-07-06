@@ -1,0 +1,94 @@
+.cycle-card {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-default, 10px);
+    padding: 20px;
+    background: #fafafa;
+    transition: box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .cycle-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cycle-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  
+  .cycle-card-title {
+    margin: 0;
+    font-size: 18px;
+    font-family: var(--font-family-heading, "Istok Web", sans-serif);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--text, #000000);
+    flex: 1;
+  }
+  
+  .cycle-card-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: var(--font-weight-bold, 700);
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    text-transform: uppercase;
+  }
+  
+  .cycle-card-status.active {
+    background: var(--badge-green, #B7F9BF);
+    color: #2e7d2e;
+    border: 1px solid var(--badge-green-stroke, #0FE16D);
+  }
+  
+  .cycle-card-status.closed {
+    background: var(--badge-red, #F8D1D1);
+    color: #721c24;
+    border: 1px solid var(--badge-red-stroke, #E20029);
+  }
+  
+  .cycle-card-body {
+    flex: 1;
+    margin-bottom: 20px;
+  }
+  
+  .cycle-card-info p {
+    margin: 8px 0;
+    font-size: 14px;
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    color: var(--secondary, #88909f);
+  }
+  
+  .cycle-card-info p strong {
+    color: var(--text, #000000);
+  }
+  
+  .cycle-card-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: auto;
+  }
+  
+  .cycle-card-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    font-weight: var(--font-weight-bold, 700);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .cycle-card-button-close {
+    background: var(--primary, #9C2F31);
+    color: white;
+  }
+  
+  .cycle-card-button-close:hover {
+    background: var(--light-red, #B61B23);
+  }
