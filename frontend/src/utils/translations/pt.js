@@ -314,7 +314,7 @@ const pt = {
       1: "Contribuição baixa",
       2: "Contribuição parcial",
       3: "Contribuição conforme o esperado",
-      4: "Contribuição excedida"
+      4: "Contribuição excedida",
     },
     submit: "Submeter",
     save: "Guardar",
@@ -332,7 +332,38 @@ const pt = {
     noAppraisalsSelected: "Nenhuma avaliação selecionada",
     completeAppraisals: "Completar",
     pdfGenerated: "PDF gerado com sucesso. Pode descarregá-lo agora.",
-    pdfGenerationFailed: "Falha ao gerar PDF. Por favor, tente novamente mais tarde.",
+    pdfGenerationFailed:
+      "Falha ao gerar PDF. Por favor, tente novamente mais tarde.",
+  },
+
+  // Ciclos
+  cycles: {
+    title: "Gestão de Ciclos",
+    createNewCycle: "Criar Novo Ciclo",
+    startDate: "Data de Início",
+    endDate: "Data de Fim",
+    evaluations: "Avaliações",
+    statusOpen: "Aberto",
+    statusClosed: "Fechado",
+    cycleTitle: "Ciclo {id}",
+    closeCycle: "Fechar Ciclo",
+    confirmCloseCycle: "Tem certeza que deseja fechar este ciclo?",
+    cycleClosedSuccess: "Ciclo fechado com sucesso!",
+    errorClosingCycle: "Erro ao fechar ciclo",
+    errorLoadingCycles: "Erro ao carregar ciclos",
+    loading: "A carregar ciclos...",
+    tryAgain: "Tentar novamente",
+    noCyclesFound: "Nenhum ciclo encontrado.",
+    previous: "Anterior",
+    next: "Próximo",
+    pageInfo: "Página {current} de {total}",
+    na: "N/D",
+    appraisalsToComplete: "{count} avaliações para completar",
+    daysDuration: "{days} dias",
+    createCycle: "Criar Ciclo",
+    creating: "A criar...",
+    errorInvalidDateRange: "Selecione um período válido",
+    errorCreateCycle: "Erro ao criar ciclo",
   },
 };
 

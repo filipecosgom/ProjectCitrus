@@ -239,7 +239,6 @@ const en = {
   searchByName: "name",
   searchByRole: "role",
 
-
   //User Sort Controls
   userSortControlsName: "Name",
   userSortControlsRole: "Role",
@@ -310,7 +309,7 @@ const en = {
       1: "Low contribution",
       2: "Partial contribution",
       3: "Expected contribution",
-      4: "Exceeded contribution"
+      4: "Exceeded contribution",
     },
     submit: "Submit",
     save: "Save",
@@ -330,5 +329,33 @@ const en = {
     pdfGenerationFailed: "Failed to generate PDF. Please try again later.",
   },
 
+  cycles: {
+    title: "Cycle Management",
+    createNewCycle: "Create New Cycle",
+    startDate: "Start Date",
+    endDate: "End Date",
+    evaluations: "Evaluations",
+    statusOpen: "Open",
+    statusClosed: "Closed",
+    cycleTitle: "Cycle {id}",
+    closeCycle: "Close Cycle",
+    confirmCloseCycle: "Are you sure you want to close this cycle?",
+    cycleClosedSuccess: "Cycle closed successfully!",
+    errorClosingCycle: "Error closing cycle",
+    errorLoadingCycles: "Error loading cycles",
+    loading: "Loading cycles...",
+    tryAgain: "Try again",
+    noCyclesFound: "No cycles found.",
+    previous: "Previous",
+    next: "Next",
+    pageInfo: "Page {current} of {total}",
+    na: "N/A",
+    appraisalsToComplete: "{count} appraisals to complete",
+    daysDuration: "{days} days",
+    createCycle: "Create Cycle",
+    creating: "Creating...",
+    errorInvalidDateRange: "Select a valid date range",
+    errorCreateCycle: "Error creating cycle",
+  },
 };
 export default en;
