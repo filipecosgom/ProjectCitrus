@@ -4,6 +4,8 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.StreamingOutput;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.*;
@@ -14,6 +16,7 @@ import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.repositories.CycleRepository;
 import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.utils.PdfGenerator;
 import pt.uc.dei.mapper.AppraisalMapper;
 
 import java.io.Serializable;
@@ -153,7 +156,10 @@ public class AppraisalService implements Serializable {
         appraisal.setScore(updateAppraisalDTO.getScore());
         appraisal.setEditedDate(LocalDate.now());
         appraisal.setState(updateAppraisalDTO.getState());
-
+        appraisal.setEditedDate(LocalDate.now());
+        if(updateAppraisalDTO.getState() == AppraisalState.COMPLETED) {
+            appraisal.setSubmissionDate(LocalDate.now());
+        }
         appraisalRepository.merge(appraisal);
         LOGGER.info("Updated appraisal with ID: {}", appraisal.getId());
 
@@ -251,6 +257,51 @@ public class AppraisalService implements Serializable {
         responseData.put("offset", offset);
         responseData.put("limit", limit);
         return responseData;
+    }
+
+    @Transactional
+    public StreamingOutput getPDFOfAppraisals(Long appraisedUserId,
+                                              String appraisedUserName,
+                                              String appraisedUserEmail,
+                                              Long appraisingUserId,
+                                              String appraisingUserName,
+                                              String appraisingUserEmail,
+                                              Long cycleId,
+                                              AppraisalState state,
+                                              AppraisalParameter parameter,
+                                              OrderBy orderBy,
+                                              Language language) {
+        LOGGER.debug("Retrieving appraisals with filters");
+
+        // 1. Fetch all data needed within the transaction
+        List<AppraisalEntity> appraisals = appraisalRepository.findAppraisalsWithFilters(
+                appraisedUserId, appraisedUserName, appraisedUserEmail,
+                appraisingUserId, appraisingUserName, appraisingUserEmail,
+                cycleId, state, parameter, orderBy, null, null);
+
+        LOGGER.info("Found {} appraisals for PDF export", appraisals.size());
+
+        // 2. Convert to DTOs and fully initialize all needed data
+        List<AppraisalResponseDTO> appraisalDTOs = appraisals.stream()
+                .map(appraisal -> {
+                    AppraisalResponseDTO dto = appraisalMapper.toResponseDto(appraisal);
+                    // Force loading of any lazy-loaded relationships if needed
+                    if (dto.getAppraisedUser() != null) {
+                        dto.getAppraisedUser().getName(); // Trigger proxy initialization
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        // 3. Return the streaming output
+        return output -> {
+            try {
+                PdfGenerator.generateAppraisalsPdf(appraisalDTOs, output, language);
+            } catch (Exception e) {
+                LOGGER.error("PDF generation failed", e);
+                throw new RuntimeException("Failed to generate PDF", e);
+            }
+        };
     }
 
     /**

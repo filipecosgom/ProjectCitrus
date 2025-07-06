@@ -14,6 +14,7 @@ import {
   buildAppraisalsSearchParams,
 } from "../../utils/appraisalsSearchUtils";
 import useAuthStore from "../../stores/useAuthStore";
+import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 
 export default function AppraisalsTab() {
   const { t } = useTranslation();
@@ -40,10 +41,26 @@ export default function AppraisalsTab() {
     sortOrder: "DESCENDING",
   });
   const lastSearchRef = useRef(searchParams);
+  // Estados para appraisal offcanvas
+    const [selectedAppraisal, setSelectedAppraisal] = useState(null);
+    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
   useEffect(() => {
     lastSearchRef.current = searchParams;
   }, [searchParams]);
+
+  // Handlers para appraisal off canvas
+  const handleAppraisalClick = (appraisal) => {
+    setSelectedAppraisal(appraisal);
+    setOffcanvasOpen(true);
+  };
+
+  const handleCloseOffcanvas = () => {
+    setOffcanvasOpen(false);
+    setTimeout(() => {
+      setSelectedAppraisal(null);
+    }, 300);
+  };
 
   // Fetch appraisals for this user
   async function fetchAppraisals(
@@ -148,12 +165,18 @@ export default function AppraisalsTab() {
               <AppraisalCard
                 key={appraisal.id}
                 appraisal={appraisal}
+                onClick={handleAppraisalClick}
                 // No checkbox or selection in profile tab
               />
             ))}
           </div>
         </div>
       )}
+      <AppraisalOffCanvas
+        appraisal={selectedAppraisal}
+        isOpen={offcanvasOpen}
+        onClose={handleCloseOffcanvas}
+      />
       <Pagination
         offset={pagination.offset}
         limit={pagination.limit}

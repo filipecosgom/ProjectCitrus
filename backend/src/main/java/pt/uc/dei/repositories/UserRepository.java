@@ -101,17 +101,17 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
      * Allows sorting by any parameter and supports pagination.
      *
-     * @param id User ID to filter (optional)
-     * @param email Email to filter (optional, supports quoted and normalized search)
-     * @param name Name or surname to filter (optional, supports quoted and normalized search)
-     * @param phone Phone number to filter (optional)
+     * @param id           User ID to filter (optional)
+     * @param email        Email to filter (optional, supports quoted and normalized search)
+     * @param name         Name or surname to filter (optional, supports quoted and normalized search)
+     * @param phone        Phone number to filter (optional)
      * @param accountState Account state to filter (optional)
-     * @param roleStr Role to filter (optional, supports quoted and normalized search)
-     * @param office Office to filter (optional)
-     * @param parameter Sorting parameter (optional)
-     * @param orderBy Sorting order (ASCENDING or DESCENDING)
-     * @param offset Pagination offset (start position)
-     * @param limit Pagination limit (max results)
+     * @param roleStr      Role to filter (optional, supports quoted and normalized search)
+     * @param office       Office to filter (optional)
+     * @param parameter    Sorting parameter (optional)
+     * @param orderBy      Sorting order (ASCENDING or DESCENDING)
+     * @param offset       Pagination offset (start position)
+     * @param limit        Pagination limit (max results)
      * @return List of users matching the criteria
      */
     public List<UserEntity> getUsers(Long id, String email, String name, String phone,
@@ -224,13 +224,13 @@ public class UserRepository extends AbstractRepository<UserEntity> {
      * <p>
      * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
      *
-     * @param id User ID to filter (optional)
-     * @param email Email to filter (optional, supports quoted and normalized search)
-     * @param name Name or surname to filter (optional, supports quoted and normalized search)
-     * @param phone Phone number to filter (optional)
+     * @param id           User ID to filter (optional)
+     * @param email        Email to filter (optional, supports quoted and normalized search)
+     * @param name         Name or surname to filter (optional, supports quoted and normalized search)
+     * @param phone        Phone number to filter (optional)
      * @param accountState Account state to filter (optional)
-     * @param roleStr Role to filter (optional, supports quoted and normalized search)
-     * @param office Office to filter (optional)
+     * @param roleStr      Role to filter (optional, supports quoted and normalized search)
+     * @param office       Office to filter (optional)
      * @return Total count of users matching the criteria
      */
     public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState,
@@ -328,8 +328,8 @@ public class UserRepository extends AbstractRepository<UserEntity> {
     public List<UserEntity> findActiveUsersForCycle() {
         try {
             TypedQuery<UserEntity> query = em.createQuery(
-                "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false ORDER BY u.id", 
-                UserEntity.class
+                    "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false ORDER BY u.id",
+                    UserEntity.class
             );
             List<UserEntity> result = query.getResultList();
             LOGGER.debug("Found {} active users for cycle creation", result.size());
@@ -349,10 +349,10 @@ public class UserRepository extends AbstractRepository<UserEntity> {
     public List<UserEntity> findActiveUsersWithoutManager() {
         try {
             TypedQuery<UserEntity> query = em.createQuery(
-                "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false " +
-                        "AND u.userIsAdmin " +
-                " AND u.managerUser IS NULL ORDER BY u.email",
-                UserEntity.class
+                    "SELECT u FROM UserEntity u WHERE u.userIsDeleted = false " +
+                            "AND u.userIsAdmin " +
+                            " AND u.managerUser IS NULL ORDER BY u.email",
+                    UserEntity.class
             );
             List<UserEntity> result = query.getResultList();
             LOGGER.debug("Found {} active users without manager", result.size());
@@ -371,9 +371,9 @@ public class UserRepository extends AbstractRepository<UserEntity> {
     public long countActiveUsersWithoutManager() {
         try {
             TypedQuery<Long> query = em.createQuery(
-                "SELECT COUNT(u) FROM UserEntity u WHERE u.userIsDeleted = false " +
-                "AND u.managerUser IS NULL", 
-                Long.class
+                    "SELECT COUNT(u) FROM UserEntity u WHERE u.userIsDeleted = false " +
+                            "AND u.managerUser IS NULL",
+                    Long.class
             );
             Long count = query.getSingleResult();
             LOGGER.debug("Count of active users without manager: {}", count);
@@ -381,6 +381,21 @@ public class UserRepository extends AbstractRepository<UserEntity> {
         } catch (Exception e) {
             LOGGER.error("Error counting active users without manager", e);
             return 0L;
+        }
+    }
+
+    public boolean checkIfUserStillHasManagedUsers(Long userId) {
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(u) FROM UserEntity u WHERE u.managerUser.id = :userId",
+                    Long.class);
+            query.setParameter("userId", userId);
+            Long count = query.getSingleResult();
+            LOGGER.debug("User with ID {} has {} managed users", userId, count);
+            return count > 0;
+        } catch (Exception e) {
+            LOGGER.error("Error checking if user with ID {} has managed users", userId, e);
+            return false;
         }
     }
 }

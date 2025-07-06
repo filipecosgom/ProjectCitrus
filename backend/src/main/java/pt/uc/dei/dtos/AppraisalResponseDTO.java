@@ -46,6 +46,8 @@ public class AppraisalResponseDTO {
 
     private LocalDate endDate;
 
+    private LocalDate submissionDate;
+
     private UserResponseDTO appraisedUser;
     private UserResponseDTO appraisingUser;
 
@@ -181,5 +183,13 @@ public class AppraisalResponseDTO {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public LocalDate getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(LocalDate submissionDate) {
+        this.submissionDate = submissionDate;
     }
 }

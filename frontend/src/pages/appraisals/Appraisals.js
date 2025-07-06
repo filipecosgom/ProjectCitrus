@@ -16,8 +16,8 @@ import {
 } from "../../utils/appraisalsSearchUtils";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 import useAuthStore from "../../stores/useAuthStore";
-import handleNotification from "../../handles/handleNotification";
-import { GrDocumentVerified } from "react-icons/gr";
+import { GrDocumentPdf } from "react-icons/gr";
+import { handleGeneratePdfOfAppraisals } from "../../handles/handleGeneratePdfOfAppraisals";
 
 export default function Appraisals() {
   const { t } = useTranslation();
@@ -44,21 +44,7 @@ export default function Appraisals() {
     sortBy: "creationDate",
     sortOrder: "DESCENDING",
   });
-  const [selectedAppraisals, setSelectedAppraisals] = useState(new Set());
-  const [completeAppraisalsOpen, setCompleteAppraisalsOpen] = useState(false);
   const lastSearchRef = useRef(searchParams);
-
-  const handleOpenCompleteAppraisals = () => {
-    if (selectedAppraisals.size === 0) {
-      handleNotification("info", t("appraisal.noAppraisalsSelected"));
-      return;
-    }
-    setCompleteAppraisalsOpen(true);
-  };
-
-  const handleCloseCompleteAppraisals = () => {
-    setCompleteAppraisalsOpen(false);
-  };
 
   // Estados para appraisal offcanvas
   const [selectedAppraisal, setSelectedAppraisal] = useState(null);
@@ -84,7 +70,7 @@ export default function Appraisals() {
       sortBy: sort.sortBy,
       sortOrder: sort.sortOrder,
     });
-    console.log('Params sent to backend:', params); // Debug log
+    console.log("Params sent to backend:", params); // Debug log
     setResultsLoading(true);
     const result = await handleGetAppraisals(params);
     setAppraisals(result.appraisals || []);
@@ -132,7 +118,9 @@ export default function Appraisals() {
         ...filters,
       };
       // Always ensure appraisingUserId is present for non-admins
-      return isAdmin ? nextParams : { ...nextParams, appraisingUserId: user?.id };
+      return isAdmin
+        ? nextParams
+        : { ...nextParams, appraisingUserId: user?.id };
     });
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
@@ -159,21 +147,37 @@ export default function Appraisals() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-  // Handler for selecting/deselecting appraisals
-  const handleAppraisalSelection = (appraisalId, isSelected) => {
-    const newSelected = new Set(selectedAppraisals);
-    if (isSelected) {
-      newSelected.add(appraisalId);
-    } else {
-      newSelected.delete(appraisalId);
+  // PDF export handler
+  const handleGetPdf = async () => {
+    let params = buildAppraisalsSearchParams({
+      ...searchParams,
+      sortBy: sort.sortBy,
+      sortOrder: sort.sortOrder,
+    });
+    // Remove pagination params
+    delete params.limit;
+    delete params.offset;
+    // Always ensure appraisingUserId is present for non-admins
+    if (!isAdmin) {
+      params = { ...params, appraisingUserId: user?.id };
     }
-    setSelectedAppraisals(newSelected);
+    console.log("PDF export params:", params); // Debug log
+    const result = await handleGeneratePdfOfAppraisals(params);
+    if (result.success) {
+      const url = window.URL.createObjectURL(
+        new Blob([result.blob], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "appraisals.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert(t("exportPdfError") || "Failed to generate PDF");
+    }
   };
-
-  // Clear selection on page change
-  useEffect(() => {
-    setSelectedAppraisals(new Set());
-  }, [pagination.offset]);
 
   if (pageLoading) return <Spinner />;
 
@@ -186,27 +190,7 @@ export default function Appraisals() {
           onSearch={handleSearch}
           searchTypes={appraisalsSearchTypes(t, isAdmin)}
           {...filtersConfig}
-          actions={
-            isAdmin && (
-              <button
-                className={`complete-appraisals-btn${
-                  selectedAppraisals.size === 0 ? " disabled" : ""
-                }`}
-                onClick={handleOpenCompleteAppraisals}
-                disabled={selectedAppraisals.size === 0}
-              >
-                <GrDocumentVerified className="complete-appraisals-icon" />
-                <span className="complete-appraisals-text">
-                  {t("appraisal.completeAppraisals")}
-                </span>
-                <span className="complete-appraisals-count">
-                  {selectedAppraisals.size > 0
-                    ? ` (${selectedAppraisals.size})`
-                    : ""}
-                </span>
-              </button>
-            )
-          }
+          onExportPdf={handleGetPdf}
         />
       </div>
       <SortControls
@@ -232,9 +216,6 @@ export default function Appraisals() {
                 key={appraisal.id}
                 appraisal={appraisal}
                 onClick={handleAppraisalClick}
-                showCheckbox={isAdmin}
-                isSelected={selectedAppraisals.has(appraisal.id)}
-                onSelectionChange={handleAppraisalSelection}
                 // Optionally, add onClick if you want card click
               />
             ))}

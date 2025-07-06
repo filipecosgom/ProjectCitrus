@@ -74,3 +74,34 @@ export const updateAppraisal = async (updateAppraisalDTO) => {
     };
   }
 };
+
+export const fetchAppraisalsPdf = async (params = {}) => {
+  console.log("fetchAppraisalsPdf called with params:", params);
+  try {
+    const response = await api.get("/appraisals/pdf", {
+      params,
+      paramsSerializer: (params) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            searchParams.append(key, value);
+          }
+        });
+        return searchParams.toString();
+      },
+      responseType: "blob",
+      headers: { Accept: "application/pdf" }
+    });
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};

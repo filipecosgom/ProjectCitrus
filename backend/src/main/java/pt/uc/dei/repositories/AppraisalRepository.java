@@ -290,8 +290,7 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
                             : cb.desc(scoreExpr);
 
                     cq.orderBy(cb.asc(nullRank), scoreOrder);
-                }
-                else {
+                } else {
                     cq.orderBy(order == OrderBy.DESCENDING
                             ? cb.desc(sortingField)
                             : cb.asc(sortingField));
@@ -525,5 +524,22 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
         query.setParameter("state", AppraisalState.COMPLETED);
         query.setParameter("cycleState", CycleState.OPEN);
         return query.getResultList();
+    }
+
+    public boolean setAppraisalsToNewManager(Long userId, Long newManagerId) {
+        try {
+            TypedQuery<AppraisalEntity> query = em.createQuery(
+                    "UPDATE AppraisalEntity a SET a.appraisingUser.id = :newManagerId " +
+                            "WHERE a.appraisedUser.id = :userId",
+                    AppraisalEntity.class
+            );
+            query.setParameter("newManagerId", newManagerId);
+            query.setParameter("userId", userId);
+            query.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error setting new manager for appraisals of user ID: {}", userId, e);
+            return false;
+        }
     }
 }

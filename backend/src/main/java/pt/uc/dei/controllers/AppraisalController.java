@@ -5,9 +5,12 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.AppraisalResponseDTO;
 import pt.uc.dei.dtos.AppraisalStatsDTO;
 import pt.uc.dei.dtos.CreateAppraisalDTO;
 import pt.uc.dei.dtos.UpdateAppraisalDTO;
@@ -29,6 +32,7 @@ import java.util.Map;
  * Provides endpoints for CRUD operations on appraisals, including
  * creation, retrieval, updating, and filtering functionality.
  */
+
 @Path("/appraisals")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -52,15 +56,19 @@ public class AppraisalController {
     @PATCH
     public Response updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO, @CookieParam("jwt") String jwtToken) {
         Response validationResponse = validateUpdateAppraisalDTO(updateAppraisalDTO);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         try {
             Long managerId = JWTUtil.extractUserIdOrAbort(jwtToken);
-            if(appraisalService.checkIfManagerOfUser(updateAppraisalDTO.getId(), managerId)){
-                LOGGER.info("Manager with ID {} is authorized to update appraisal with ID: {}", managerId, updateAppraisalDTO.getId());
+            if (appraisalService.checkIfManagerOfUser(updateAppraisalDTO.getId(), managerId)) {
+                LOGGER.info("Manager with ID {} is authorized to update appraisal with ID: {}", managerId,
+                        updateAppraisalDTO.getId());
             } else {
-                LOGGER.warn("Manager with ID {} is not authorized to update appraisal with ID: {}", managerId, updateAppraisalDTO.getId());
+                LOGGER.warn("Manager with ID {} is not authorized to update appraisal with ID: {}", managerId,
+                        updateAppraisalDTO.getId());
                 return Response.status(Response.Status.FORBIDDEN)
-                        .entity(new ApiResponse(false, "You are not authorized to update this appraisal", "errorUnauthorized", null))
+                        .entity(new ApiResponse(false, "You are not authorized to update this appraisal",
+                                "errorUnauthorized", null))
                         .build();
             }
             try {
@@ -123,28 +131,30 @@ public class AppraisalController {
     /**
      * Retrieves appraisals with filtering options.
      *
-     * @param appraisedUserId  Optional filter by appraised user ID
-     * @param appraisingUserId Optional filter by appraising user ID (manager)
-     * @param cycleId          Optional filter by cycle ID
-     * @param appraisalStateStr            Optional filter by appraisal state
-     * @param limit            Maximum number of results
-     * @param offset           Starting position for pagination
+     * @param appraisedUserId   Optional filter by appraised user ID
+     * @param appraisingUserId  Optional filter by appraising user ID (manager)
+     * @param cycleId           Optional filter by cycle ID
+     * @param appraisalStateStr Optional filter by appraisal state
+     * @param limit             Maximum number of results
+     * @param offset            Starting position for pagination
      * @return Response with list of filtered appraisal DTOs
      */
     @GET
     public Response getAppraisalsWithFilters(@QueryParam("appraisedUserId") Long appraisedUserId,
-                                             @QueryParam("appraisedUserName") String appraisedUserName,
-                                             @QueryParam("appraisedUserEmail") String appraisedUserEmail,
-                                             @QueryParam("appraisingUserId") Long appraisingUserId,
-                                             @QueryParam("appraisingUserName") String appraisingUserName,
-                                             @QueryParam("appraisingUserEmail") String appraisingUserEmail,
-                                             @QueryParam("cycleId") Long cycleId,
-                                             @QueryParam("state") String appraisalStateStr,
-                                             @QueryParam("parameter") @DefaultValue("creationDate") String parameterStr,
-                                             @QueryParam("order") @DefaultValue("DESCENDING") String orderStr,
-                                             @QueryParam("limit") @DefaultValue("10") Integer limit,
-                                             @QueryParam("offset") @DefaultValue("0") Integer offset) {
-        AppraisalState state = appraisalStateStr != null ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr)) : null;
+            @QueryParam("appraisedUserName") String appraisedUserName,
+            @QueryParam("appraisedUserEmail") String appraisedUserEmail,
+            @QueryParam("appraisingUserId") Long appraisingUserId,
+            @QueryParam("appraisingUserName") String appraisingUserName,
+            @QueryParam("appraisingUserEmail") String appraisingUserEmail,
+            @QueryParam("cycleId") Long cycleId,
+            @QueryParam("state") String appraisalStateStr,
+            @QueryParam("parameter") @DefaultValue("creationDate") String parameterStr,
+            @QueryParam("order") @DefaultValue("DESCENDING") String orderStr,
+            @QueryParam("limit") @DefaultValue("10") Integer limit,
+            @QueryParam("offset") @DefaultValue("0") Integer offset) {
+        AppraisalState state = appraisalStateStr != null
+                ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr))
+                : null;
         AppraisalParameter parameter = AppraisalParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
         OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
         try {
@@ -152,8 +162,7 @@ public class AppraisalController {
 
             Map<String, Object> appraisalData = appraisalService.getAppraisalsWithFilters(
                     appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
-                    appraisingUserEmail, cycleId, state, parameter, orderBy, limit, offset
-            );
+                    appraisingUserEmail, cycleId, state, parameter, orderBy, limit, offset);
             return Response.ok(new ApiResponse(true, "Appraisals retrieved successfully", "success", appraisalData))
                     .build();
 
@@ -202,7 +211,8 @@ public class AppraisalController {
             LOGGER.debug("Retrieving appraisals created by manager ID: {}", managerId);
 
             List<AppraisalDTO> appraisals = appraisalService.getAppraisalsByManager(managerId);
-            return Response.ok(new ApiResponse(true, "Manager appraisals retrieved successfully", "success", appraisals))
+            return Response
+                    .ok(new ApiResponse(true, "Manager appraisals retrieved successfully", "success", appraisals))
                     .build();
 
         } catch (Exception e) {
@@ -380,9 +390,10 @@ public class AppraisalController {
         try {
             // TODO: Add JWT Admin validation here
             // if (!isUserAdmin(jwtToken)) {
-            //     return Response.status(Response.Status.FORBIDDEN)
-            //             .entity(new ApiResponse(false, "Admin access required", "errorUnauthorized", null))
-            //             .build();
+            // return Response.status(Response.Status.FORBIDDEN)
+            // .entity(new ApiResponse(false, "Admin access required", "errorUnauthorized",
+            // null))
+            // .build();
             // }
 
             if (appraisalIds == null || appraisalIds.trim().isEmpty()) {
@@ -439,7 +450,8 @@ public class AppraisalController {
 
             int closedCount = appraisalService.closeCompletedAppraisalsByCycleId(cycleId);
 
-            String message = String.format("Successfully closed %d COMPLETED appraisal(s) in cycle %d", closedCount, cycleId);
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) in cycle %d", closedCount,
+                    cycleId);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
 
@@ -479,7 +491,8 @@ public class AppraisalController {
 
             int closedCount = appraisalService.closeCompletedAppraisalsByUserId(userId);
 
-            String message = String.format("Successfully closed %d COMPLETED appraisal(s) for user %d", closedCount, userId);
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) for user %d", closedCount,
+                    userId);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
 
@@ -513,7 +526,8 @@ public class AppraisalController {
 
             int closedCount = appraisalService.closeAllCompletedAppraisals();
 
-            String message = String.format("Successfully closed %d COMPLETED appraisal(s) across all OPEN cycles", closedCount);
+            String message = String.format("Successfully closed %d COMPLETED appraisal(s) across all OPEN cycles",
+                    closedCount);
             return Response.ok(new ApiResponse(true, message, "success", closedCount))
                     .build();
 
@@ -521,6 +535,50 @@ public class AppraisalController {
             LOGGER.error("Unexpected error closing all COMPLETED appraisals", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Exports filtered appraisals as a PDF file.
+     *
+     * @return PDF file with filtered appraisals
+     */
+    @GET
+    @Path("/pdf")
+    @Produces("application/pdf")
+    public Response exportAppraisalsPdf(
+            @QueryParam("appraisedUserId") Long appraisedUserId,
+            @QueryParam("appraisedUserName") String appraisedUserName,
+            @QueryParam("appraisedUserEmail") String appraisedUserEmail,
+            @QueryParam("appraisingUserId") Long appraisingUserId,
+            @QueryParam("appraisingUserName") String appraisingUserName,
+            @QueryParam("appraisingUserEmail") String appraisingUserEmail,
+            @QueryParam("language") @DefaultValue("ENGLISH") String languageStr,
+            @QueryParam("cycleId") Long cycleId,
+            @QueryParam("state") String appraisalStateStr,
+            @QueryParam("parameter") @DefaultValue("creationDate") String parameterStr,
+            @QueryParam("order") @DefaultValue("DESCENDING") String orderStr
+    ) {
+        try {
+            AppraisalState state = appraisalStateStr != null
+                    ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr))
+                    : null;
+            Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));
+            AppraisalParameter parameter = AppraisalParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+            OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
+
+            StreamingOutput stream = appraisalService.getPDFOfAppraisals(
+                    appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
+                    appraisingUserEmail, cycleId, state, parameter, orderBy, language);
+            return Response.ok(stream)
+                    .header("Content-Disposition", "attachment; filename=appraisals.pdf")
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Error generating appraisals PDF", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Failed to generate PDF", "errorPdfExport", null))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
         }
     }
@@ -533,14 +591,16 @@ public class AppraisalController {
         }
         if (dto.getFeedback() != null && dto.getFeedback().isBlank()) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ApiResponse(false, "Feedback must not be blank if provided", "errorFeedbackBlank", null))
+                    .entity(new ApiResponse(false, "Feedback must not be blank if provided", "errorFeedbackBlank",
+                            null))
                     .build();
         }
         if (dto.getScore() != null) {
             int score = dto.getScore();
             if (score < 1 || score > 4) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ApiResponse(false, "Score must be between 1 and 4 if provided", "errorScoreOutOfBounds", null))
+                        .entity(new ApiResponse(false, "Score must be between 1 and 4 if provided",
+                                "errorScoreOutOfBounds", null))
                         .build();
             }
         }
@@ -548,14 +608,16 @@ public class AppraisalController {
             String feedback = dto.getFeedback();
             if (feedback == null || feedback.trim().isBlank()) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ApiResponse(false, "Completed appraisal must have feedback", "errorFeedbackBlank", null))
+                        .entity(new ApiResponse(false, "Completed appraisal must have feedback", "errorFeedbackBlank",
+                                null))
                         .build();
             }
 
             Integer score = dto.getScore();
             if (score == null || score < 1 || score > 4) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ApiResponse(false, "Completed appraisal must have a valid score between 1 and 4", "errorScoreOutOfBounds", null))
+                        .entity(new ApiResponse(false, "Completed appraisal must have a valid score between 1 and 4",
+                                "errorScoreOutOfBounds", null))
                         .build();
             }
         }

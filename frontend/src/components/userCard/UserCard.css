@@ -7,6 +7,7 @@
   padding-right: 0;
   box-shadow: var(--shadow-card);
   border-radius: var(--border-radius-default, 10px);
+  background-color: #fafafa;
 }
 
 .userCard-wrapper:hover {
@@ -19,6 +20,11 @@
   padding-right: 0;
   box-shadow: var(--shadow-card);
   border-radius: var(--border-radius-default, 10px);
+  background-color: #fafafa;
+}
+
+.userCard-wrapper.with-checkbox:hover {
+  background-color:  rgb(186, 221, 255);
 }
 
 .userCard-container {

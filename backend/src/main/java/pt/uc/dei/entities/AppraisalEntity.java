@@ -37,6 +37,13 @@ public class AppraisalEntity implements Serializable {
     private LocalDate editedDate;
 
     /**
+     * The date and time when the appraisal was last edited.
+     * Can be updated.
+     */
+    @Column(name = "submission_date", nullable = false, unique = false, updatable = true)
+    private LocalDate submissionDate;
+
+    /**
      * The score assigned in the appraisal.
      * Optional and can be updated.
      */
@@ -177,4 +184,12 @@ public class AppraisalEntity implements Serializable {
      * @param cycle the cycle entity to set.
      */
     public void setCycle(CycleEntity cycle) { this.cycle = cycle; }
+
+    public LocalDate getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(LocalDate submissionDate) {
+        this.submissionDate = submissionDate;
+    }
 }

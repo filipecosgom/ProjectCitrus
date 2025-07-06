@@ -11,9 +11,30 @@ package pt.uc.dei.enums;
  * </ul>
  */
 public enum Language {
-    PORTUGUESE,
-    ENGLISH,
-    ITALIAN,
-    FRENCH,
-    SPANISH;
+    PORTUGUESE("pt"),
+    ENGLISH("en"),
+    ITALIAN("it"),
+    FRENCH("fr"),
+    SPANISH("es");
+
+    private final String fieldName;
+
+    Language(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public static Language fromFieldName(String input) {
+        if (input == null || input.trim().isEmpty()) return null;
+        String trimmed = input.trim();
+        for (Language l : values()) {
+            if (l.fieldName.equalsIgnoreCase(trimmed) || (l.toString().equalsIgnoreCase(trimmed))) {
+                return l;
+            }
+        }
+        throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
 }

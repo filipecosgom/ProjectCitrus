@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 public class UpdateUserDTO {
 
+    private Long userId;
+
     // The user's manager (if updating manager information)
     private Long managerId;
 
@@ -186,5 +188,11 @@ public class UpdateUserDTO {
         this.role = role;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

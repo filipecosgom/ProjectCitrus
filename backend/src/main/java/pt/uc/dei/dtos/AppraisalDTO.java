@@ -58,6 +58,8 @@ public class AppraisalDTO {    /**
      */
     private LocalDate creationDate;
 
+    private LocalDate submissionDate;
+
     // Getters and Setters
     /**
      * Retrieves the unique identifier for the appraisal.
@@ -185,5 +187,13 @@ public class AppraisalDTO {    /**
      */
     public void setAppraisingUserId(Long appraisingUserId) {
         this.appraisingUserId = appraisingUserId;
+    }
+
+    public LocalDate getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(LocalDate submissionDate) {
+        this.submissionDate = submissionDate;
     }
 }

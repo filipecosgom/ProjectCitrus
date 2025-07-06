@@ -326,6 +326,8 @@ const en = {
     saveError: "Failed to save appraisal.",
     noAppraisalsSelected: "No appraisals selected",
     completeAppraisals: "Complete",
+    pdfGenerated: "PDF generated successfully. You can download it now.",
+    pdfGenerationFailed: "Failed to generate PDF. Please try again later.",
   },
 
 };

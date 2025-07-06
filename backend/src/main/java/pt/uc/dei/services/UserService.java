@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.*;
+import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
@@ -54,6 +55,9 @@ public class UserService implements Serializable {
      */
     @EJB
     UserRepository userRepository;
+
+    @EJB
+    AppraisalRepository appraisalRepository;
 
     /**
      * Injected repository for managing temporary users.
@@ -132,7 +136,7 @@ public class UserService implements Serializable {
      * Updates an existing user with the provided data.
      * Only non-null fields in the DTO are updated.
      *
-     * @param id The ID of the user to update
+     * @param id            The ID of the user to update
      * @param updateUserDTO The DTO containing updated user data
      * @return true if the update was successful, false otherwise
      */
@@ -140,17 +144,27 @@ public class UserService implements Serializable {
     public Boolean updateUser(Long id, UpdateUserDTO updateUserDTO) {
         // Fetch the user from the repository
         UserEntity user = userRepository.findUserById(id);
-        if(user == null) {
+        if (user == null) {
             LOGGER.error("Update user - user not found");
             return false;
         }
         // Update only those fields that are non-null in the DTO.
         if (updateUserDTO.getManagerId() != null) {
+            if(user.getManagerUser() != null) {
+                if(!checkIfUserStillIsManager(user.getManagerUser().getId())) {
+                    UserEntity previousManager = user.getManagerUser();
+                    updateManagerStatus(previousManager);
+                }
+            }
             UserEntity manager = userRepository.findUserById(updateUserDTO.getManagerId());
-            if(manager != null) {
+            if (manager != null) {
                 user.setManagerUser(manager);
                 manager.setUserIsManager(true);
+                appraisalRepository.setAppraisalsToNewManager(manager.getId(), updateUserDTO.getManagerId());
             }
+        }
+        if (updateUserDTO.getUserIsManager() != null) {
+            user.setUserIsManager(updateUserDTO.getUserIsManager());
         }
         if (updateUserDTO.getHasAvatar() != null) {
             user.setHasAvatar(updateUserDTO.getHasAvatar());
@@ -219,17 +233,17 @@ public class UserService implements Serializable {
     /**
      * Retrieves a paginated and filtered list of users as DTOs, with total count and pagination info.
      *
-     * @param id User ID to filter (optional)
-     * @param email Email to filter (optional)
-     * @param name Name or surname to filter (optional)
-     * @param phone Phone number to filter (optional)
+     * @param id           User ID to filter (optional)
+     * @param email        Email to filter (optional)
+     * @param name         Name or surname to filter (optional)
+     * @param phone        Phone number to filter (optional)
      * @param accountState Account state to filter (optional)
-     * @param roleStr Role to filter (optional)
-     * @param office Office to filter (optional)
-     * @param parameter Sorting parameter (optional)
-     * @param orderBy Sorting order (ASCENDING or DESCENDING)
-     * @param offset Pagination offset (start position)
-     * @param limit Pagination limit (max results)
+     * @param roleStr      Role to filter (optional)
+     * @param office       Office to filter (optional)
+     * @param parameter    Sorting parameter (optional)
+     * @param orderBy      Sorting order (ASCENDING or DESCENDING)
+     * @param offset       Pagination offset (start position)
+     * @param limit        Pagination limit (max results)
      * @return Map containing the list of users, total count, offset, and limit
      */
     public Map<String, Object> getUsers(Long id, String email, String name, String phone,
@@ -256,7 +270,6 @@ public class UserService implements Serializable {
         responseData.put("limit", limit);
         return responseData;
     }
-
 
 
     /**
@@ -308,7 +321,6 @@ public class UserService implements Serializable {
     }
 
 
-
     /**
      * Converts a {@link TemporaryUserEntity} to a {@link TemporaryUserDTO}.
      *
@@ -337,15 +349,15 @@ public class UserService implements Serializable {
             return false;
 
         boolean isComplete =
-            user.getHasAvatar() &&
-            user.getBiography() != null &&
-            user.getBirthdate() != null &&
-            user.getMunicipality() != null &&
-            user.getName() != null &&
-            user.getPhone() != null &&
-            user.getPostalCode() != null &&
-            user.getStreet() != null &&
-            user.getSurname() != null;
+                user.getHasAvatar() &&
+                        user.getBiography() != null &&
+                        user.getBirthdate() != null &&
+                        user.getMunicipality() != null &&
+                        user.getName() != null &&
+                        user.getPhone() != null &&
+                        user.getPostalCode() != null &&
+                        user.getStreet() != null &&
+                        user.getSurname() != null;
 
         if (isComplete && user.getAccountState() == AccountState.INCOMPLETE) {
             user.setAccountState(AccountState.COMPLETE);
@@ -353,5 +365,21 @@ public class UserService implements Serializable {
         }
         LOGGER.info("User account state updated for user ID: " + userId + ", new state: " + user.getAccountState());
         return true;
+    }
+
+    private boolean checkIfUserStillIsManager(Long managerId) {
+        if (userRepository.checkIfUserStillHasManagedUsers(managerId)) {
+            LOGGER.info("User with ID {} still manages users", managerId);
+            return true;
+        } else {
+            LOGGER.info("User with ID {} manages no users", managerId);
+            return false;
+        }
+    }
+
+    private void updateManagerStatus(UserEntity user) {
+        user.setUserIsManager(false);
+        userRepository.persist(user);
+        LOGGER.info("User with ID {} is no longer a manager", user.getId());
     }
 }

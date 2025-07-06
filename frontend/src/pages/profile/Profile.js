@@ -27,7 +27,11 @@ import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffca
 
 export default function Profile() {
   const { t } = useTranslation();
-  const userId = new URLSearchParams(useLocation().search).get("id");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const userId = new URLSearchParams(location.search).get("id");
+  // Read tab from URL, default to 'profile'
+  const tabFromUrl = new URLSearchParams(location.search).get("tab") || "profile";
   const [user, setUser] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
   const [managerAvatar, setManagerAvatar] = useState(null);
@@ -36,7 +40,7 @@ export default function Profile() {
   const [roleOptions, setRoleOptions] = useState([]);
   const [officeOptions, setOfficeOptions] = useState([]);
   const [showAddressFields, setShowAddressFields] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
   const setUserAndExpiration = useAuthStore(
     (state) => state.setUserAndExpiration
   );
@@ -45,8 +49,6 @@ export default function Profile() {
   //Avatar
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-
-  const navigate = useNavigate();
 
   // react-hook-form setup
   const {
@@ -203,6 +205,24 @@ export default function Profile() {
       </button>
     );
   };
+
+  // Keep activeTab in sync with URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (activeTab !== params.get("tab")) {
+      params.set("tab", activeTab);
+      navigate({ search: params.toString() }, { replace: true });
+    }
+    // eslint-disable-next-line
+  }, [activeTab]);
+
+  // Update activeTab if URL changes (e.g., browser navigation)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab") || "profile";
+    if (tab !== activeTab) setActiveTab(tab);
+    // eslint-disable-next-line
+  }, [location.search]);
 
   if (loading) return <Spinner />;
 

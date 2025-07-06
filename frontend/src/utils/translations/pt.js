@@ -331,6 +331,8 @@ const pt = {
     error: "Falha ao guardar avaliação.",
     noAppraisalsSelected: "Nenhuma avaliação selecionada",
     completeAppraisals: "Completar",
+    pdfGenerated: "PDF gerado com sucesso. Pode descarregá-lo agora.",
+    pdfGenerationFailed: "Falha ao gerar PDF. Por favor, tente novamente mais tarde.",
   },
 };
 

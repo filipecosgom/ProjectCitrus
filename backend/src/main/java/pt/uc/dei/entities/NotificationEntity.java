@@ -73,13 +73,17 @@ public class NotificationEntity implements Serializable {
     private LocalDateTime creationDate;
 
     /**
-     * Indicates whether the notification has been read.
+     * Indicates whether the notification has been read and clicked by the user.
      * Can be updated.
      */
-    @Column(name = "is_read", nullable = false, unique = false, updatable = true)
+    @Column(name = "is_read", nullable = false)
     private Boolean notificationIsRead;
 
-    @Column(name = "is_seen", nullable = false, unique = false, updatable = true)
+    /** Is seen indicates a notifications which content has been seen by the user.
+     * This is different from read, as it indicates that the user has viewed the notification content.
+     * Can be updated.
+     */
+    @Column(name = "is_seen", nullable = false)
     private Boolean notificationIsSeen;
 
     /**
