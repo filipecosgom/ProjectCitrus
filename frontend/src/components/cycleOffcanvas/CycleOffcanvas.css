@@ -1,0 +1,270 @@
+/* Backdrop com blur effect */
+.cycle-offcanvas-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  
+  .cycle-offcanvas-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  /* Fallback para browsers que não suportam backdrop-filter */
+  @supports not (backdrop-filter: blur(8px)) {
+    .cycle-offcanvas-backdrop {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .cycle-offcanvas-backdrop.open {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+  
+  /* Offcanvas - slide da direita */
+  .cycle-offcanvas {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+    overflow-y: auto;
+    z-index: 1001;
+  }
+  
+  .cycle-offcanvas.open {
+    transform: translateX(0);
+  }
+  
+  /* Botão X - preto, canto superior direito */
+  .cycle-offcanvas-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #000000;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    z-index: 10;
+  }
+  
+  .cycle-offcanvas-close:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Conteúdo do offcanvas */
+  .cycle-offcanvas-content {
+    padding: 60px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 100vh;
+  }
+  
+  /* Título */
+  .cycle-offcanvas-title {
+    font-family: var(--font-family-heading, "Istok Web", sans-serif);
+    font-size: var(--font-size-title, 2rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--text, #000000);
+    margin: 0;
+    text-align: center;
+  }
+  
+  /* Container do calendário */
+  .cycle-calendar-container {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  
+  /* Customização do react-calendar */
+  .cycle-calendar {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-default, 10px);
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  }
+  
+  .cycle-calendar .react-calendar__tile {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cycle-calendar .react-calendar__tile:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .cycle-calendar .react-calendar__tile--active {
+    background-color: var(--primary, #9C2F31) !important;
+    color: white;
+  }
+  
+  .cycle-calendar .react-calendar__tile--range {
+    background-color: rgba(156, 47, 49, 0.2);
+    color: var(--text, #000000);
+  }
+  
+  .cycle-calendar .react-calendar__tile--rangeStart,
+  .cycle-calendar .react-calendar__tile--rangeEnd {
+    background-color: var(--primary, #9C2F31) !important;
+    color: white;
+  }
+  
+  /* Informações das datas */
+  .cycle-date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius-default, 10px);
+  }
+  
+  .cycle-date-item {
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    font-size: var(--font-size-main, 1rem);
+    color: var(--text, #000000);
+  }
+  
+  /* Resumo do ciclo */
+  .cycle-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius-default, 10px);
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    font-size: var(--font-size-main, 1rem);
+  }
+  
+  .cycle-summary-left {
+    color: var(--text, #000000);
+    font-weight: var(--font-weight-regular, 400);
+  }
+  
+  .cycle-summary-right {
+    color: var(--secondary, #88909f);
+    font-weight: var(--font-weight-bold, 700);
+  }
+  
+  /* Mensagem de erro */
+  .cycle-error-message {
+    padding: 12px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c2c7;
+    border-radius: var(--border-radius-default, 10px);
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    font-size: var(--font-size-main, 1rem);
+    text-align: center;
+  }
+  
+  /* Botão de criar ciclo */
+  .cycle-create-button {
+    width: 100%;
+    max-width: 300px;
+    height: 45px;
+    border-radius: var(--border-radius-default, 10px);
+    background: var(--primary, #9C2F31);
+    border: none;
+    color: white;
+    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+    font-size: 18px;
+    font-weight: var(--font-weight-bold, 700);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    align-self: center;
+    margin-top: auto;
+  }
+  
+  .cycle-create-button:hover:not(:disabled) {
+    background: var(--light-red, #B61B23);
+  }
+  
+  .cycle-create-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 480px) {
+    .cycle-offcanvas {
+      width: 100vw;
+      right: 0;
+    }
+  
+    .cycle-offcanvas-content {
+      padding: 60px 20px 32px 20px;
+    }
+  
+    .cycle-summary {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+  
+    .cycle-offcanvas-backdrop {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+  
+    .cycle-offcanvas-backdrop.open {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+  }
+  
+  @media (max-width: 768px) and (min-width: 481px) {
+    .cycle-offcanvas {
+      width: 90vw;
+    }
+  
+    .cycle-offcanvas-backdrop {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+  
+    .cycle-offcanvas-backdrop.open {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .cycle-offcanvas {
+      transition: transform 0.2s ease;
+    }
+    .cycle-offcanvas-backdrop {
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  }
