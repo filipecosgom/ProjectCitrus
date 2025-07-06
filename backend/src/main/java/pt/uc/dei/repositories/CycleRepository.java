@@ -46,7 +46,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
 
     public List<CycleEntity> getAllCycles() {
         TypedQuery<CycleEntity> query = em.createQuery(
-                "SELECT DISTINCT c FROM CycleEntity c LEFT JOIN FETCH c.evaluations",
+                "SELECT DISTINCT c FROM CycleEntity c LEFT JOIN FETCH c.evaluations ORDER BY c.startDate DESC",
                 CycleEntity.class
         );
         return query.getResultList();
@@ -245,7 +245,6 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
             cycle.fetch("evaluations", JoinType.LEFT);
             cq.select(cycle).distinct(true);
 
-
             List<Predicate> predicates = new ArrayList<>();
             
             if (state != null) {
@@ -268,6 +267,7 @@ public class CycleRepository extends AbstractRepository<CycleEntity> {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));
             }
             
+            // MUDANÇA: Ordenar por startDate descendente (mais recente primeiro)
             cq.orderBy(cb.desc(cycle.get("startDate")));
             
             TypedQuery<CycleEntity> query = em.createQuery(cq);
