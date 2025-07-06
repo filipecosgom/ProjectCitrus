@@ -100,6 +100,40 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     return state === "OPEN" ? t("cycles.statusOpen") : t("cycles.statusClosed");
   };
 
+  // MUDANÇA: Função para mapear estados das appraisals
+  const getAppraisalStatusText = (state) => {
+    switch (state) {
+      case "COMPLETED":
+        return t("cycles.statusCompleted");
+      case "IN_PROGRESS":
+        return t("cycles.statusInProgress");
+      case "CLOSED":
+        return t("cycles.statusClosed");
+      default:
+        return t("cycles.statusPending");
+    }
+  };
+
+  // MUDANÇA: Função para obter o nome do usuário da appraisal
+  const getAppraisalUserName = (appraisal) => {
+    // Primeiro tenta appraisedUser (estrutura do backend)
+    if (appraisal.appraisedUser?.name) {
+      return `${appraisal.appraisedUser.name} ${
+        appraisal.appraisedUser.surname || ""
+      }`.trim();
+    }
+    if (appraisal.appraisedUser?.email) {
+      return appraisal.appraisedUser.email;
+    }
+
+    // Fallback para estrutura antiga (caso ainda venha assim)
+    if (appraisal.user?.name) {
+      return appraisal.user.name;
+    }
+
+    return t("cycles.na");
+  };
+
   if (!shouldRender || !cycle) return null;
 
   return (
@@ -161,6 +195,7 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
                     {t("cycles.appraisals")}:
                   </span>
                   <span className="cycle-details-summary-value">
+                    {/* MUDANÇA: Usar evaluations em vez de evaluations */}
                     {cycle.evaluations?.length || 0}
                   </span>
                 </div>
@@ -175,21 +210,20 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
               </div>
             </div>
 
+            {/* MUDANÇA: Usar evaluations e adaptar estrutura */}
             {cycle.evaluations && cycle.evaluations.length > 0 && (
               <div className="cycle-details-section">
                 <h3 className="cycle-details-section-title">
                   {t("cycles.appraisalsList")}
                 </h3>
                 <div className="cycle-details-evaluations">
-                  {cycle.evaluations.map((evaluation, index) => (
+                  {cycle.evaluations.map((appraisal, index) => (
                     <div key={index} className="cycle-details-evaluation-item">
                       <span className="cycle-details-evaluation-user">
-                        {evaluation.user?.name || t("cycles.na")}
+                        {getAppraisalUserName(appraisal)}
                       </span>
                       <span className="cycle-details-evaluation-status">
-                        {evaluation.completed
-                          ? t("cycles.statusCompleted")
-                          : t("cycles.statusPending")}
+                        {getAppraisalStatusText(appraisal.state)}
                       </span>
                     </div>
                   ))}
