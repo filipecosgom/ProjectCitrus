@@ -360,6 +360,15 @@ const en = {
     creating: "Creating...",
     errorInvalidDateRange: "Select a valid date range",
     errorCreateCycle: "Error creating cycle",
+
+    // Novas traduções para o CycleDetailsOffcanvas
+    dateRange: "Date Range",
+    summary: "Summary",
+    duration: "Duration",
+    status: "Status",
+    evaluationsList: "Evaluations List",
+    statusCompleted: "Completed",
+    statusPending: "Pending",
   },
 
   common: {

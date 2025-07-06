@@ -367,6 +367,19 @@ const pt = {
     creating: "A criar...",
     errorInvalidDateRange: "Selecione um período válido",
     errorCreateCycle: "Erro ao criar ciclo",
+
+    // Novas traduções para o CycleDetailsOffcanvas
+    dateRange: "Período de Datas",
+    summary: "Resumo",
+    duration: "Duração",
+    status: "Estado",
+    evaluationsList: "Lista de Avaliações",
+    statusCompleted: "Concluído",
+    statusPending: "Pendente",
+
+    // Correção da tradução existente
+    cycleClosedSuccessToast:
+      "Ciclo {id} fechado com sucesso! ({startDate} - {endDate})",
   },
 
   common: {
