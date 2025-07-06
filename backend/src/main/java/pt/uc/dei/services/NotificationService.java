@@ -133,4 +133,13 @@ public class NotificationService {
             return 0;
         }
     }
+
+    public boolean markMessageNotificationsAsRead(Long userId) {
+        try {
+            return notificationRepository.markMessageNotificationsAsRead(userId);
+        } catch (Exception e) {
+            logger.error("Error marking message notifications as read for user {}", userId, e);
+            return false;
+        }
+    }
 }

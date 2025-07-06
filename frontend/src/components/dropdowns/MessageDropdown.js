@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { fetchConversationPreviews } from "../../api/messagesApi";
+import { markMessageNotificationsAsRead } from "../../api/notificationsApi";
 import UserIcon from "../userIcon/UserIcon"; // ✅ ADICIONAR IMPORT
 import "./NotificationDropdown.css";
 
@@ -18,6 +19,17 @@ export default function MessageDropdown({
   useEffect(() => {
     if (isVisible) {
       loadConversations();
+
+      // ✅ MARCAR NOTIFICAÇÕES MESSAGE COMO LIDAS
+      markMessageNotificationsAsRead()
+        .then((result) => {
+          if (result.success) {
+            console.log("✅ Notificações MESSAGE marcadas como lidas");
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Erro ao marcar notificações:", error);
+        });
 
       // Auto-refresh a cada 30 segundos
       const interval = setInterval(() => {
