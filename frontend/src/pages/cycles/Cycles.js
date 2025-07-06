@@ -3,7 +3,12 @@ import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { fetchCycles, closeCycle } from "../../api/cyclesApi";
 import CycleOffcanvas from "../../components/cycleOffcanvas/CycleOffcanvas";
-import CycleCard from "../../components/cycleCard/cycleCard";
+import CycleCard from "../../components/cycleCard/CycleCard";
+import ConfirmModal from "../../components/confirmModal/ConfirmModal";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../utils/toastConfig/toastConfig";
 import "./Cycles.css";
 
 const Cycles = () => {
@@ -20,6 +25,10 @@ const Cycles = () => {
     startDateFrom: null,
     startDateTo: null,
   });
+
+  // Estados para o modal de confirmação
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [cycleToClose, setCycleToClose] = useState(null);
 
   const cyclesPerPage = 6;
 
@@ -56,23 +65,45 @@ const Cycles = () => {
     }
   };
 
-  const handleCloseCycle = async (cycleId) => {
-    if (!window.confirm(t("cycles.confirmCloseCycle"))) {
-      return;
-    }
+  const handleCloseCycle = (cycleId) => {
+    // Abrir modal de confirmação em vez de window.confirm
+    setCycleToClose(cycleId);
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmCloseCycle = async () => {
+    if (!cycleToClose) return;
+
+    // Encontrar o ciclo que está sendo fechado para mostrar informações específicas
+    const cycleData = cycles.find((cycle) => cycle.id === cycleToClose);
 
     try {
-      const response = await closeCycle(cycleId);
+      const response = await closeCycle(cycleToClose);
 
       if (response.success) {
         loadCycles();
-        alert(t("cycles.cycleClosedSuccess"));
+        // Toast de sucesso com informações específicas do ciclo
+        showSuccessToast(
+          t("cycles.cycleClosedSuccessToast", {
+            id: cycleData?.id || cycleToClose,
+            startDate: cycleData?.startDate
+              ? new Date(cycleData.startDate).toLocaleDateString("pt-PT")
+              : "",
+            endDate: cycleData?.endDate
+              ? new Date(cycleData.endDate).toLocaleDateString("pt-PT")
+              : "",
+          })
+        );
       } else {
-        alert(response.error?.message || t("cycles.errorClosingCycle"));
+        showErrorToast(
+          response.error?.message || t("cycles.errorClosingCycle")
+        );
       }
     } catch (err) {
-      alert(t("cycles.errorClosingCycle"));
+      showErrorToast(t("cycles.errorClosingCycle"));
       console.error("Error closing cycle:", err);
+    } finally {
+      setCycleToClose(null);
     }
   };
 
@@ -190,6 +221,20 @@ const Cycles = () => {
         isOpen={isOffcanvasOpen}
         onClose={() => setIsOffcanvasOpen(false)}
         onCycleCreated={handleCycleCreated}
+      />
+
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setCycleToClose(null);
+        }}
+        onConfirm={confirmCloseCycle}
+        title={t("cycles.confirmCloseCycleTitle")}
+        message={t("cycles.confirmCloseCycle")}
+        confirmText={t("cycles.closeCycle")}
+        cancelText={t("common.cancel")}
+        variant="danger"
       />
     </div>
   );

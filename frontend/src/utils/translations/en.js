@@ -339,8 +339,12 @@ const en = {
     statusClosed: "Closed",
     cycleTitle: "Cycle {id}",
     closeCycle: "Close Cycle",
-    confirmCloseCycle: "Are you sure you want to close this cycle?",
+    confirmCloseCycleTitle: "Close Cycle",
+    confirmCloseCycle:
+      "Are you sure you want to close this cycle? This action cannot be undone.",
     cycleClosedSuccess: "Cycle closed successfully!",
+    cycleClosedSuccessToast:
+      "Cycle {id} closed successfully! ({startDate} - {endDate})",
     errorClosingCycle: "Error closing cycle",
     errorLoadingCycles: "Error loading cycles",
     loading: "Loading cycles...",
@@ -356,6 +360,12 @@ const en = {
     creating: "Creating...",
     errorInvalidDateRange: "Select a valid date range",
     errorCreateCycle: "Error creating cycle",
+  },
+
+  common: {
+    confirm: "Confirm",
+    cancel: "Cancel",
+    confirmMessage: "Are you sure you want to proceed?",
   },
 };
 export default en;

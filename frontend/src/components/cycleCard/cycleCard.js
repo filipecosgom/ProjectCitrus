@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import "./cycleCard.css";
+import "./CycleCard.css";
 
 const CycleCard = ({ cycle, onCloseCycle }) => {
   const { t } = useTranslation();

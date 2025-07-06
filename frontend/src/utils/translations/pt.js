@@ -347,8 +347,11 @@ const pt = {
     statusClosed: "Fechado",
     cycleTitle: "Ciclo {id}",
     closeCycle: "Fechar Ciclo",
-    confirmCloseCycle: "Tem certeza que deseja fechar este ciclo?",
-    cycleClosedSuccess: "Ciclo fechado com sucesso!",
+    confirmCloseCycleTitle: "Fechar Ciclo",
+    confirmCloseCycle:
+      "Tem certeza que deseja fechar este ciclo? Esta ação não pode ser desfeita.",
+    cycleClosedSuccess:
+      "Ciclo {id} fechado com sucesso! ({startDate} - {endDate})",
     errorClosingCycle: "Erro ao fechar ciclo",
     errorLoadingCycles: "Erro ao carregar ciclos",
     loading: "A carregar ciclos...",
@@ -364,6 +367,12 @@ const pt = {
     creating: "A criar...",
     errorInvalidDateRange: "Selecione um período válido",
     errorCreateCycle: "Erro ao criar ciclo",
+  },
+
+  common: {
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    confirmMessage: "Tem certeza que deseja prosseguir?",
   },
 };
 
