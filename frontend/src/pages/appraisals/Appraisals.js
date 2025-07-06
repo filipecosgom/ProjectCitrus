@@ -16,7 +16,6 @@ import {
 } from "../../utils/appraisalsSearchUtils";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 import useAuthStore from "../../stores/useAuthStore";
-import { GrDocumentPdf } from "react-icons/gr";
 import { handleGeneratePdfOfAppraisals } from "../../handles/handleGeneratePdfOfAppraisals";
 import handleNotification from "../../handles/handleNotification";
 

@@ -159,7 +159,8 @@ public class AppraisalController {
          * @return Response with list of filtered appraisal DTOs
          */
         @GET
-        public Response getAppraisalsWithFilters (@QueryParam("appraisedUserId") Long appraisedUserId,
+        public Response getAppraisalsWithFilters (
+                @QueryParam("appraisedUserId") Long appraisedUserId,
                 @QueryParam("appraisedUserName") String appraisedUserName,
                 @QueryParam("appraisedUserEmail") String appraisedUserEmail,
                 @QueryParam("appraisingUserId") Long appraisingUserId,
@@ -170,7 +171,25 @@ public class AppraisalController {
                 @QueryParam("parameter") @DefaultValue("creationDate") String parameterStr,
                 @QueryParam("order") @DefaultValue("DESCENDING") String orderStr,
                 @QueryParam("limit") @DefaultValue("10") Integer limit,
-                @QueryParam("offset") @DefaultValue("0") Integer offset){
+                @QueryParam("offset") @DefaultValue("0") Integer offset,
+                @CookieParam("jwt") String jwtToken){
+            if(!JWTUtil.isUserAdmin(jwtToken)){
+                Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+                if((appraisedUserId != null) && appraisedUserId != userId){
+                    LOGGER.warn("User ID {} tried to access appraisals of {}", userId, appraisedUserId);
+                    return Response.status(Response.Status.FORBIDDEN)
+                            .entity(new ApiResponse(false, "You are not authorized to access these appraisals",
+                                    "errorUnauthorized", null))
+                            .build();
+                }
+                if((appraisingUserId != null) && appraisingUserId != userId){
+                    LOGGER.warn("User ID {} tried to access appraisals of manager {}", userId, appraisingUserId);
+                    return Response.status(Response.Status.FORBIDDEN)
+                            .entity(new ApiResponse(false, "You are not authorized to access these appraisals",
+                                    "errorUnauthorized", null))
+                            .build();
+                }
+            }
             AppraisalState state = appraisalStateStr != null
                     ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr))
                     : null;

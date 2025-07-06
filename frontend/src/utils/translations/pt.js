@@ -242,6 +242,12 @@ const pt = {
   appraisalStateClosed: "Fechado",
   appraisalsPdfExportError: "Falha ao exportar avaliações para PDF. Por favor, tente novamente mais tarde.",
 
+  appraisalSortControlsUser: "Utilizador",
+  appraisalSortControlsScore: "Score",
+  appraisalSortControlsManager: "Manager",
+  appraisalSortControlsEndDate: "Data de fim",
+  appraisalSortControlsState: "Estado",
+
   //SearchBar
   searchBarSearchButton: "Pesquisar",
   searchBarPlaceholder: "Pesquisar por {type}…",

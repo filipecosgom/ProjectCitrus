@@ -155,3 +155,25 @@
   color: var(--primary);
   font-size: 42px;
 }
+
+/*----------------------------------------*/
+/*----------------CSV BUTTON------------------*/
+/*----------------------------------------*/
+.searchBar-csvButton {
+  background: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.searchBar-csvIcon:hover {
+  background: rgb(238, 238, 238);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+.searchBar-csvIcon {
+  color: var(--primary);
+  font-size: 42px;
+}

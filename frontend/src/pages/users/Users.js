@@ -22,6 +22,7 @@ import {
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 import handleNotification from "../../handles/handleNotification";
+import { handleGetUsersCSV } from "../../handles/handleGetUsers";
 
 export default function Users() {
   const { t } = useTranslation();
@@ -232,6 +233,35 @@ export default function Users() {
     }
   };
 
+  // CSV export handler
+  const handleGetCSV = async () => {
+    // Build params from current search and sort
+    let params = {
+      ...searchParams,
+      parameter: sort.sortBy,
+      order: sort.sortOrder,
+      // Optionally, add language param here if needed (e.g., language: i18n.language)
+    };
+    // Remove pagination params
+    delete params.limit;
+    delete params.offset;
+    const result = await handleGetUsersCSV(params);
+    if (result.success) {
+      const url = window.URL.createObjectURL(
+        new Blob([result.blob], { type: result.contentType || "text/csv" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "users.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } else {
+      handleNotification("error", "usersCsvExportError");
+    }
+  };
+
   return (
     <div className="users-container">
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
@@ -239,6 +269,7 @@ export default function Users() {
         <SearchBar
           onSearch={setSearchingParameters}
           {...usersFilters}
+          onExportCsv={handleGetCSV}
           actions={
             isAdmin && (
               <button

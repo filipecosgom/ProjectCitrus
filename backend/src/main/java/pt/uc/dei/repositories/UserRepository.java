@@ -117,7 +117,7 @@ public class UserRepository extends AbstractRepository<UserEntity> {
     public List<UserEntity> getUsers(Long id, String email, String name, String phone,
                                      AccountState accountState, String roleStr, Office office,
                                      Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
-                                     Parameter parameter, OrderBy orderBy, int offset, int limit) {
+                                     Parameter parameter, OrderBy orderBy, Integer offset, Integer limit) {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEntity> query = cb.createQuery(UserEntity.class);
@@ -213,9 +213,6 @@ public class UserRepository extends AbstractRepository<UserEntity> {
             query.orderBy(orderBy == OrderBy.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
         }
         TypedQuery<UserEntity> typedQuery = em.createQuery(query);
-        typedQuery.setFirstResult(offset);
-        typedQuery.setMaxResults(limit);
-
         return typedQuery.getResultList();
     }
 

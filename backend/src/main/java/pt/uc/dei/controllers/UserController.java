@@ -39,7 +39,8 @@ public class UserController {
     @Inject
     UserService userService;
 
-    @Context Request request;
+    @Context
+    Request request;
 
     @Inject
     AuthenticationService authenticationService;
@@ -189,7 +190,7 @@ public class UserController {
     /**
      * Updates a user's information.
      *
-     * @param id User ID.
+     * @param id             User ID.
      * @param updatedUserDTO DTO with updated user data.
      * @return HTTP 200 (OK) if updated, or error response.
      */
@@ -225,7 +226,7 @@ public class UserController {
     /**
      * Uploads or updates a user's avatar.
      *
-     * @param id User ID.
+     * @param id   User ID.
      * @param form Multipart form containing the avatar file.
      * @return HTTP 200 (OK) if uploaded, or error response.
      */
@@ -276,7 +277,7 @@ public class UserController {
     /**
      * Retrieves a user's avatar image.
      *
-     * @param id User ID.
+     * @param id      User ID.
      * @param request HTTP request context.
      * @param headers HTTP headers.
      * @return The avatar image or error response.
@@ -348,17 +349,17 @@ public class UserController {
     /**
      * Retrieves users with optional filters and pagination.
      *
-     * @param id User ID filter.
-     * @param email Email filter.
-     * @param name Name filter.
-     * @param phone Phone filter.
+     * @param id              User ID filter.
+     * @param email           Email filter.
+     * @param name            Name filter.
+     * @param phone           Phone filter.
      * @param accountStateStr Account state filter.
-     * @param roleStr Role filter.
-     * @param officeStr Office filter.
-     * @param parameterStr Sort parameter.
-     * @param orderStr Sort order.
-     * @param offset Pagination offset.
-     * @param limit Pagination limit.
+     * @param roleStr         Role filter.
+     * @param officeStr       Office filter.
+     * @param parameterStr    Sort parameter.
+     * @param orderStr        Sort order.
+     * @param offset          Pagination offset.
+     * @param limit           Pagination limit.
      * @return HTTP 200 (OK) with users or message if none found.
      */
     @GET
@@ -376,8 +377,23 @@ public class UserController {
                              @QueryParam("parameter") @DefaultValue("name") String parameterStr,
                              @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
-                             @QueryParam("limit") @DefaultValue("10") int limit) {
+                             @QueryParam("limit") @DefaultValue("10") int limit,
+                             @CookieParam("jwt") String jwtToken) {
         LOGGER.info("User list request with filters: id={}, email={}, name={}, phone={}", id, email, name, phone);
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            LOGGER.warn("Missing JWT token in user list request");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Missing token", "errorMissingToken", null))
+                    .build();
+        }
+        if(accountStateStr != null && !accountStateStr.isEmpty()) {
+            if(!JWTUtil.isUserAdmin(jwtToken)){
+                LOGGER.warn("Unauthorized access to account state filter without admin privileges");
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity(new ApiResponse(false, "Forbidden", "errorForbidden", null))
+                        .build();
+            }
+        }
         AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;
         Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;
         Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
@@ -393,5 +409,70 @@ public class UserController {
         }
         LOGGER.info("Returning {} users", ((List<?>) userData.get("users")).size());
         return Response.ok(new ApiResponse(true, "Users retrieved successfully", null, userData)).build();
+    }
+
+    /**
+     * Exports users as CSV with all filters and sorting (no pagination).
+     *
+     * @param id              User ID filter.
+     * @param email           Email filter.
+     * @param name            Name filter.
+     * @param phone           Phone filter.
+     * @param accountStateStr Account state filter.
+     * @param roleStr         Role filter.
+     * @param officeStr       Office filter.
+     * @param parameterStr    Sort parameter.
+     * @param orderStr        Sort order.
+     * @param jwtToken        JWT authentication token.
+     * @return CSV file with all matching users.
+     */
+    @GET
+    @Path("/export")
+    @Produces("text/csv")
+    public Response exportUsersToCSV(
+            @QueryParam("id") Long id,
+            @QueryParam("email") String email,
+            @QueryParam("name") String name,
+            @QueryParam("phone") String phone,
+            @QueryParam("accountState") String accountStateStr,
+            @QueryParam("role") String roleStr,
+            @QueryParam("office") String officeStr,
+            @QueryParam("isManager") Boolean userIsManager,
+            @QueryParam("isAdmin") Boolean userIsAdmin,
+            @QueryParam("isManaged") Boolean userIsManaged,
+            @QueryParam("parameter") @DefaultValue("name") String parameterStr,
+            @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
+            @QueryParam("language") @DefaultValue("EN") String languageStr,
+            @CookieParam("jwt") String jwtToken) {
+        LOGGER.info("CSV export request for users with filters: id={}, email={}, name={}, phone={}", id, email, name, phone);
+        boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            LOGGER.warn("Missing JWT token in user CSV export request");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Missing token")
+                    .build();
+        }
+        if(accountStateStr != null && !accountStateStr.isEmpty()) {
+            if(!JWTUtil.isUserAdmin(jwtToken)){
+                LOGGER.warn("Unauthorized access to account state filter without admin privileges");
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity("Forbidden")
+                        .build();
+            }
+        }
+        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;
+        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;
+        Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));
+        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
+
+        // Call the service to generate CSV (to be implemented)
+        byte[] csvData = userService.generateCSV(id, email, name, phone,
+                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged, language,
+                parameter, orderBy, isAdmin);
+
+        return Response.ok(new ByteArrayInputStream(csvData))
+                .header("Content-Disposition", "attachment; filename=users.csv")
+                .build();
     }
 }

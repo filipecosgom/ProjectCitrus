@@ -4,7 +4,7 @@ import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
 import { useTranslation } from "react-i18next";
-import { GrDocumentPdf } from "react-icons/gr";
+import { GrDocumentPdf, GrDocumentCsv } from "react-icons/gr";
 
 // Now generic: accepts filtersConfig, filterOptions, defaultValues, limitOptions
 const SearchBar = ({
@@ -16,6 +16,7 @@ const SearchBar = ({
   tristateFilters = [],
   actions,
   onExportPdf,
+  onExportCsv,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -121,16 +122,27 @@ const SearchBar = ({
         )}
       </div>
       {/* PDF Export Button */}
-        {onExportPdf && (
-          <button
-            type="button"
-            className="searchBar-pdfButton"
-            onClick={onExportPdf}
-            title={t("exportPdf")}
-          >
-            <GrDocumentPdf className= "searchBar-pdfIcon" />
-          </button>
-        )}
+      {onExportPdf && (
+        <button
+          type="button"
+          className="searchBar-pdfButton"
+          onClick={onExportPdf}
+          title={t("exportPdf")}
+        >
+          <GrDocumentPdf className="searchBar-pdfIcon" />
+        </button>
+      )}
+      {/* CSV Export Button */}
+      {onExportCsv && (
+        <button
+          type="button"
+          className="searchBar-csvButton"
+          onClick={onExportCsv}
+          title={t("exportCsv")}
+        >
+          <GrDocumentCsv className="searchBar-csvIcon" />
+        </button>
+      )}
       {/* Keep actions for backward compatibility */}
       {actions && <div className="searchBar-actions">{actions}</div>}
     </form>
