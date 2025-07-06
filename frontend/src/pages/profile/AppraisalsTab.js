@@ -15,6 +15,7 @@ import {
 } from "../../utils/appraisalsSearchUtils";
 import useAuthStore from "../../stores/useAuthStore";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
+import handleNotification from "../../handles/handleNotification";
 
 export default function AppraisalsTab() {
   const { t } = useTranslation();
@@ -152,7 +153,7 @@ export default function AppraisalsTab() {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } else {
-      alert(t("exportPdfError") || "Failed to generate PDF");
+      handleNotification("error", "appraisalsPdfExportError");
     }
   };
 

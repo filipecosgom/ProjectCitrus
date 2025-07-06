@@ -172,6 +172,7 @@ export default function Users() {
 
   // ✅ HANDLER para atribuir manager COM DEBUGGING
   const handleAssignManagerAction = async (assignments) => {
+    console.log("🔧 Assigning manager:", assignments);
     try {
       setResultsLoading(true);
 
@@ -192,8 +193,12 @@ export default function Users() {
       if (result.success) {
         // ✅ FEEDBACK SUCCESS - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;
-        alert(
-          `✅ Success!\n${assignments.newManagerName} is now the manager of ${totalSuccessful} user(s)`
+        handleNotification(
+          "success",
+          t("users.managerAssignSuccess", {
+            managerName: assignments.newManagerName,
+            total: totalSuccessful,
+          })
         );
       } else {
         console.error("❌ Manager assignment partially failed:", result);

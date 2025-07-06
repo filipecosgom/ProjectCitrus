@@ -218,6 +218,7 @@ const en = {
     avatarLoading: "Loading...",
     viewProfile: "View Profile",
     noUsersSelected: "No users selected",
+    managerAssignSuccess: "{managerName} is now the manager of {total} user(s)",
   },
   //Usercard
   userCardNoManager: "No manager",
@@ -227,6 +228,7 @@ const en = {
   appraisalStateCompleted: "Complete",
   appraisalStateInProgress: "In Progress",
   appraisalStateClosed: "Closed",
+  appraisalsPdfExportError: "Failed to export appraisals to PDF. Please try again later.",
 
   //Searchbar
   searchBarSearchButton: "Search",
@@ -328,6 +330,7 @@ const en = {
     completeAppraisals: "Complete",
     pdfGenerated: "PDF generated successfully. You can download it now.",
     pdfGenerationFailed: "Failed to generate PDF. Please try again later.",
+
   },
 
 };
