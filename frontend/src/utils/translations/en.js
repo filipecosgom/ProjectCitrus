@@ -371,6 +371,8 @@ const en = {
     evaluationsList: "Evaluations List",
     statusCompleted: "Completed",
     statusPending: "Pending",
+    statusInProgress: "In Progress",
+    userId: "User",
   },
 
   common: {

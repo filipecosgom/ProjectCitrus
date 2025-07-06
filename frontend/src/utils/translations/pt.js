@@ -380,6 +380,10 @@ const pt = {
     // Correção da tradução existente
     cycleClosedSuccessToast:
       "Ciclo {id} fechado com sucesso! ({startDate} - {endDate})",
+
+    // Adicionar traduções em falta
+    statusInProgress: "Em Progresso",
+    userId: "Utilizador",
   },
 
   common: {
