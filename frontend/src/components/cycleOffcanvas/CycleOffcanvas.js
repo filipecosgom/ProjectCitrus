@@ -94,9 +94,18 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   const calculateDays = () => {
     if (!selectedRange || selectedRange.length !== 2) return 0;
     const [start, end] = selectedRange;
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays + 1; // +1 para incluir o primeiro dia
+
+    // Se for a mesma data, retorna 1 dia
+    if (start.getTime() === end.getTime()) {
+      return 1;
+    }
+
+    // Calcula a diferença em milissegundos
+    const diffTime = end.getTime() - start.getTime();
+    // Converte para dias e adiciona 1 para incluir o primeiro dia
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    return diffDays;
   };
 
   const formatDate = (date) => {

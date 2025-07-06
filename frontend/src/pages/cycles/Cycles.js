@@ -3,7 +3,7 @@ import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { fetchCycles, closeCycle } from "../../api/cyclesApi";
 import CycleOffcanvas from "../../components/cycleOffcanvas/CycleOffcanvas";
-import CycleCard from "../../components/cycleCard/CycleCard";
+import CycleCard from "../../components/cycleCard/cycleCard";
 import "./Cycles.css";
 
 const Cycles = () => {
