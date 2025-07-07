@@ -111,8 +111,12 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             }
 
             TypedQuery<CourseEntity> typedQuery = em.createQuery(cq);
-            typedQuery.setFirstResult(offset);
-            typedQuery.setMaxResults(limit);
+            if(offset != null && offset >= 0) {
+                typedQuery.setFirstResult(offset);
+            }
+            if(limit != null && limit >= 0) {
+                typedQuery.setMaxResults(limit);
+            }
             return typedQuery.getResultList();
         } catch (Exception e) {
             LOGGER.error("Error finding courses with filters", e);
