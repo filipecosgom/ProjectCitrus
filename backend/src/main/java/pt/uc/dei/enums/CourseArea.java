@@ -10,8 +10,29 @@ package pt.uc.dei.enums;
  * </ul>
  */
 public enum CourseArea {
-    FRONTEND,
-    BACKEND,
-    INFRASTRUCTURE,
-    UX_UI;
+    FRONTEND("frontend"),
+    BACKEND("backend"),
+    INFRASTRUCTURE("infrastructure"),
+    UX_UI("ux_ui");
+
+    private final String fieldName;
+
+    CourseArea(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public static CourseArea fromFieldName(String input) {
+        if (input == null || input.trim().isEmpty()) return null;
+        String trimmed = input.trim();
+        for (CourseArea l : values()) {
+            if (l.fieldName.equalsIgnoreCase(trimmed) || (l.toString().equalsIgnoreCase(trimmed))) {
+                return l;
+            }
+        }
+        throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
 }

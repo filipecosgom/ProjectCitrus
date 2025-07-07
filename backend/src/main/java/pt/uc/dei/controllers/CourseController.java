@@ -12,8 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import pt.uc.dei.annotations.AdminOnly;
 import pt.uc.dei.dtos.FileUploadDTO;
-import pt.uc.dei.enums.CourseArea;
-import pt.uc.dei.enums.Language;
+import pt.uc.dei.enums.*;
 import pt.uc.dei.services.CourseService;
 import pt.uc.dei.services.CourseFileService;
 import pt.uc.dei.utils.ApiResponse;
@@ -28,6 +27,7 @@ import java.util.Map;
 import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.StreamingOutput;
+import pt.uc.dei.utils.SearchUtils;
 
 /**
  * REST Controller for managing course-related operations.
@@ -49,10 +49,10 @@ public class CourseController {
     /**
      * Retrieves courses with filtering options.
      *
-     * @param area     Optional filter by course area
-     * @param language Optional filter by course language
-     * @param adminId  Optional filter by admin ID
-     * @param isActive Optional filter by active status
+     * @param areaStr     Optional filter by course area
+     * @param languageStr Optional filter by course language
+     * @param adminName  Optional filter by admin name
+     * @param courseIsActive Optional filter by active status
      * @param limit    Maximum number of results
      * @param offset   Starting position for pagination
      * @return Response with list of filtered course DTOs
@@ -62,16 +62,27 @@ public class CourseController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getCoursesWithFilters(
-            @QueryParam("area") CourseArea area,
-            @QueryParam("language") Language language,
-            @QueryParam("adminId") Long adminId,
-            @QueryParam("isActive") Boolean isActive,
-            @QueryParam("limit") @DefaultValue("10") Integer limit,
-            @QueryParam("offset") @DefaultValue("0") Integer offset) {
+            @QueryParam("id") Long id,
+            @QueryParam("title") String title,
+            @QueryParam("duration") Integer duration,
+            @QueryParam("description") String description,
+            @QueryParam("area") String areaStr,
+            @QueryParam("language") String languageStr,
+            @QueryParam("adminName") String adminName,
+            @QueryParam("courseIsActive") Boolean courseIsActive,
+            @QueryParam("parameter") @DefaultValue("id") String parameterStr,
+            @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
+            @QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("limit") @DefaultValue("10") Integer limit) {
+        Language language = languageStr != null ? Language.fromFieldName(languageStr) : null;
+        CourseArea area = areaStr != null ? CourseArea.fromFieldName(SearchUtils.normalizeString(areaStr)) : null;
+        CourseParameter parameter = CourseParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
         try {
             LOGGER.debug("Retrieving courses with filters");
-            Map<String, Object> courseData = courseService.getCoursesWithFilters(area, language, adminId, isActive,
-                    limit, offset);
+            Map<String, Object> courseData = courseService.getCoursesWithFilters(
+                    id, title, duration, description, area, language, adminName, courseIsActive,
+                    parameter, orderBy, offset, limit);
             return Response.ok(new ApiResponse(true, "Courses retrieved successfully", "success", courseData))
                     .build();
         } catch (Exception e) {
