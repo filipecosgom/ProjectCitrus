@@ -213,8 +213,12 @@ public class UserRepository extends AbstractRepository<UserEntity> {
             query.orderBy(orderBy == OrderBy.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));
         }
         TypedQuery<UserEntity> typedQuery = em.createQuery(query);
-        typedQuery.setFirstResult(offset);
-        typedQuery.setMaxResults(limit);
+        if(offset != null && offset >= 0) {
+            typedQuery.setFirstResult(offset);
+        }
+        if(limit != null && limit > 0) {
+            typedQuery.setMaxResults(limit);
+        }
         return typedQuery.getResultList();
     }
 
