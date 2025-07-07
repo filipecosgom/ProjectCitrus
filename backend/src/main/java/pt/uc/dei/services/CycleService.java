@@ -302,16 +302,14 @@ public class CycleService implements Serializable {
     }
 
     /**
-     * Closes a cycle, changing its state to CLOSED.
+     * Validates if a cycle can be closed by checking if all appraisals are in CLOSED state.
      *
-     * @param cycleId The cycle ID
-     * @return The updated cycle DTO
+     * @param cycleId The cycle ID to validate
+     * @return Map containing validation result and details
      * @throws IllegalArgumentException If cycle not found
-     * @throws IllegalStateException If cycle is already closed
      */
-    @Transactional
-    public CycleDTO closeCycle(Long cycleId) {
-        LOGGER.info("Closing cycle with ID: {}", cycleId);
+    public Map<String, Object> canCloseCycle(Long cycleId) {
+        LOGGER.info("Validating if cycle {} can be closed", cycleId);
 
         CycleEntity cycle = cycleRepository.find(cycleId);
         if (cycle == null) {
@@ -322,9 +320,67 @@ public class CycleService implements Serializable {
             throw new IllegalStateException("Cycle is already closed");
         }
 
+        // Count appraisals that are NOT in CLOSED state
+        long inProgressCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()
+                .filter(appraisal -> appraisal.getState() == AppraisalState.IN_PROGRESS)
+                .count();
+        
+        long completedCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()
+                .filter(appraisal -> appraisal.getState() == AppraisalState.COMPLETED)
+                .count();
+
+        long totalNonClosedCount = inProgressCount + completedCount;
+        long totalAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId).size();
+
+        boolean canClose = totalNonClosedCount == 0;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("canClose", canClose);
+        result.put("totalAppraisals", totalAppraisals);
+        result.put("inProgressCount", inProgressCount);
+        result.put("completedCount", completedCount);
+        result.put("nonClosedCount", totalNonClosedCount);
+
+        if (!canClose) {
+            String reason = String.format("Cannot close cycle: %d appraisal(s) are not closed (%d in progress, %d completed)", 
+                                        totalNonClosedCount, inProgressCount, completedCount);
+            result.put("reason", reason);
+            LOGGER.warn("Cycle {} cannot be closed: {} appraisals not closed", cycleId, totalNonClosedCount);
+        } else {
+            result.put("reason", "All appraisals are closed");
+            LOGGER.info("Cycle {} can be closed: all appraisals are closed", cycleId);
+        }
+
+        return result;
+    }
+
+    /**
+     * Closes a cycle, changing its state to CLOSED.
+     * Now includes validation to ensure all appraisals are closed.
+     *
+     * @param cycleId The cycle ID
+     * @return The updated cycle DTO
+     * @throws IllegalArgumentException If cycle not found
+     * @throws IllegalStateException If cycle is already closed or has pending appraisals
+     */
+    @Transactional
+    public CycleDTO closeCycle(Long cycleId) {
+        LOGGER.info("Attempting to close cycle with ID: {}", cycleId);
+
+        // First validate if cycle can be closed
+        Map<String, Object> validation = canCloseCycle(cycleId);
+        boolean canClose = (Boolean) validation.get("canClose");
+        
+        if (!canClose) {
+            String reason = (String) validation.get("reason");
+            LOGGER.warn("Cannot close cycle {}: {}", cycleId, reason);
+            throw new IllegalStateException(reason);
+        }
+
+        CycleEntity cycle = cycleRepository.find(cycleId);
         cycle.setState(CycleState.CLOSED);
         cycleRepository.merge(cycle);
-        LOGGER.info("Closed cycle with ID: {}", cycleId);
+        LOGGER.info("Successfully closed cycle with ID: {}", cycleId);
 
         return cycleMapper.toDto(cycle);
     }
