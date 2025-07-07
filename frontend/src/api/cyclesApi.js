@@ -119,3 +119,24 @@ export const fetchActiveUsersCount = async () => {
     };
   }
 };
+
+/**
+ * Validates if a cycle can be closed
+ * @param {number} cycleId - The cycle ID
+ * @returns {Promise<Object>} API response with validation details
+ */
+export const canCloseCycle = async (cycleId) => {
+  try {
+    const response = await apiClient.get(`/cycles/${cycleId}/can-close`);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error("Error validating cycle closure:", error);
+    return {
+      success: false,
+      error: error.response?.data || error,
+    };
+  }
+};
