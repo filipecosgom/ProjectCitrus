@@ -151,4 +151,14 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             return 0L;
         }
     }
+
+    // Update: find by id (now Long id is PK)
+    public CourseEntity findCourseById(Long id) {
+        try {
+            return em.find(CourseEntity.class, id);
+        } catch (Exception e) {
+            LOGGER.error("Error finding course by id: {}", id, e);
+            return null;
+        }
+    }
 }

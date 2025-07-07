@@ -164,8 +164,6 @@
   border: none;
   display: flex;
   align-items: center;
-  margin-left: 0.5rem;
-  padding: 0.25rem 0.5rem;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -174,6 +172,26 @@
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
 .searchBar-csvIcon {
+  color: var(--primary);
+  font-size: 42px;
+}
+
+/*----------------------------------------*/
+/*----------------XLSX BUTTON------------------*/
+/*----------------------------------------*/
+.searchBar-xlsxButton {
+  background: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.searchBar-xlsxIcon:hover {
+  background: rgb(238, 238, 238);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+.searchBar-xlsxIcon {
   color: var(--primary);
   font-size: 42px;
 }

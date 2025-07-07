@@ -4,7 +4,7 @@ import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
 import { useTranslation } from "react-i18next";
-import { GrDocumentPdf, GrDocumentCsv } from "react-icons/gr";
+import { GrDocumentPdf, GrDocumentCsv, GrDocumentExcel } from "react-icons/gr";
 
 // Now generic: accepts filtersConfig, filterOptions, defaultValues, limitOptions
 const SearchBar = ({
@@ -17,6 +17,7 @@ const SearchBar = ({
   actions,
   onExportPdf,
   onExportCsv,
+  onExportXlsx,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -141,6 +142,17 @@ const SearchBar = ({
           title={t("exportCsv")}
         >
           <GrDocumentCsv className="searchBar-csvIcon" />
+        </button>
+      )}
+      {/* XLSX Export Button */}
+      {onExportXlsx && (
+        <button
+          type="button"
+          className="searchBar-xlsxButton"
+          onClick={onExportXlsx}
+          title={t("exportXlsx")}
+        >
+          <GrDocumentExcel className="searchBar-xlsxIcon" />
         </button>
       )}
       {/* Keep actions for backward compatibility */}

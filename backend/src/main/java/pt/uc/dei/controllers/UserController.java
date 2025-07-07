@@ -24,7 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles user registration and management endpoints.
@@ -250,15 +252,15 @@ public class UserController {
         byte[] fileBytes = baos.toByteArray();
         InputStream forMimeType = new ByteArrayInputStream(fileBytes);
         InputStream forSaving = new ByteArrayInputStream(fileBytes);
-        String filename = FileService.getFilename(id, fileBytes);
-        if (!FileService.isValidMimeType(forMimeType)) {
+        String filename = AvatarFileService.getFilename(id, fileBytes);
+        if (!AvatarFileService.isValidMimeType(forMimeType)) {
             LOGGER.warn("Invalid mime type for avatar upload by user id: {}", id);
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Unsupported file type", "errorInvalidType", null))
                     .build();
         }
-        FileService.removeExistingFiles(id);
-        boolean saved = FileService.saveFileWithSizeLimit(forSaving, filename);
+        AvatarFileService.removeExistingFiles(id);
+        boolean saved = AvatarFileService.saveFileWithSizeLimit(forSaving, filename);
         if (!saved) {
             LOGGER.warn("File too large for avatar upload by user id: {}", id);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -292,7 +294,7 @@ public class UserController {
 
         LOGGER.info("Avatar retrieval request for user id: {}", id);
         try {
-            java.nio.file.Path avatarPath = FileService.resolveAvatarPath(id);
+            java.nio.file.Path avatarPath = AvatarFileService.resolveAvatarPath(id);
             if (avatarPath == null) {
                 LOGGER.warn("Avatar not found for user id: {}", id);
                 return Response.status(Response.Status.NOT_FOUND)
@@ -301,7 +303,7 @@ public class UserController {
                         .build();
             }
 
-            FileService.CacheData cacheData = FileService.getCacheData(avatarPath);
+            AvatarFileService.CacheData cacheData = AvatarFileService.getCacheData(avatarPath);
             EntityTag etag = new EntityTag(cacheData.lastModified + "-" + cacheData.fileSize);
 
             Response.ResponseBuilder builder = request.evaluatePreconditions(
@@ -427,7 +429,7 @@ public class UserController {
      * @return CSV file with all matching users.
      */
     @GET
-    @Path("/export")
+    @Path("/export/csv")
     @Produces("text/csv")
     public Response exportUsersToCSV(
             @QueryParam("id") Long id,
@@ -467,12 +469,77 @@ public class UserController {
         OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
 
         // Call the service to generate CSV (to be implemented)
-        byte[] csvData = userService.generateCSV(id, email, name, phone,
+        byte[] csvData = userService.generateUsersCSV(id, email, name, phone,
                 accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged, language,
                 parameter, orderBy, isAdmin);
 
         return Response.ok(new ByteArrayInputStream(csvData))
                 .header("Content-Disposition", "attachment; filename=users.csv")
+                .build();
+    }
+
+    /**
+     * Exports users as XLSX with all filters and sorting (no pagination).
+     *
+     * @param id              User ID filter.
+     * @param email           Email filter.
+     * @param name            Name filter.
+     * @param phone           Phone filter.
+     * @param accountStateStr Account state filter.
+     * @param roleStr         Role filter.
+     * @param officeStr       Office filter.
+     * @param parameterStr    Sort parameter.
+     * @param orderStr        Sort order.
+     * @param languageStr     Language for header translation.
+     * @param jwtToken        JWT authentication token.
+     * @return XLSX file with all matching users.
+     */
+    @GET
+    @Path("/export/xlsx")
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public Response exportUsersToXLSX(
+            @QueryParam("id") Long id,
+            @QueryParam("email") String email,
+            @QueryParam("name") String name,
+            @QueryParam("phone") String phone,
+            @QueryParam("accountState") String accountStateStr,
+            @QueryParam("role") String roleStr,
+            @QueryParam("office") String officeStr,
+            @QueryParam("isManager") Boolean userIsManager,
+            @QueryParam("isAdmin") Boolean userIsAdmin,
+            @QueryParam("isManaged") Boolean userIsManaged,
+            @QueryParam("parameter") @DefaultValue("name") String parameterStr,
+            @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
+            @QueryParam("language") @DefaultValue("EN") String languageStr,
+            @CookieParam("jwt") String jwtToken) {
+        LOGGER.info("XLSX export request for users with filters: id={}, email={}, name={}, phone={}", id, email, name, phone);
+        boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            LOGGER.warn("Missing JWT token in user XLSX export request");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Missing token")
+                    .build();
+        }
+        if(accountStateStr != null && !accountStateStr.isEmpty()) {
+            if(!JWTUtil.isUserAdmin(jwtToken)){
+                LOGGER.warn("Unauthorized access to account state filter without admin privileges");
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity("Forbidden")
+                        .build();
+            }
+        }
+        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;
+        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;
+        Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));
+        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));
+        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
+
+        byte[] xlsxData = userService.generateUsersXLSX(id, email, name, phone,
+                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged, language,
+                parameter, orderBy, isAdmin);
+
+        return Response.ok(new ByteArrayInputStream(xlsxData))
+                .header("Content-Disposition", "attachment; filename=users.xlsx")
                 .build();
     }
 }

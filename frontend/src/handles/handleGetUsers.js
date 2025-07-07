@@ -1,4 +1,4 @@
-import { fetchPaginatedUsers, fetchUsersCSV } from "../api/userApi";
+import { fetchPaginatedUsers, fetchUsersCSV, fetchUsersXLSX } from "../api/userApi";
 import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from '../utils/utilityFunctions';
 import useLocaleStore from "../stores/useLocaleStore";
 
@@ -54,6 +54,34 @@ export const handleGetUsersCSV = async (params = {}) => {
   const locale = useLocaleStore.getState().locale || "en";
   console.log("Fetching users CSV with params:", { ...params, language: locale });
   const response = await fetchUsersCSV({ ...params, language: locale });
+
+  if (response.success) {
+    // Return the blob and content type for download
+    return {
+      success: true,
+      blob: response.blob,
+      contentType: response.contentType
+    };
+  } else {
+    if (response.error?.errorHandled) {
+      return {
+        success: false,
+        error: response.error,
+        suppressToast: true
+      };
+    }
+    return {
+      success: false,
+      error: response.error || { message: 'Unknown error' },
+      shouldNotify: true
+    };
+  }
+};
+
+export const handleGetUsersXLSX = async (params = {}) => {
+  const locale = useLocaleStore.getState().locale || "en";
+  console.log("Fetching users XLSX with params:", { ...params, language: locale });
+  const response = await fetchUsersXLSX({ ...params, language: locale });
 
   if (response.success) {
     // Return the blob and content type for download

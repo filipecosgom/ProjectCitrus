@@ -4,9 +4,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import pt.uc.dei.services.AvatarFileService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.services.FileService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +38,7 @@ public class DataInitializer {
      */
     @PostConstruct
     public void initializeSystemData() {
-        Path uploadDir = FileService.getAvatarStoragePath();
+        Path uploadDir = AvatarFileService.getAvatarStoragePath();
         try {
             Files.createDirectories(uploadDir);  // Auto-creates if missing
         }

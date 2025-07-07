@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
  */
 public class CourseDTO {
     /**
+     * The unique identifier of the course.
+     */
+    private Long id;
+
+    /**
      * The title of the course.
      * Must not be blank.
      */
@@ -61,18 +66,32 @@ public class CourseDTO {
     private String link;
 
     /**
-     * The URL of the image representing the course.
-     * Must not be blank.
+     * Indicates whether the course has an image.
      */
-    @NotBlank(message = "Image link missing")
-    private String imageLink;
+    private Boolean courseHasImage;
 
     /**
      * Indicates whether the course is active.
      */
-    private Boolean isActive;
+    private Boolean courseIsActive;
 
     // Getters and Setters
+    /**
+     * Retrieves the unique identifier of the course.
+     * @return the course id.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the unique identifier of the course.
+     * @param id the course id to set.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     /**
      * Retrieves the title of the course.
      * @return the course title.
@@ -138,22 +157,6 @@ public class CourseDTO {
     }
 
     /**
-     * Retrieves whether the course is active.
-     * @return true if the course is active, false otherwise.
-     */
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    /**
-     * Sets whether the course is active.
-     * @param active true to set the course as active, false otherwise.
-     */
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
-
-    /**
      * Retrieves the subject area of the course.
      * @return the course area.
      */
@@ -202,34 +205,34 @@ public class CourseDTO {
     }
 
     /**
-     * Retrieves the URL of the image representing the course.
-     * @return the image link.
+     * Retrieves whether the course has an image.
+     * @return true if the course has an image, false otherwise.
      */
-    public String getImageLink() {
-        return imageLink;
+    public Boolean getCourseHasImage() {
+        return courseHasImage;
     }
 
     /**
-     * Sets the URL of the image representing the course.
-     * @param imageLink the image link to set.
+     * Sets whether the course has an image.
+     * @param courseHasImage true to set the course as having an image, false otherwise.
      */
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
+    public void setCourseHasImage(Boolean courseHasImage) {
+        this.courseHasImage = courseHasImage;
     }
 
     /**
      * Retrieves whether the course is active.
      * @return true if the course is active, false otherwise.
      */
-    public Boolean getIsActive() {
-        return isActive;
+    public Boolean getCourseIsActive() {
+        return courseIsActive;
     }
 
     /**
      * Sets whether the course is active.
-     * @param isActive true to set the course as active, false otherwise.
+     * @param courseIsActive true to set the course as active, false otherwise.
      */
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setCourseIsActive(Boolean courseIsActive) {
+        this.courseIsActive = courseIsActive;
     }
 }

@@ -17,11 +17,19 @@ import java.util.Set;
 public class CourseEntity implements Serializable {
 
     /**
-     * The unique title of the course.
-     * Must always be sent and cannot be updated.
+     * The unique identifier for the course.
+     * Generated automatically.
      */
     @Id
-    @Column(name = "title", nullable = false, unique = true, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true, updatable = false)
+    private Long id;
+
+    /**
+     * The unique title of the course.
+     * Must always be sent and can be updated.
+     */
+    @Column(name = "title", nullable = false, unique = true, updatable = true)
     private String title;
 
     /**
@@ -94,6 +102,22 @@ public class CourseEntity implements Serializable {
     private Set<FinishedCourseEntity> userCompletions = new HashSet<>();
 
     // Getters and Setters
+
+    /**
+     * Gets the unique identifier of the course.
+     * @return the course id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the unique identifier of the course.
+     * @param id the course id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /**
      * Gets the unique title of the course.

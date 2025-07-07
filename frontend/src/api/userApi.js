@@ -166,10 +166,65 @@ export const fetchUsersCSV = async ({
     params.append("language", language);
 
     const response = await api.get(
-      `${userEndpoint}/export?${params.toString()}`,
+      `${userEndpoint}/export/csv?${params.toString()}`,
       {
         responseType: "blob",
         headers: { Accept: "text/csv" },
+      }
+    );
+    return {
+      success: true,
+      status: response.status,
+      contentType: response.headers["content-type"],
+      blob: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+export const fetchUsersXLSX = async ({
+  id = null,
+  email = null,
+  name = null,
+  phone = null,
+  accountState = null,
+  role = null,
+  office = null,
+  isManager = null,
+  isAdmin = null,
+  isManaged = null,
+  parameter = "name",
+  order = "ASCENDING",
+  language = "en",
+} = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (id) params.append("id", id);
+    if (email) params.append("email", email);
+    if (name) params.append("name", name);
+    if (phone) params.append("phone", phone);
+    if (accountState) params.append("accountState", accountState);
+    if (role) params.append("role", role);
+    if (office) params.append("office", office);
+    if (isManager !== null) params.append("isManager", isManager);
+    if (isAdmin !== null) params.append("isAdmin", isAdmin);
+    if (isManaged !== null) params.append("isManaged", isManaged);
+    params.append("parameter", parameter);
+    params.append("order", order);
+    params.append("language", language);
+
+    const response = await api.get(
+      `${userEndpoint}/export/xlsx?${params.toString()}`,
+      {
+        responseType: "blob",
+        headers: {
+          Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
       }
     );
     return {

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user_course_completion",
         uniqueConstraints = @UniqueConstraint( // Ensures unique records per user-course pair
-                columnNames = {"user_id", "course_title"}
+                columnNames = {"user_id", "course_id"}
         ))
 public class FinishedCourseEntity implements Serializable {
 
@@ -31,8 +31,8 @@ public class FinishedCourseEntity implements Serializable {
     /** Reference to the completed course */
     @ManyToOne
     @JoinColumn(
-            name = "course_title",
-            referencedColumnName = "title", // Maps to CourseEntity.title
+            name = "course_id",
+            referencedColumnName = "id", // Maps to CourseEntity.id
             nullable = false
     )
     private CourseEntity course;

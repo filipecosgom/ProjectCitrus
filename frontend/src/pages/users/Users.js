@@ -22,7 +22,7 @@ import {
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 import handleNotification from "../../handles/handleNotification";
-import { handleGetUsersCSV } from "../../handles/handleGetUsers";
+import { handleGetUsersCSV, handleGetUsersXLSX } from "../../handles/handleGetUsers";
 
 export default function Users() {
   const { t } = useTranslation();
@@ -262,6 +262,32 @@ export default function Users() {
     }
   };
 
+  // XLSX export handler
+  const handleGetXLSX = async () => {
+    let params = {
+      ...searchParams,
+      parameter: sort.sortBy,
+      order: sort.sortOrder,
+    };
+    delete params.limit;
+    delete params.offset;
+    const result = await handleGetUsersXLSX(params);
+    if (result.success) {
+      const url = window.URL.createObjectURL(
+        new Blob([result.blob], { type: result.contentType || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "users.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } else {
+      handleNotification("error", "usersXlsxExportError");
+    }
+  };
+
   return (
     <div className="users-container">
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
@@ -270,6 +296,7 @@ export default function Users() {
           onSearch={setSearchingParameters}
           {...usersFilters}
           onExportCsv={handleGetCSV}
+          onExportXlsx={handleGetXLSX}
           actions={
             isAdmin && (
               <button

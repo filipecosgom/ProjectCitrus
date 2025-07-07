@@ -302,7 +302,7 @@ public class UserService implements Serializable {
      * @return CSV file as byte array
      */
     @Transactional
-    public byte[] generateCSV(Long id, String email, String name, String phone,
+    public byte[] generateUsersCSV(Long id, String email, String name, String phone,
             AccountState accountState, String roleStr, Office office,
             Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager, Language lang,
             Parameter parameter, OrderBy orderBy, boolean isAdmin) {
@@ -324,6 +324,50 @@ public class UserService implements Serializable {
         } catch (Exception e) {
             LOGGER.error("Error generating CSV for users", e);
             throw new RuntimeException("Failed to generate CSV", e);
+        }
+    }
+
+    /**
+     * Generates an XLSX file of all users matching the given filters and sorting (no pagination).
+     *
+     * @param id             User ID to filter (optional)
+     * @param email          Email to filter (optional)
+     * @param name           Name or surname to filter (optional)
+     * @param phone          Phone number to filter (optional)
+     * @param accountState   Account state to filter (optional)
+     * @param roleStr        Role to filter (optional)
+     * @param office         Office to filter (optional)
+     * @param userIsManager  Manager filter (optional)
+     * @param userIsAdmin    Admin filter (optional)
+     * @param userHasManager Managed filter (optional)
+     * @param parameter      Sorting parameter (optional)
+     * @param orderBy        Sorting order (ASCENDING or DESCENDING)
+     * @param lang           Language for header translation
+     * @param isAdmin        Whether the export is performed by an admin (affects columns)
+     * @return XLSX file as byte array
+     */
+    @Transactional
+    public byte[] generateUsersXLSX(Long id, String email, String name, String phone,
+            AccountState accountState, String roleStr, Office office,
+            Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager, Language lang,
+            Parameter parameter, OrderBy orderBy, boolean isAdmin) {
+        try {
+            LOGGER.info("Generating XLSX for users with filters: id={}, email={}, name={}, phone={}, accountState={}, roleStr={}, office={}, userIsManager={}, userIsAdmin={}, userHasManager={}, parameter={}, orderBy={}",
+                    id, email, name, phone, accountState, roleStr, office, userIsManager, userIsAdmin, userHasManager, parameter, orderBy);
+            // Fetch all users matching filters, no pagination
+            List<UserEntity> users = userRepository.getUsers(id, email, name, phone,
+                    accountState, roleStr, office,
+                    userIsManager, userIsAdmin, userHasManager,
+                    parameter, orderBy, null, null);
+
+            List<UserDTO> userDtos = users.stream()
+                    .map(userMapper::toDto)
+                    .collect(Collectors.toList());
+
+            return pt.uc.dei.utils.XLSXGenerator.generateUserXLSX(userDtos, lang, isAdmin);
+        } catch (Exception e) {
+            LOGGER.error("Error generating XLSX for users", e);
+            throw new RuntimeException("Failed to generate XLSX", e);
         }
     }
 
