@@ -402,6 +402,7 @@ const pt = {
     noResults: "Nenhuma formação encontrada",
     loading: "A carregar formações...",
     viewCourse: "Ver Formação",
+    startCourse: "Iniciar Formação", // NOVO
     categories: {
       all: "Todas as Categorias",
       frontend: "Frontend",

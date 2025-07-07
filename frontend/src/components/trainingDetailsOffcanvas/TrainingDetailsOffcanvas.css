@@ -1,0 +1,285 @@
+/* Backdrop com blur effect */
+.training-details-offcanvas-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.training-details-offcanvas-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Fallback para browsers que não suportam backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .training-details-offcanvas-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .training-details-offcanvas-backdrop.open {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Offcanvas - slide da direita */
+.training-details-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.training-details-offcanvas.open {
+  transform: translateX(0);
+}
+
+/* Botão X - preto, canto superior direito */
+.training-details-offcanvas-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 24px;
+  color: #000000;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.training-details-offcanvas-close:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Conteúdo do offcanvas */
+.training-details-offcanvas-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Imagem do curso */
+.training-details-image {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+}
+
+.training-details-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Título do curso */
+.training-details-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-title, 2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+  padding: 0 32px;
+  line-height: 1.2;
+}
+
+/* Informações principais */
+.training-details-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 32px;
+}
+
+.training-details-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+}
+
+.training-details-icon {
+  color: #b61b23;
+  font-size: 18px;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.training-details-flag {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.training-details-label {
+  color: var(--secondary, #88909f);
+  font-weight: var(--font-weight-bold, 700);
+  min-width: 80px;
+}
+
+.training-details-value {
+  color: var(--text, #000000);
+  font-weight: var(--font-weight-regular, 400);
+  flex: 1;
+}
+
+/* Seções */
+.training-details-section {
+  padding: 0 32px;
+}
+
+.training-details-section-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0 0 16px 0;
+}
+
+.training-details-description,
+.training-details-objectives,
+.training-details-prerequisites {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  color: var(--text, #000000);
+  line-height: 1.6;
+}
+
+.training-details-description p {
+  margin: 0;
+}
+
+.training-details-objectives ul,
+.training-details-prerequisites ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.training-details-objectives li,
+.training-details-prerequisites li {
+  margin-bottom: 8px;
+  color: var(--text, #000000);
+}
+
+.training-details-objectives li:last-child,
+.training-details-prerequisites li:last-child {
+  margin-bottom: 0;
+}
+
+/* Botão de ação */
+.training-details-actions {
+  padding: 0 32px 32px 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.training-details-start-btn {
+  width: 100%;
+  max-width: 300px;
+  height: 48px;
+  background: linear-gradient(135deg, #b61b23 0%, #8b1619 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(182, 27, 35, 0.3);
+}
+
+.training-details-start-btn:hover {
+  background: linear-gradient(135deg, #8b1619 0%, #6b1013 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(182, 27, 35, 0.4);
+}
+
+.training-details-start-btn:active {
+  transform: translateY(0);
+}
+
+.training-details-play-icon {
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .training-details-offcanvas {
+    width: 100vw;
+    right: 0;
+  }
+
+  .training-details-title {
+    font-size: 24px;
+    padding: 0 20px;
+  }
+
+  .training-details-info,
+  .training-details-section {
+    padding: 0 20px;
+  }
+
+  .training-details-actions {
+    padding: 0 20px 20px 20px;
+  }
+
+  .training-details-image {
+    height: 200px;
+  }
+
+  .training-details-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .training-details-label {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .training-details-offcanvas {
+    width: 90vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .training-details-offcanvas {
+    transition: transform 0.2s ease;
+  }
+  .training-details-offcanvas-backdrop {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
