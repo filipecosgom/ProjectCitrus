@@ -80,7 +80,7 @@ public class CourseEntity implements Serializable {
      * The URL of the image representing the course.
      * Must be unique and can be updated.
      */
-    @Column(name = "image", nullable = false, unique = true, updatable = true)
+    @Column(name = "image", nullable = false, unique = false, updatable = true)
     private Boolean courseHasImage;
 
     /**

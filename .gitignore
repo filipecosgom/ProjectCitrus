@@ -15,5 +15,4 @@ pom.xml.versionsBackup
 pom.xml.releaseBackup
 #Pasta de avatars
 backend/uploads/avatars/
-backend/uploads/avatars/2.jpg
-backend/uploads/avatars/2.png
+backend/uploads/courses/

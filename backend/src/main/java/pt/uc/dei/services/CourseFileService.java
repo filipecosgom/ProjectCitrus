@@ -19,10 +19,11 @@ public class CourseFileService {
     private static final int MAX_BYTES = 5 * 1024 * 1024;
 
     public static Path getCourseStoragePath() {
-        String configuredPath = System.getProperty("avatar.storage.path"); // Uses the same property as avatars for now
+        System.out.println(System.getProperty("course.storage.path"));
+        String configuredPath = System.getProperty("course.storage.path"); // Uses the same property as avatars for now
         if (configuredPath == null || configuredPath.isBlank()) {
-            LOGGER.error("System property 'avatar.storage.path' not configured for courses");
-            throw new IllegalStateException("System property 'avatar.storage.path' not set for courses!");
+            LOGGER.error("System property 'course.storage.path' not configured for courses");
+            throw new IllegalStateException("System property 'course.storage.path' not set for courses!");
         }
         Path path = Paths.get(configuredPath).toAbsolutePath().normalize();
         LOGGER.debug("Resolved course image storage path: {}", path);
