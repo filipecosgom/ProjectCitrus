@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
-import { fetchCycles, closeCycle } from "../../api/cyclesApi";
+import { fetchCycles, closeCycle, canCloseCycle } from "../../api/cyclesApi";
 import CycleOffcanvas from "../../components/cycleOffcanvas/CycleOffcanvas";
 import CycleDetailsOffcanvas from "../../components/cycleDetailsOffcanvas/CycleDetailsOffcanvas";
 import CycleCard from "../../components/cycleCard/CycleCard";
 import ConfirmModal from "../../components/confirmModal/ConfirmModal";
+import AppraisalWarningModal from "../../components/appraisalWarningModal/AppraisalWarningModal";
 import {
   showSuccessToast,
   showErrorToast,
@@ -32,6 +33,10 @@ const Cycles = () => {
   // Estados para o modal de confirmação
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [cycleToClose, setCycleToClose] = useState(null);
+
+  // ✅ NOVOS ESTADOS para o modal de aviso de appraisals
+  const [isAppraisalWarningOpen, setIsAppraisalWarningOpen] = useState(false);
+  const [appraisalValidationData, setAppraisalValidationData] = useState({});
 
   const cyclesPerPage = 6;
 
@@ -68,9 +73,32 @@ const Cycles = () => {
     }
   };
 
-  const handleCloseCycle = (cycleId) => {
-    setCycleToClose(cycleId);
-    setIsConfirmModalOpen(true);
+  const handleCloseCycle = async (cycleId) => {
+    try {
+      // ✅ Primeiro verificar se o cycle pode ser fechado
+      const validationResponse = await canCloseCycle(cycleId);
+
+      if (validationResponse.success) {
+        const validationData = validationResponse.data.data;
+
+        if (validationData.canClose) {
+          // ✅ Pode fechar - mostrar modal de confirmação normal
+          setCycleToClose(cycleId);
+          setIsConfirmModalOpen(true);
+        } else {
+          // ✅ Não pode fechar - mostrar modal de aviso com detalhes
+          setAppraisalValidationData(validationData);
+          setIsAppraisalWarningOpen(true);
+        }
+      } else {
+        showErrorToast(
+          validationResponse.error?.message || t("cycles.errorClosingCycle")
+        );
+      }
+    } catch (err) {
+      showErrorToast(t("cycles.errorClosingCycle"));
+      console.error("Error validating cycle closure:", err);
+    }
   };
 
   const handleCardClick = (cycle) => {
@@ -250,6 +278,16 @@ const Cycles = () => {
         confirmText={t("cycles.closeCycle")}
         cancelText={t("common.cancel")}
         variant="danger"
+      />
+
+      {/* ✅ NOVO: Modal de aviso para appraisals pendentes */}
+      <AppraisalWarningModal
+        isOpen={isAppraisalWarningOpen}
+        onClose={() => {
+          setIsAppraisalWarningOpen(false);
+          setAppraisalValidationData({});
+        }}
+        validationData={appraisalValidationData}
       />
     </div>
   );
