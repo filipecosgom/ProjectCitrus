@@ -240,7 +240,8 @@ const pt = {
   appraisalStateCompleted: "Completo",
   appraisalStateInProgress: "Em curso",
   appraisalStateClosed: "Fechado",
-  appraisalsPdfExportError: "Falha ao exportar avaliações para PDF. Por favor, tente novamente mais tarde.",
+  appraisalsPdfExportError:
+    "Falha ao exportar avaliações para PDF. Por favor, tente novamente mais tarde.",
 
   appraisalSortControlsUser: "Utilizador",
   appraisalSortControlsScore: "Score",
@@ -395,11 +396,45 @@ const pt = {
     userId: "Utilizador",
   },
 
+  training: {
+    title: "Formação",
+    searchPlaceholder: "Procurar formações...",
+    noResults: "Nenhuma formação encontrada",
+    loading: "A carregar formações...",
+    viewCourse: "Ver Formação",
+    categories: {
+      all: "Todas as Categorias",
+      frontend: "Frontend",
+      backend: "Backend",
+      uiux: "UX/UI",
+      database: "Base de Dados",
+      mobile: "Mobile",
+      devops: "DevOps",
+    },
+    languages: {
+      all: "Todos os Idiomas",
+      pt: "Português",
+      en: "Inglês",
+    },
+    duration: {
+      hours: "{hours}h",
+      minutes: "{minutes}min",
+    },
+    filters: {
+      category: "Categoria",
+      language: "Idioma",
+    },
+  },
+
   common: {
     confirm: "Confirmar",
     cancel: "Cancelar",
     confirmMessage: "Tem certeza que deseja prosseguir?",
   },
+
+  // Adicionar estas traduções para o FilterMenu funcionar:
+  filterMenuCategory: "Categoria",
+  filterMenuLanguage: "Idioma",
 };
 
 export default pt;

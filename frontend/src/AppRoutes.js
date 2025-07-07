@@ -19,6 +19,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
+import Training from "./pages/training/Training";
 
 function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
@@ -52,6 +53,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/cycles",
     "/settings",
     "/messages",
+    "/training", // ADICIONAR esta linha
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -153,6 +155,14 @@ function AppRoutes({ currentLocale, setLocale }) {
           element={<Menu language={currentLocale} setLanguage={setLocale} />}
         />
         <Route path="/header" element={<div />} />
+        <Route
+          path="/training"
+          element={
+            <ProtectedRoute>
+              <Training />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
       <ToastContainer limit={3} />
