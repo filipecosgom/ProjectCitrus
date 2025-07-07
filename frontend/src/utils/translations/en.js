@@ -228,7 +228,8 @@ const en = {
   appraisalStateCompleted: "Complete",
   appraisalStateInProgress: "In Progress",
   appraisalStateClosed: "Closed",
-  appraisalsPdfExportError: "Failed to export appraisals to PDF. Please try again later.",
+  appraisalsPdfExportError:
+    "Failed to export appraisals to PDF. Please try again later.",
 
   //Searchbar
   searchBarSearchButton: "Search",
@@ -271,6 +272,10 @@ const en = {
   filterMenuisManager: "Show only managers",
   filterMenuisAdmin: "Show only admins",
   filterMenuisManaged: "Managed users",
+
+  // Adicionar estas traduções para o FilterMenu funcionar:
+  filterMenuCategory: "Category",
+  filterMenuLanguage: "Language",
 
   // Menu internationalization
   menuDashboard: "Dashboard",
@@ -329,7 +334,6 @@ const en = {
     completeAppraisals: "Complete",
     pdfGenerated: "PDF generated successfully. You can download it now.",
     pdfGenerationFailed: "Failed to generate PDF. Please try again later.",
-
   },
 
   cycles: {
@@ -376,6 +380,36 @@ const en = {
     statusPending: "Pending",
     statusInProgress: "In Progress",
     userId: "User",
+  },
+
+  training: {
+    title: "Training",
+    searchPlaceholder: "Search training courses...",
+    noResults: "No training courses found",
+    loading: "Loading training courses...",
+    viewCourse: "View Course",
+    categories: {
+      all: "All Categories",
+      frontend: "Frontend",
+      backend: "Backend",
+      uiux: "UX/UI",
+      database: "Database",
+      mobile: "Mobile",
+      devops: "DevOps",
+    },
+    languages: {
+      all: "All Languages",
+      pt: "Portuguese",
+      en: "English",
+    },
+    duration: {
+      hours: "{hours}h",
+      minutes: "{minutes}min",
+    },
+    filters: {
+      category: "Category",
+      language: "Language",
+    },
   },
 
   common: {

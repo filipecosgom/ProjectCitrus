@@ -1,0 +1,99 @@
+.training-page {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.training-header {
+  margin-bottom: 30px;
+}
+
+.training-title {
+  font-family: "Istok Web", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.training-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.training-loading,
+.training-no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: #666;
+}
+
+.training-loading {
+  color: #b61b23;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .training-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .training-page {
+    padding: 16px;
+  }
+
+  .training-title {
+    font-size: 24px;
+  }
+
+  .training-header {
+    margin-bottom: 24px;
+  }
+
+  .training-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .training-page {
+    padding: 12px;
+  }
+
+  .training-title {
+    font-size: 20px;
+  }
+
+  .training-header {
+    margin-bottom: 20px;
+  }
+
+  .training-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 0 4px;
+  }
+}
