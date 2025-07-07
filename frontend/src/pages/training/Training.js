@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../../components/searchbar/Searchbar";
 import TrainingCard from "../../components/trainingCard/TrainingCard";
+import TrainingDetailsOffcanvas from "../../components/trainingDetailsOffcanvas/TrainingDetailsOffcanvas";
 import "./Training.css";
 
 const Training = () => {
@@ -9,8 +10,10 @@ const Training = () => {
   const [trainings, setTrainings] = useState([]);
   const [filteredTrainings, setFilteredTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTraining, setSelectedTraining] = useState(null);
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-  // CORREÇÃO: Dados mock com imagens do picsum.photos
+  // Dados mock com mais detalhes
   const mockTrainings = [
     {
       id: 1,
@@ -19,6 +22,10 @@ const Training = () => {
       language: "en",
       duration: 40,
       image: "https://picsum.photos/170/95?random=1",
+      instructor: "João Silva",
+      createdDate: "2024-01-15",
+      description:
+        "Learn Bootstrap 5 from scratch and build responsive websites quickly and efficiently. This comprehensive course covers all the essential components and utilities.",
     },
     {
       id: 2,
@@ -27,6 +34,10 @@ const Training = () => {
       language: "pt",
       duration: 120,
       image: "https://picsum.photos/170/95?random=2",
+      instructor: "Maria Santos",
+      createdDate: "2024-02-10",
+      description:
+        "Domine os três principais frameworks JavaScript: React, Vue.js e Angular. Compare suas diferenças e aprenda quando usar cada um.",
     },
     {
       id: 3,
@@ -35,6 +46,10 @@ const Training = () => {
       language: "en",
       duration: 80,
       image: "https://picsum.photos/170/95?random=3",
+      instructor: "Alice Johnson",
+      createdDate: "2024-01-20",
+      description:
+        "Master the fundamentals of user interface and user experience design. Learn design principles, prototyping, and user research methods.",
     },
     {
       id: 4,
@@ -43,6 +58,10 @@ const Training = () => {
       language: "pt",
       duration: 60,
       image: "https://picsum.photos/170/95?random=4",
+      instructor: "Carlos Oliveira",
+      createdDate: "2024-02-05",
+      description:
+        "Construa aplicações web robustas com Node.js e Express. Aprenda sobre APIs RESTful, middleware e integração com bases de dados.",
     },
     {
       id: 5,
@@ -51,6 +70,10 @@ const Training = () => {
       language: "en",
       duration: 100,
       image: "https://picsum.photos/170/95?random=5",
+      instructor: "Robert Brown",
+      createdDate: "2024-01-25",
+      description:
+        "Learn database design, SQL queries, and database optimization. Cover both relational and NoSQL databases with practical examples.",
     },
     {
       id: 6,
@@ -59,6 +82,10 @@ const Training = () => {
       language: "pt",
       duration: 90,
       image: "https://picsum.photos/170/95?random=6",
+      instructor: "Ana Costa",
+      createdDate: "2024-02-15",
+      description:
+        "Desenvolva aplicações móveis nativas e híbridas. Aprenda React Native, Flutter e as melhores práticas para desenvolvimento mobile.",
     },
     {
       id: 7,
@@ -67,6 +94,10 @@ const Training = () => {
       language: "en",
       duration: 70,
       image: "https://picsum.photos/170/95?random=7",
+      instructor: "David Wilson",
+      createdDate: "2024-01-30",
+      description:
+        "Master DevOps practices including CI/CD, containerization with Docker, and infrastructure as code. Learn modern deployment strategies.",
     },
     {
       id: 8,
@@ -75,6 +106,10 @@ const Training = () => {
       language: "pt",
       duration: 85,
       image: "https://picsum.photos/170/95?random=8",
+      instructor: "Pedro Ferreira",
+      createdDate: "2024-02-20",
+      description:
+        "Aprofunde seus conhecimentos em JavaScript com tópicos avançados como closures, protótipos, programação assíncrona e ES6+.",
     },
   ];
 
@@ -149,6 +184,18 @@ const Training = () => {
     setFilteredTrainings(filtered);
   };
 
+  // NOVO: Função para abrir offcanvas
+  const handleViewDetails = (training) => {
+    setSelectedTraining(training);
+    setOffcanvasOpen(true);
+  };
+
+  // NOVO: Função para fechar offcanvas
+  const handleCloseOffcanvas = () => {
+    setOffcanvasOpen(false);
+    setSelectedTraining(null);
+  };
+
   return (
     <div className="training-page">
       <div className="training-header">
@@ -176,11 +223,22 @@ const Training = () => {
         ) : (
           <div className="training-grid">
             {filteredTrainings.map((training) => (
-              <TrainingCard key={training.id} training={training} />
+              <TrainingCard
+                key={training.id}
+                training={training}
+                onViewDetails={handleViewDetails}
+              />
             ))}
           </div>
         )}
       </div>
+
+      {/* NOVO: Offcanvas */}
+      <TrainingDetailsOffcanvas
+        isOpen={offcanvasOpen}
+        onClose={handleCloseOffcanvas}
+        training={selectedTraining}
+      />
     </div>
   );
 };

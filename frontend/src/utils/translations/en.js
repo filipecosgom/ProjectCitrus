@@ -388,6 +388,7 @@ const en = {
     noResults: "No training courses found",
     loading: "Loading training courses...",
     viewCourse: "View Course",
+    startCourse: "Start Course", // NOVO
     categories: {
       all: "All Categories",
       frontend: "Frontend",

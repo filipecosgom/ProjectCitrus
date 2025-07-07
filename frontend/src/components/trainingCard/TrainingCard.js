@@ -5,12 +5,14 @@ import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./TrainingCard.css";
 
-const TrainingCard = ({ training }) => {
+const TrainingCard = ({ training, onViewDetails }) => {
   const { t } = useTranslation();
 
   const handleViewCourse = () => {
-    // Por agora só console.log, depois implementar navegação
-    console.log("Ver curso:", training.title);
+    // MUDANÇA: Chamar callback para abrir offcanvas
+    if (onViewDetails) {
+      onViewDetails(training);
+    }
   };
 
   const getLanguageFlag = (language) => {
@@ -33,7 +35,6 @@ const TrainingCard = ({ training }) => {
           src={training.image}
           alt={training.title}
           onError={(e) => {
-            // CORREÇÃO: Usar picsum.photos como fallback
             e.target.src = "https://picsum.photos/170/95?random=" + training.id;
           }}
         />
