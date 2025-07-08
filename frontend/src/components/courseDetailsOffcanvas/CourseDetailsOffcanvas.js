@@ -50,7 +50,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
         setCourseImageUrl(null);
         return;
       }
-      shouldRender(false);
+      setShouldRender(false);
       handleGetCourseImage(course.id)
         .then((result) => {
           if (result.success && result.image) {
