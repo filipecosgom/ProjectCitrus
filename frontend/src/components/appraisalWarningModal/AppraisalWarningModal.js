@@ -1,10 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom"; // ✅ ADICIONAR
 import { IoWarning, IoClose } from "react-icons/io5";
 import "./AppraisalWarningModal.css";
 
 const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate(); // ✅ ADICIONAR
 
   if (!isOpen) return null;
 
@@ -13,6 +15,13 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
     inProgressCount = 0,
     completedCount = 0,
   } = validationData;
+
+  // ✅ NOVA função para navegar para appraisals pendentes
+  const handleCheckPendingAppraisals = () => {
+    // Navegar para /appraisals com filtro state=IN_PROGRESS
+    navigate("/appraisals?state=IN_PROGRESS");
+    onClose(); // Fechar o modal
+  };
 
   return (
     <div className="appraisal-warning-modal-overlay">
@@ -88,6 +97,13 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
         </div>
 
         <div className="appraisal-warning-modal-footer">
+          {/* ✅ NOVO: Botão para verificar appraisals pendentes */}
+          <button
+            className="appraisal-warning-check-btn"
+            onClick={handleCheckPendingAppraisals}
+          >
+            {t("cycles.checkPendingAppraisals")}
+          </button>
           <button
             className="appraisal-warning-understand-btn"
             onClick={onClose}
