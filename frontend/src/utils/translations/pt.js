@@ -309,6 +309,7 @@ const pt = {
     statusNotRead: "✓✓",
     typeMessage: "Escreva uma mensagem...",
     selectConversation: "Selecione uma conversa para começar a conversar",
+    toMessageCenter: "Ir para Central de Mensagens",
   },
 
   // Avaliações

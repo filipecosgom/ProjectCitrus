@@ -67,26 +67,30 @@ const SortControls = ({
   if (isMobile) {
     return (
       <div className="sortControls-mobile">
-        <button type="button" onClick={() => setShowDropdown(!showDropdown)}>
-          {t(currentSortField)} {getSortIcon(sortBy)}
-        </button>
-        {showDropdown && (
-          <div className="sortControls-dropdown">
-            {displayFields.map((field) => (
-              <div
-                key={field.key}
-                className={`sortControls-div ${field.key} ${
-                  sortBy === field.key ? "active" : ""
-                }`}
-                onClick={() => handleSort(field.key)}
-              >
-                {field.label ? field.label(t) : t(field.id)}
-                {getSortIcon(field.key)}
-              </div>
-            ))}
+  <div className="sortControls-mobile-dropdown-wrapper" style={{ position: "relative", width: "100%" }}>
+    <button type="button" onClick={() => setShowDropdown(!showDropdown)}>
+      {t(currentSortField)} {getSortIcon(sortBy)}
+    </button>
+    {showDropdown && (
+      <div className="sortControls-dropdown">
+        {displayFields.map((field) => (
+          <div
+            key={field.key}
+            className={`sortControls-div ${field.key} ${sortBy === field.key ? "active" : ""}`}
+            onClick={() => {
+              handleSort(field.key);
+              setShowDropdown(false)
+            }}
+          
+          >
+            {field.label ? field.label(t) : t(field.id)}
+            {getSortIcon(field.key)}
           </div>
-        )}
+        ))}
       </div>
+    )}
+  </div>
+</div>
     );
   }
 

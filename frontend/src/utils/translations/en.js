@@ -301,6 +301,7 @@ const en = {
     statusNotRead: "✓✓",
     typeMessage: "Type a message...",
     selectConversation: "Select a conversation to start chatting",
+    toMessageCenter: "To Message Center",
   },
 
   // Appraisals Search

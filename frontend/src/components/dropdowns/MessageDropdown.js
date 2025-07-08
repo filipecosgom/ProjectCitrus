@@ -5,6 +5,7 @@ import { fetchConversationPreviews } from "../../api/messagesApi";
 import { markMessageNotificationsAsRead } from "../../api/notificationsApi";
 import UserIcon from "../userIcon/UserIcon"; // ✅ ADICIONAR IMPORT
 import "./NotificationDropdown.css";
+import { useTranslation } from "react-i18next";
 
 export default function MessageDropdown({
   isVisible,
@@ -15,6 +16,7 @@ export default function MessageDropdown({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Hook para navegação programática
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isVisible) {
@@ -107,8 +109,6 @@ export default function MessageDropdown({
   const handleConversationClick = (userId) => {
     // Navegar para a página de mensagens com o parâmetro correto (id em vez de user)
     navigate(`/messages?id=${userId}`);
-
-    // Fechar o dropdown após navegação
     onClose?.();
   };
 
@@ -177,8 +177,8 @@ export default function MessageDropdown({
         )}
       </div>
       {/* Botão para navegar para o centro de mensagens */}
-      <Link to="/messages" className="notification-center-btn">
-        TO MESSAGES CENTER <span className="notification-center-arrow">↗</span>
+      <Link to="/messages" className="notification-center-btn" onClick={onClose}>
+        {t("messageCenter.toMessageCenter")} <span className="notification-center-arrow">↗</span>
       </Link>
     </div>
   );
