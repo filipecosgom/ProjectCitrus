@@ -113,12 +113,13 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   };
 
   const formatDuration = (hours) => {
+    console.log("Formatando duração:", hours);
     if (hours < 1) {
-      return t("courses.duration", {
+      return t("courses.duration.minutes", {
         minutes: Math.round(hours * 60),
       });
     }
-    return t("courses.duration", { hours });
+    return t("courses.duration.hours", { hours });
   };
 
   const handleStartCourse = () => {
@@ -186,7 +187,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
 
             <div className="course-details-info-item">
               <FaClock className="course-details-icon" />
-              <span className="course-details-label">{t("courses.duration")}:</span>
+              <span className="course-details-label">{t("courses.sortDuration")}:</span>
               <span className="course-details-value">
                 {formatDuration(course.duration)}
               </span>

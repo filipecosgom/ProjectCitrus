@@ -8,7 +8,7 @@ import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
 import Spinner from "../spinner/spinner";
 
-const TrainingCard = ({ course, onViewDetails }) => {
+const CourseCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();
   const hasImage = course?.courseHasImage ?? false;
   const [courseImageUrl, setCourseImageUrl] = useState(null);
@@ -55,18 +55,18 @@ const TrainingCard = ({ course, onViewDetails }) => {
 
   const formatDuration = (hours) => {
     if (hours < 1) {
-      return t("training.duration.minutes", {
+      return t("courses.duration.minutes", {
         minutes: Math.round(hours * 60),
       });
     }
-    return t("training.duration.hours", { hours });
+    return t("courses.duration.hours", { hours });
   };
 
   if(loading) return <Spinner />;
 
   return (
-    <div className="training-card">
-      <div className="training-card-image">
+    <div className="course-card">
+      <div className="course-card-image">
         <img
         src={
           hasImage && courseImageUrl
@@ -81,32 +81,32 @@ const TrainingCard = ({ course, onViewDetails }) => {
       />
       </div>
 
-      <div className="training-card-content">
-        <h3 className="training-card-title">{course.title}</h3>
+      <div className="course-card-content">
+        <h3 className="course-card-title">{course.title}</h3>
 
-        <div className="training-card-info">
-          <span className="training-card-category">{course.area}</span>
+        <div className="course-card-info">
+          <span className="course-card-category">{course.area}</span>
 
-          <div className="training-card-language">
+          <div className="course-card-language">
             <img
               src={getLanguageFlag(course.language)}
               alt={course.language}
-              className="training-card-flag"
+              className="course-card-flag"
             />
           </div>
 
-          <div className="training-card-duration">
-            <FaClock className="training-card-clock-icon" />
+          <div className="course-card-duration">
+            <FaClock className="course-card-clock-icon" />
             <span>{formatDuration(course.duration)}</span>
           </div>
         </div>
 
-        <button className="training-card-button" onClick={handleViewCourse}>
-          {t("training.viewCourse")}
+        <button className="course-card-button" onClick={handleViewCourse}>
+          {t("courses.viewCourse")}
         </button>
       </div>
     </div>
   );
 };
 
-export default TrainingCard;
+export default CourseCard;

@@ -1,14 +1,14 @@
-.training-page {
+.courses-page {
   padding: var(--padding-sm);
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-.training-header {
+.courses-header {
   margin-bottom: 30px;
 }
 
-.training-title {
+.courses-title {
   font-family: "Istok Web", sans-serif;
   font-size: 28px;
   font-weight: 700;
@@ -17,14 +17,14 @@
   text-align: center;
 }
 
-.training-content {
+.courses-content {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.training-grid {
+.courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
   gap: 20px;
@@ -34,8 +34,8 @@
   padding: 0 20px;
 }
 
-.training-loading,
-.training-no-results {
+.courses-loading,
+.courses-no-results {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,25 +45,25 @@
   color: #666;
 }
 
-.training-loading {
+.courses-loading {
   color: #b61b23;
 }
 
 /* Responsividade */
 @media (min-width: 480px) {
-  .training-page {
+  .courses-page {
     padding: var(--padding-sm);
   }
 
-  .training-title {
+  .courses-title {
     font-size: 24px;
   }
 
-  .training-header {
+  .courses-header {
     margin-bottom: 24px;
   }
 
-  .training-grid {
+  .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
     padding: 0 8px;
@@ -71,11 +71,11 @@
 }
 
 @media (min-width: 1024px) {
-  .training-page {
+  .courses-page {
     padding: var(--padding-lg);
   }
 
-  .training-grid {
+  .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
     padding: 0 16px;
@@ -83,19 +83,19 @@
 }
 
 @media (max-width: 768px) {
-  .training-page {
+  .courses-page {
     padding: var(--padding-sm);
   }
 
-  .training-title {
+  .courses-title {
     font-size: 24px;
   }
 
-  .training-header {
+  .courses-header {
     margin-bottom: 24px;
   }
 
-  .training-grid {
+  .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
     padding: 0 8px;
@@ -103,19 +103,19 @@
 }
 
 @media (max-width: 480px) {
-  .training-page {
+  .courses-page {
     padding: var(--padding-sm);
   }
 
-  .training-title {
+  .courses-title {
     font-size: 20px;
   }
 
-  .training-header {
+  .courses-header {
     margin-bottom: 20px;
   }
 
-  .training-grid {
+  .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
     padding: 0 4px;

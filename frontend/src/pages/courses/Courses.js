@@ -17,7 +17,7 @@ import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 
 
-const Training = () => {
+const Courses = () => {
   const { t } = useTranslation();
   const [courses, setCourses] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -134,8 +134,8 @@ const Training = () => {
 
 
   return (
-    <div className="training-page">
-      <div className="training-header">
+    <div className="courses-page">
+      <div className="courses-header">
 
         <SearchBar
           onSearch={setSearchingParameters}
@@ -148,17 +148,17 @@ const Training = () => {
                 sortOrder={sort.sortOrder}
                 onSortChange={handleSortChange}
       />
-      <div className="training-content">
+      <div className="courses-content">
         {resultsLoading ? (
-          <div className="training-loading">
-            <p>{t("training.loading")}</p>
+          <div className="courses-loading">
+            <p>{t("courses.loading")}</p>
           </div>
         ) : courses.length === 0 ? (
-          <div className="training-no-results">
-            <p>{t("training.noResults")}</p>
+          <div className="courses-no-results">
+            <p>{t("courses.noResults")}</p>
           </div>
         ) : (
-          <div className="training-grid">
+          <div className="courses-grid">
             {courses.map((course) => (
               <CourseCard
                 key={course.id}
@@ -186,4 +186,4 @@ const Training = () => {
   );
 };
 
-export default Training;
+export default Courses;
