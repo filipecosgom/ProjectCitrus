@@ -5,8 +5,8 @@ import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./CourseCard.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
-import image from "../../assets/templates/image.png";
-import Spinner from "../../components/spinner/spinner";
+import courseTemplateImage from "../../assets/templates/courseTemplate.png";
+import Spinner from "../spinner/spinner";
 
 const TrainingCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();
@@ -71,12 +71,12 @@ const TrainingCard = ({ course, onViewDetails }) => {
         src={
           hasImage && courseImageUrl
             ? courseImageUrl
-            : image
+            : courseTemplateImage
         }
         alt={`${course.title}`}
         onError={(e) => {
           // ✅ FALLBACK se imagem falhar
-          e.target.src = image;
+          e.target.src = courseTemplateImage;
         }}
       />
       </div>

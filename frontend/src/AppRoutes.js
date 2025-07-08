@@ -12,6 +12,7 @@ import Appraisals from "./pages/appraisals/Appraisals";
 import Cycles from "./pages/cycles/Cycles";
 import Settings from "./pages/settings/Settings";
 import Chat from "./pages/messageCenter/MessageCenter";
+import Courses from "./pages/courses/Courses";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
@@ -19,7 +20,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
-import Training from "./pages/training/Training";
+
 
 function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
@@ -53,7 +54,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/cycles",
     "/settings",
     "/messages",
-    "/training", // ADICIONAR esta linha
+    "/courses", // ADICIONAR esta linha
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -156,10 +157,10 @@ function AppRoutes({ currentLocale, setLocale }) {
         />
         <Route path="/header" element={<div />} />
         <Route
-          path="/training"
+          path="/courses"
           element={
             <ProtectedRoute>
-              <Training />
+              <Courses />
             </ProtectedRoute>
           }
         />

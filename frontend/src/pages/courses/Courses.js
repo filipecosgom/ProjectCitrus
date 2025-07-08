@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../../components/searchbar/Searchbar";
-import TrainingCard from "../../components/trainingCard/CourseCard";
-import TrainingDetailsOffcanvas from "../../components/trainingDetailsOffcanvas/TrainingDetailsOffcanvas";
+import CourseCard from "../../components/courseCard/CourseCard";
+import CourseDetailsOffcanvas from "../../components/courseDetailsOffcanvas/CourseDetailsOffcanvas";
 import { handleGetCourseAreas } from "../../handles/handleGetEnums";
 import { buildSearchParams, createPageChangeHandler, createSortHandler } from "../../utils/searchUtils";
 import {
@@ -10,7 +10,7 @@ import {
   courseSearchFilters,
   coursesSortFields
 } from "../../utils/coursesSearchUtils";
-import "./Training.css";
+import "./Courses.css";
 import { handleGetCourses } from "../../handles/handleGetCourses";
 import Spinner from "../../components/spinner/spinner";
 import SortControls from "../../components/sortControls/SortControls";
@@ -160,7 +160,7 @@ const Training = () => {
         ) : (
           <div className="training-grid">
             {courses.map((course) => (
-              <TrainingCard
+              <CourseCard
                 key={course.id}
                 course={course}
                 onViewDetails={handleViewDetails}
@@ -171,10 +171,10 @@ const Training = () => {
       </div>
 
       {/* NOVO: Offcanvas */}
-      <TrainingDetailsOffcanvas
+      <CourseDetailsOffcanvas
         isOpen={offcanvasOpen}
         onClose={handleCloseOffcanvas}
-        training={selectedCourse}
+        course={selectedCourse}
       />
       <Pagination
               offset={pagination.offset}

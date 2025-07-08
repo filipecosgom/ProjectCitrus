@@ -76,7 +76,7 @@ export default function Menu({
       label: menuTraining,
       icon: <FaBook />,
       color: "#FF5900",
-      route: "/training",
+      route: "/courses",
       adminOnly: false,
       managerOnly: false,
     },
