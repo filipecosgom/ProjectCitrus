@@ -407,6 +407,10 @@ const pt = {
       "{count, plural, one {# avaliação concluída} other {# avaliações concluídas}}",
     closeCycleInstruction:
       "Para fechar este ciclo, todas as avaliações devem estar no estado 'Fechado'.",
+    appraisalsNotCompleted:
+      "Não é possível fechar este ciclo porque existem avaliações que ainda não foram completadas.",
+    closeCycleInstructionCompleted:
+      "Para fechar este ciclo, todas as avaliações devem estar no estado 'Completado'.",
   },
 
   courses: {
