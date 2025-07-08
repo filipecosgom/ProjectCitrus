@@ -394,6 +394,19 @@ const pt = {
     // Adicionar traduções em falta
     statusInProgress: "Em Progresso",
     userId: "Utilizador",
+    cannotCloseCycle: "Não é possível fechar o ciclo",
+    appraisalsNotClosed: "Existem avaliações que não estão fechadas",
+    understood: "Compreendido",
+    appraisalsSummary: "Resumo das Avaliações",
+    totalAppraisals: "Total de Avaliações",
+    pendingAppraisals: "Avaliações Pendentes",
+    appraisalsBreakdown: "Detalhamento:",
+    inProgressAppraisals:
+      "{count, plural, one {# avaliação em progresso} other {# avaliações em progresso}}",
+    completedAppraisals:
+      "{count, plural, one {# avaliação concluída} other {# avaliações concluídas}}",
+    closeCycleInstruction:
+      "Para fechar este ciclo, todas as avaliações devem estar no estado 'Fechado'.",
   },
 
   training: {

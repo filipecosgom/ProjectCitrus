@@ -425,6 +425,40 @@ public class CycleController {
         }
     }
 
+    /**
+     * Validates if a cycle can be closed.
+     *
+     * @param id The cycle ID
+     * @return Response with validation result and details
+     */
+    @GET
+    @Path("/{id}/can-close")
+    public Response canCloseCycle(@PathParam("id") Long id) {
+        try {
+            LOGGER.debug("Validating if cycle {} can be closed", id);
+
+            Map<String, Object> validation = cycleService.canCloseCycle(id);
+            return Response.ok(new ApiResponse(true, "Cycle validation completed", "success", validation))
+                    .build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cycle not found with ID: {}", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleNotFound", null))
+                    .build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Cannot validate cycle with ID {}: {}", id, e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorCycleAlreadyClosed", null))
+                    .build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error validating cycle with ID: {}", id, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
     // Métodos helper para determinar códigos de erro
     private String getValidationErrorCode(String message) {
         if (message.contains("Start date") && message.contains("past")) {

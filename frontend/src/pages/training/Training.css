@@ -1,5 +1,5 @@
 .training-page {
-  padding: 20px;
+  padding: var(--padding-sm);
   min-height: 100vh;
   background-color: #f8f9fa;
 }
@@ -50,7 +50,31 @@
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
+@media (min-width: 480px) {
+  .training-page {
+    padding: var(--padding-sm);
+  }
+
+  .training-title {
+    font-size: 24px;
+  }
+
+  .training-header {
+    margin-bottom: 24px;
+  }
+
+  .training-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 0 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .training-page {
+    padding: var(--padding-lg);
+  }
+
   .training-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
@@ -60,7 +84,7 @@
 
 @media (max-width: 768px) {
   .training-page {
-    padding: 16px;
+    padding: var(--padding-sm);
   }
 
   .training-title {
@@ -80,7 +104,7 @@
 
 @media (max-width: 480px) {
   .training-page {
-    padding: 12px;
+    padding: var(--padding-sm);
   }
 
   .training-title {

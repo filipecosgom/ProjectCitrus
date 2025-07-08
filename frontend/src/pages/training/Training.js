@@ -136,7 +136,6 @@ const Training = () => {
   return (
     <div className="training-page">
       <div className="training-header">
-        <h1 className="training-title">{t("training.title")}</h1>
 
         <SearchBar
           onSearch={setSearchingParameters}

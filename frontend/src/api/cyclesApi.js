@@ -90,6 +90,34 @@ export const closeCycle = async (id) => {
 };
 
 /**
+ * Validates if a cycle can be closed
+ * @param {number} cycleId - The cycle ID
+ * @returns {Promise<Object>} API response with validation details
+ */
+export const canCloseCycle = async (cycleId) => {
+  try {
+    const response = await axios.get(`${cyclesEndpoint}/${cycleId}/can-close`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error("Error validating cycle closure:", error);
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+/**
  * Conta o número de usuários ativos (não admin e não deletados)
  * @returns {Promise<Object>} Response com contagem de usuários
  */

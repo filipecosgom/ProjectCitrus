@@ -380,6 +380,21 @@ const en = {
     statusPending: "Pending",
     statusInProgress: "In Progress",
     userId: "User",
+
+    // Novas traduções sugeridas
+    cannotCloseCycle: "Cannot close cycle",
+    appraisalsNotClosed: "There are appraisals that are not closed",
+    understood: "Understood",
+    appraisalsSummary: "Appraisals Summary",
+    totalAppraisals: "Total Appraisals",
+    pendingAppraisals: "Pending Appraisals",
+    appraisalsBreakdown: "Breakdown:",
+    inProgressAppraisals:
+      "{count, plural, one {# appraisal in progress} other {# appraisals in progress}}",
+    completedAppraisals:
+      "{count, plural, one {# completed appraisal} other {# completed appraisals}}",
+    closeCycleInstruction:
+      "To close this cycle, all appraisals must be in 'Closed' state.",
   },
 
   training: {
