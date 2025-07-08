@@ -6,7 +6,7 @@ export const handleGetCourses = async ({
   language = null,
   adminId = null,
   isActive = null,
-  parameter = "title",
+  parameter = "id",
   order = "ASCENDING",
   offset = 0,
   limit = 10,
@@ -24,6 +24,7 @@ export const handleGetCourses = async ({
   params.limit = limit;
   // Add any extra params
   Object.assign(params, rest);
+  console.log("Fetching courses with params:", params);
 
   const response = await fetchCourses(params);
 
@@ -35,6 +36,8 @@ export const handleGetCourses = async ({
       offset: response.data?.data?.offset || 0,
       limit: response.data?.data?.limit || 10
     };
+    console.log("Courses fetched successfully:", courses);
+    console.log("Pagination info:", paginationInfo);
     return {
       courses,
       pagination: paginationInfo,

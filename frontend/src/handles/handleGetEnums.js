@@ -1,4 +1,4 @@
-import { getRoles, getOffices, getAppraisalStates } from '../api/enumsApi';
+import { getRoles, getOffices, getAppraisalStates, getCourseAreas } from '../api/enumsApi';
 
 export const handleGetRoles = async () => {
   try {
@@ -30,4 +30,14 @@ export const handleGetAppraisalStates = async () => {
   }
 };
 
-export default { handleGetRoles, handleGetOffices, handleGetAppraisalStates };
+export const handleGetCourseAreas = async () => {
+  try {
+    const courseAreas = await getCourseAreas();
+    return courseAreas;
+  } catch (error) {
+    console.error("Error retrieving course areas", error);
+    return [];
+  }
+};
+
+export default { handleGetRoles, handleGetOffices, handleGetAppraisalStates, handleGetCourseAreas };

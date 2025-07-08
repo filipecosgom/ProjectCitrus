@@ -55,14 +55,14 @@ public class CourseService implements Serializable {
     public Map<String, Object> getCoursesWithFilters(
             Long id, String title, Integer duration, String description,
             CourseArea area, Language language, String adminName, Boolean courseIsActive,
-            CourseParameter parameter, OrderBy orderBy, Integer limit, Integer offset) {
+            CourseParameter parameter, OrderBy orderBy, Integer offset, Integer limit) {
         LOGGER.debug("Retrieving courses with filters");
 
         List<CourseEntity> courses = courseRepository.findCoursesWithFilters(
                 id, title, duration, description, area, language, adminName, courseIsActive,
                 parameter, orderBy, offset, limit);
-        long totalCourses = courseRepository.countCoursesWithFilters(id, title, duration, description, area, language, adminName, courseIsActive,
-                parameter, orderBy);
+        long totalCourses = courseRepository.countCoursesWithFilters(
+                id, title, duration, description, area, language, adminName, courseIsActive);
 
         List<CourseDTO> courseDTOs = courses.stream()
                 .map(courseMapper::toDto)

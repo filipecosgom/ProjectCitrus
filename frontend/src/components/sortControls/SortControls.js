@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-import { FaSortAmountDownAlt , FaSortAmountUpAlt , FaSort } from "react-icons/fa"; // ✅ ADICIONAR
+import { FaSortAmountDownAlt, FaSortAmountUpAlt, FaSort } from "react-icons/fa"; // ✅ ADICIONAR
 import "./SortControls.css";
 
 const SortControls = ({
@@ -61,7 +61,8 @@ const SortControls = ({
   };
 
   const displayFields = getDisplayFields();
-  const currentSortField = displayFields.find(f => f.key === sortBy)?.id || displayFields[0].id;
+  const currentSortField =
+    displayFields.find((f) => f.key === sortBy)?.id || displayFields[0].id;
 
   if (isMobile) {
     return (
@@ -71,18 +72,16 @@ const SortControls = ({
         </button>
         {showDropdown && (
           <div className="sortControls-dropdown">
-            {displayFields.map(field => (
+            {displayFields.map((field) => (
               <div
                 key={field.key}
-                onClick={() => {
-                  onSortChange({
-                    sortBy: field.key,
-                    sortOrder: sortBy === field.key && sortOrder === "ASCENDING" ? "DESCENDING" : "ASCENDING"
-                  });
-                  setShowDropdown(false);
-                }}
+                className={`sortControls-div ${field.key} ${
+                  sortBy === field.key ? "active" : ""
+                }`}
+                onClick={() => handleSort(field.key)}
               >
-                {t(field.id)} {sortBy === field.key && getSortIcon(field.key)}
+                {field.label ? field.label(t) : t(field.id)}
+                {getSortIcon(field.key)}
               </div>
             ))}
           </div>
@@ -94,14 +93,16 @@ const SortControls = ({
   // Desktop/tablet version
   return (
     <div className={`sortControls-container ${className}`}>
-      {displayFields.map(({ id, key }) => (
+      {displayFields.map((field) => (
         <div
-          key={key}
-          className={`sortControls-div ${key} ${sortBy === key ? "active" : ""}`}
-          onClick={() => handleSort(key)}
+          key={field.key}
+          className={`sortControls-div ${field.key} ${
+            sortBy === field.key ? "active" : ""
+          }`}
+          onClick={() => handleSort(field.key)}
         >
-          {t(id)}
-          {getSortIcon(key)}
+          {field.label ? field.label(t) : t(field.id)}
+          {getSortIcon(field.key)}
         </div>
       ))}
     </div>

@@ -70,7 +70,7 @@ public class CourseController {
             @QueryParam("language") String languageStr,
             @QueryParam("adminName") String adminName,
             @QueryParam("courseIsActive") Boolean courseIsActive,
-            @QueryParam("parameter") @DefaultValue("id") String parameterStr,
+            @QueryParam("parameter") @DefaultValue("title") String parameterStr,
             @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
             @QueryParam("limit") @DefaultValue("10") Integer limit) {

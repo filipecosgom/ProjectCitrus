@@ -438,4 +438,29 @@ const pt = {
   filterMenuLanguage: "Idioma",
 };
 
+export const courses = {
+  title: "Cursos",
+  searchPlaceholder: "Pesquisar cursos...",
+  noResults: "Nenhum curso encontrado.",
+  loading: "A carregar cursos...",
+  sortTitle: "Título",
+  sortArea: "Área",
+  sortDuration: "Duração",
+  sortLanguage: "Idioma",
+  searchByTitle: "Título",
+  searchByDescription: "Descrição",
+  searchByArea: "Área",
+  filterAllAreas: "Todas as áreas",
+  filterAllLanguages: "Todos os idiomas",
+  filterPortuguese: "Português",
+  filterEnglish: "Inglês",
+  details: "Detalhes do Curso",
+  instructor: "Instrutor",
+  duration: "Duração",
+  language: "Idioma",
+  area: "Área",
+  createdDate: "Data de Criação",
+  description: "Descrição",
+};
+
 export default pt;

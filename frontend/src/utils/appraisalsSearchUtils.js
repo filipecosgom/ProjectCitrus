@@ -1,27 +1,5 @@
 import useAuthStore from "../stores/useAuthStore";
 
-// Utility for building search params
-export function buildSearchParams(query, searchType, limit, filters = {}) {
-  return { query, searchType, limit, filters };
-}
-
-// Pagination handler factory
-export function createPageChangeHandler(setPagination) {
-  return (newOffset) => {
-    setPagination((prev) => ({ ...prev, offset: newOffset }));
-  };
-}
-
-// Sorting logic handler
-export function createSortHandler(setSort, setPagination, lastSearchRef) {
-  return (newSort) => {
-    setSort(newSort);
-    if (lastSearchRef.current) {
-      setPagination((prev) => ({ ...prev, offset: 0 }));
-    }
-  };
-}
-
 // Initial data fetching logic
 export async function fetchInitialAppraisals({
   setPageLoading,
@@ -193,26 +171,26 @@ export const appraisalsSortFields = (t) => [
   {
     id: "appraisalSortControlsUser",
     key: "user",
-    label: t("appraisalSortControlsUser"),
+    label: (t) => t("appraisalSortControlsUser"),
   },
   {
     id: "appraisalSortControlsScore",
     key: "score",
-    label: t("appraisalSortControlsScore"),
+    label: (t) => t("appraisalSortControlsScore"),
   },
   {
     id: "appraisalSortControlsManager",
     key: "manager",
-    label: t("appraisalSortControlsManager"),
+    label: (t) => t("appraisalSortControlsManager"),
   },
   {
     id: "appraisalSortControlsEndDate",
     key: "endDate",
-    label: t("appraisalSortControlsEndDate"),
+    label: (t) => t("appraisalSortControlsEndDate"),
   },
   {
     id: "appraisalSortControlsState",
     key: "state",
-    label: t("appraisalSortControlsState"),
+    label: (t) => t("appraisalSortControlsState"),
   },
 ];

@@ -1,27 +1,5 @@
 import useAuthStore from "../stores/useAuthStore";
 
-// Utility for building search params
-export function buildSearchParams(query, searchType, limit, filters = {}) {
-  return { query, searchType, limit, filters };
-}
-
-// Pagination handler factory
-export function createPageChangeHandler(setPagination) {
-  return (newOffset) => {
-    setPagination((prev) => ({ ...prev, offset: newOffset }));
-  };
-}
-
-// Sorting logic handler
-export function createSortHandler(setSort, setPagination, lastSearchRef) {
-  return (newSort) => {
-    setSort(newSort);
-    if (lastSearchRef.current) {
-      setPagination((prev) => ({ ...prev, offset: 0 }));
-    }
-  };
-}
-
 // Initial data fetching logic
 export async function fetchInitialUsers({
   setPageLoading,

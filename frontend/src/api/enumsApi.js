@@ -36,3 +36,14 @@ export const getAppraisalStates = async () => {
     throw error; // propagate the error if needed
   }
 };
+
+export const getCourseAreas = async () => {
+  try {
+    const response = await api.get(`${enumsEndpoint}/courseAreas`);
+    // Assuming the API returns an array of strings
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "getCourseAreas");
+    throw error; // propagate the error if needed
+  }
+};

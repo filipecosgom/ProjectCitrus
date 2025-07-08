@@ -12,10 +12,8 @@ import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
 import { GrUserSettings } from "react-icons/gr";
 import useAuthStore from "../../stores/useAuthStore";
+import { buildSearchParams, createPageChangeHandler, createSortHandler } from "../../utils/searchUtils";
 import {
-  buildSearchParams,
-  createPageChangeHandler,
-  createSortHandler,
   fetchInitialUsers,
   userSearchFilters,
 } from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
@@ -47,7 +45,6 @@ export default function Users() {
   // Use null as initial value for searchParams
   const [searchParams, setSearchParams] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState({
     sortBy: "name",
     sortOrder: "ascending",
@@ -57,6 +54,7 @@ export default function Users() {
 
   // ✅ VERIFICAR se user é admin
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
+  const containerRef = useRef();
 
   // Handlers para user offcanvas
   const handleUserClick = (user) => {
@@ -94,7 +92,6 @@ export default function Users() {
     setSelectedUsers(newSelectedUsers);
   };
 
-  // ✅ LIMPAR seleções quando mudar de página
   useEffect(() => {
     setSelectedUsers(new Set());
   }, [pagination.offset]);
@@ -108,7 +105,6 @@ export default function Users() {
   ) => {
     const search = buildSearchParams(query, searchType, limit, filters);
     setLastSearch(search);
-    setCurrentPage(1);
     setSearchParams(search);
   };
 
@@ -159,7 +155,7 @@ export default function Users() {
     // eslint-disable-next-line
   }, [searchParams, pagination.offset, sort]);
 
-  // 📦 On mount: fetch offices and initial users
+
   useEffect(() => {
     fetchInitialUsers({
       setPageLoading,
@@ -289,7 +285,7 @@ export default function Users() {
   };
 
   return (
-    <div className="users-container">
+    <div className="users-container" ref={containerRef}>
       {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
       <div className="searchBar-containerAndButton">
         <SearchBar

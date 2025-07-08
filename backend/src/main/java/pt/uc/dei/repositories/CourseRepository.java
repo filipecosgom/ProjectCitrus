@@ -93,8 +93,44 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             Join<CourseEntity, UserEntity> adminJoin = course.join("admin", JoinType.LEFT);
             List<Predicate> predicates = new ArrayList<>();
 
-            // ...existing predicate logic, but use cb.function(\"unaccent\", ...) if needed...
-
+            if (id != null) {
+                predicates.add(cb.equal(course.get("id"), id));
+            }
+            if (SearchUtils.isNotBlank(title)) {
+                if (SearchUtils.isQuoted(title)) {
+                    String exact = SearchUtils.stripQuotes(title);
+                    predicates.add(cb.like(course.get("title"), "%" + exact + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(title.toLowerCase());
+                    Expression<String> unaccentedTitle = cb.function("unaccent", String.class, cb.lower(course.get("title")));
+                    predicates.add(cb.like(unaccentedTitle, "%" + normalized + "%"));
+                }
+            }
+            if (duration != null) {
+                predicates.add(cb.equal(course.get("duration"), duration));
+            }
+            if (SearchUtils.isNotBlank(description)) {
+                if (SearchUtils.isQuoted(description)) {
+                    String exact = SearchUtils.stripQuotes(description);
+                    predicates.add(cb.like(course.get("description"), "%" + exact + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(description.toLowerCase());
+                    Expression<String> unaccentedDescription = cb.function("unaccent", String.class, cb.lower(course.get("description")));
+                    predicates.add(cb.like(unaccentedDescription, "%" + normalized + "%"));
+                }
+            }
+            if (area != null) {
+                predicates.add(cb.equal(course.get("area"), area));
+            }
+            if (language != null) {
+                predicates.add(cb.equal(course.get("language"), language));
+            }
+            if (SearchUtils.isNotBlank(adminName)) {
+                predicates.add(cb.like(adminJoin.get("name"), "%" + adminName + "%"));
+            }
+            if (Boolean.TRUE.equals(courseIsActive)) {
+                predicates.add(cb.isTrue(course.get("courseIsActive")));
+            }
             cq.where(predicates.toArray(new Predicate[0]));
 
             // Sorting
@@ -109,7 +145,6 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             } else {
                 cq.orderBy(cb.desc(course.get("creationDate")));
             }
-
             TypedQuery<CourseEntity> typedQuery = em.createQuery(cq);
             if(offset != null && offset >= 0) {
                 typedQuery.setFirstResult(offset);
@@ -125,8 +160,7 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
     }
 
     public long countCoursesWithFilters(Long id, String title, Integer duration, String description,
-                                        CourseArea area, Language language, String adminName, Boolean courseIsActive,
-                                        CourseParameter parameter, OrderBy orderBy) {
+                                        CourseArea area, Language language, String adminName, Boolean courseIsActive) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -134,8 +168,44 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             Join<CourseEntity, UserEntity> adminJoin = course.join("admin", JoinType.LEFT);
             List<Predicate> predicates = new ArrayList<>();
 
-            // ...same predicate logic as above...
-
+            if (id != null) {
+                predicates.add(cb.equal(course.get("id"), id));
+            }
+            if (SearchUtils.isNotBlank(title)) {
+                if (SearchUtils.isQuoted(title)) {
+                    String exact = SearchUtils.stripQuotes(title);
+                    predicates.add(cb.like(course.get("title"), "%" + exact + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(title.toLowerCase());
+                    Expression<String> unaccentedTitle = cb.function("unaccent", String.class, cb.lower(course.get("title")));
+                    predicates.add(cb.like(unaccentedTitle, "%" + normalized + "%"));
+                }
+            }
+            if (duration != null) {
+                predicates.add(cb.equal(course.get("duration"), duration));
+            }
+            if (SearchUtils.isNotBlank(description)) {
+                if (SearchUtils.isQuoted(description)) {
+                    String exact = SearchUtils.stripQuotes(description);
+                    predicates.add(cb.like(course.get("description"), "%" + exact + "%"));
+                } else {
+                    String normalized = SearchUtils.normalizeString(description.toLowerCase());
+                    Expression<String> unaccentedDescription = cb.function("unaccent", String.class, cb.lower(course.get("description")));
+                    predicates.add(cb.like(unaccentedDescription, "%" + normalized + "%"));
+                }
+            }
+            if (area != null) {
+                predicates.add(cb.equal(course.get("area"), area));
+            }
+            if (language != null) {
+                predicates.add(cb.equal(course.get("language"), language));
+            }
+            if (SearchUtils.isNotBlank(adminName)) {
+                predicates.add(cb.like(adminJoin.get("name"), "%" + adminName + "%"));
+            }
+            if (Boolean.TRUE.equals(courseIsActive)) {
+                predicates.add(cb.isTrue(course.get("courseIsActive")));
+            }
             cq.where(predicates.toArray(new Predicate[0]));
             cq.select(cb.count(course));
             return em.createQuery(cq).getSingleResult();

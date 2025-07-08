@@ -15,7 +15,7 @@ import UserIcon from "../../components/userIcon/UserIcon";
 import Spinner from "../../components/spinner/spinner";
 import handleGetUserInformation from "../../handles/handleGetUserInformation";
 import handleGetUserAvatar from "../../handles/handleGetUserAvatar";
-import template_backup from "../../assets/photos/template_backup.png";
+import template_backup from "../../assets/templates/template_backup.png";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
 import useAuthStore from "../../stores/useAuthStore";
