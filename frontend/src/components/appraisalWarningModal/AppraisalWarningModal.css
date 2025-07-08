@@ -1,245 +1,282 @@
 .appraisal-warning-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.appraisal-warning-modal {
+  background: white;
+  border-radius: var(--border-radius-default, 12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
   }
-  
-  .appraisal-warning-modal {
-    background: white;
-    border-radius: var(--border-radius-default, 12px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
-  
-  @keyframes modalSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-  
-  .appraisal-warning-modal-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 24px 24px 16px 24px;
-    border-bottom: 1px solid #e0e0e0;
-    position: relative;
-  }
-  
-  .appraisal-warning-icon {
-    flex-shrink: 0;
-    font-size: 24px;
-    color: #ff9800;
-    background: #fff3e0;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .appraisal-warning-modal-header h2 {
-    margin: 0;
-    font-family: var(--font-family-heading, "Istok Web", sans-serif);
-    font-size: 20px;
-    font-weight: var(--font-weight-bold, 700);
-    color: var(--text, #000000);
-    flex: 1;
-  }
-  
-  .appraisal-warning-close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #666;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-  }
-  
-  .appraisal-warning-close-btn:hover {
-    background: #f5f5f5;
-    color: #333;
-  }
-  
-  .appraisal-warning-modal-content {
-    padding: 24px;
-  }
-  
-  .appraisal-warning-message {
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 16px;
-    color: var(--text, #000000);
-    margin: 0 0 20px 0;
-    line-height: 1.5;
-  }
-  
-  .appraisal-warning-details {
-    background: #f8f9fa;
-    border-radius: var(--border-radius-default, 8px);
+}
+
+.appraisal-warning-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.appraisal-warning-icon {
+  flex-shrink: 0;
+  font-size: 24px;
+  color: #ff9800;
+  background: #fff3e0;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appraisal-warning-modal-header h2 {
+  margin: 0;
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: 20px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  flex: 1;
+}
+
+.appraisal-warning-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.appraisal-warning-close-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.appraisal-warning-modal-content {
+  padding: 24px;
+}
+
+.appraisal-warning-message {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 16px;
+  color: var(--text, #000000);
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.appraisal-warning-details {
+  background: #f8f9fa;
+  border-radius: var(--border-radius-default, 8px);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.appraisal-warning-summary h3 {
+  margin: 0 0 12px 0;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.appraisal-warning-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appraisal-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #e0e0e0;
+}
+
+.appraisal-stat.warning {
+  border-left-color: #ff9800;
+  background: #fff8f0;
+}
+
+.appraisal-stat-label {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  color: #666;
+}
+
+.appraisal-stat-value {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+}
+
+.appraisal-warning-breakdown {
+  margin-top: 16px;
+}
+
+.appraisal-warning-breakdown h4 {
+  margin: 0 0 8px 0;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 13px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.appraisal-warning-breakdown ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: none;
+}
+
+.appraisal-warning-breakdown li {
+  position: relative;
+  padding: 4px 0;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  color: #666;
+}
+
+.appraisal-warning-breakdown li:before {
+  content: "•";
+  color: #ff9800;
+  position: absolute;
+  left: -12px;
+}
+
+.appraisal-warning-instruction {
+  margin: 16px 0 0 0;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.appraisal-warning-modal-footer {
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px; /* ✅ ADICIONAR espaçamento entre botões */
+}
+
+/* ✅ NOVO: Estilo para o botão de verificar appraisals pendentes */
+.appraisal-warning-check-btn {
+  background: #424359;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-default, 8px);
+  padding: 12px 20px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  min-width: 180px; /* Largura mínima para o texto */
+  white-space: nowrap; /* Evitar quebra de linha */
+}
+
+.appraisal-warning-check-btn:hover {
+  background: #88909f;
+}
+
+.appraisal-warning-check-btn:active {
+  transform: translateY(1px);
+}
+
+.appraisal-warning-understand-btn {
+  background: var(--primary, #9c2f31);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-default, 8px);
+  padding: 12px 24px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  min-width: 120px;
+}
+
+.appraisal-warning-understand-btn:hover {
+  background: var(--light-red, #b61b23);
+}
+
+.appraisal-warning-understand-btn:active {
+  transform: translateY(1px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .appraisal-warning-modal-overlay {
     padding: 16px;
-    margin-bottom: 20px;
   }
-  
-  .appraisal-warning-summary h3 {
-    margin: 0 0 12px 0;
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    font-weight: var(--font-weight-bold, 700);
-    color: var(--text, #000000);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+
+  .appraisal-warning-modal {
+    max-width: 100%;
   }
-  
-  .appraisal-warning-stats {
-    display: flex;
-    flex-direction: column;
+
+  .appraisal-warning-modal-header,
+  .appraisal-warning-modal-content,
+  .appraisal-warning-modal-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* ✅ NOVO: Responsividade para os botões em mobile */
+  .appraisal-warning-modal-footer {
+    flex-direction: column-reverse; /* Botão principal em baixo */
     gap: 8px;
   }
-  
-  .appraisal-stat {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: white;
-    border-radius: 6px;
-    border-left: 3px solid #e0e0e0;
-  }
-  
-  .appraisal-stat.warning {
-    border-left-color: #ff9800;
-    background: #fff8f0;
-  }
-  
-  .appraisal-stat-label {
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .appraisal-stat-value {
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    font-weight: var(--font-weight-bold, 700);
-    color: var(--text, #000000);
-  }
-  
-  .appraisal-warning-breakdown {
-    margin-top: 16px;
-  }
-  
-  .appraisal-warning-breakdown h4 {
-    margin: 0 0 8px 0;
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 13px;
-    font-weight: var(--font-weight-bold, 700);
-    color: var(--text, #000000);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .appraisal-warning-breakdown ul {
-    margin: 0;
-    padding-left: 16px;
-    list-style-type: none;
-  }
-  
-  .appraisal-warning-breakdown li {
-    position: relative;
-    padding: 4px 0;
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .appraisal-warning-breakdown li:before {
-    content: "•";
-    color: #ff9800;
-    position: absolute;
-    left: -12px;
-  }
-  
-  .appraisal-warning-instruction {
-    margin: 16px 0 0 0;
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    color: #666;
-    font-style: italic;
-    line-height: 1.4;
-  }
-  
-  .appraisal-warning-modal-footer {
-    padding: 16px 24px 24px 24px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  
+
+  .appraisal-warning-check-btn,
   .appraisal-warning-understand-btn {
-    background: var(--primary, #9c2f31);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-default, 8px);
-    padding: 12px 24px;
-    font-family: var(--font-family-secondary, "Catamaran", sans-serif);
-    font-size: 14px;
-    font-weight: var(--font-weight-bold, 700);
-    cursor: pointer;
-    transition: background 0.2s ease;
-    min-width: 120px;
+    width: 100%; /* Botões full-width em mobile */
+    min-width: unset;
   }
-  
-  .appraisal-warning-understand-btn:hover {
-    background: var(--light-red, #b61b23);
+
+  .appraisal-warning-stats {
+    gap: 6px;
   }
-  
-  .appraisal-warning-understand-btn:active {
-    transform: translateY(1px);
+
+  .appraisal-stat {
+    padding: 6px 10px;
   }
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .appraisal-warning-modal-overlay {
-      padding: 16px;
-    }
-  
-    .appraisal-warning-modal {
-      max-width: 100%;
-    }
-  
-    .appraisal-warning-modal-header,
-    .appraisal-warning-modal-content,
-    .appraisal-warning-modal-footer {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-  
-    .appraisal-warning-stats {
-      gap: 6px;
-    }
-  
-    .appraisal-stat {
-      padding: 6px 10px;
-    }
-  }
+}

@@ -302,7 +302,7 @@ public class CycleService implements Serializable {
     }
 
     /**
-     * Validates if a cycle can be closed by checking if all appraisals are in CLOSED state.
+     * Validates if a cycle can be closed by checking if all appraisals are in COMPLETED state.
      *
      * @param cycleId The cycle ID to validate
      * @return Map containing validation result and details
@@ -320,7 +320,7 @@ public class CycleService implements Serializable {
             throw new IllegalStateException("Cycle is already closed");
         }
 
-        // Count appraisals that are NOT in CLOSED state
+        // Count appraisals that are NOT COMPLETED (i.e., still IN_PROGRESS)
         long inProgressCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()
                 .filter(appraisal -> appraisal.getState() == AppraisalState.IN_PROGRESS)
                 .count();
@@ -329,34 +329,38 @@ public class CycleService implements Serializable {
                 .filter(appraisal -> appraisal.getState() == AppraisalState.COMPLETED)
                 .count();
 
-        long totalNonClosedCount = inProgressCount + completedCount;
+        long closedCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()
+                .filter(appraisal -> appraisal.getState() == AppraisalState.CLOSED)
+                .count();
+
         long totalAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId).size();
 
-        boolean canClose = totalNonClosedCount == 0;
+        // Can only close if ALL appraisals are COMPLETED (none IN_PROGRESS)
+        boolean canClose = inProgressCount == 0 && completedCount == totalAppraisals;
 
         Map<String, Object> result = new HashMap<>();
         result.put("canClose", canClose);
         result.put("totalAppraisals", totalAppraisals);
         result.put("inProgressCount", inProgressCount);
         result.put("completedCount", completedCount);
-        result.put("nonClosedCount", totalNonClosedCount);
+        result.put("closedCount", closedCount);
 
         if (!canClose) {
-            String reason = String.format("Cannot close cycle: %d appraisal(s) are not closed (%d in progress, %d completed)", 
-                                        totalNonClosedCount, inProgressCount, completedCount);
+            String reason = String.format("Cannot close cycle: %d appraisal(s) are still in progress and need to be completed first", 
+                                        inProgressCount);
             result.put("reason", reason);
-            LOGGER.warn("Cycle {} cannot be closed: {} appraisals not closed", cycleId, totalNonClosedCount);
+            LOGGER.warn("Cycle {} cannot be closed: {} appraisals still in progress", cycleId, inProgressCount);
         } else {
-            result.put("reason", "All appraisals are closed");
-            LOGGER.info("Cycle {} can be closed: all appraisals are closed", cycleId);
+            result.put("reason", "All appraisals are completed and ready for cycle closure");
+            LOGGER.info("Cycle {} can be closed: all {} appraisals are completed", cycleId, completedCount);
         }
 
         return result;
     }
 
     /**
-     * Closes a cycle, changing its state to CLOSED.
-     * Now includes validation to ensure all appraisals are closed.
+     * Closes a cycle, changing its state to CLOSED and updating all appraisals to CLOSED.
+     * Validates that all appraisals are COMPLETED before allowing closure.
      *
      * @param cycleId The cycle ID
      * @return The updated cycle DTO
@@ -367,7 +371,7 @@ public class CycleService implements Serializable {
     public CycleDTO closeCycle(Long cycleId) {
         LOGGER.info("Attempting to close cycle with ID: {}", cycleId);
 
-        // First validate if cycle can be closed
+        // First validate if cycle can be closed (all appraisals COMPLETED)
         Map<String, Object> validation = canCloseCycle(cycleId);
         boolean canClose = (Boolean) validation.get("canClose");
         
@@ -377,10 +381,27 @@ public class CycleService implements Serializable {
             throw new IllegalStateException(reason);
         }
 
+        // Get the cycle
         CycleEntity cycle = cycleRepository.find(cycleId);
+        
+        // Close the cycle
         cycle.setState(CycleState.CLOSED);
         cycleRepository.merge(cycle);
-        LOGGER.info("Successfully closed cycle with ID: {}", cycleId);
+        
+        // Now update all COMPLETED appraisals to CLOSED
+        List<AppraisalEntity> cycleAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId);
+        long updatedAppraisals = 0;
+        
+        for (AppraisalEntity appraisal : cycleAppraisals) {
+            if (appraisal.getState() == AppraisalState.COMPLETED) {
+                appraisal.setState(AppraisalState.CLOSED);
+                appraisalRepository.merge(appraisal);
+                updatedAppraisals++;
+            }
+        }
+        
+        LOGGER.info("Successfully closed cycle with ID: {} and updated {} appraisals to CLOSED state", 
+                   cycleId, updatedAppraisals);
 
         return cycleMapper.toDto(cycle);
     }

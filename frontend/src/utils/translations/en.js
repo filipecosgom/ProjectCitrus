@@ -371,7 +371,7 @@ const en = {
     errorInvalidDateRange: "Select a valid date range",
     errorCreateCycle: "Error creating cycle",
 
-    // Novas traduções para o CycleDetailsOffcanvas
+    // Traduções para o CycleDetailsOffcanvas
     dateRange: "Date Range",
     summary: "Summary",
     duration: "Duration",
@@ -382,7 +382,7 @@ const en = {
     statusInProgress: "In Progress",
     userId: "User",
 
-    // Novas traduções sugeridas
+    // Traduções para o AppraisalWarningModal
     cannotCloseCycle: "Cannot close cycle",
     appraisalsNotClosed: "There are appraisals that are not closed",
     understood: "Understood",
@@ -394,8 +394,16 @@ const en = {
       "{count, plural, one {# appraisal in progress} other {# appraisals in progress}}",
     completedAppraisals:
       "{count, plural, one {# completed appraisal} other {# completed appraisals}}",
+
+    // CORRIGIR esta tradução (era "Closed", agora é "Completed")
     closeCycleInstruction:
-      "To close this cycle, all appraisals must be in 'Closed' state.",
+      "To close this cycle, all appraisals must be in 'Completed' state.",
+
+    // ADICIONAR estas traduções em falta
+    appraisalsNotCompleted:
+      "Cannot close this cycle because there are appraisals that have not been completed yet.",
+    closeCycleInstructionCompleted:
+      "To close this cycle, all appraisals must be in 'Completed' state.",
   },
 
   courses: {
@@ -434,6 +442,21 @@ const en = {
     confirm: "Confirm",
     cancel: "Cancel",
     confirmMessage: "Are you sure you want to proceed?",
+  },
+
+  checkPendingAppraisals: "Check Pending Appraisals",
+  cycles: {
+    understood: "Understood",
+    cannotCloseCycle: "Cannot Close Cycle",
+    appraisalsNotCompleted: "Some appraisals are not completed yet.",
+    appraisalsSummary: "Appraisals Summary",
+    totalAppraisals: "Total Appraisals",
+    pendingAppraisals: "Pending Appraisals",
+    appraisalsBreakdown: "Breakdown",
+    inProgressAppraisals: "{{count}} in progress",
+    completedAppraisals: "{{count}} completed",
+    closeCycleInstructionCompleted:
+      "Please ensure all appraisals are completed before closing the cycle.",
   },
 };
 export default en;
