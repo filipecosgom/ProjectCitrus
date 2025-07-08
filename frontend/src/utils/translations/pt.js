@@ -411,7 +411,7 @@ const pt = {
       "Não é possível fechar este ciclo porque existem avaliações que ainda não foram completadas.",
     closeCycleInstructionCompleted:
       "Para fechar este ciclo, todas as avaliações devem estar no estado 'Completado'.",
-    checkPendingAppraisals: "Verificar Appraisals Pendentes",
+    checkPendingAppraisals: "Verificar Avaliações Pendentes",
   },
 
   courses: {

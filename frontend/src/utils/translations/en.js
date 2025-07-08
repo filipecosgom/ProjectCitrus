@@ -449,5 +449,20 @@ const en = {
     cancel: "Cancel",
     confirmMessage: "Are you sure you want to proceed?",
   },
+
+  checkPendingAppraisals: "Check Pending Appraisals",
+  cycles: {
+    understood: "Understood",
+    cannotCloseCycle: "Cannot Close Cycle",
+    appraisalsNotCompleted: "Some appraisals are not completed yet.",
+    appraisalsSummary: "Appraisals Summary",
+    totalAppraisals: "Total Appraisals",
+    pendingAppraisals: "Pending Appraisals",
+    appraisalsBreakdown: "Breakdown",
+    inProgressAppraisals: "{{count}} in progress",
+    completedAppraisals: "{{count}} completed",
+    closeCycleInstructionCompleted:
+      "Please ensure all appraisals are completed before closing the cycle.",
+  },
 };
 export default en;

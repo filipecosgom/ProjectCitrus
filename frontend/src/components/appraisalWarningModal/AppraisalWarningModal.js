@@ -97,12 +97,12 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
         </div>
 
         <div className="appraisal-warning-modal-footer">
-          {/* ✅ NOVO: Botão para verificar appraisals pendentes */}
+          {/* ✅ MELHOR: Usar tradução com fallback */}
           <button
             className="appraisal-warning-check-btn"
             onClick={handleCheckPendingAppraisals}
           >
-            {t("cycles.checkPendingAppraisals")}
+            {t("checkPendingAppraisals", "Check Pending Appraisals")}
           </button>
           <button
             className="appraisal-warning-understand-btn"
