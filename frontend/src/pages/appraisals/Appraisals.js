@@ -39,13 +39,13 @@ export default function Appraisals() {
   // Separate state for search/filter, sort, and pagination
   const [searchParams, setSearchParams] = useState({
     query: "",
-    searchType: "creationDate",
+    searchType: "appraisedUserName", // ✅ CORRIGIR: era "creationDate"
     limit: 10,
     state: "",
     score: "",
   });
   const [sort, setSort] = useState({
-    sortBy: "creationDate",
+    sortBy: "endDate", // ✅ CORRIGIR: era "creationDate", usar "endDate" como padrão
     sortOrder: "DESCENDING",
   });
   const lastSearchRef = useRef(searchParams);
@@ -62,7 +62,7 @@ export default function Appraisals() {
       // Extrair parâmetros de busca da URL
       const searchParamsFromURL = {
         query: urlParams.query || "",
-        searchType: urlParams.searchType || "creationDate",
+        searchType: urlParams.searchType || "appraisedUserName", // ✅ CORRIGIR
         limit: parseInt(urlParams.limit) || 10,
         state: urlParams.state || "",
         score: urlParams.score || "",
@@ -70,7 +70,7 @@ export default function Appraisals() {
 
       // Extrair parâmetros de ordenação da URL
       const sortFromURL = {
-        sortBy: urlParams.sortBy || "creationDate",
+        sortBy: urlParams.sortBy || "endDate", // ✅ CORRIGIR
         sortOrder: urlParams.sortOrder || "DESCENDING",
       };
 
@@ -109,7 +109,8 @@ export default function Appraisals() {
 
       // Adicionar parâmetros de busca (apenas se não são valores padrão)
       if (searchParams.query) newParams.set("query", searchParams.query);
-      if (searchParams.searchType !== "creationDate")
+      if (searchParams.searchType !== "appraisedUserName")
+        // ✅ CORRIGIR
         newParams.set("searchType", searchParams.searchType);
       if (searchParams.limit !== 10)
         newParams.set("limit", searchParams.limit.toString());
@@ -117,7 +118,7 @@ export default function Appraisals() {
       if (searchParams.score) newParams.set("score", searchParams.score);
 
       // Adicionar parâmetros de ordenação (apenas se não são valores padrão)
-      if (sort.sortBy !== "creationDate") newParams.set("sortBy", sort.sortBy);
+      if (sort.sortBy !== "endDate") newParams.set("sortBy", sort.sortBy); // ✅ CORRIGIR
       if (sort.sortOrder !== "DESCENDING")
         newParams.set("sortOrder", sort.sortOrder);
 
@@ -212,6 +213,13 @@ export default function Appraisals() {
 
   // ✅ MODIFICAR: Handlers para atualizar tanto estado quanto URL
   const handleSearch = (query, searchType, limit, filters = {}) => {
+    console.log("🔍 handleSearch received:", {
+      query,
+      searchType,
+      limit,
+      filters,
+    }); // ✅ DEBUG
+
     const newSearchParams = {
       query,
       searchType,
@@ -219,10 +227,14 @@ export default function Appraisals() {
       ...filters,
     };
 
+    console.log("🔍 newSearchParams:", newSearchParams); // ✅ DEBUG
+
     // Always ensure appraisingUserId is present for non-admins
     const finalParams = isAdmin
       ? newSearchParams
       : { ...newSearchParams, appraisingUserId: user?.id };
+
+    console.log("🔍 finalParams:", finalParams); // ✅ DEBUG
 
     setSearchParams(finalParams);
     setPagination((prev) => ({ ...prev, offset: 0 }));
@@ -315,6 +327,7 @@ export default function Appraisals() {
     <div className="appraisals-container">
       <div className="appraisals-searchBarAndButton">
         <SearchBar
+          key={`searchbar-${searchParams.query}-${searchParams.searchType}-${searchParams.state}`} // ✅ FORÇAR re-render
           onSearch={handleSearch}
           searchTypes={appraisalsSearchTypes(t, isAdmin)}
           {...filtersConfig}

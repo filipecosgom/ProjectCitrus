@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // ✅ ADICIONAR useEffect
 import { useForm } from "react-hook-form";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
@@ -21,17 +21,31 @@ const SearchBar = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, watch, setValue } = useForm({
+  const { register, handleSubmit, watch, setValue, reset } = useForm({
+    // ✅ ADICIONAR reset
     defaultValues: {
       query: "",
-      searchType: "name",
+      searchType: "appraisedUserName", // ✅ CORRIGIR valor padrão
       limit: 10,
       ...defaultValues,
     },
   });
+
+  // ✅ NOVO: Atualizar form quando defaultValues mudam
+  useEffect(() => {
+    console.log("🔍 SearchBar defaultValues changed:", defaultValues); // DEBUG
+    reset({
+      query: "",
+      searchType: "appraisedUserName", // ✅ CORRIGIR valor padrão
+      limit: 10,
+      ...defaultValues,
+    });
+  }, [defaultValues, reset]);
+
   const [showResultsMenu, setShowResultsMenu] = useState(false);
 
   const onSubmit = (formData) => {
+    console.log("🔍 SearchBar onSubmit:", formData); // ✅ DEBUG
     const filters = {};
     filtersConfig.forEach((filter) => {
       filters[filter] = formData[filter];
