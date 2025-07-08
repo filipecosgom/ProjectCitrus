@@ -147,6 +147,7 @@ const Courses = () => {
                 sortBy={sort.sortBy}
                 sortOrder={sort.sortOrder}
                 onSortChange={handleSortChange}
+                isCardMode={true}
       />
       <div className="courses-content">
         {resultsLoading ? (

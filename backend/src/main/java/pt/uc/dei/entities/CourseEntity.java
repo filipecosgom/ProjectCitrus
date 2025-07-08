@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import pt.uc.dei.enums.CourseArea;
 import pt.uc.dei.enums.Language;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class CourseEntity implements Serializable {
      * Cannot be updated once set.
      */
     @Column(name = "creation_date", nullable = false, unique = false, updatable = false)
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     /**
      * The duration of the course (in hours).
@@ -139,7 +140,7 @@ public class CourseEntity implements Serializable {
      * Gets the creation date and time of the course.
      * @return the creation date
      */
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
@@ -147,7 +148,7 @@ public class CourseEntity implements Serializable {
      * Sets the creation date and time of the course.
      * @param creationDate the creation date
      */
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -436,7 +436,7 @@ const pt = {
     area: "Área",
     createdDate: "Data de Criação",
     description: "Descrição",
-    startCourse: "Iniciar Curso",
+    startCourse: "Ir para o curso",
     objectives: "Objetivos de Aprendizagem",
     objective1: "Dominar os conceitos fundamentais de {{title}}",
     objective2: "Aplicar conhecimentos em projetos práticos",

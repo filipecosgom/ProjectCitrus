@@ -41,7 +41,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .sort-icon {
@@ -152,10 +152,22 @@
   .sortControls-mobile {
     display: none;
   }
+  .sortControls-mobile .cardMode {
+    display: flex;
+  }
+}
+
+/* Always show mobile sort controls in cardMode, even on desktop */
+.sortControls-mobile.cardMode {
+  display: flex !important;
 }
 
 @media (max-width: 480px) {
   .sortControls-container {
     display: none;
   }
+
+  .sortControls-div.active {
+  justify-content: space-between;
+}
 }

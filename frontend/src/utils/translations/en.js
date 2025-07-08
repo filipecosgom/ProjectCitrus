@@ -426,7 +426,7 @@ const en = {
     area: "Area",
     createdDate: "Created Date",
     description: "Description",
-    startCourse: "Start Course",
+    startCourse: "Go to course",
     objectives: "Learning Objectives",
     objective1: "Master the fundamentals of {{title}}",
     objective2: "Apply knowledge in practical projects",
