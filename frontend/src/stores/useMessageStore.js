@@ -59,9 +59,7 @@ const useMessageStore = create((set, get) => ({
     },
 
     setSelectedUser: (user) => {
-      set({ selectedUser: user, messages: []});
-      // Optionally clear messages when changing user
-      // set({ selectedUser: username, messages: [] });
+      set({ selectedUser: user});
     },
 
     addLocalMessage: (message) => {

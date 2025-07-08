@@ -397,36 +397,7 @@ const en = {
       "To close this cycle, all appraisals must be in 'Closed' state.",
   },
 
-  training: {
-    title: "Training",
-    searchPlaceholder: "Search training courses...",
-    noResults: "No training courses found",
-    loading: "Loading training courses...",
-    viewCourse: "View Course",
-    startCourse: "Start Course", // NOVO
-    categories: {
-      all: "All Categories",
-      frontend: "Frontend",
-      backend: "Backend",
-      uiux: "UX/UI",
-      database: "Database",
-      mobile: "Mobile",
-      devops: "DevOps",
-    },
-    languages: {
-      all: "All Languages",
-      pt: "Portuguese",
-      en: "English",
-    },
-    duration: {
-      hours: "{hours}h",
-      minutes: "{minutes}min",
-    },
-    filters: {
-      category: "Category",
-      language: "Language",
-    },
-  },
+  
 
   courses: {
     title: "Courses",
@@ -446,11 +417,25 @@ const en = {
     filterEnglish: "English",
     details: "Course Details",
     instructor: "Instructor",
-    duration: "Duration",
+    duration: {
+      hours: "{hours}h",
+      minutes: "{minutes}min",
+    },
     language: "Language",
     area: "Area",
     createdDate: "Created Date",
     description: "Description",
+    startCourse: "Start Course",
+    objectives: "Learning Objectives",
+    objective1: "Master the fundamentals of {{title}}",
+    objective2: "Apply knowledge in practical projects",
+    objective3: "Develop skills in {{area}}",
+    objective4: "Prepare for professional challenges",
+    prerequisites: "Prerequisites",
+    prerequisite1: "Basic programming knowledge",
+    prerequisite2: "Familiarity with web development",
+    prerequisite3: "Willingness to learn and practice",
+    viewCourse: "View Course",
   },
 
   common: {

@@ -1,4 +1,4 @@
-.training-card {
+.course-card {
   width: 192px;
   height: 220px;
   background: #fff;
@@ -11,12 +11,12 @@
   flex-direction: column;
 }
 
-.training-card:hover {
+.course-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.training-card-image {
+.course-card-image {
   width: 100%;
   height: 95px;
   overflow: hidden;
@@ -26,14 +26,14 @@
   background: #f5f5f5;
 }
 
-.training-card-image img {
+.course-card-image img {
   width: 170px;
   height: 95px;
   object-fit: cover;
   border-radius: 0;
 }
 
-.training-card-content {
+.course-card-content {
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@
   height: 125px;
 }
 
-.training-card-title {
+.course-card-title {
   font-family: "Istok Web", sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -55,7 +55,7 @@
   overflow: hidden;
 }
 
-.training-card-info {
+.course-card-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -63,27 +63,27 @@
   font-size: 12px;
 }
 
-.training-card-category {
+.course-card-category {
   font-family: "Inter", sans-serif;
   font-size: 10px;
   color: #666;
   font-weight: 500;
 }
 
-.training-card-language {
+.course-card-language {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.training-card-flag {
+.course-card-flag {
   width: 18px;
   height: 12px;
   border-radius: 2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.training-card-duration {
+.course-card-duration {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -92,12 +92,12 @@
   color: #666;
 }
 
-.training-card-clock-icon {
+.course-card-clock-icon {
   font-size: 10px;
   color: #888;
 }
 
-.training-card-button {
+.course-card-button {
   width: 100%;
   height: 32px;
   background: #b61b23;
@@ -112,83 +112,83 @@
   margin-top: auto;
 }
 
-.training-card-button:hover {
+.course-card-button:hover {
   background: #9c1419;
 }
 
-.training-card-button:active {
+.course-card-button:active {
   transform: translateY(1px);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .training-card {
+  .course-card {
     width: 160px;
     height: 190px;
   }
 
-  .training-card-image {
+  .course-card-image {
     height: 80px;
   }
 
-  .training-card-image img {
+  .course-card-image img {
     width: 140px;
     height: 80px;
   }
 
-  .training-card-content {
+  .course-card-content {
     height: 110px;
     padding: 10px;
   }
 
-  .training-card-title {
+  .course-card-title {
     font-size: 13px;
   }
 
-  .training-card-button {
+  .course-card-button {
     height: 28px;
     font-size: 11px;
   }
 }
 
 @media (max-width: 480px) {
-  .training-card {
+  .course-card {
     width: 140px;
     height: 170px;
   }
 
-  .training-card-image {
+  .course-card-image {
     height: 70px;
   }
 
-  .training-card-image img {
+  .course-card-image img {
     width: 120px;
     height: 70px;
   }
 
-  .training-card-content {
+  .course-card-content {
     height: 100px;
     padding: 8px;
   }
 
-  .training-card-title {
+  .course-card-title {
     font-size: 12px;
   }
 
-  .training-card-info {
+  .course-card-info {
     font-size: 10px;
   }
 
-  .training-card-flag {
+  .course-card-flag {
     width: 16px;
     height: 10px;
   }
 
-  .training-card-duration {
+  .course-card-duration {
     font-size: 9px;
   }
 
-  .training-card-button {
+  .course-card-button {
     height: 26px;
     font-size: 10px;
   }
