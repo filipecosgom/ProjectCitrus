@@ -301,6 +301,7 @@ const en = {
     statusNotRead: "✓✓",
     typeMessage: "Type a message...",
     selectConversation: "Select a conversation to start chatting",
+    toMessageCenter: "To Message Center",
   },
 
   // Appraisals Search
@@ -414,11 +415,12 @@ const en = {
     sortArea: "Area",
     sortDuration: "Duration",
     sortLanguage: "Language",
-    searchByTitle: "Title",
-    searchByDescription: "Description",
-    searchByArea: "Area",
+    searchByTitle: "Search by title",
+    searchByDescription: "Search by description",
+    searchByArea: "Search by area",
     filterAllAreas: "All areas",
     filterAllLanguages: "All languages",
+    filterMenuArea: "Area", // fallback for any legacy usage
     filterPortuguese: "Portuguese",
     filterEnglish: "English",
     details: "Course Details",
@@ -431,17 +433,9 @@ const en = {
     area: "Area",
     createdDate: "Created Date",
     description: "Description",
-    startCourse: "Start Course",
-    objectives: "Learning Objectives",
-    objective1: "Master the fundamentals of {{title}}",
-    objective2: "Apply knowledge in practical projects",
-    objective3: "Develop skills in {{area}}",
-    objective4: "Prepare for professional challenges",
-    prerequisites: "Prerequisites",
-    prerequisite1: "Basic programming knowledge",
-    prerequisite2: "Familiarity with web development",
-    prerequisite3: "Willingness to learn and practice",
+    startCourse: "Go to course",
     viewCourse: "View Course",
+    filterMenuArea: "Area"
   },
 
   common: {

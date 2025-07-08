@@ -3,6 +3,7 @@ package pt.uc.dei.dtos;
 import jakarta.validation.constraints.NotBlank;
 import pt.uc.dei.enums.CourseArea;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotBlank;
@@ -30,7 +31,7 @@ public class CourseDTO {
     /**
      * The date and time when the course was created.
      */
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     /**
      * The duration of the course (in hours).
@@ -112,7 +113,7 @@ public class CourseDTO {
      * Retrieves the date and time when the course was created.
      * @return the creation date and time.
      */
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
@@ -120,7 +121,7 @@ public class CourseDTO {
      * Sets the date and time when the course was created.
      * @param creationDate the creation date and time to set.
      */
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 

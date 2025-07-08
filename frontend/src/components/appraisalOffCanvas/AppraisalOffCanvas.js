@@ -401,9 +401,7 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
               <AppraisalStateBadge state={appraisal.state} />
             )}
           </div>
-          <button className="appraisal-offcanvas-close" onClick={onClose}>
-            <FaTimes />
-          </button>
+            <FaTimes className="appraisal-offcanvas-close" onClick={onClose}/>
         </div>
         {/* Conteúdo centrado */}
         <div className="appraisal-offcanvas-content">

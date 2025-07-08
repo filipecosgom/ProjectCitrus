@@ -2,6 +2,8 @@ package pt.uc.dei.dtos;
 
 import pt.uc.dei.enums.CourseArea;
 import pt.uc.dei.enums.Language;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
 public class CourseUpdateDTO {
     private Long id;
     private String title;
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
     private Integer duration;
     private Language language;
     private CourseArea area;
@@ -27,8 +29,8 @@ public class CourseUpdateDTO {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public LocalDateTime getCreationDate() { return creationDate; }
-    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
+    public LocalDate getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
 
     public Integer getDuration() { return duration; }
     public void setDuration(Integer duration) { this.duration = duration; }

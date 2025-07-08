@@ -8,11 +8,17 @@ import {
   FaPlay,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./CourseDetailsOffcanvas.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
-import courseTemplateImage from "../../assets/templates/courseTemplate.png"; // Default image if no course image is available
+import courseTemplateImage from "../../assets/templates/courseTemplate.png";
+import {
+  formatStringToDate
+} from "../../utils/utilityFunctions";
+
+
 
 const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   const { t } = useTranslation();
@@ -21,6 +27,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
 
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [criationDate, setCriationDate] = useState(null);
 
   // Controlar renderização e animação
   useEffect(() => {
@@ -40,32 +47,40 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   }, [isOpen]);
 
   useEffect(() => {
-      if (!course || !course.id) {
-        setCourseImageUrl(null);
-        return;
-      }
-  
-      let courseBlobUrl = null;
-      if (!hasImage) {
-        setCourseImageUrl(null);
-        return;
-      }
-      setShouldRender(false);
-      handleGetCourseImage(course.id)
-        .then((result) => {
-          if (result.success && result.image) {
-            courseBlobUrl = result.image;
-            setCourseImageUrl(result.image);
-          } else {
-            setCourseImageUrl(null);
-          }
-        })
-        .catch(() => setCourseImageUrl(null))
-        .finally(() => setShouldRender(true));
-        return () => {
-        if (courseBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(courseBlobUrl);
-      };
-    }, [course?.id, hasImage]);
+    if (!course || !course.id) {
+      setCourseImageUrl(null);
+      return;
+    }
+    let courseBlobUrl = null;
+    if (!hasImage) {
+      setCourseImageUrl(null);
+      return;
+    }
+    setShouldRender(false);
+    handleGetCourseImage(course.id)
+      .then((result) => {
+        if (result.success && result.image) {
+          courseBlobUrl = result.image;
+          setCourseImageUrl(result.image);
+        } else {
+          setCourseImageUrl(null);
+        }
+      })
+      .catch(() => setCourseImageUrl(null))
+      .finally(() => setShouldRender(true));
+    return () => {
+      if (courseBlobUrl?.startsWith("blob:"))
+        URL.revokeObjectURL(courseBlobUrl);
+    };
+  }, [course?.id, hasImage]);
+
+  useEffect(() => {
+    if (course?.creationDate) {
+      setCriationDate(formatStringToDate(course.creationDate));
+    } else {
+      setCriationDate(null);
+    }
+  }, [course?.creationDate]);
 
   // Controlar scroll da página
   useEffect(() => {
@@ -78,8 +93,6 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
-
-
 
   // Fechar com ESC
   useEffect(() => {
@@ -122,10 +135,6 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
     return t("courses.duration.hours", { hours });
   };
 
-  const handleStartCourse = () => {
-    console.log("Iniciar curso:", course.title);
-  };
-
   if (!shouldRender || !course) return null;
 
   return (
@@ -135,27 +144,22 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
       }`}
       onClick={handleBackdropClick}
     >
-      <div
-        className={`course-details-offcanvas ${isAnimating ? "open" : ""}`}
-      >
-        <button className="course-details-offcanvas-close" onClick={onClose}>
-          <FaTimes />
-        </button>
-
+      <div className={`course-details-offcanvas ${isAnimating ? "open" : ""}`}>
+          <FaTimes className="course-details-offcanvas-close" onClick={onClose}/>
         <div className="course-details-offcanvas-content">
           <div className="course-details-image">
             <img
-                    src={
-                      hasImage && courseImageUrl
-                        ? courseImageUrl
-                        : courseTemplateImage
-                    }
-                    alt={`${course.title}`}
-                    onError={(e) => {
-                      // ✅ FALLBACK se imagem falhar
-                      e.target.src = courseTemplateImage;
-                    }}
-                  />
+              src={
+                hasImage && courseImageUrl
+                  ? courseImageUrl
+                  : courseTemplateImage
+              }
+              alt={`${course.title}`}
+              onError={(e) => {
+                // ✅ FALLBACK se imagem falhar
+                e.target.src = courseTemplateImage;
+              }}
+            />
           </div>
 
           <h1 className="course-details-title">{course.title}</h1>
@@ -163,12 +167,8 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
           <div className="course-details-info">
             <div className="course-details-info-item">
               <FaGraduationCap className="course-details-icon" />
-              <span className="course-details-label">
-                {t("courses.area")}:
-              </span>
-              <span className="course-details-value">
-                {course.area}
-              </span>
+              <span className="course-details-label">{t("courses.area")}:</span>
+              <span className="course-details-value">{course.area}</span>
             </div>
 
             <div className="course-details-info-item">
@@ -187,31 +187,29 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
 
             <div className="course-details-info-item">
               <FaClock className="course-details-icon" />
-              <span className="course-details-label">{t("courses.sortDuration")}:</span>
+              <span className="course-details-label">
+                {t("courses.sortDuration")}:
+              </span>
               <span className="course-details-value">
                 {formatDuration(course.duration)}
               </span>
             </div>
 
             <div className="course-details-info-item">
-              <FaUser className="course-details-icon" />
-              <span className="course-details-label">{t("courses.instructor")}:</span>
-              <span className="course-details-value">
-                {course.instructor || t("profilePlaceholderNA")}
-              </span>
-            </div>
-
-            <div className="course-details-info-item">
               <FaCalendar className="course-details-icon" />
-              <span className="course-details-label">{t("courses.createdDate") || "Criado em"}:</span>
+              <span className="course-details-label">
+                {t("courses.createdDate") || "Criado em"}:
+              </span>
               <span className="course-details-value">
-                {course.createdDate || t("profilePlaceholderNA")}
+                {course.creationDate ? criationDate : t("profilePlaceholderNA")}
               </span>
             </div>
           </div>
 
           <div className="course-details-section">
-            <h3 className="course-details-section-title">{t("courses.description")}</h3>
+            <h3 className="course-details-section-title">
+              {t("courses.description")}
+            </h3>
             <div className="course-details-description">
               <p>
                 {course.description ||
@@ -220,37 +218,14 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
             </div>
           </div>
 
-          <div className="course-details-section">
-            <h3 className="course-details-section-title">{t("courses.objectives", "Learning Objectives")}</h3>
-            <div className="course-details-objectives">
-              <ul>
-                <li>{t("courses.objective1", `Master the fundamentals of ${course.title}`)}</li>
-                <li>{t("courses.objective2", "Apply knowledge in practical projects")}</li>
-                <li>{t("courses.objective3", `Develop skills in ${course.area}`)}</li>
-                <li>{t("courses.objective4", "Prepare for professional challenges")}</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="course-details-section">
-            <h3 className="course-details-section-title">{t("courses.prerequisites", "Prerequisites")}</h3>
-            <div className="course-details-prerequisites">
-              <ul>
-                <li>{t("courses.prerequisite1", "Basic programming knowledge")}</li>
-                <li>{t("courses.prerequisite2", "Familiarity with web development")}</li>
-                <li>{t("courses.prerequisite3", "Willingness to learn and practice")}</li>
-              </ul>
-            </div>
-          </div>
-
           <div className="course-details-actions">
-            <button
+            <Link
+              to={course.link}
               className="course-details-start-btn"
-              onClick={handleStartCourse}
             >
               <FaPlay className="course-details-play-icon" />
               {t("courses.startCourse", t("course.startCourse"))}
-            </button>
+            </Link>
           </div>
         </div>
       </div>

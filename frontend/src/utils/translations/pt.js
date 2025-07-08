@@ -309,6 +309,7 @@ const pt = {
     statusNotRead: "✓✓",
     typeMessage: "Escreva uma mensagem...",
     selectConversation: "Selecione uma conversa para começar a conversar",
+    toMessageCenter: "Ir para Central de Mensagens",
   },
 
   // Avaliações
@@ -440,16 +441,7 @@ const pt = {
     area: "Área",
     createdDate: "Data de Criação",
     description: "Descrição",
-    startCourse: "Iniciar Curso",
-    objectives: "Objetivos de Aprendizagem",
-    objective1: "Dominar os conceitos fundamentais de {{title}}",
-    objective2: "Aplicar conhecimentos em projetos práticos",
-    objective3: "Desenvolver competências em {{area}}",
-    objective4: "Preparar-se para desafios profissionais",
-    prerequisites: "Pré-requisitos",
-    prerequisite1: "Conhecimentos básicos de programação",
-    prerequisite2: "Familiaridade com desenvolvimento web",
-    prerequisite3: "Vontade de aprender e praticar",
+    startCourse: "Ir para o curso",
     viewCourse: "Ver Curso",
   },
 

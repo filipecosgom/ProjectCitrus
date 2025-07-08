@@ -11,6 +11,7 @@ const SortControls = ({
   sortOrder,
   onSortChange,
   className = "",
+  isCardMode = false
 }) => {
   const { t } = useTranslation();
   const isUsersMode = className.includes("users-mode");
@@ -61,31 +62,34 @@ const SortControls = ({
   };
 
   const displayFields = getDisplayFields();
-  const currentSortField =
-    displayFields.find((f) => f.key === sortBy)?.id || displayFields[0].id;
+  const currentSortFieldObj = displayFields.find((f) => f.key === sortBy) || displayFields[0];
 
-  if (isMobile) {
+  // Show mobile dropdown if cardMode OR mobile
+  if (isCardMode || isMobile) {
     return (
-      <div className="sortControls-mobile">
-        <button type="button" onClick={() => setShowDropdown(!showDropdown)}>
-          {t(currentSortField)} {getSortIcon(sortBy)}
-        </button>
-        {showDropdown && (
-          <div className="sortControls-dropdown">
-            {displayFields.map((field) => (
-              <div
-                key={field.key}
-                className={`sortControls-div ${field.key} ${
-                  sortBy === field.key ? "active" : ""
-                }`}
-                onClick={() => handleSort(field.key)}
-              >
-                {field.label ? field.label(t) : t(field.id)}
-                {getSortIcon(field.key)}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className={`sortControls-mobile${isCardMode ? ' cardMode' : ''}`}>
+        <div className="sortControls-mobile-dropdown-wrapper" style={{ position: "relative", width: "100%" }}>
+          <button type="button" onClick={() => setShowDropdown(!showDropdown)}>
+            {currentSortFieldObj.label ? currentSortFieldObj.label(t) : t(currentSortFieldObj.id)} {getSortIcon(sortBy)}
+          </button>
+          {showDropdown && (
+            <div className="sortControls-dropdown">
+              {displayFields.map((field) => (
+                <div
+                  key={field.key}
+                  className={`sortControls-div ${field.key} ${sortBy === field.key ? "active" : ""}`}
+                  onClick={() => {
+                    handleSort(field.key);
+                    setShowDropdown(false)
+                  }}
+                >
+                  {field.label ? field.label(t) : t(field.id)}
+                  {getSortIcon(field.key)}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     );
   }
