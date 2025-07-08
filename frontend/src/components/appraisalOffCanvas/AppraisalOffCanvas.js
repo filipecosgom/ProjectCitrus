@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom"; // ✅ ADICIONAR useSearchParams
 import { FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
@@ -15,8 +15,10 @@ import useAuthStore from "../../stores/useAuthStore";
 
 const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams(); // ✅ ADICIONAR para suporte a URLs
   const user = appraisal?.appraisedUser || {};
-  const isTheManager = appraisal?.appraisingUser.id === useAuthStore((state) => state.user?.id);
+  const isTheManager =
+    appraisal?.appraisingUser.id === useAuthStore((state) => state.user?.id);
   const isAdmin = useAuthStore((state) => state.isUserAdmin());
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
@@ -25,7 +27,9 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedFeedback, setEditedFeedback] = useState("");
   const [editedScore, setEditedScore] = useState(appraisal?.score ?? 0);
-  const [editedState, setEditedState] = useState(appraisal?.state || "IN_PROGRESS"); // Add state for editable appraisal state (for admin in edit mode)
+  const [editedState, setEditedState] = useState(
+    appraisal?.state || "IN_PROGRESS"
+  ); // Add state for editable appraisal state (for admin in edit mode)
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [showStateDropdown, setShowStateDropdown] = useState(false);
@@ -34,6 +38,22 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   // showValidationError: true only if last action was submit and error is a validation error
   const [showValidationError, setShowValidationError] = useState(false);
   const navigate = useNavigate();
+
+  // ✅ NOVO: Atualizar título da página quando appraisal mudar
+  useEffect(() => {
+    if (appraisal && isOpen) {
+      const originalTitle = document.title;
+      const userName =
+        user.name && user.surname
+          ? `${user.name} ${user.surname}`
+          : user.email || `ID ${appraisal.id}`;
+      document.title = `Avaliação de ${userName} - ${originalTitle}`;
+
+      return () => {
+        document.title = originalTitle;
+      };
+    }
+  }, [appraisal, isOpen, user.name, user.surname, user.email]);
 
   // ✅ CONTROLAR renderização e animação
   useEffect(() => {
@@ -191,8 +211,14 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
       };
       const response = await handleUpdateAppraisal(updatePayload);
       if (response.success) {
-        handleNotification("success", "appraisal.saved", { endDate: appraisal.endDate });
-        const editedAppraisal = { ...appraisal, ...appraisalData, state: editedState }; // <-- FIXED
+        handleNotification("success", "appraisal.saved", {
+          endDate: appraisal.endDate,
+        });
+        const editedAppraisal = {
+          ...appraisal,
+          ...appraisalData,
+          state: editedState,
+        }; // <-- FIXED
         if (onSave) onSave(editedAppraisal);
         Object.assign(appraisal, editedAppraisal);
         setEditMode(false);
@@ -226,8 +252,14 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
       };
       const response = await handleUpdateAppraisal(updatePayload);
       if (response.success) {
-        handleNotification("success", "appraisal.submitted", { endDate: appraisal.endDate });
-        const editedAppraisal = { ...appraisal, ...appraisalData, state: "COMPLETED" };
+        handleNotification("success", "appraisal.submitted", {
+          endDate: appraisal.endDate,
+        });
+        const editedAppraisal = {
+          ...appraisal,
+          ...appraisalData,
+          state: "COMPLETED",
+        };
         if (onSave) onSave(editedAppraisal);
         Object.assign(appraisal, editedAppraisal);
         setEditMode(false);
@@ -284,25 +316,26 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   // Star selector for score (edit mode)
   const StarSelector = ({ value, onChange, max = 4, disabled }) => {
     return (
-      <div className={`appraisal-offcanvas-star-selector${disabled ? ' disabled' : ''}`}> 
-        {[1,2,3,4].map((val) => (
+      <div
+        className={`appraisal-offcanvas-star-selector${
+          disabled ? " disabled" : ""
+        }`}
+      >
+        {[1, 2, 3, 4].map((val) => (
           <span
             key={val}
-            className={`star${value >= val ? ' selected' : ''}`}
+            className={`star${value >= val ? " selected" : ""}`}
             onClick={() => !disabled && onChange(val)}
             tabIndex={disabled ? -1 : 0}
             role="button"
             aria-label={`Set score to ${val}`}
-            onKeyDown={e => {
-              if (!disabled && (e.key === 'Enter' || e.key === ' ')) onChange(val);
+            onKeyDown={(e) => {
+              if (!disabled && (e.key === "Enter" || e.key === " "))
+                onChange(val);
             }}
           >
-            <svg
-              className="star-svg"
-              width="20"
-              height="20"
-            >
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            <svg className="star-svg" width="20" height="20">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>
           </span>
         ))}
@@ -311,7 +344,7 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // State for showing/hiding the custom badge dropdown
-  
+
   // List of possible states
   const stateOptions = [
     { value: "IN_PROGRESS", label: t("appraisalStateInProgress") },
@@ -335,19 +368,30 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                   className="appraisal-offcanvas-state-dropdown-trigger"
                   onClick={() => setShowStateDropdown((v) => !v)}
                   tabIndex={0}
-                  onBlur={() => setTimeout(() => setShowStateDropdown(false), 150)}
+                  onBlur={() =>
+                    setTimeout(() => setShowStateDropdown(false), 150)
+                  }
                 >
-                  <AppraisalStateBadge state={editedState} dropdownOption={true} />
+                  <AppraisalStateBadge
+                    state={editedState}
+                    dropdownOption={true}
+                  />
                 </div>
                 {showStateDropdown && (
                   <div className="appraisal-offcanvas-state-dropdown-menu">
-                    {stateOptions.map(opt => (
+                    {stateOptions.map((opt) => (
                       <div
                         key={opt.value}
                         className="appraisal-offcanvas-state-dropdown-option"
-                        onClick={() => { setEditedState(opt.value); setShowStateDropdown(false); }}
+                        onClick={() => {
+                          setEditedState(opt.value);
+                          setShowStateDropdown(false);
+                        }}
                       >
-                        <AppraisalStateBadge state={opt.value} dropdownOption={true} />
+                        <AppraisalStateBadge
+                          state={opt.value}
+                          dropdownOption={true}
+                        />
                       </div>
                     ))}
                   </div>
@@ -396,8 +440,6 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
           {/* Email - font secundária, cinza */}
           <p className="appraisal-offcanvas-email">{user.email}</p>
 
-          
-
           <div className="appraisal-offcanvas-profileIcons">
             {profileItems.map((item) => (
               <div
@@ -416,42 +458,76 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
             ))}
           </div>
           {/* Always show verbose text, even in edit mode */}
-          <AppraisalScoreVerbose score={editMode ? editedScore : appraisal.score} />
+          <AppraisalScoreVerbose
+            score={editMode ? editedScore : appraisal.score}
+          />
           {/* Only show static stars when not editing */}
-          {!editMode && <AppraisalScoreStarBadge score={appraisal.score}/>} 
+          {!editMode && <AppraisalScoreStarBadge score={appraisal.score} />}
           {/* In edit mode, only show the star selector */}
           {editMode && (
             <>
-              <StarSelector value={editedScore} onChange={setEditedScore} disabled={saving} />
+              <StarSelector
+                value={editedScore}
+                onChange={setEditedScore}
+                disabled={saving}
+              />
             </>
           )}
           <div className="appraisal-offcanvas-feedback-title">
-              {t("appraisal.feedback")}
-            </div>
+            {t("appraisal.feedback")}
+          </div>
           <div className="appraisal-offcanvas-feedbackContainer">
             {editMode ? (
               <form
                 onSubmit={handleFormSubmit}
-                style={{ display: 'flex', flexDirection: 'column', width: '100%', flex: 1 }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  flex: 1,
+                }}
               >
                 <textarea
                   id="appraisal-feedback"
                   value={editedFeedback}
-                  onChange={e => setEditedFeedback(e.target.value)}
+                  onChange={(e) => setEditedFeedback(e.target.value)}
                   rows={4}
                   className="appraisal-offcanvas-feedback-textarea"
                   disabled={saving}
                 />
                 {/* Show validation error only after submit, never after save */}
-                <div className="appraisal-offcanvas-feedback-error">{showValidationError && error && isValidationError(error) ? error : "\u00A0"}</div>
+                <div className="appraisal-offcanvas-feedback-error">
+                  {showValidationError && error && isValidationError(error)
+                    ? error
+                    : "\u00A0"}
+                </div>
                 <div className="appraisal-offcanvas-feedback-buttons">
-                  <button type="button" onClick={() => handleSubmit({ feedback: editedFeedback, score: editedScore })} disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-submit">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleSubmit({
+                        feedback: editedFeedback,
+                        score: editedScore,
+                      })
+                    }
+                    disabled={saving}
+                    className="appraisal-offcanvas-btn appraisal-offcanvas-btn-submit"
+                  >
                     {t("appraisal.submit")}
                   </button>
-                  <button type="submit" disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-save">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="appraisal-offcanvas-btn appraisal-offcanvas-btn-save"
+                  >
                     {t("appraisal.save")}
                   </button>
-                  <button type="button" onClick={handleCancel} disabled={saving} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-cancel">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={saving}
+                    className="appraisal-offcanvas-btn appraisal-offcanvas-btn-cancel"
+                  >
                     {t("appraisal.cancel")}
                   </button>
                 </div>
@@ -463,13 +539,25 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
                     {appraisal.feedback || t("appraisal.noFeedback")}
                   </p>
                 </div>
-                <div className="appraisal-offcanvas-feedback-error">{error && !isValidationError(error) ? error : "\u00A0"}</div>
+                <div className="appraisal-offcanvas-feedback-error">
+                  {error && !isValidationError(error) ? error : "\u00A0"}
+                </div>
                 <div className="appraisal-offcanvas-feedback-buttons appraisal-offcanvas-feedback-buttons-view">
-                  {((isAdmin) || (isTheManager && (appraisal.state !== "CLOSED" && appraisal.state !== "COMPLETED"))) && 
-                  <button onClick={() => { setEditMode(true); setError(null); setShowValidationError(false); }} className="appraisal-offcanvas-btn appraisal-offcanvas-btn-edit">
-                    {t("appraisal.edit")}
-                  </button>
-                  }
+                  {(isAdmin ||
+                    (isTheManager &&
+                      appraisal.state !== "CLOSED" &&
+                      appraisal.state !== "COMPLETED")) && (
+                    <button
+                      onClick={() => {
+                        setEditMode(true);
+                        setError(null);
+                        setShowValidationError(false);
+                      }}
+                      className="appraisal-offcanvas-btn appraisal-offcanvas-btn-edit"
+                    >
+                      {t("appraisal.edit")}
+                    </button>
+                  )}
                 </div>
               </>
             )}

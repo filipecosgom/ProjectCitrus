@@ -1,6 +1,7 @@
 import "./Appraisals.css";
 import SearchBar from "../../components/searchbar/Searchbar";
 import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import AppraisalCard from "../../components/appraisalCard/AppraisalCard";
@@ -21,6 +22,8 @@ import handleNotification from "../../handles/handleNotification";
 
 export default function Appraisals() {
   const { t } = useTranslation();
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+
   const [appraisals, setAppraisals] = useState([]);
   const [appraisalStates, setAppraisalStates] = useState([]);
   const user = useAuthStore((state) => state.user);
@@ -32,10 +35,11 @@ export default function Appraisals() {
     limit: 10,
     total: 0,
   });
+
   // Separate state for search/filter, sort, and pagination
   const [searchParams, setSearchParams] = useState({
     query: "",
-    searchType: "creationDate", // or whatever default
+    searchType: "creationDate",
     limit: 10,
     state: "",
     score: "",
@@ -49,6 +53,18 @@ export default function Appraisals() {
   // Estados para appraisal offcanvas
   const [selectedAppraisal, setSelectedAppraisal] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
+  // ✅ NOVO: Verificar se há um appraisal ID na URL ao carregar
+  useEffect(() => {
+    const appraisalId = urlSearchParams.get("appraisal");
+    if (appraisalId && appraisals.length > 0) {
+      const appraisal = appraisals.find((a) => a.id === parseInt(appraisalId));
+      if (appraisal) {
+        setSelectedAppraisal(appraisal);
+        setOffcanvasOpen(true);
+      }
+    }
+  }, [urlSearchParams, appraisals]);
 
   useEffect(() => {
     lastSearchRef.current = searchParams;
@@ -125,14 +141,19 @@ export default function Appraisals() {
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
 
-  // Handlers para appraisal off canvas
+  // ✅ MODIFICAR: Adicionar parâmetro na URL ao abrir offcanvas
   const handleAppraisalClick = (appraisal) => {
     setSelectedAppraisal(appraisal);
     setOffcanvasOpen(true);
+    // Adicionar appraisal ID na URL
+    setUrlSearchParams({ appraisal: appraisal.id.toString() });
   };
 
+  // ✅ MODIFICAR: Remover parâmetro da URL ao fechar offcanvas
   const handleCloseOffcanvas = () => {
     setOffcanvasOpen(false);
+    // Remover appraisal ID da URL
+    setUrlSearchParams({});
     setTimeout(() => {
       setSelectedAppraisal(null);
     }, 300);
@@ -147,15 +168,18 @@ export default function Appraisals() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-  
   const handleAppraisalSave = (updatedAppraisal) => {
-  setAppraisals((prev) =>
-    prev.map((a) => (a.id === updatedAppraisal.id ? { ...a, ...updatedAppraisal } : a))
-  );
-  setSelectedAppraisal((prev) =>
-    prev && prev.id === updatedAppraisal.id ? { ...prev, ...updatedAppraisal } : prev
-  );
-};
+    setAppraisals((prev) =>
+      prev.map((a) =>
+        a.id === updatedAppraisal.id ? { ...a, ...updatedAppraisal } : a
+      )
+    );
+    setSelectedAppraisal((prev) =>
+      prev && prev.id === updatedAppraisal.id
+        ? { ...prev, ...updatedAppraisal }
+        : prev
+    );
+  };
 
   // PDF export handler
   const handleGetPdf = async () => {
@@ -226,7 +250,6 @@ export default function Appraisals() {
                 key={appraisal.id}
                 appraisal={appraisal}
                 onClick={handleAppraisalClick}
-                // Optionally, add onClick if you want card click
               />
             ))}
           </div>
@@ -235,7 +258,7 @@ export default function Appraisals() {
       <AppraisalOffCanvas
         appraisal={selectedAppraisal}
         isOpen={offcanvasOpen}
-        onClose={handleCloseOffcanvas}
+        onClose={handleCloseOffcanvas} // ✅ USAR nova função
         onSave={handleAppraisalSave}
       />
       <Pagination
