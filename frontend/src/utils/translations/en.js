@@ -398,8 +398,6 @@ const en = {
       "To close this cycle, all appraisals must be in 'Closed' state.",
   },
 
-  
-
   courses: {
     title: "Courses",
     searchPlaceholder: "Search for courses...",
@@ -409,11 +407,12 @@ const en = {
     sortArea: "Area",
     sortDuration: "Duration",
     sortLanguage: "Language",
-    searchByTitle: "Title",
-    searchByDescription: "Description",
-    searchByArea: "Area",
+    searchByTitle: "Search by title",
+    searchByDescription: "Search by description",
+    searchByArea: "Search by area",
     filterAllAreas: "All areas",
     filterAllLanguages: "All languages",
+    filterMenuArea: "Area", // fallback for any legacy usage
     filterPortuguese: "Portuguese",
     filterEnglish: "English",
     details: "Course Details",
@@ -427,16 +426,8 @@ const en = {
     createdDate: "Created Date",
     description: "Description",
     startCourse: "Go to course",
-    objectives: "Learning Objectives",
-    objective1: "Master the fundamentals of {{title}}",
-    objective2: "Apply knowledge in practical projects",
-    objective3: "Develop skills in {{area}}",
-    objective4: "Prepare for professional challenges",
-    prerequisites: "Prerequisites",
-    prerequisite1: "Basic programming knowledge",
-    prerequisite2: "Familiarity with web development",
-    prerequisite3: "Willingness to learn and practice",
     viewCourse: "View Course",
+    filterMenuArea: "Area"
   },
 
   common: {

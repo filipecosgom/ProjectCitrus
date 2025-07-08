@@ -145,10 +145,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
       onClick={handleBackdropClick}
     >
       <div className={`course-details-offcanvas ${isAnimating ? "open" : ""}`}>
-        <button className="course-details-offcanvas-close" onClick={onClose}>
-          <FaTimes />
-        </button>
-
+          <FaTimes className="course-details-offcanvas-close" onClick={onClose}/>
         <div className="course-details-offcanvas-content">
           <div className="course-details-image">
             <img

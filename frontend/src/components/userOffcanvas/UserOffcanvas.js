@@ -163,9 +163,7 @@ const UserOffcanvas = ({ user, isOpen, onClose }) => {
         {" "}
         {/* ✅ USAR isAnimating */}
         {/* Botão fechar X no canto superior direito */}
-        <button className="user-offcanvas-close" onClick={onClose}>
-          <FaTimes />
-        </button>
+          <FaTimes className="user-offcanvas-close" onClick={onClose}/>
         {/* Conteúdo centrado */}
         <div className="user-offcanvas-content">
           {/* Avatar 275px com especificações */}

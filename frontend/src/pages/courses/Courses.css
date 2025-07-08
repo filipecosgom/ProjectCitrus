@@ -65,7 +65,7 @@
 
   .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    gap: 32px;
     padding: 0 8px;
   }
 }
@@ -77,7 +77,7 @@
 
   .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    gap: 32px;
     padding: 0 16px;
   }
 }
@@ -117,7 +117,7 @@
 
   .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    gap: 32px;
     padding: 0 4px;
   }
 }

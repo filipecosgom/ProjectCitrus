@@ -31,6 +31,10 @@ const FilterMenu = ({
 
   const getOptionLabel = (key, opt) => {
     if (typeof opt === "object" && opt.label) return opt.label;
+    if (key === "area") {
+      // For area options, just return the value (area name) as label
+      return typeof opt === "object" ? opt.value : opt;
+    }
     if (key === "searchType") {
       const cap = typeof opt === "string" ? opt.charAt(0).toUpperCase() + opt.slice(1) : "";
       return t(`filterMenuOption${cap}`);
@@ -69,7 +73,7 @@ const FilterMenu = ({
             >
               <div className="filterMenu-label">
                 <FiChevronLeft aria-hidden="true" />
-                {t(id)}
+                {key === "area" ? t("courses.sortArea") : t(id)}
               </div>
 
               {activeCategory === key && (

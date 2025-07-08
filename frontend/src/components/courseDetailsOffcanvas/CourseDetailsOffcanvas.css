@@ -57,11 +57,11 @@
   right: 16px;
   background: rgba(255, 255, 255, 0.9);
   border: none;
-  font-size: 24px;
+  font-size: 32px;
   color: #000000;
   cursor: pointer;
-  padding: 8px;
   border-radius: 50%;
+  border-width: 2rem;
   transition: background-color 0.2s ease;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -76,6 +76,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100vh;
 }
 
 /* Imagem do curso */
@@ -89,7 +90,7 @@
 .course-details-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: scale-down;
   display: block;
 }
 
@@ -150,6 +151,7 @@
 /* Seções */
 .course-details-section {
   padding: 0 32px;
+  flex: 1;
 }
 
 .course-details-section-title {

@@ -60,10 +60,9 @@
   right: 16px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 32px;
   color: #000000;
   cursor: pointer;
-  padding: 8px;
   border-radius: 50%;
   transition: background-color 0.2s ease;
   z-index: 10;
