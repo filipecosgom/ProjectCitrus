@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useSearchParams } from "react-router-dom"; // ✅ ADICIONAR
 import { fetchCycles, closeCycle, canCloseCycle } from "../../api/cyclesApi";
 import CycleOffcanvas from "../../components/cycleOffcanvas/CycleOffcanvas";
 import CycleDetailsOffcanvas from "../../components/cycleDetailsOffcanvas/CycleDetailsOffcanvas";
@@ -15,6 +16,9 @@ import "./Cycles.css";
 
 const Cycles = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate(); // ✅ ADICIONAR
+  const [searchParams, setSearchParams] = useSearchParams(); // ✅ ADICIONAR
+
   const [cycles, setCycles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,6 +43,18 @@ const Cycles = () => {
   const [appraisalValidationData, setAppraisalValidationData] = useState({});
 
   const cyclesPerPage = 6;
+
+  // ✅ NOVO: Verificar se há um cycle ID na URL ao carregar
+  useEffect(() => {
+    const cycleId = searchParams.get("cycle");
+    if (cycleId && cycles.length > 0) {
+      const cycle = cycles.find((c) => c.id === parseInt(cycleId));
+      if (cycle) {
+        setSelectedCycle(cycle);
+        setIsDetailsOffcanvasOpen(true);
+      }
+    }
+  }, [searchParams, cycles]);
 
   useEffect(() => {
     loadCycles();
@@ -101,9 +117,20 @@ const Cycles = () => {
     }
   };
 
+  // ✅ MODIFICAR: Adicionar parâmetro na URL ao abrir offcanvas
   const handleCardClick = (cycle) => {
     setSelectedCycle(cycle);
     setIsDetailsOffcanvasOpen(true);
+    // Adicionar cycle ID na URL
+    setSearchParams({ cycle: cycle.id.toString() });
+  };
+
+  // ✅ MODIFICAR: Remover parâmetro da URL ao fechar offcanvas
+  const handleCloseDetailsOffcanvas = () => {
+    setIsDetailsOffcanvasOpen(false);
+    setSelectedCycle(null);
+    // Remover cycle ID da URL
+    setSearchParams({});
   };
 
   const confirmCloseCycle = async () => {
@@ -259,10 +286,7 @@ const Cycles = () => {
 
       <CycleDetailsOffcanvas
         isOpen={isDetailsOffcanvasOpen}
-        onClose={() => {
-          setIsDetailsOffcanvasOpen(false);
-          setSelectedCycle(null);
-        }}
+        onClose={handleCloseDetailsOffcanvas} // ✅ USAR nova função
         cycle={selectedCycle}
       />
 

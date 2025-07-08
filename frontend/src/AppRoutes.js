@@ -21,7 +21,6 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
 
-
 function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
   const location = useLocation();
@@ -54,7 +53,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/cycles",
     "/settings",
     "/messages",
-    "/courses", // ADICIONAR esta linha
+    "/courses",
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);

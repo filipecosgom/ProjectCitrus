@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom"; // ✅ ADICIONAR
 import useLocaleStore from "../../stores/useLocaleStore";
 import "./CycleDetailsOffcanvas.css";
 
 const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
   const { t } = useTranslation();
   const locale = useLocaleStore((state) => state.locale);
+  const [searchParams] = useSearchParams(); // ✅ ADICIONAR
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -26,6 +28,20 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
+  // ✅ NOVO: Atualizar título da página quando cycle mudar
+  useEffect(() => {
+    if (cycle && isOpen) {
+      const originalTitle = document.title;
+      document.title = `${t("cycles.cycleTitle", {
+        id: cycle.id,
+      })} - ${originalTitle}`;
+
+      return () => {
+        document.title = originalTitle;
+      };
+    }
+  }, [cycle, isOpen, t]);
 
   // Controlar scroll da página
   useEffect(() => {
