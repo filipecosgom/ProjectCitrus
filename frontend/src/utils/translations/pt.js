@@ -440,6 +440,7 @@ const pt = {
     language: "Idioma",
     area: "Área",
     createdDate: "Data de Criação",
+    completionDate: "Data de Conclusão",
     description: "Descrição",
     startCourse: "Ir para o curso",
     viewCourse: "Ver Curso",

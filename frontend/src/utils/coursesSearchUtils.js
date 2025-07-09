@@ -54,3 +54,21 @@ export const coursesSortFields = [
   { id: "courseSortControlsDuration", key: "duration", label: (t) => t("courses.sortDuration") },
   { id: "courseSortControlsLanguage", key: "language", label: (t) => t("courses.sortLanguage") }
 ];
+
+
+export function mapFinishedCourseToCourseCard(finishedCourse) {
+  return {
+    id: finishedCourse.courseId,
+    title: finishedCourse.courseTitle,
+    creationDate: finishedCourse.courseCreationDate,
+    duration: finishedCourse.courseDuration,
+    language: finishedCourse.courseLanguage,
+    area: finishedCourse.courseArea,
+    description: finishedCourse.courseDescription,
+    link: finishedCourse.courseLink,
+    courseHasImage: finishedCourse.courseHasImage,
+    courseIsActive: finishedCourse.courseIsActive,
+    completionDate: finishedCourse.completionDate,
+    // ...add any other fields as needed
+  };
+}

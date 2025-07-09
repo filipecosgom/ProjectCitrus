@@ -26,6 +26,29 @@ public class FinishedCourseDTO {
     /** Date when the course was completed */
     private LocalDate completionDate;
 
+    /** ID of the course (from CourseEntity) */
+    private Long courseId;
+
+    /** Area of the course */
+    private String courseArea;
+
+    /** Duration of the course (in hours) */
+    private Integer courseDuration;
+
+    /** Language of the course */
+    private String courseLanguage;
+
+    /** Link to the course */
+    private String courseLink;
+
+    /** Whether the course has an image */
+    private Boolean courseHasImage;
+
+    /** Whether the course is active */
+    private Boolean courseIsActive;
+
+    private LocalDate courseCreationDate;
+
     /**
      * Default constructor.
      */
@@ -40,16 +63,33 @@ public class FinishedCourseDTO {
      * @param courseTitle Title of the completed course
      * @param courseDescription Description of the course
      * @param completionDate Date of completion (ISO format, e.g. 2023-12-31)
+     * @param courseId ID of the course
+     * @param courseArea Area of the course
+     * @param courseDuration Duration of the course
+     * @param courseLanguage Language of the course
+     * @param courseLink Link to the course
+     * @param courseHasImage Whether the course has an image
+     * @param courseIsActive Whether the course is active
      */
     public FinishedCourseDTO(Long id, Long userId, String userEmail,
                              String courseTitle, String courseDescription,
-                             LocalDate completionDate) {
+                             LocalDate completionDate, Long courseId,
+                             String courseArea, Integer courseDuration,
+                             String courseLanguage, String courseLink,
+                             Boolean courseHasImage, Boolean courseIsActive) {
         this.id = id;
         this.userId = userId;
         this.userEmail = userEmail;
         this.courseTitle = courseTitle;
         this.courseDescription = courseDescription;
         this.completionDate = completionDate;
+        this.courseId = courseId;
+        this.courseArea = courseArea;
+        this.courseDuration = courseDuration;
+        this.courseLanguage = courseLanguage;
+        this.courseLink = courseLink;
+        this.courseHasImage = courseHasImage;
+        this.courseIsActive = courseIsActive;
     }
 
     // ============== GETTERS AND SETTERS ==============
@@ -120,5 +160,34 @@ public class FinishedCourseDTO {
             throw new IllegalArgumentException("Completion date cannot be in the future");
         }
         this.completionDate = completionDate;
+    }
+
+    public Long getCourseId() { return courseId; }
+    public void setCourseId(Long courseId) { this.courseId = courseId; }
+
+    public String getCourseArea() { return courseArea; }
+    public void setCourseArea(String courseArea) { this.courseArea = courseArea; }
+
+    public Integer getCourseDuration() { return courseDuration; }
+    public void setCourseDuration(Integer courseDuration) { this.courseDuration = courseDuration; }
+
+    public String getCourseLanguage() { return courseLanguage; }
+    public void setCourseLanguage(String courseLanguage) { this.courseLanguage = courseLanguage; }
+
+    public String getCourseLink() { return courseLink; }
+    public void setCourseLink(String courseLink) { this.courseLink = courseLink; }
+
+    public Boolean getCourseHasImage() { return courseHasImage; }
+    public void setCourseHasImage(Boolean courseHasImage) { this.courseHasImage = courseHasImage; }
+
+    public Boolean getCourseIsActive() { return courseIsActive; }
+    public void setCourseIsActive(Boolean courseIsActive) { this.courseIsActive = courseIsActive; }
+
+    public LocalDate getCourseCreationDate() {
+        return courseCreationDate;
+    }
+
+    public void setCourseCreationDate(LocalDate courseCreationDate) {
+        this.courseCreationDate = courseCreationDate;
     }
 }

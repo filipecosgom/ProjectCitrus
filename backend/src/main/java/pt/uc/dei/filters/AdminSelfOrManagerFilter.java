@@ -8,18 +8,18 @@ import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
-import pt.uc.dei.annotations.SelfOrAdminOnly;
 import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.annotations.AdminSelfOrManager;
 
 /**
  * JAX-RS filter that allows access only to the user themselves or an admin.
  * Checks the path parameter 'id' against the authenticated user's ID and admin status.
  */
-@SelfOrAdminOnly
+@AdminSelfOrManager
 @Provider
 @Priority(Priorities.AUTHORIZATION)
-public class SelfOrAdminAuthorizationFilter implements ContainerRequestFilter {
+public class AdminSelfOrManagerFilter implements ContainerRequestFilter {
 
     @Context
     private ResourceInfo resourceInfo;

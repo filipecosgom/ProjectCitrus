@@ -1,7 +1,5 @@
 package pt.uc.dei.dtos;
-import pt.uc.dei.enums.AccountState;
-import pt.uc.dei.enums.Office;
-import pt.uc.dei.enums.Role;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotBlank;
+import pt.uc.dei.enums.AccountState;
+import pt.uc.dei.enums.Office;
+import pt.uc.dei.enums.Role;
 
 /**
  * Data Transfer Object (DTO) representing a user.
@@ -135,17 +136,7 @@ public class UserDTO {
 
     private LocalDateTime lastSeen;
 
-    /**
-     * The list of evaluations the user has received.
-     */
-    private List<AppraisalDTO> evaluationsReceived;
 
-    /**
-     * The list of evaluations the user has given.
-     */
-    private List<AppraisalDTO> evaluationsGiven;
-
-    private Set<FinishedCourseDTO> completedCourses;
 
     /**
      * Default constructor for `UserDTO`.
@@ -483,54 +474,6 @@ public class UserDTO {
         this.creationDate = creationDate;
     }
 
-    /**
-     * Retrieves the list of evaluations the user has received.
-     * @return the list of received evaluations.
-     */
-    public List<AppraisalDTO> getEvaluationsReceived() {
-        return evaluationsReceived;
-    }
-
-    /**
-     * Sets the list of evaluations the user has received.
-     * @param evaluationsReceived the list of received evaluations to set.
-     */
-    public void setEvaluationsReceived(List<AppraisalDTO> evaluationsReceived) {
-        this.evaluationsReceived = evaluationsReceived;
-    }
-
-    /**
-     * Retrieves the list of evaluations the user has given.
-     * @return the list of given evaluations.
-     */
-    public List<AppraisalDTO> getEvaluationsGiven() {
-        return evaluationsGiven;
-    }
-
-    /**
-     * Sets the list of evaluations the user has given.
-     * @param evaluationsGiven the list of given evaluations to set.
-     */
-    public void setEvaluationsGiven(List<AppraisalDTO> evaluationsGiven) {
-        this.evaluationsGiven = evaluationsGiven;
-    }
-
-    /**
-     * Retrieves the set of completed courses for the user.
-     * @return the set of completed courses.
-     */
-    public Set<FinishedCourseDTO> getCompletedCourses() {
-        return completedCourses;
-    }
-
-    /**
-     * Sets the set of completed courses for the user.
-     * @param completedCourses the set of completed courses to set.
-     */
-    public void setCompletedCourses(Set<FinishedCourseDTO> completedCourses) {
-        this.completedCourses = completedCourses;
-    }
-
     public boolean isOnlineStatus() {
         return onlineStatus;
     }
@@ -546,4 +489,6 @@ public class UserDTO {
     public void setLastSeen(LocalDateTime lastSeen) {
         this.lastSeen = lastSeen;
     }
+
+
 }

@@ -13,15 +13,15 @@ import {
   appraisalsSortFields,
   buildAppraisalsSearchParams,
 } from "../../utils/appraisalsSearchUtils";
-import useAuthStore from "../../stores/useAuthStore";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 import handleNotification from "../../handles/handleNotification";
+import { set } from "react-hook-form";
 
-export default function AppraisalsTab() {
+export default function AppraisalsTab({ user }) {
   const { t } = useTranslation();
-  const [appraisals, setAppraisals] = useState([]);
+  const [appraisals, setAppraisals] = useState(user.evaluationsReceived || []);
+  const [filteredAppraisals, setFilteredAppraisals] = useState([]);
   const [appraisalStates, setAppraisalStates] = useState([]);
-  const user = useAuthStore((state) => state.user);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -43,8 +43,8 @@ export default function AppraisalsTab() {
   });
   const lastSearchRef = useRef(searchParams);
   // Estados para appraisal offcanvas
-    const [selectedAppraisal, setSelectedAppraisal] = useState(null);
-    const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+  const [selectedAppraisal, setSelectedAppraisal] = useState(null);
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
   useEffect(() => {
     lastSearchRef.current = searchParams;
@@ -63,49 +63,64 @@ export default function AppraisalsTab() {
     }, 300);
   };
 
-  // Fetch appraisals for this user
-  async function fetchAppraisals(
-    offset = pagination.offset,
-    overrideParams = null
-  ) {
-    const baseParams = overrideParams || searchParams;
-    const params = buildAppraisalsSearchParams({
-      ...baseParams,
-      offset,
-      sortBy: sort.sortBy,
-      sortOrder: sort.sortOrder,
-      appraisedUserId: user?.id, // always lock to profile user
-    });
-    setResultsLoading(true);
-    const result = await handleGetAppraisals(params);
-    setAppraisals(result.appraisals || []);
+  // Apply search, filter, sort, and pagination whenever dependencies change
+  useEffect(() => {
+    let data = [...appraisals];
+    // Search/filter logic
+    if (searchParams.query) {
+      data = data.filter((a) =>
+        (a[searchParams.searchType] || "")
+          .toLowerCase()
+          .includes(searchParams.query.toLowerCase())
+      );
+    }
+    if (searchParams.state) {
+      data = data.filter((a) => a.state === searchParams.state);
+    }
+    if (searchParams.score) {
+      data = data.filter((a) => String(a.score) === String(searchParams.score));
+    }
+
+    // Sort logic
+    if (sort.sortBy) {
+      data.sort((a, b) => {
+        // Example: sort by creationDate descending
+        if (sort.sortOrder === "DESCENDING") {
+          return (b[sort.sortBy] || "").localeCompare(a[sort.sortBy] || "");
+        } else {
+          return (a[sort.sortBy] || "").localeCompare(b[sort.sortBy] || "");
+        }
+      });
+    }
+
+    // Pagination logic
+    const start = pagination.offset;
+    const end = start + pagination.limit;
+    setFilteredAppraisals(data.slice(start, end));
     setPagination((prev) => ({
       ...prev,
-      offset,
-      limit: result.pagination?.limit || 10,
-      total: result.pagination?.totalAppraisals || 0,
+      total: data.length,
     }));
-    setResultsLoading(false);
+  }, [appraisals, searchParams, sort, pagination.offset, pagination.limit]);
+
+  async function fetchAppraisalsStates() {
+    const appraisalStates = await handleGetAppraisalStates();
+    setAppraisalStates(appraisalStates);
   }
 
   useEffect(() => {
-    if (searchParams) {
-      fetchAppraisals(pagination.offset, searchParams);
-    }
-    // eslint-disable-next-line
-  }, [searchParams, pagination.offset, sort]);
-
-  useEffect(() => {
-    async function fetchInitial() {
+    if (user?.evaluationsReceived) {
       setPageLoading(true);
-      const appraisalStates = await handleGetAppraisalStates();
-      setAppraisalStates(appraisalStates);
-      setSearchParams((prev) => ({ ...prev, appraisedUserId: user?.id }));
+      fetchAppraisalsStates();
+      setAppraisals(user.evaluationsReceived);
+      setPagination((prev) => ({
+        ...prev,
+        offset: 0,
+        total: user.evaluationsReceived.length,
+      }));
       setPageLoading(false);
     }
-    fetchInitial();
-    // eslint-disable-next-line
-  }, [user?.id]);
+  }, [user]);
 
   const handleSearch = (query, searchType, limit, filters = {}) => {
     setSearchParams((prev) => ({
@@ -114,7 +129,6 @@ export default function AppraisalsTab() {
       searchType,
       limit,
       ...filters,
-      appraisedUserId: user?.id, // always lock
     }));
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
@@ -139,7 +153,9 @@ export default function AppraisalsTab() {
     // Remove pagination params
     delete params.limit;
     delete params.offset;
-    const { handleGeneratePdfOfAppraisals } = await import("../../handles/handleGeneratePdfOfAppraisals");
+    const { handleGeneratePdfOfAppraisals } = await import(
+      "../../handles/handleGeneratePdfOfAppraisals"
+    );
     const result = await handleGeneratePdfOfAppraisals(params);
     if (result.success) {
       const url = window.URL.createObjectURL(
@@ -168,8 +184,14 @@ export default function AppraisalsTab() {
         <SearchBar
           onSearch={handleSearch}
           searchTypes={[
-            { value: "appraisedUserName", label: t("appraisalsSearchTypeUserName") },
-            { value: "appraisedUserEmail", label: t("appraisalsSearchTypeUserEmail") },
+            {
+              value: "appraisedUserName",
+              label: t("appraisalsSearchTypeUserName"),
+            },
+            {
+              value: "appraisedUserEmail",
+              label: t("appraisalsSearchTypeUserEmail"),
+            },
           ]}
           {...filtersConfig}
           onExportPdf={handleGetPdf}
@@ -185,19 +207,18 @@ export default function AppraisalsTab() {
         <div className="appraisalsTab-loading">
           <Spinner />
         </div>
-      ) : appraisals.length === 0 ? (
+      ) : filteredAppraisals.length === 0 ? (
         <div className="appraisalsTab-empty">
           <p>{t("appraisalsNoResults")}</p>
         </div>
       ) : (
         <div>
           <div className="appraisalsTab-grid">
-            {appraisals.map((appraisal) => (
+            {filteredAppraisals.map((appraisal) => (
               <AppraisalCard
                 key={appraisal.id}
                 appraisal={appraisal}
                 onClick={handleAppraisalClick}
-                // No checkbox or selection in profile tab
               />
             ))}
           </div>

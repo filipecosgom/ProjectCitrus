@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import pt.uc.dei.dtos.ManagerDTO;
 import pt.uc.dei.dtos.UserDTO;
 import pt.uc.dei.dtos.UserResponseDTO;
+import pt.uc.dei.dtos.UserFullDTO;
 import pt.uc.dei.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,15 +27,14 @@ import org.mapstruct.*;
  * </p>
  */
 @Mapper(
-        componentModel = "jakarta",
-        uses = {AppraisalMapper.class, FinishedCourseMapper.class},
+        componentModel = "cdi",
+        uses = {AppraisalMapper.class, FinishedCourseMapper.class, CourseMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface UserMapper {
 
     @Mapping(source = "managerUser", target = "manager", qualifiedByName = "toManagerDto")
     @Mapping(target = "password", ignore = true)
-    @Mapping(source = "completedCourses", target = "completedCourses")
     UserDTO toDto(UserEntity userEntity);
 
     List<UserDTO> toDtoList(List<UserEntity> users);
@@ -45,12 +45,21 @@ public interface UserMapper {
     @Mapping(target = "evaluationsGiven", ignore = true)
     @Mapping(target = "completedCourses", ignore = true)
     @Mapping(target = "userIsDeleted", ignore = true) // <-- updated this line
+    @Mapping(target = "password", ignore = true)
     UserEntity toEntity(UserDTO userDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     void updateUserFromDto(UserDTO dto, @MappingTarget UserEntity entity);
+
+    @Named("toFullDto")
+    @Mapping(target = "manager", source = "managerUser", qualifiedByName = "toManagerDto")
+    @Mapping(target = "evaluationsReceived", source = "evaluationsReceived")
+    @Mapping(target = "evaluationsGiven", source = "evaluationsGiven")
+    @Mapping(target = "completedCourses", source = "completedCourses")
+    @Mapping(target = "password", ignore = true)
+    UserFullDTO toFullDto(UserEntity entity);
 
     @Named("toResponseDto")
     @Mapping(target = "id", source = "id")
@@ -64,6 +73,7 @@ public interface UserMapper {
     @Mapping(target = "hasAvatar", source = "hasAvatar")
     @Mapping(target = "lastSeen", source = "lastSeen")
     @Mapping(target = "onlineStatus", source = "onlineStatus")
+    @Mapping(target = "manager", source = "managerUser", qualifiedByName = "toManagerDto")
     UserResponseDTO toUserResponseDto(UserEntity entity);
 
     @Named("toManagerDto")

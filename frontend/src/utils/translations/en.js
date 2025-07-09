@@ -433,10 +433,10 @@ const en = {
     language: "Language",
     area: "Area",
     createdDate: "Created Date",
+    completionDate: "Completion Date",
     description: "Description",
     startCourse: "Go to course",
-    viewCourse: "View Course",
-    filterMenuArea: "Area",
+    viewCourse: "View Course"
   },
 
   common: {
