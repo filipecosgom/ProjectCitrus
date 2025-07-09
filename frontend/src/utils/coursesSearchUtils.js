@@ -21,7 +21,6 @@ export async function fetchInitialCourses({
 export const courseSearchTypes = (t) => [
   { value: "title", label: t("courses.searchByTitle") },
   { value: "description", label: t("courses.searchByDescription") },
-  { value: "area", label: t("courses.searchByArea") },
 ];
 
 // Externalized filter config for courses
