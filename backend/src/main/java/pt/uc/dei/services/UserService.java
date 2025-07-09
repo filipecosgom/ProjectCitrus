@@ -241,6 +241,18 @@ public class UserService implements Serializable {
         return userDTO;
     }
 
+    public UserDTO getUserProfile(Long id, boolean fullResponse) {
+        UserEntity user = userRepository.findUserById(id);
+        UserDTO userDTO = new UserDTO();
+        if(fullResponse) {
+            userDTO = userMapper.toFullDto(user);
+        }
+        else {
+            userDTO = userMapper.toUserResponseDto(user);
+        }
+        return userDTO;
+    }
+
     /**
      * Retrieves a paginated and filtered list of users as DTOs, with total count
      * and pagination info.
@@ -267,12 +279,10 @@ public class UserService implements Serializable {
                 accountState, roleStr, office,
                 userIsManager, userIsAdmin, userHasManager,
                 parameter, orderBy, offset, limit);
-
         long totalUsers = userRepository.getTotalUserCount(id, email, name, phone,
                 accountState, roleStr, office, userIsManager, userIsAdmin, userHasManager);
-
-        List<UserDTO> userDtos = users.stream()
-                .map(userMapper::toDto)
+        List<UserResponseDTO> userDtos = users.stream()
+                .map(userMapper::toUserResponseDto)
                 .collect(Collectors.toList());
 
         Map<String, Object> responseData = new HashMap<>();
@@ -407,6 +417,18 @@ public class UserService implements Serializable {
             LOGGER.error("Failed to delete temporary user: {}", userToDelete.getEmail(), e);
             return false;
         }
+    }
+
+    public boolean checkIfManagerOfUser(Long userId, Long managerId) {
+        UserEntity user = userRepository.findUserById(userId);
+        if (user == null) {
+            LOGGER.error("User with ID {} not found", userId);
+            return false;
+        }
+        UserEntity manager = user.getManagerUser();
+        boolean isManager = manager != null && manager.getId().equals(managerId);
+        LOGGER.info("User with ID {} is managed by manager with ID {}: {}", userId, managerId, isManager);
+        return isManager;
     }
 
     public boolean checkIfUserIsAdmin(Long userId) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaClock } from "react-icons/fa6";
+import { FaBuromobelexperte, FaClock } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
@@ -7,12 +7,17 @@ import "./CourseCard.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
 import Spinner from "../spinner/spinner";
+import {
+  dateToFormattedDate,
+  transformArrayLocalDatetoLocalDate,
+} from "../../utils/utilityFunctions";
 
 const CourseCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();
   const hasImage = course?.courseHasImage ?? false;
   const [courseImageUrl, setCourseImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [completionDate, setCompletionDate] = useState(null);
 
   useEffect(() => {
     if (!course || !course.id) {
@@ -37,10 +42,26 @@ const CourseCard = ({ course, onViewDetails }) => {
       })
       .catch(() => setCourseImageUrl(null))
       .finally(() => setLoading(false));
-      return () => {
-      if (courseBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(courseBlobUrl);
+    return () => {
+      if (courseBlobUrl?.startsWith("blob:"))
+        URL.revokeObjectURL(courseBlobUrl);
     };
   }, [course?.id, hasImage]);
+
+  useEffect(() => {
+    if (course?.completionDate) {
+      let formattedCompletionDate;
+      if (Array.isArray(course.completionDate)) {
+        const dateObj = transformArrayLocalDatetoLocalDate(
+          course.completionDate
+        );
+        formattedCompletionDate = dateToFormattedDate(dateObj);
+      } else {
+        formattedCompletionDate = dateToFormattedDate(course.completionDate);
+      }
+      setCompletionDate(formattedCompletionDate);
+    }
+  }, [course?.completionDate]);
 
   const handleViewCourse = () => {
     // MUDANÇA: Chamar callback para abrir offcanvas
@@ -62,23 +83,21 @@ const CourseCard = ({ course, onViewDetails }) => {
     return t("courses.duration.hours", { hours });
   };
 
-  if(loading) return <Spinner />;
+  if (loading) return <Spinner />;
 
   return (
     <div className="course-card">
       <div className="course-card-image">
         <img
-        src={
-          hasImage && courseImageUrl
-            ? courseImageUrl
-            : courseTemplateImage
-        }
-        alt={`${course.title}`}
-        onError={(e) => {
-          // ✅ FALLBACK se imagem falhar
-          e.target.src = courseTemplateImage;
-        }}
-      />
+          src={
+            hasImage && courseImageUrl ? courseImageUrl : courseTemplateImage
+          }
+          alt={`${course.title}`}
+          onError={(e) => {
+            // ✅ FALLBACK se imagem falhar
+            e.target.src = courseTemplateImage;
+          }}
+        />
       </div>
 
       <div className="course-card-content">
@@ -99,11 +118,12 @@ const CourseCard = ({ course, onViewDetails }) => {
             <FaClock className="course-card-clock-icon" />
             <span>{formatDuration(course.duration)}</span>
           </div>
-        </div>
+          </div>
+          
 
-        <button className="course-card-button" onClick={handleViewCourse}>
-          {t("courses.viewCourse")}
-        </button>
+          <button className="course-card-button" onClick={handleViewCourse}>
+            {t("courses.viewCourse")}
+          </button>
       </div>
     </div>
   );

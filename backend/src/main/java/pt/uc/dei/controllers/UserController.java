@@ -48,6 +48,9 @@ public class UserController {
     AuthenticationService authenticationService;
 
     @Inject
+    AppraisalService appraisalService;
+
+    @Inject
     EmailService emailService;
 
     /**
@@ -165,10 +168,33 @@ public class UserController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") Long id) {
+    public Response getUserById(
+            @PathParam("id") long id,
+            @CookieParam("jwt") String jwtToken) {
+        boolean fullResponse = false;
+        try {
+            long requesterId = JWTUtil.extractUserIdOrAbort(jwtToken);
+            boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);
+            if (isAdmin) {
+                fullResponse = true;
+            } else {
+                if (id == requesterId) {
+                    fullResponse = true;
+                } else {
+                    if (userService.checkIfManagerOfUser(id, requesterId)) {
+                        fullResponse = true;
+                    }
+                }
+            }
+        } catch (JWTUtil.JwtValidationException e) {
+            LOGGER.info(e.getMessage());
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(new ApiResponse(false, "Unauthorized access", "errorUnauthorized", null))
+                    .build();
+        }
         LOGGER.info("Request to get user by id: {}", id);
         try {
-            UserDTO user = userService.getUser(id);
+            UserDTO user = userService.getUserProfile(id, fullResponse);
 
             if (user == null) {
                 LOGGER.warn("User not found with id: {}", id);
@@ -381,13 +407,6 @@ public class UserController {
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit,
                              @CookieParam("jwt") String jwtToken) {
-        LOGGER.info("User list request with filters: id={}, email={}, name={}, phone={}", id, email, name, phone);
-        if (jwtToken == null || jwtToken.isEmpty()) {
-            LOGGER.warn("Missing JWT token in user list request");
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(new ApiResponse(false, "Missing token", "errorMissingToken", null))
-                    .build();
-        }
         if(accountStateStr != null && !accountStateStr.isEmpty()) {
             if(!JWTUtil.isUserAdmin(jwtToken)){
                 LOGGER.warn("Unauthorized access to account state filter without admin privileges");

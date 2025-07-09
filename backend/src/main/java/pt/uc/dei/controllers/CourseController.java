@@ -34,7 +34,6 @@ import pt.uc.dei.utils.SearchUtils;
  * <p>
  * Provides endpoints for course retrieval and filtering functionality.
  */
-@AdminOnly
 @Path("/courses")
 public class CourseController {
 

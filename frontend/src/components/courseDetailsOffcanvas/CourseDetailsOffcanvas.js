@@ -7,6 +7,7 @@ import {
   FaGraduationCap,
   FaPlay,
 } from "react-icons/fa";
+import { FaCircleCheck } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import flagEn from "../../assets/flags/flag-en.png";
@@ -14,11 +15,7 @@ import flagPt from "../../assets/flags/flag-pt.png";
 import "./CourseDetailsOffcanvas.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
-import {
-  formatStringToDate
-} from "../../utils/utilityFunctions";
-
-
+import { formatStringToDate } from "../../utils/utilityFunctions";
 
 const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   const { t } = useTranslation();
@@ -145,7 +142,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
       onClick={handleBackdropClick}
     >
       <div className={`course-details-offcanvas ${isAnimating ? "open" : ""}`}>
-          <FaTimes className="course-details-offcanvas-close" onClick={onClose}/>
+        <FaTimes className="course-details-offcanvas-close" onClick={onClose} />
         <div className="course-details-offcanvas-content">
           <div className="course-details-image">
             <img
@@ -198,12 +195,26 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
             <div className="course-details-info-item">
               <FaCalendar className="course-details-icon" />
               <span className="course-details-label">
-                {t("courses.createdDate") || "Criado em"}:
+                {t("courses.createdDate") || "Criado a"}:
               </span>
               <span className="course-details-value">
                 {course.creationDate ? criationDate : t("profilePlaceholderNA")}
               </span>
             </div>
+
+            {course.completionDate && (
+              <div className="course-details-info-item">
+                <FaCircleCheck className="course-details-icon" />
+                <span className="course-details-label">
+                  {t("courses.completionDate") || "Concluído a"}:
+                </span>
+                <span className="course-details-value">
+                  {course.creationDate
+                    ? criationDate
+                    : t("profilePlaceholderNA")}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="course-details-section">
@@ -219,10 +230,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
           </div>
 
           <div className="course-details-actions">
-            <Link
-              to={course.link}
-              className="course-details-start-btn"
-            >
+            <Link to={course.link} className="course-details-start-btn">
               <FaPlay className="course-details-play-icon" />
               {t("courses.startCourse", t("course.startCourse"))}
             </Link>

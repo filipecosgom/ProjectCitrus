@@ -248,20 +248,12 @@ public class CourseEntity implements Serializable {
         this.userCompletions = userCompletions;
     }
 
-    /**
-     * Gets whether the course is active.
-     * @return true if the course is active, false otherwise
-     */
-    public Boolean getActive() {
+    public Boolean getCourseIsActive() {
         return courseIsActive;
     }
 
-    /**
-     * Sets whether the course is active.
-     * @param active true if the course is active, false otherwise
-     */
-    public void setActive(Boolean active) {
-        courseIsActive = active;
+    public void setCourseIsActive(Boolean courseIsActive) {
+        this.courseIsActive = courseIsActive;
     }
 
     /**

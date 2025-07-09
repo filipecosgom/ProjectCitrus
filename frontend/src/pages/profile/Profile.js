@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,7 +31,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const userId = new URLSearchParams(location.search).get("id");
   // Read tab from URL, default to 'profile'
-  const tabFromUrl = new URLSearchParams(location.search).get("tab") || "profile";
+  const tabFromUrl =
+    new URLSearchParams(location.search).get("tab") || "profile";
   const [user, setUser] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
   const [managerAvatar, setManagerAvatar] = useState(null);
@@ -49,6 +50,7 @@ export default function Profile() {
   //Avatar
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
+  const [authorized, setAuthorized] = useState(false);
 
   // react-hook-form setup
   const {
@@ -58,11 +60,32 @@ export default function Profile() {
     formState: { errors },
   } = useForm();
 
+  const setAuthorization = () => {
+    console.log(useAuthStore.getState().user?.userIsAdmin);
+    console.log(userId);
+    console.log(useAuthStore.getState().user?.id);
+    console.log(user?.manager?.id);
+    if (useAuthStore.getState().user?.userIsAdmin) {
+      console.log("User is admin, authorized");
+      setAuthorized(true);
+    } else if (user?.id === useAuthStore.getState().user?.id) {
+      console.log("User is viewing their own profile, authorized");
+      setAuthorized(true);
+    } else if (user?.manager?.id === useAuthStore.getState().user?.id) {
+      console.log("User is viewing their managed user's profile, authorized");
+      setAuthorized(true);
+    } else {
+      console.log("User is not authorized to view this profile");
+      setAuthorized(false);
+    }
+  };
+
   // Carrega dados do utilizador
   useEffect(() => {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
+        console.log("User Info:", userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
@@ -91,6 +114,12 @@ export default function Profile() {
     };
     fetchUserInformation();
   }, [userId, reset, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      setAuthorization();
+    }
+  }, [user]);
 
   // Carrega enums
   useEffect(() => {
@@ -240,7 +269,7 @@ export default function Profile() {
 
         <div className="tabs">
           {renderTab("profile")}
-          {renderTab("appraisals")}
+          {authorized && renderTab("appraisals")}
           {renderTab("training")}
         </div>
         <div className="profile-actions">
@@ -379,15 +408,9 @@ export default function Profile() {
               {user.manager ? (
                 <div className="manager-card show-desktop">
                   {managerAvatar ? (
-                    <img
-                      src={managerAvatar}
-                      alt="Manager"
-                    />
+                    <img src={managerAvatar} alt="Manager" />
                   ) : (
-                    <img
-                      src={user.manager.avatar}
-                      alt="Manager"
-                    />
+                    <img src={user.manager.avatar} alt="Manager" />
                   )}
                   <div className="profile-label small">
                     <strong>
@@ -410,9 +433,15 @@ export default function Profile() {
                 </span>
                 <div className="manager-compact-avatar">
                   <img
-                    src={managerAvatar
-                      ? managerAvatar
-                      : (user.manager?.avatar || generateInitialsAvatar(user.manager?.name, user.manager?.surname))}
+                    src={
+                      managerAvatar
+                        ? managerAvatar
+                        : user.manager?.avatar ||
+                          generateInitialsAvatar(
+                            user.manager?.name,
+                            user.manager?.surname
+                          )
+                    }
                     alt="Manager"
                     className="manager-avatar"
                   />
@@ -772,8 +801,8 @@ export default function Profile() {
           </div>
         </div>
       )}
-      {activeTab === "appraisals" && <AppraisalsTab userId={userId} />}
-      {activeTab === "training" && <TrainingTab userId={userId} />}
+      {activeTab === "appraisals" && authorized && <AppraisalsTab user={user} />}
+      {activeTab === "training" && <TrainingTab user={user} />}
     </div>
   );
 }

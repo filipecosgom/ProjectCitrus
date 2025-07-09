@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.mapstruct.*;
+
+import javax.swing.plaf.IconUIResource;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +32,8 @@ import java.util.Set;
  * @version 1.0
  */
 @Mapper(
-        componentModel = "jakarta",
+        componentModel = "cdi",
+        uses = {CourseMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface FinishedCourseMapper {
@@ -41,6 +44,18 @@ public interface FinishedCourseMapper {
      * @param finishedCourseEntity the entity to convert
      * @return the mapped DTO
      */
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.email", target = "userEmail")
+    @Mapping(source = "course.id", target = "courseId")
+    @Mapping(source = "course.title", target = "courseTitle")
+    @Mapping(source = "course.description", target = "courseDescription")
+    @Mapping(source = "course.area", target = "courseArea")
+    @Mapping(source = "course.creationDate", target = "courseCreationDate")
+    @Mapping(source = "course.duration", target = "courseDuration")
+    @Mapping(source = "course.language", target = "courseLanguage")
+    @Mapping(source = "course.link", target = "courseLink")
+    @Mapping(source = "course.courseHasImage", target = "courseHasImage")
+    @Mapping(source = "course.courseIsActive", target = "courseIsActive")
     FinishedCourseDTO toDto(FinishedCourseEntity finishedCourseEntity);
 
     /**
