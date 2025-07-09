@@ -39,8 +39,10 @@ public class CycleDTO {    /**
      * The ID of the administrator responsible for managing the cycle.
      */
     private Long adminId;
-
-    @NotNull(message = "Evaluations missing")
+    /**
+     * The list of evaluations (appraisals) associated with the cycle.
+     * This is a lazy-loaded collection.
+     */
     private List<AppraisalDTO> evaluations;
 
 
