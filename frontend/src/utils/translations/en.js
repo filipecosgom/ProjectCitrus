@@ -404,6 +404,7 @@ const en = {
       "Cannot close this cycle because there are appraisals that have not been completed yet.",
     closeCycleInstructionCompleted:
       "To close this cycle, all appraisals must be in 'Completed' state.",
+    checkPendingAppraisals: "Check Pending Appraisals", // ✅ MOVER PARA AQUI
   },
 
   courses: {
@@ -435,7 +436,7 @@ const en = {
     description: "Description",
     startCourse: "Go to course",
     viewCourse: "View Course",
-    filterMenuArea: "Area"
+    filterMenuArea: "Area",
   },
 
   common: {
@@ -443,20 +444,6 @@ const en = {
     cancel: "Cancel",
     confirmMessage: "Are you sure you want to proceed?",
   },
-
-  checkPendingAppraisals: "Check Pending Appraisals",
-  cycles: {
-    understood: "Understood",
-    cannotCloseCycle: "Cannot Close Cycle",
-    appraisalsNotCompleted: "Some appraisals are not completed yet.",
-    appraisalsSummary: "Appraisals Summary",
-    totalAppraisals: "Total Appraisals",
-    pendingAppraisals: "Pending Appraisals",
-    appraisalsBreakdown: "Breakdown",
-    inProgressAppraisals: "{{count}} in progress",
-    completedAppraisals: "{{count}} completed",
-    closeCycleInstructionCompleted:
-      "Please ensure all appraisals are completed before closing the cycle.",
-  },
 };
+
 export default en;
