@@ -97,12 +97,12 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
         </div>
 
         <div className="appraisal-warning-modal-footer">
-          {/* ✅ MELHOR: Usar tradução com fallback */}
+          {/* ✅ CORRIGIR: Usar chave correta dentro do objeto cycles */}
           <button
             className="appraisal-warning-check-btn"
             onClick={handleCheckPendingAppraisals}
           >
-            {t("checkPendingAppraisals", "Check Pending Appraisals")}
+            {t("cycles.checkPendingAppraisals", "Check Pending Appraisals")}
           </button>
           <button
             className="appraisal-warning-understand-btn"
