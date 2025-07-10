@@ -3,6 +3,7 @@ import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from '../util
 import useLocaleStore from "../stores/useLocaleStore";
 
 export const handleGetUsers = async (params = {}) => {
+  console.log("Fetching users with params:", params);
   const response = await fetchPaginatedUsers(params);
   
   if (response.success) {

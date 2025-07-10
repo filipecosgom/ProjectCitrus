@@ -15,7 +15,6 @@ function useWebSocketNotifications(isAuthenticated) {
   const { t } = useTranslation();
 
   useEffect(() => {
-    console.log("🔇 WebSocket notifications DESABILITADO");
     return; // ← SAIR IMEDIATAMENTE
   }, []);
 
@@ -32,7 +31,6 @@ function useWebSocketNotifications(isAuthenticated) {
     const ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
-      console.log("WebSocket notifications connected");
     };
 
     ws.onmessage = (event) => {

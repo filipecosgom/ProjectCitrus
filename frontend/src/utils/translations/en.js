@@ -424,6 +424,13 @@ const en = {
     filterMenuArea: "Area", // fallback for any legacy usage
     filterPortuguese: "Portuguese",
     filterEnglish: "English",
+    filterSpanish: "Spanish",
+    filterFrench: "French",
+    filterItalian: "Italian",
+    filterActiveState: "Active state",
+    filterActive: "Active",
+    filterInactive: "Inactive",
+    filterAllStates: "All states",
     details: "Course Details",
     instructor: "Instructor",
     duration: {

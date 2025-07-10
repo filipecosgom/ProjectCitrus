@@ -170,7 +170,6 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
 
   // When appraisal changes, reset edit state
   useEffect(() => {
-    console.log(appraisal?.state);
     setEditMode(false);
     setEditedFeedback(appraisal?.feedback || "");
     setEditedScore(appraisal?.score ?? 0);

@@ -128,8 +128,8 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             if (SearchUtils.isNotBlank(adminName)) {
                 predicates.add(cb.like(adminJoin.get("name"), "%" + adminName + "%"));
             }
-            if (Boolean.TRUE.equals(courseIsActive)) {
-                predicates.add(cb.isTrue(course.get("courseIsActive")));
+            if (courseIsActive != null) {
+                predicates.add(cb.equal(course.get("courseIsActive"), courseIsActive));
             }
             cq.where(predicates.toArray(new Predicate[0]));
 

@@ -26,22 +26,33 @@ export const courseSearchTypes = (t) => [
 // Externalized filter config for courses
 export const courseSearchFilters = (t, areas) => {
   const filtersConfig = ["area", "language"];
+  const tristateFilters = [
+    {
+      key: "courseIsActive",
+      label: t("courses.filterActiveState"),
+    },
+  ];
   const filterOptions = {
     area: areas,
     language: [
       { label: t("courses.filterAllLanguages"), value: "" },
       { label: t("courses.filterPortuguese"), value: "pt" },
       { label: t("courses.filterEnglish"), value: "en" },
+      { label: t("courses.filterSpanish"), value: "es" },
+      { label: t("courses.filterFrench"), value: "fr" },
+      { label: t("courses.filterItalian"), value: "it" },
     ],
   };
   return {
     filtersConfig,
     filterOptions,
+    tristateFilters,
     defaultValues: {
       query: "",
       searchType: "title",
       area: "",
       language: "",
+      courseIsActive: null, // null = all, true = active, false = not active
       limit: 10,
     },
     searchTypes: courseSearchTypes(t),

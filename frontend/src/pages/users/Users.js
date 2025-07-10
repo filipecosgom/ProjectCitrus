@@ -21,6 +21,7 @@ import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/Assi
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 import handleNotification from "../../handles/handleNotification";
 import { handleGetUsersCSV, handleGetUsersXLSX } from "../../handles/handleGetUsers";
+import { useSearchParams } from "react-router-dom";
 
 export default function Users() {
   const { t } = useTranslation();
@@ -42,8 +43,8 @@ export default function Users() {
   const [selectedUsers, setSelectedUsers] = useState(new Set());
   const [assignManagerOpen, setAssignManagerOpen] = useState(false); // ✅ NOVO
 
-  // Use null as initial value for searchParams
-  const [searchParams, setSearchParams] = useState(null);
+  // Use URL search params for search/filter state
+  const [searchParams, setSearchParams] = useSearchParams();
   const [lastSearch, setLastSearch] = useState(null);
   const [sort, setSort] = useState({
     sortBy: "name",
@@ -96,16 +97,38 @@ export default function Users() {
     setSelectedUsers(new Set());
   }, [pagination.offset]);
 
-  // Externalized: set searching parameters
+  const parseParams = () => {
+  const paramsObj = Object.fromEntries([...searchParams.entries()]);
+  // Tristate logic for isManager, isAdmin, isManaged
+  ["isManager", "isAdmin", "isManaged"].forEach((key) => {
+    if (paramsObj[key] === undefined) {
+      paramsObj[key] = null;
+    } else if (paramsObj[key] === "true") {
+      paramsObj[key] = true;
+    } else if (paramsObj[key] === "false") {
+      paramsObj[key] = false;
+    } else if (paramsObj[key] === "null" || paramsObj[key] === "") {
+      paramsObj[key] = null;
+    }
+  });
+  // ...existing code for accountState, limit, offset, etc.
+  if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
+  if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
+  return paramsObj;
+};
+
+  // Update setSearchingParameters to update URL and flatten filters
   const setSearchingParameters = async (
     query,
     searchType,
     limit,
     filters = {}
   ) => {
-    const search = buildSearchParams(query, searchType, limit, filters);
-    setLastSearch(search);
-    setSearchParams(search);
+    // Flatten filters into top-level params (no 'filters' key)
+    const params = buildSearchParams(query, searchType, limit, filters);
+    // Remove any 'filters' key if present (defensive)
+    if (params.filters) delete params.filters;
+    setSearchParams(params);
   };
 
   // Externalized: handle page change
@@ -125,14 +148,18 @@ export default function Users() {
 
   // Externalized: fetch users
   async function fetchUsers(offset = 0, overrideParams = null) {
-    const { query, searchType, limit, filters } =
-      overrideParams || searchParams;
+    const params = overrideParams || parseParams();
     setResultsLoading(true);
     const result = await handleGetUsers({
-      [searchType]: query,
+      [params.searchType]: params.query,
       offset,
-      limit,
-      ...filters,
+      limit: params.limit,
+      ...Object.fromEntries(
+        Object.entries(params).filter(
+          ([key]) =>
+            !["query", "searchType", "limit", "offset", "parameter", "order"].includes(key)
+        )
+      ),
       parameter: sort.sortBy,
       order: sort.sortOrder,
     });
@@ -144,14 +171,12 @@ export default function Users() {
       total: result.pagination.totalUsers,
     }));
     setResultsLoading(false);
-    setLastSearch(overrideParams || searchParams);
+    setLastSearch(overrideParams || params);
   }
 
   // Only one effect for fetching users
   useEffect(() => {
-    if (searchParams) {
-      fetchUsers(pagination.offset, searchParams);
-    }
+    fetchUsers(pagination.offset);
     // eslint-disable-next-line
   }, [searchParams, pagination.offset, sort]);
 
@@ -169,7 +194,6 @@ export default function Users() {
 
   // ✅ HANDLER para atribuir manager COM DEBUGGING
   const handleAssignManagerAction = async (assignments) => {
-    console.log("🔧 Assigning manager:", assignments);
     try {
       setResultsLoading(true);
 

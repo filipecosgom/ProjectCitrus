@@ -123,7 +123,6 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   };
 
   const formatDuration = (hours) => {
-    console.log("Formatando duração:", hours);
     if (hours < 1) {
       return t("courses.duration.minutes", {
         minutes: Math.round(hours * 60),

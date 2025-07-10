@@ -36,7 +36,6 @@ export const fetchPaginatedAppraisals = async ({
     params.append("order", order);
     params.append("offset", offset);
     params.append("limit", limit);
-    console.log("apiFetchParams", params.toString())
 
     const response = await api.get(`${appraisalsEndpoint}?${params.toString()}`);
     return {
@@ -54,7 +53,6 @@ export const fetchPaginatedAppraisals = async ({
 };
 
 export const updateAppraisal = async (updateAppraisalDTO) => {
-  console.log("updateAppraisal called with:", updateAppraisalDTO);
   try {
     const response = await api.patch(
       appraisalsEndpoint,
@@ -76,7 +74,6 @@ export const updateAppraisal = async (updateAppraisalDTO) => {
 };
 
 export const fetchAppraisalsPdf = async (params = {}) => {
-  console.log("fetchAppraisalsPdf called with params:", params);
   try {
     const response = await api.get("/appraisals/pdf", {
       params,

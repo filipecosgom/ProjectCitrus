@@ -18,6 +18,21 @@ const LANGUAGES = [
     label: "English",
     flag: require("../../assets/flags/flag-en.png"),
   },
+  {
+    code: "es",
+    label: "Español",
+    flag: require("../../assets/flags/flag-es.png"),
+  },
+  {
+    code: "fr",
+    label: "Français",
+    flag: require("../../assets/flags/flag-fr.png"),
+  },
+  {
+    code: "it",
+    label: "Italiano",
+    flag: require("../../assets/flags/flag-it.png"),
+  },
 ];
 
 const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
@@ -120,7 +135,6 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     };
     let createdCourseId = null;
     let courseResult = await handleCreateNewCourse(courseData);
-    console.log("Course creation result:", courseResult);
 
     // If course creation fails, do not proceed to image upload or close offcanvas
     if (!courseResult.success) {

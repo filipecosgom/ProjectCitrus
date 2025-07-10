@@ -9,7 +9,6 @@ const cyclesEndpoint = `${apiBaseUrl}/cycles`;
  * @returns {Promise<Object>} Response com lista de ciclos
  */
 export const fetchCycles = async (params = {}) => {
-  console.log(params);
   try {
     const response = await axios.get(cyclesEndpoint, {
       params,
@@ -38,7 +37,6 @@ export const fetchCycles = async (params = {}) => {
  * @returns {Promise<Object>} Response com resultado da operação
  */
 export const createCycle = async (cycleData) => {
-  console.log(cycleData);
   try {
     const response = await axios.post(cyclesEndpoint, cycleData, {
       withCredentials: true,

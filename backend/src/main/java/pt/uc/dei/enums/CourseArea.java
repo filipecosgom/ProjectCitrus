@@ -16,7 +16,7 @@ public enum CourseArea {
     FRONTEND("frontend"),
     BACKEND("backend"),
     INFRASTRUCTURE("infrastructure"),
-    UX_UI("ux_ui");
+    UX_UI("ux/ui");
 
     private final String fieldName;
 

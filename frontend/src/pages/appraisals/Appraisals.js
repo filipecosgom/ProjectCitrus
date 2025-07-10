@@ -174,7 +174,6 @@ export default function Appraisals() {
       sortBy: sort.sortBy,
       sortOrder: sort.sortOrder,
     });
-    console.log("Params sent to backend:", params); // Debug log
     setResultsLoading(true);
     const result = await handleGetAppraisals(params);
     setAppraisals(result.appraisals || []);
@@ -213,12 +212,6 @@ export default function Appraisals() {
 
   // ✅ MODIFICAR: Handlers para atualizar tanto estado quanto URL
   const handleSearch = (query, searchType, limit, filters = {}) => {
-    console.log("🔍 handleSearch received:", {
-      query,
-      searchType,
-      limit,
-      filters,
-    }); // ✅ DEBUG
 
     const newSearchParams = {
       query,
@@ -227,14 +220,12 @@ export default function Appraisals() {
       ...filters,
     };
 
-    console.log("🔍 newSearchParams:", newSearchParams); // ✅ DEBUG
 
     // Always ensure appraisingUserId is present for non-admins
     const finalParams = isAdmin
       ? newSearchParams
       : { ...newSearchParams, appraisingUserId: user?.id };
 
-    console.log("🔍 finalParams:", finalParams); // ✅ DEBUG
 
     setSearchParams(finalParams);
     setPagination((prev) => ({ ...prev, offset: 0 }));
@@ -301,7 +292,6 @@ export default function Appraisals() {
     if (!isAdmin) {
       params = { ...params, appraisingUserId: user?.id };
     }
-    console.log("PDF export params:", params); // Debug log
     const result = await handleGeneratePdfOfAppraisals(params);
     if (result.success) {
       const url = window.URL.createObjectURL(

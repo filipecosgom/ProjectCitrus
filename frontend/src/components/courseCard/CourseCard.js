@@ -43,7 +43,6 @@ const CourseCard = ({ course, onViewDetails }) => {
     };
   }, [course?.id, hasImage]);
 
-
   const handleViewCourse = () => {
     // MUDANÇA: Chamar callback para abrir offcanvas
     if (onViewDetails) {
@@ -52,9 +51,11 @@ const CourseCard = ({ course, onViewDetails }) => {
   };
 
   const getLanguageFlag = (language) => {
-    console.log("getLanguageFlag", language);
     return language === "PORTUGUESE" ? flagPt : flagEn;
   };
+
+  const toTitleCase = (str) =>
+    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
   if (loading) return <Spinner />;
 
@@ -77,7 +78,7 @@ const CourseCard = ({ course, onViewDetails }) => {
         <h3 className="course-card-title">{course.title}</h3>
 
         <div className="course-card-info">
-          <span className="course-card-category">{course.area}</span>
+          <span className="course-card-category">{toTitleCase(course.area)}</span>
 
           <div className="course-card-language">
             <img

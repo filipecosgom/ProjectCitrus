@@ -61,21 +61,13 @@ export default function Profile() {
   } = useForm();
 
   const setAuthorization = () => {
-    console.log(useAuthStore.getState().user?.userIsAdmin);
-    console.log(userId);
-    console.log(useAuthStore.getState().user?.id);
-    console.log(user?.manager?.id);
     if (useAuthStore.getState().user?.userIsAdmin) {
-      console.log("User is admin, authorized");
       setAuthorized(true);
     } else if (user?.id === useAuthStore.getState().user?.id) {
-      console.log("User is viewing their own profile, authorized");
       setAuthorized(true);
     } else if (user?.manager?.id === useAuthStore.getState().user?.id) {
-      console.log("User is viewing their managed user's profile, authorized");
       setAuthorized(true);
     } else {
-      console.log("User is not authorized to view this profile");
       setAuthorized(false);
     }
   };
@@ -85,7 +77,6 @@ export default function Profile() {
     const fetchUserInformation = async () => {
       try {
         const userInfo = await handleGetUserInformation(userId);
-        console.log("User Info:", userInfo);
         if (userInfo) {
           setUser(userInfo);
           reset(userInfo); // Preenche o formulário com os dados do utilizador
@@ -131,7 +122,6 @@ export default function Profile() {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log(data);
     setLoading(true);
 
     try {

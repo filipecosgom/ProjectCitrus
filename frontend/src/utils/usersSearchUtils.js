@@ -11,7 +11,17 @@ export async function fetchInitialUsers({
   let offices = await handleGetOffices();
   // Add "All offices" option at the top
   offices = [{ label: "All offices", value: "" }, ...offices];
-  const initialSearch = { query: "", searchType: "email", limit: 10, office: "", filters: {} };
+  // FIX: Only use top-level fields, no 'filters' key
+  const initialSearch = {
+    query: "",
+    searchType: "email",
+    limit: 10,
+    office: "",
+    accountState: "",
+    isManager: null,
+    isAdmin: null,
+    isManaged: null,
+  };
   setSearchParams(initialSearch);
   setOffices(offices);
   setPageLoading(false);

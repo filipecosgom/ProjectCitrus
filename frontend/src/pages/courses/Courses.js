@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import SearchBar from "../../components/searchbar/Searchbar";
 import CourseCard from "../../components/courseCard/CourseCard";
 import CourseDetailsOffcanvas from "../../components/courseDetailsOffcanvas/CourseDetailsOffcanvas";
 import CourseNewOffCanvas from "../../components/courseNewOffCanvas/CourseNewOffCanvas";
 import { handleGetCourseAreas } from "../../handles/handleGetEnums";
-import {
-  buildSearchParams,
-  createPageChangeHandler,
-  createSortHandler,
-} from "../../utils/searchUtils";
 import {
   fetchInitialCourses,
   courseSearchFilters,
@@ -25,26 +21,18 @@ import { FaBookMedical } from "react-icons/fa";
 
 const Courses = () => {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams(); // Use URL for search params
   const [courses, setCourses] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
-  const [pagination, setPagination] = useState({
-    offset: 0,
-    limit: 10,
-    total: 0,
-  });
 
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
   const [newCourseOffcanvasOpen, setNewCourseOffcanvasOpen] = useState(false);
 
-  const [searchParams, setSearchParams] = useState(null);
+  const [searchParamsState, setSearchParamsState] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
-  const [sort, setSort] = useState({
-    sortBy: "title",
-    sortOrder: "ascending",
-  });
   const lastSearchRef = useRef(lastSearch);
   const coursesFilters = courseSearchFilters(t, areas);
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
@@ -71,44 +59,103 @@ const Courses = () => {
     setNewCourseOffcanvasOpen(false);
   };
 
-  // Externalized: set searching parameters
+  // Helper: parse query params to state (for initial load)
+  const parseParams = () => {
+    const paramsObj = Object.fromEntries([...searchParams.entries()]);
+    // Tristate logic for courseIsActive
+    if (paramsObj.courseIsActive === undefined) paramsObj.courseIsActive = null;
+    else if (paramsObj.courseIsActive === "true") paramsObj.courseIsActive = true;
+    else if (paramsObj.courseIsActive === "false") paramsObj.courseIsActive = false;
+    if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
+    if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
+    // Default searchType to 'title' if not present
+    if (!paramsObj.searchType) paramsObj.searchType = "title";
+    return { ...coursesFilters.defaultValues, ...paramsObj };
+  };
+
+  // Always derive filter state from URL
+  const urlState = parseParams();
+  const [sort, setSort] = useState({
+    sortBy: urlState.sortBy,
+    sortOrder: urlState.sortOrder,
+  });
+  const [pagination, setPagination] = useState({
+    offset: urlState.offset,
+    limit: urlState.limit,
+    total: 0,
+  });
+
+  // When filters/search/sort/page change, update URL
+  const updateUrlParams = (params) => {
+    setSearchParams(params, { replace: true });
+  };
+
+  // Update setSearchingParameters to default searchType to 'title' if not provided
   const setSearchingParameters = async (
     query,
     searchType,
     limit,
     filters = {}
   ) => {
-    const search = buildSearchParams(query, searchType, limit, filters);
-    setLastSearch(search);
-    setSearchParams(search);
-  };
-
-  const handlePageChange = createPageChangeHandler(
-    setPagination,
-    fetchCourses,
-    lastSearchRef
-  );
-
-  const handleSortChange = createSortHandler(
-    setSort,
-    setPagination,
-    fetchCourses,
-    lastSearchRef
-  );
-
-  async function fetchCourses(offset = 0, overrideParams = null) {
-    const { query, searchType, limit, filters } =
-      overrideParams || searchParams;
-    setResultsLoading(true);
-    const result = await handleGetCourses({
-      [searchType]: query,
-      offset,
+    const params = {
+      query,
+      searchType: searchType || "title",
       limit,
       ...filters,
-      parameter: sort.sortBy,
-      order: sort.sortOrder,
+    };
+    // Only include courseIsActive in the URL if not null
+    const urlParams = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "") {
+        urlParams[key] = typeof value === "boolean" ? String(value) : value;
+      }
     });
-    console.log("Fetched courses:", result.courses);
+    setSearchParams(urlParams);
+    setPagination((prev) => ({ ...prev, offset: 0, limit }));
+  };
+
+  // Externalized: handle page change
+  const handlePageChange = (newOffset) => {
+    setPagination((prev) => ({ ...prev, offset: newOffset }));
+  };
+
+  // Externalized: handle sort change
+  const handleSortChange = ({ sortBy, sortOrder }) => {
+    setSort({ sortBy, sortOrder });
+    setPagination((prev) => ({ ...prev, offset: 0 }));
+  };
+
+  // Fetch courses when searchParams, pagination, or sort changes
+  useEffect(() => {
+    if (!searchParams) return;
+    // Parse params from URL and ensure correct types
+    const paramsObj = Object.fromEntries([...searchParams.entries()]);
+    if (paramsObj.courseIsActive === "true") paramsObj.courseIsActive = true;
+    else if (paramsObj.courseIsActive === "false") paramsObj.courseIsActive = false;
+    if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
+    if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
+    // Remove any 'filters' key if present (defensive)
+    if (paramsObj.filters) delete paramsObj.filters;
+    // Always pass searchType and query explicitly
+    fetchCourses(pagination.offset, {
+      ...paramsObj,
+      searchType: paramsObj.searchType,
+      query: paramsObj.query,
+    });
+  }, [searchParams, pagination.offset, sort]);
+
+  // Sync searchParamsState with URL state
+  useEffect(() => {
+    setSearchParamsState(parseParams());
+  }, [searchParams]);
+
+  async function fetchCourses(offset = 0, overrideParams = null) {
+    const params = { ...(overrideParams || searchParamsState) };
+    params.offset = offset;
+    params.parameter = sort.sortBy;
+    params.order = sort.sortOrder;
+    setResultsLoading(true);
+    const result = await handleGetCourses(params);
     setCourses(result.courses);
     setPagination((prev) => ({
       ...prev,
@@ -117,15 +164,8 @@ const Courses = () => {
       total: result.pagination.totalCourses,
     }));
     setResultsLoading(false);
-    setLastSearch(overrideParams || searchParams);
+    setLastSearch(params);
   }
-
-  useEffect(() => {
-    if (searchParams) {
-      fetchCourses(pagination.offset, searchParams);
-    }
-    // eslint-disable-next-line
-  }, [searchParams, pagination.offset, sort]);
 
   useEffect(() => {
     fetchInitialCourses({
@@ -134,11 +174,9 @@ const Courses = () => {
       setSearchParams,
       handleGetCourseAreas,
     });
-    console.log("Initial courses fetched successfully", courses);
   }, []);
 
   const handleNewCourseCreated = (newCourse) => {
-    console.log("New course created:", newCourse);
     if (newCourse && newCourse.id) {
       setCourses((prev) => [newCourse, ...prev]);
     }
@@ -152,6 +190,7 @@ const Courses = () => {
         <SearchBar
           onSearch={setSearchingParameters}
           {...coursesFilters}
+          defaultValues={searchParams || coursesFilters.defaultValues}
           actions={
             isAdmin && (
               <button

@@ -3,7 +3,6 @@ import handleNotification from './handleNotification';
 
 export const handleActivateAccount = async (token) => {
   const response = await activateAccount(token);
-  console.log(response);
   if (response.success) {
     return true; // Success   
   } else {

@@ -9,8 +9,6 @@ import { FaCheck, FaTimes, FaMinus } from "react-icons/fa";
 const FilterMenu = ({
   watch,
   setValue,
-  handleSubmit,
-  onSubmit,
   filtersConfig = [],
   filterOptions = {},
   tristateFilters = [],
@@ -89,7 +87,6 @@ const FilterMenu = ({
                         data-active={watch(key) === value}
                         onClick={() => {
                           setValue(key, value);
-                          handleSubmit(onSubmit)();
                           setMenuOpen(false);
                         }}
                       >
@@ -117,7 +114,6 @@ const FilterMenu = ({
                         ? false
                         : null;
                     setValue(key, next);
-                    handleSubmit(onSubmit)();
                   }}
                   title={
                     watch(key) === true

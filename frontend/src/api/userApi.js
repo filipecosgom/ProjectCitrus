@@ -1,3 +1,4 @@
+import { GiConsoleController } from "react-icons/gi";
 import { api } from "./api"; // No need to import handleApiError here
 
 const userEndpoint = "/users";
@@ -109,15 +110,21 @@ export const fetchPaginatedUsers = async ({
     if (accountState) params.append("accountState", accountState);
     if (role) params.append("role", role);
     if (office) params.append("office", office);
-    if (isManager !== null) params.append("isManager", isManager);
-    if (isAdmin !== null) params.append("isAdmin", isAdmin);
-    if (isManaged !== null) params.append("isManaged", isManaged);
+    // Only send isManager, isAdmin, isManaged if value is exactly true/false (boolean) or "true"/"false" (string)
+    if (isManager === true || isManager === "true") params.append("isManager", "true");
+    if (isManager === false || isManager === "false") params.append("isManager", "false");
+    if (isAdmin === true || isAdmin === "true") params.append("isAdmin", "true");
+    if (isAdmin === false || isAdmin === "false") params.append("isAdmin", "false");
+    if (isManaged === true || isManaged === "true") params.append("isManaged", "true");
+    if (isManaged === false || isManaged === "false") params.append("isManaged", "false");
 
     // Add pagination and sorting parameters
     params.append("parameter", parameter);
     params.append("order", order);
     params.append("offset", offset);
     params.append("limit", limit);
+
+    console.log(`Fetching users with param`, params.toString());
 
     const response = await api.get(`${userEndpoint}?${params.toString()}`);
     return {
@@ -223,7 +230,8 @@ export const fetchUsersXLSX = async ({
       {
         responseType: "blob",
         headers: {
-          Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          Accept:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         },
       }
     );

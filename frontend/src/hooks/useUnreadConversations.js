@@ -25,9 +25,6 @@ function useUnreadConversations() {
         if (!newSet.has(senderId)) {
           newSet.add(senderId);
           updateConversationCount(newSet);
-          console.log(
-            `📩 Nova conversa não lida: ${senderId}. Total: ${newSet.size}`
-          );
         }
         return newSet;
       });
@@ -39,7 +36,6 @@ function useUnreadConversations() {
   const resetConversationCount = useCallback(() => {
     setUnreadConversations(new Set());
     setConversationCount(0);
-    console.log("🔄 Contador de conversas resetado");
   }, []);
 
   // ✅ WEBSOCKET CONTROLADO
@@ -47,7 +43,6 @@ function useUnreadConversations() {
     // ✅ LIMPAR WEBSOCKET SE NÃO TIVER USER
     if (!user) {
       // ✅ USAR user DIRETAMENTE
-      console.log("❌ Sem user ativo, fechando WebSocket");
       if (websocket) {
         websocket.close(1000, "No user");
         setWebSocket(null);
@@ -60,7 +55,6 @@ function useUnreadConversations() {
 
     // ✅ NÃO CONECTAR SE JÁ TIVER WEBSOCKET ATIVO
     if (websocket && websocket.readyState === WebSocket.OPEN) {
-      console.log("✅ WebSocket já ativo, não duplicar");
       return;
     }
 
@@ -70,11 +64,9 @@ function useUnreadConversations() {
       setWebSocket(null);
     }
 
-    console.log("🔗 Conectando WebSocket para conversas...");
     const ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
-      console.log("✅ WebSocket conectado para conversas");
       setWebSocket(ws);
     };
 
@@ -100,7 +92,6 @@ function useUnreadConversations() {
     };
 
     ws.onclose = (event) => {
-      console.log(`🔌 WebSocket fechado: ${event.code} - ${event.reason}`);
       setWebSocket(null);
     };
 
@@ -111,7 +102,6 @@ function useUnreadConversations() {
 
     // ✅ CLEANUP FUNCTION
     return () => {
-      console.log("🧹 Limpando WebSocket...");
       if (ws.readyState === WebSocket.OPEN) {
         ws.close(1000, "Component cleanup");
       }

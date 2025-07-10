@@ -4,7 +4,6 @@ import handleNotification from "./handleNotification";
 export const handleCreateNewCourse = async (course) => {
   try {
     const response = await createCourse(course);
-    console.log("Course creation response:", response);
     if (
       response &&
       response.success === true &&

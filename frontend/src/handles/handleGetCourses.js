@@ -5,27 +5,33 @@ export const handleGetCourses = async ({
   area = null,
   language = null,
   adminId = null,
-  isActive = null,
+  courseIsActive = null, // CHANGED from isActive to courseIsActive
   parameter = "id",
   order = "ASCENDING",
   offset = 0,
   limit = 10,
+  query,
+  searchType,
   ...rest
 } = {}) => {
+  // Map query/searchType to the correct backend param
+  const params = { ...rest };
+  if (searchType && query !== undefined && query !== "") {
+    params[searchType] = query;
+  }
   // Build params for the API
-  const params = {};
   if (area) params.area = area;
   if (language) params.language = language;
   if (adminId) params.adminId = adminId;
-  if (isActive !== null) params.isActive = isActive;
+  if (courseIsActive !== null) params.courseIsActive = courseIsActive; // CHANGED
   params.parameter = parameter;
   params.order = order;
   params.offset = offset;
   params.limit = limit;
   // Add any extra params
   Object.assign(params, rest);
-  console.log("Fetching courses with params:", params);
 
+  console.log("Fetching courses with params:", params);
   const response = await fetchCourses(params);
 
   if (response.success) {
@@ -36,8 +42,6 @@ export const handleGetCourses = async ({
       offset: response.data?.data?.offset || 0,
       limit: response.data?.data?.limit || 10
     };
-    console.log("Courses fetched successfully:", courses);
-    console.log("Pagination info:", paginationInfo);
     return {
       courses,
       pagination: paginationInfo,

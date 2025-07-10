@@ -132,8 +132,6 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
 
   // MUDANÇA: Função para obter o nome do usuário da appraisal
   const getAppraisalUserName = (appraisal) => {
-    // Debug: Para ver a estrutura real dos dados (remover depois)
-    console.log("Appraisal data:", appraisal);
 
     // Agora deve receber o objeto completo do usuário
     if (appraisal.appraisedUser) {

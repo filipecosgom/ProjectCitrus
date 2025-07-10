@@ -2,7 +2,6 @@ import { fetchPaginatedAppraisals } from "../api/appraisalsApi";
 import { dateToFormattedDate, transformArrayLocalDatetoLocalDate } from "../utils/utilityFunctions";
 
 export const handleGetAppraisals = async (params = {}) => {
-  console.log(params);
   const response = await fetchPaginatedAppraisals(params);
 
   if (response.success) {

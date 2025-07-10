@@ -25,7 +25,6 @@ const skipEndpoints = ["/login", "/logout", "/request-password-reset", "/activat
 
 api.interceptors.response.use(
   (response) => {
-    console.log(response)
     const url = response.config.url;
     if (!skipEndpoints.some((endpoint) => url && url.includes(endpoint))) {
       // Call the refreshSessionTimer method if it exists

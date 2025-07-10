@@ -71,17 +71,13 @@ function useWebSocketChat() {
           }
           break;
         case "AUTHENTICATED":
-          console.log("Authenticated to websocket chat");
           break;
         case "AUTH_FAILED":
           console.error("WebSocket authentication failed");
           ws.close();
           break;
         case "CONVERSATION_READ":
-          console.log("Conversation read", data);
-          console.log("Current chatting user:", currentChattingUser.user);
           if (data.readerId === currentChattingUser.user.id) {
-            console.log("SAME USER, marking conversation as read");
             markConversationAsRead();
           }
           break;

@@ -2,7 +2,12 @@
 
 // Utility for building search params
 export function buildSearchParams(query, searchType, limit, filters = {}) {
-  return { query, searchType, limit, filters };
+  return {
+  query,
+  searchType,
+  limit,
+  ...filters, // <-- This spreads all filter keys (office, accountState, etc.) into the params object
+};
 }
 
 // Pagination handler factory (with scroll-to-top)

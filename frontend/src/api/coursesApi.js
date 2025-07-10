@@ -3,11 +3,13 @@ import { api } from "./api"; // No need to import handleApiError here
 const courseEndpoint = "/courses";
 
 export const fetchCourses = async (params = {}) => {
+  console.log("Fetching courses with params:", params);
   try {
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
-        query.append(key, value);
+        // Ensure booleans are sent as strings
+        query.append(key, typeof value === 'boolean' ? String(value) : value);
       }
     });
     const response = await api.get(`${courseEndpoint}?${query.toString()}`);

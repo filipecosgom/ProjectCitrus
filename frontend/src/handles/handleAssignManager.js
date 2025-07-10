@@ -73,14 +73,6 @@ export const handleAssignManager = async (assignmentData) => {
     const successfulAssignments = assignmentResults.filter((r) => r.success);
     const failedAssignments = assignmentResults.filter((r) => !r.success);
 
-    console.log("📊 Assignment summary:", {
-      total: userIds.length,
-      successful: successfulAssignments.length,
-      failed: failedAssignments.length,
-      successfulUsers: successfulAssignments.map((r) => r.userId),
-      failedUsers: failedAssignments.map((r) => r.userId),
-    });
-
     return {
       success: failedAssignments.length === 0,
       message:
