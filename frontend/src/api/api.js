@@ -1,6 +1,5 @@
 import axios from "axios";
 import { apiBaseUrl } from "../config";
-import handleNotification from "../handles/handleNotification";
 import useAuthStore from "../stores/useAuthStore";
 
 export const api = axios.create({
@@ -26,7 +25,7 @@ const skipEndpoints = ["/login", "/logout", "/request-password-reset", "/activat
 
 api.interceptors.response.use(
   (response) => {
-    // Refresh session timer on most successful responses
+    console.log(response)
     const url = response.config.url;
     if (!skipEndpoints.some((endpoint) => url && url.includes(endpoint))) {
       // Call the refreshSessionTimer method if it exists
@@ -59,10 +58,7 @@ api.interceptors.response.use(
       errorData.suppressToast = true; // Don't show "session expired" if we're not even logged in
     }
 
-    // ✅ Respect suppressToast flag
-    if (!errorData.suppressToast) {
-        handleApiError(errorData)
-    }
+    // ✅ Respect suppressToast flag (no notification here)
 
     return Promise.resolve({
       success: false,
@@ -73,17 +69,3 @@ api.interceptors.response.use(
     });
   }
 );
-
-export const handleApiError = (error) => {
-  if (error.response) {
-    console.log("API Error:", error.response.data.message);
-    const { success, message, errorCode } = error.response.data;
-    console.log(message)
-
-    if (!success) {
-      handleNotification("error", message || "errorUnexpected");
-    }
-  } else {
-    handleNotification("error", "errorNetworkError");
-  }
-};

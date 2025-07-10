@@ -2,6 +2,7 @@ package pt.uc.dei.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ejb.EJB;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -11,11 +12,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import pt.uc.dei.annotations.AdminOnly;
+import pt.uc.dei.dtos.CourseUpdateDTO;
 import pt.uc.dei.dtos.FileUploadDTO;
+import pt.uc.dei.dtos.CourseNewDTO;
+import pt.uc.dei.dtos.UpdateUserDTO;
+import pt.uc.dei.dtos.CourseDTO;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.services.CourseService;
 import pt.uc.dei.services.CourseFileService;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.JWTUtil;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -203,10 +209,72 @@ public class CourseController {
                     .entity(new ApiResponse(false, "File too large", "errorFileTooLarge", null))
                     .build();
         }
-        // Optionally update course entity to set courseHasImage = true
+        CourseUpdateDTO courseUpdateDTO = new CourseUpdateDTO();
+        courseUpdateDTO.setId(id);
+        courseUpdateDTO.setCourseHasImage(true);
+        courseService.updateCourse(courseUpdateDTO);
         LOGGER.info("Course image uploaded successfully for course id: {}", id);
         return Response.status(Response.Status.OK)
                 .entity(new ApiResponse(true, "File uploaded successfully", "successFileUploaded", filename))
                 .build();
+    }
+
+    /**
+     * Creates a new course. Only accessible by admins.
+     *
+     * @param jwtToken JWT token from cookie for admin authentication
+     * @param dto      The new course data
+     * @return Response indicating success or failure
+     */
+    @AdminOnly
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createCourse(
+            @CookieParam("jwt") String jwtToken,
+            @Valid CourseNewDTO dto) {
+        LOGGER.info("Create course request received");
+        try {
+            if (!JWTUtil.isUserAdmin(jwtToken)) {
+                LOGGER.warn("Unauthorized attempt to create course");
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity(new ApiResponse(false, "Not authorized", "notAuthorized", null))
+                        .build();
+            }
+            Long adminId = JWTUtil.getUserIdFromToken(jwtToken);
+            try {
+                CourseDTO createdCourse = courseService.createNewCourse(dto, adminId);
+                if (createdCourse != null) {
+                    LOGGER.info("Course created successfully by admin id {}", adminId);
+                    return Response.status(Response.Status.CREATED)
+                            .entity(new ApiResponse(true, "Course created successfully", "successCourseCreated", createdCourse))
+                            .build();
+                } else {
+                    LOGGER.warn("Failed to create course (admin not found)");
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity(new ApiResponse(false, "Course not created (admin not found)", "errorCourseNotCreated", null))
+                            .build();
+                }
+            } catch (IllegalArgumentException ex) {
+                String errorCode = ex.getMessage();
+                String errorMsg;
+                if ("duplicateTitle".equals(errorCode)) {
+                    errorMsg = "Course with this title already exists";
+                } else if ("duplicateLink".equals(errorCode)) {
+                    errorMsg = "Course with this link already exists";
+                } else {
+                    errorMsg = "Course not created (duplicate title or link)";
+                }
+                LOGGER.warn("Failed to create course: {}", errorMsg);
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, errorMsg, errorCode, null))
+                        .build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error creating course", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
     }
 }

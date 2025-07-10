@@ -1,5 +1,8 @@
 package pt.uc.dei.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Enum representing different areas of a course.
  * <ul>
@@ -21,10 +24,12 @@ public enum CourseArea {
         this.fieldName = fieldName;
     }
 
+    @JsonValue
     public String getFieldName() {
         return fieldName;
     }
 
+    @JsonCreator
     public static CourseArea fromFieldName(String input) {
         if (input == null || input.trim().isEmpty()) return null;
         String trimmed = input.trim();
@@ -34,5 +39,10 @@ public enum CourseArea {
             }
         }
         throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
+
+    @Override
+    public String toString() {
+        return fieldName;
     }
 }

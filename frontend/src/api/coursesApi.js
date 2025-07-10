@@ -69,3 +69,29 @@ export const uploadCourseImage = async (courseId, imageFile) => {
     return { success: false, error };
   }
 };
+
+export const createCourse = async (courseData) => {
+  try {
+    const response = await api.post(
+      courseEndpoint,
+      courseData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};

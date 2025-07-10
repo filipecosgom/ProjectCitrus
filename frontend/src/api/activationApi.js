@@ -1,4 +1,4 @@
-import { api, handleApiError } from "./api"; // Import the global Axios instance
+import { api } from "./api"; // Import the global Axios instance
 
 const activationEndpoint = "/activate"; // Keep only the relative endpoint
 
@@ -12,7 +12,6 @@ export const activateAccount = async (token) => {
     });
     return response.data;
   } catch (error) {
-    handleApiError(error, "login");
     throw error; // para propagar o erro
   }
 };

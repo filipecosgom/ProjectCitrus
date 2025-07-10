@@ -224,4 +224,36 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             return null;
         }
     }
+
+    // Checks if a course with the given title already exists (case-insensitive)
+    public boolean existsByTitle(String title) {
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(c) FROM CourseEntity c WHERE LOWER(c.title) = LOWER(:title)",
+                Long.class
+            );
+            query.setParameter("title", title);
+            Long count = query.getSingleResult();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            LOGGER.error("Error checking if course exists by title: {}", title, e);
+            return false;
+        }
+    }
+
+    // Checks if a course with the given link already exists (case-insensitive)
+    public boolean existsByLink(String link) {
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(c) FROM CourseEntity c WHERE LOWER(c.link) = LOWER(:link)",
+                Long.class
+            );
+            query.setParameter("link", link);
+            Long count = query.getSingleResult();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            LOGGER.error("Error checking if course exists by link: {}", link, e);
+            return false;
+        }
+    }
 }

@@ -2,6 +2,7 @@ package pt.uc.dei.mapper;
 
 import org.mapstruct.*;
 import pt.uc.dei.dtos.CourseDTO;
+import pt.uc.dei.dtos.CourseNewDTO;
 import pt.uc.dei.dtos.CourseUpdateDTO;
 import pt.uc.dei.entities.CourseEntity;
 import java.util.List;
@@ -31,6 +32,25 @@ public interface CourseMapper {
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true) // Set admin in service if needed
     CourseEntity toEntity(CourseDTO courseDTO);
+
+    /**
+     * Converts a CourseUpdateDTO object to a CourseEntity object.
+     * @param courseUpdateDTO the DTO to convert
+     * @return the mapped entity
+     */
+    @Mapping(target = "userCompletions", ignore = true)
+    @Mapping(target = "admin", ignore = true)
+    CourseEntity toEntity(CourseUpdateDTO courseUpdateDTO);
+
+    /**
+     * Converts a CourseNewDTO object to a CourseEntity object.
+     * @param courseNewDTO the DTO to convert
+     * @return the mapped entity
+     */
+    @Mapping(target = "userCompletions", ignore = true)
+    @Mapping(target = "admin", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    CourseEntity toEntity(CourseNewDTO courseNewDTO);
 
     /**
      * Converts a list of CourseEntity objects into a list of CourseDTO objects.

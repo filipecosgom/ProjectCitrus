@@ -1,11 +1,12 @@
 import { getRoles, getOffices, getAppraisalStates, getCourseAreas } from '../api/enumsApi';
+import handleNotification from './handleNotification';
 
 export const handleGetRoles = async () => {
   try {
     const roles = await getRoles();
     return roles; // returns the transformed array of roles
   } catch (error) {
-    console.error("Error retrieving roles", error);
+    handleNotification("error", "enums.errorFetchRoles");
     return [];
   }
 };
@@ -15,7 +16,7 @@ export const handleGetOffices = async () => {
     const offices = await getOffices();
     return offices;
   } catch (error) {
-    console.error("Error retrieving offices", error);
+    handleNotification("error", "enums.errorFetchOffices");
     return [];
   }
 };
@@ -25,7 +26,7 @@ export const handleGetAppraisalStates = async () => {
     const appraisalStates = await getAppraisalStates();
     return appraisalStates;
   } catch (error) {
-    console.error("Error retrieving appraisal states", error);
+    handleNotification("error", "enums.errorFetchAppraisalStates");
     return [];
   }
 };
@@ -35,7 +36,7 @@ export const handleGetCourseAreas = async () => {
     const courseAreas = await getCourseAreas();
     return courseAreas;
   } catch (error) {
-    console.error("Error retrieving course areas", error);
+    handleNotification("error", "enums.errorFetchCourseAreas");
     return [];
   }
 };

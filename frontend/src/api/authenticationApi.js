@@ -1,4 +1,4 @@
-import { api, handleApiError } from "./api"; // Import the global Axios instance
+import { api } from "./api"; // Import the global Axios instance
 
 const authenticationEndpoint = "/auth"; // Keep only the relative endpoint
 
@@ -10,7 +10,6 @@ export const login = async (loginInformation) => {
     const response = await api.post(`${authenticationEndpoint}/login`, loginInformation);
     return response.data;
   } catch (error) {
-    handleApiError(error, "login");
     throw error; // para propagar o erro
   }
 };
@@ -22,7 +21,6 @@ export const requestSecretKey = async (userInformation) => {
     const response = await api.post(`${authenticationEndpoint}`, userInformation);
     return response.data;
   } catch (error) {
-    handleApiError(error, "auth");
     throw error;
   }
 };

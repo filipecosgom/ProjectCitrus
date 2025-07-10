@@ -1,0 +1,341 @@
+/* Backdrop com blur effect */
+.course-newCourse-offcanvas-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.course-newCourse-offcanvas-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Fallback para browsers que não suportam backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .course-newCourse-offcanvas-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .course-newCourse-offcanvas-backdrop.open {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Offcanvas - slide da direita */
+.course-newCourse-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.course-newCourse-offcanvas.open {
+  transform: translateX(0);
+}
+
+/* Botão X - preto, canto superior direito */
+.course-newCourse-offcanvas-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 32px;
+  color: #000000;
+  cursor: pointer;
+  border-radius: 50%;
+  border-width: 2rem;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-newCourse-offcanvas-close:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Conteúdo do offcanvas */
+.course-newCourse-offcanvas-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100vh;
+}
+
+/* Imagem do curso */
+.course-newCourse-image {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+}
+
+.course-newCourse-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  display: block;
+}
+
+.course-newCourse-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 32px 16px 32px;
+}
+
+/* Estilo para o botão flutuante de upload de imagem (label e ícone) na área da imagem do curso */
+.course-newCourse-edit-label {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border: 2px solid #fff;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.course-newCourse-edit-label:hover {
+  background: #f5f5f5;
+}
+
+.course-newCourse-edit-icon {
+  color: #b61b23;
+  font-size: 1.2rem;
+}
+
+.course-newCourse-image input[type="file"] {
+  display: none;
+}
+
+/* Título do curso */
+.course-newCourse-title {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: var(--font-size-title, 2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text, #000000);
+  margin: 0;
+  padding: 0 32px;
+  line-height: 1.2;
+}
+
+
+.course-newCourse-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+}
+
+.course-newCourse-icon {
+  color: #b61b23;
+  font-size: 18px;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.course-newCourse-flag {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.course-newCourse-label {
+  color: var(--secondary, #88909f);
+  font-weight: var(--font-weight-bold, 700);
+  min-width: 56px;
+  align-self: flex-start;
+}
+.course-newCourse-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-newCourse-value {
+  color: var(--text, #000000);
+  font-weight: var(--font-weight-regular, 400);
+  flex: 1;
+}
+
+/* Seções */
+.course-newCourse-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-newCourse-section-title {
+  color: var(--secondary, #88909f);
+  font-weight: var(--font-weight-bold, 700);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+}
+
+.course-newCourse-description {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  color: var(--text, #000000);
+}
+
+.course-newCourse-description p {
+  margin: 0;
+}
+
+.course-newCourse-inputAndError {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+}
+
+.course-newCourse-input {
+  width: 100%;
+  min-height: 32px;
+  max-height: 96px;
+  padding: 0 16px;
+  border: 2px solid #cbb4b4;
+  border-radius: 8px;
+  box-shadow: var(--shadow-text);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main);
+  color: var(--text, #000000);
+  box-sizing: border-box;
+}
+
+.course-newCourse-input-duration {
+  width: 128px;
+  height: auto;
+  padding: 0 16px;
+  border: 2px solid #cbb4b4;
+  border-radius: 8px;
+  box-shadow: var(--shadow-text);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main);
+  color: var(--text, #000000);
+  box-sizing: border-box;
+}
+
+
+select.course-new-input {
+  width: 100%;
+  height: 40px;
+  border: 2px solid #cbb4b4;
+  border-radius: 10px;
+  box-shadow: var(--shadow-text);
+  padding: 8px 12px;
+  font-size: 16px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  color: var(--text, #000000);
+  background: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.2s;
+}
+select.course-new-input:focus {
+  border-color: #b61b23;
+  outline: none;
+}
+
+/* Botão de ação */
+.course-newCourse-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.course-newCourse-start-btn {
+  width: auto;
+  max-width: 300px;
+  height: 48px;
+  background: var(--primary, #b61b23);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(182, 27, 35, 0.3);
+  padding: 16px 16px;
+}
+
+.course-newCourse-start-btn:hover {
+  background: linear-gradient(135deg, #8b1619 0%, #6b1013 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(182, 27, 35, 0.4);
+}
+
+.course-newCourse-start-btn:active {
+  transform: translateY(0);
+}
+
+.course-newCourse-play-icon {
+  font-size: 14px;
+}
+
+/* Remover underline do link do botão em todos os estados */
+.course-newCourse-start-btn,
+.course-newCourse-start-btn:visited,
+.course-newCourse-start-btn:hover,
+.course-newCourse-start-btn:active {
+  text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .course-newCourse-offcanvas {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .course-newCourse-offcanvas {
+    width: 90vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-newCourse-offcanvas {
+    transition: transform 0.2s ease;
+  }
+  .course-newCourse-offcanvas-backdrop {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
