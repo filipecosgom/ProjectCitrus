@@ -155,6 +155,28 @@ export default function Users() {
     }
   }, [urlSearchParams, searchParams, offices, initialLoadComplete]);
 
+  // ✅ ADICIONAR: useEffect que garante parâmetros padrão na URL
+  useEffect(() => {
+    if (offices.length > 0 && !initialLoadComplete) {
+      const currentParams = new URLSearchParams(urlSearchParams);
+
+      // Garantir que sortBy e sortOrder estejam sempre na URL
+      if (!currentParams.has("sortBy")) {
+        currentParams.set("sortBy", "name");
+      }
+      if (!currentParams.has("sortOrder")) {
+        currentParams.set("sortOrder", "ASCENDING");
+      }
+
+      // Se algo foi adicionado, atualizar URL
+      if (!urlSearchParams.has("sortBy") || !urlSearchParams.has("sortOrder")) {
+        setUrlSearchParams(currentParams);
+      }
+
+      setInitialLoadComplete(true);
+    }
+  }, [offices, urlSearchParams, setUrlSearchParams, initialLoadComplete]);
+
   // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
     if (selectedUsers.size === 0) {
