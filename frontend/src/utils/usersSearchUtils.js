@@ -11,7 +11,7 @@ export async function fetchInitialUsers({
   let offices = await handleGetOffices();
   // Add "All offices" option at the top
   offices = [{ label: "All offices", value: "" }, ...offices];
-  const initialSearch = { query: "", searchType: "email", limit: 10, office: "", filters: {} };
+  const initialSearch = { query: "", searchType: "name", limit: 10, office: "", filters: {} };
   setSearchParams(initialSearch);
   setOffices(offices);
   setPageLoading(false);
@@ -47,7 +47,7 @@ export const userSearchFilters = (t, offices) => {
     ],
     defaultValues: {
       query: "",
-      searchType: "email",
+      searchType: "name",
       accountState: "",
       office: "",
       limit: 10,

@@ -25,18 +25,18 @@ const SearchBar = ({
     // ✅ ADICIONAR reset
     defaultValues: {
       query: "",
-      searchType: "email", // ✅ CORRIGIDO: usar "email" por padrão
+      searchType: "email", // ✅ CORRIGIDO: usar "email" como padrão
       limit: 10,
       ...defaultValues,
     },
   });
 
-  // ✅ NOVO: Atualizar form quando defaultValues mudam
+  // ✅ CORRIGIR: useEffect também
   useEffect(() => {
     console.log("🔍 SearchBar defaultValues changed:", defaultValues); // DEBUG
     reset({
       query: "",
-      searchType: "email", // ✅ CORRIGIDO: usar "email" por padrão
+      searchType: "email", // ✅ CORRIGIDO: usar "email" como padrão
       limit: 10,
       ...defaultValues,
     });
