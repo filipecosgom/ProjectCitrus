@@ -15,6 +15,7 @@ import pt.uc.dei.dtos.CycleUpdateDTO;
 import pt.uc.dei.enums.CycleState;
 import pt.uc.dei.services.CycleService;
 import pt.uc.dei.utils.ApiResponse;
+import pt.uc.dei.utils.JWTUtil;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -52,8 +53,10 @@ public class CycleController {
      * @return Response with the created cycle DTO
      */
     @POST
-    public Response createCycle(@Valid CycleDTO cycleDTO) {
-        try {
+    public Response createCycle(@Valid CycleDTO cycleDTO, @CookieParam("jwt") String jwtToken) {
+        Long userId = JWTUtil.getUserIdFromToken(jwtToken);
+                cycleDTO.setAdminId(userId);
+                try {
             LOGGER.info("Creating new cycle from {} to {} with admin {}", 
                        cycleDTO.getStartDate(), 
                        cycleDTO.getEndDate(),

@@ -320,7 +320,7 @@ public class CycleService implements Serializable {
             throw new IllegalStateException("Cycle is already closed");
         }
 
-        // Count appraisals that are NOT COMPLETED (i.e., still IN_PROGRESS)
+        // Count appraisals by state
         long inProgressCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()
                 .filter(appraisal -> appraisal.getState() == AppraisalState.IN_PROGRESS)
                 .count();
@@ -335,8 +335,7 @@ public class CycleService implements Serializable {
 
         long totalAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId).size();
 
-        // Can only close if ALL appraisals are COMPLETED (none IN_PROGRESS)
-        boolean canClose = inProgressCount == 0 && completedCount == totalAppraisals;
+         boolean canClose = (completedCount + closedCount) == totalAppraisals;
 
         Map<String, Object> result = new HashMap<>();
         result.put("canClose", canClose);
@@ -352,7 +351,8 @@ public class CycleService implements Serializable {
             LOGGER.warn("Cycle {} cannot be closed: {} appraisals still in progress", cycleId, inProgressCount);
         } else {
             result.put("reason", "All appraisals are completed and ready for cycle closure");
-            LOGGER.info("Cycle {} can be closed: all {} appraisals are completed", cycleId, completedCount);
+            LOGGER.info("Cycle {} can be closed: {} appraisals in progress, {} completed, {} closed", 
+                       cycleId, inProgressCount, completedCount, closedCount);
         }
 
         return result;
