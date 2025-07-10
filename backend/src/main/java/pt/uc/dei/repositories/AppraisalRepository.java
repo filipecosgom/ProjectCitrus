@@ -542,4 +542,24 @@ public class AppraisalRepository extends AbstractRepository<AppraisalEntity> {
             return false;
         }
     }
+
+    /**
+     * Counts the number of appraisals for a specific cycle.
+     *
+     * @param cycleId The ID of the cycle
+     * @return The number of appraisals in the cycle
+     */
+    public int countAppraisalsByCycleId(Long cycleId) {
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(a) FROM AppraisalEntity a WHERE a.cycle.id = :cycleId", 
+                Long.class
+            );
+            query.setParameter("cycleId", cycleId);
+            return query.getSingleResult().intValue();
+        } catch (Exception e) {
+            LOGGER.error("Error counting appraisals for cycle {}: {}", cycleId, e.getMessage());
+            return 0;
+        }
+    }
 }

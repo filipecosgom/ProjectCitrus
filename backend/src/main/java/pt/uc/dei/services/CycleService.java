@@ -2,6 +2,7 @@ package pt.uc.dei.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.ejb.EJBException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -55,6 +56,9 @@ public class CycleService implements Serializable {
 
     @EJB
     private AppraisalRepository appraisalRepository;
+
+    @EJB
+    private EmailService emailService;
 
     @Inject
     private CycleMapper cycleMapper;
@@ -124,10 +128,25 @@ public class CycleService implements Serializable {
             // CREATE APPRAISALS FOR ALL ACTIVE USERS
             createAppraisalsForCycle(cycleEntity);
 
+            // GET ADMIN NAME FOR EMAIL
+            String adminName = admin != null ? (admin.getName() + " " + admin.getSurname()) : "System Administrator";
+            
+            // COUNT CREATED APPRAISALS
+            int appraisalsCount = appraisalRepository.countAppraisalsByCycleId(cycleEntity.getId());
+            
+            LOGGER.info("🔍 DEBUG: About to send notification emails for cycle {}", cycleEntity.getId());
+            boolean emailsSuccess = sendCycleNotificationEmails(cycleEntity, adminName, appraisalsCount);
+            LOGGER.info("🔍 DEBUG: Email notification result: {}", emailsSuccess);
+            
+            if (!emailsSuccess) {
+                LOGGER.warn("Some cycle notification emails failed to send for cycle ID: {}", cycleEntity.getId());
+            }
+
+            LOGGER.info("Cycle created successfully with ID: {} by admin: {}", cycleEntity.getId(), admin.getEmail());
             return cycleMapper.toDto(cycleEntity);
 
         } catch (Exception e) {
-            LOGGER.error("Error creating cycle: {}", cycleDTO.getId(), e);
+            LOGGER.error("Error creating cycle: {}", e.getMessage());
             throw new RuntimeException("Failed to create cycle: " + e.getMessage(), e);
         }
     }
@@ -585,6 +604,76 @@ public class CycleService implements Serializable {
 
         if (createdCount == 0 && skippedCount == 0) {
             LOGGER.warn("No appraisals were created for cycle ID: {}", cycle.getId());
+        }
+    }
+
+    /**
+     * Sends cycle notification emails to all managers and administrators.
+     *
+     * @param cycle The created cycle
+     * @param adminName The name of the admin who created the cycle
+     * @param appraisalsCount The number of appraisals created
+     * @return true if all emails were sent successfully, false if any failed
+     */
+    private boolean sendCycleNotificationEmails(CycleEntity cycle, String adminName, int appraisalsCount) {
+        try {
+            LOGGER.info("🔍 DEBUG: Starting email notification process for cycle {}", cycle.getId());
+            
+            List<UserEntity> managersAndAdmins = userRepository.findManagersAndAdmins();
+            LOGGER.info("🔍 DEBUG: Found {} managers/admins for notification", managersAndAdmins.size());
+            
+            if (managersAndAdmins.isEmpty()) {
+                LOGGER.warn("🔍 DEBUG: No managers or administrators found to notify about cycle creation");
+                return true;
+            }
+            
+            // Listar os emails encontrados
+            for (UserEntity user : managersAndAdmins) {
+                LOGGER.info("🔍 DEBUG: Will send email to: {} (Manager: {}, Admin: {})", 
+                       user.getEmail(), user.getUserIsManager(), user.getUserIsAdmin());
+            }
+            
+            String cycleId = cycle.getId().toString();
+            String startDate = cycle.getStartDate().toString();
+            String endDate = cycle.getEndDate().toString();
+            
+            boolean allEmailsSent = true;
+            int emailsSent = 0;
+            int emailsFailed = 0;
+            
+            for (UserEntity user : managersAndAdmins) {
+                try {
+                    // Default to English if user doesn't have a preferred language
+                    String userLanguage = "en"; // You might want to add a language preference field to UserEntity
+                    
+                    emailService.sendCycleNotificationEmail(
+                        user.getEmail(),
+                        cycleId,
+                        startDate,
+                        endDate,
+                        adminName,
+                        appraisalsCount,
+                        userLanguage
+                    );
+                    
+                    emailsSent++;
+                    LOGGER.info("Cycle notification sent to manager/admin: {}", user.getEmail());
+                    
+                } catch (Exception e) {
+                    emailsFailed++;
+                    allEmailsSent = false;
+                    LOGGER.error("Failed to send cycle notification to {}: {}", user.getEmail(), e.getMessage());
+                }
+            }
+            
+            LOGGER.info("Cycle notification summary - Sent: {}, Failed: {}, Total recipients: {}", 
+                       emailsSent, emailsFailed, managersAndAdmins.size());
+            
+            return allEmailsSent;
+            
+        } catch (Exception e) {
+            LOGGER.error("🔍 DEBUG: Error in sendCycleNotificationEmails: {}", e.getMessage(), e);
+            return false;
         }
     }
 }

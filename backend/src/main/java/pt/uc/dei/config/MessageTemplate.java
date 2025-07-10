@@ -309,4 +309,192 @@ public class MessageTemplate {
                 </html>
                 """.formatted(resetLink, expirationTime);
     }
+
+    /**
+     * Email template for new cycle notification (English).
+     */
+    public static final String CYCLE_NOTIFICATION_TEMPLATE_EN(String cycleId, String startDate, String endDate, String adminName, int appraisalsCount, String cycleLink) {
+        return """
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Performance Cycle Started</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        margin: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        background-color: #ffffff;
+        margin: auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+      .button {
+        display: inline-block;
+        padding: 12px 24px;
+        margin: 20px 0;
+        color: #ffffff !important;
+        background-color: #00b9cd;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .cycle-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .highlight {
+        color: #00b9cd;
+        font-weight: bold;
+      }
+      .footer {
+        font-size: 12px;
+        color: #777777;
+        margin-top: 30px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h2>🎯 New Performance Cycle Started</h2>
+      <p>Hello,</p>
+      <p>
+        A new performance evaluation cycle has been created and is now active. 
+        As a manager/administrator, we're notifying you of this important update.
+      </p>
+      
+      <div class="cycle-info">
+        <h3>Cycle Details:</h3>
+        <p><strong>Cycle ID:</strong> %s</p>
+        <p><strong>Start Date:</strong> %s</p>
+        <p><strong>End Date:</strong> %s</p>
+        <p><strong>Created by:</strong> %s</p>
+        <p><strong>Total Appraisals:</strong> <span class="highlight">%d evaluations</span> are now in progress</p>
+      </div>
+      
+      <p>
+        Please review the active evaluations and ensure your team members 
+        complete their assessments within the specified timeframe.
+      </p>
+      
+      <p style="text-align: center;">
+        <a href="%s" class="button">View Cycle Details</a>
+      </p>
+      
+      <p>
+        For any questions or support, please contact your system administrator.
+      </p>
+      
+      <p>Best regards,<br />The CITRUS Team</p>
+      <div class="footer">
+        ©CITRUS. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>
+""".formatted(cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+    }
+
+    /**
+     * Email template for new cycle notification (Portuguese).
+     */
+    public static final String CYCLE_NOTIFICATION_TEMPLATE_PT(String cycleId, String startDate, String endDate, String adminName, int appraisalsCount, String cycleLink) {
+        return """
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Novo Ciclo de Avaliação Iniciado</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        margin: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        background-color: #ffffff;
+        margin: auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+      .button {
+        display: inline-block;
+        padding: 12px 24px;
+        margin: 20px 0;
+        color: #ffffff !important;
+        background-color: #00b9cd;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .cycle-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .highlight {
+        color: #00b9cd;
+        font-weight: bold;
+      }
+      .footer {
+        font-size: 12px;
+        color: #777777;
+        margin-top: 30px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h2>🎯 Novo Ciclo de Avaliação Iniciado</h2>
+      <p>Olá,</p>
+      <p>
+        Um novo ciclo de avaliação de desempenho foi criado e está agora ativo. 
+        Como gestor/administrador, estamos a notificá-lo desta importante atualização.
+      </p>
+      
+      <div class="cycle-info">
+        <h3>Detalhes do Ciclo:</h3>
+        <p><strong>ID do Ciclo:</strong> %s</p>
+        <p><strong>Data de Início:</strong> %s</p>
+        <p><strong>Data de Fim:</strong> %s</p>
+        <p><strong>Criado por:</strong> %s</p>
+        <p><strong>Total de Avaliações:</strong> <span class="highlight">%d avaliações</span> estão em progresso</p>
+      </div>
+      
+      <p>
+        Por favor, reveja as avaliações ativas e garanta que os membros da sua equipa 
+        completam as suas avaliações dentro do prazo especificado.
+      </p>
+      
+      <p style="text-align: center;">
+        <a href="%s" class="button">Ver Detalhes do Ciclo</a>
+      </p>
+      
+      <p>
+        Para qualquer questão ou apoio, contacte o administrador do sistema.
+      </p>
+      
+      <p>Atenciosamente,<br />A Equipa CITRUS</p>
+      <div class="footer">
+        ©CITRUS. Todos os direitos reservados.
+      </div>
+    </div>
+  </body>
+</html>
+""".formatted(cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+    }
 }

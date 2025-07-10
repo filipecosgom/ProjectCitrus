@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import Calendar from "react-calendar";
+import { toast } from "react-toastify"; // ✅ ADICIONAR
 import { createCycle, fetchActiveUsersCount } from "../../api/cyclesApi";
 import useLocaleStore from "../../stores/useLocaleStore";
 import "react-calendar/dist/Calendar.css";
@@ -9,7 +10,7 @@ import "./CycleOffcanvas.css";
 
 const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   const { t } = useTranslation();
-  const locale = useLocaleStore((state) => state.locale); // Adicionar esta linha
+  const locale = useLocaleStore((state) => state.locale);
   const [selectedRange, setSelectedRange] = useState([new Date(), new Date()]);
   const [activeUsersCount, setActiveUsersCount] = useState(0);
   const [shouldRender, setShouldRender] = useState(false);
@@ -141,16 +142,64 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
         state: "OPEN",
       };
 
-      const response = await createCycle(cycleData);
+      const response = await createCycle(cycleData, locale);
 
       if (response.success) {
         onCycleCreated();
+
+        // ✅ CORRIGIR: Usar toast diretamente
+        toast.success(t("cycles.cycleCreated"), {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        // Check if there were email notification issues
+        if (response.data && response.data.emailWarning) {
+          toast.warning(t("cycles.cycleCreatedEmailWarning"), {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
+
+        // Fechar o offcanvas após sucesso
         onClose();
       } else {
-        setError(response.error?.message || t("cycles.errorCreateCycle"));
+        const errorMessage =
+          response.error?.message || t("cycles.errorCreateCycle");
+        setError(errorMessage);
+
+        // ✅ ADICIONAR: Toast de erro
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     } catch (error) {
-      setError(t("cycles.errorCreateCycle"));
+      const errorMessage = t("cycles.errorCreateCycle");
+      setError(errorMessage);
+
+      // ✅ ADICIONAR: Toast de erro para exceptions
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
       console.error("Error creating cycle:", error);
     } finally {
       setIsCreating(false);

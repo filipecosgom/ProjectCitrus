@@ -144,4 +144,71 @@ public class EmailService {
             LOGGER.error("Failed to send password reset email to {}: {}", recipientEmail, e.getMessage());
         }
     }
+
+    /**
+     * Sends cycle notification emails to managers and administrators.
+     *
+     * @param recipientEmail The email address of the recipient
+     * @param cycleId The ID of the created cycle
+     * @param startDate The start date of the cycle
+     * @param endDate The end date of the cycle
+     * @param adminName The name of the admin who created the cycle
+     * @param appraisalsCount The number of appraisals created in the cycle
+     * @param language The language code for the email template
+     */
+    public void sendCycleNotificationEmail(String recipientEmail, String cycleId, String startDate,
+                                         String endDate, String adminName, int appraisalsCount, String language) {
+        try {
+            // Retrieve SMTP properties for configuring email session
+            Properties properties = EmailConfig.getSMTPProperties();
+
+            // Create a new email session with authentication
+            Session session = Session.getInstance(properties, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(emailAccount, password);
+                }
+            });
+
+            // Construct the email message
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailAccount));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+
+            String cycleLink = "https://localhost:3000/cycles?cycle=" + cycleId + "&lang=" + language;
+
+            switch (language) {
+                case "en": {
+                    message.setSubject("CITRUS - New Performance Cycle Started");
+                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_EN(
+                        cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+                case "pt": {
+                    message.setSubject("CITRUS - Novo Ciclo de Avaliação Iniciado");
+                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_PT(
+                        cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+                default: {
+                    message.setSubject("CITRUS - New Performance Cycle Started");
+                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_EN(
+                        cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+            }
+
+            // Send the email
+            Transport.send(message);
+            LOGGER.info("Cycle notification sent successfully to: {}", recipientEmail);
+        } catch (MessagingException e) {
+            LOGGER.error("Failed to send cycle notification email to {}: {}", recipientEmail, e.getMessage());
+            throw new RuntimeException("Failed to send cycle notification email", e);
+        }
+    }
 }

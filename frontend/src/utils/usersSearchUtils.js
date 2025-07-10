@@ -57,7 +57,7 @@ export const userSearchFilters = (t, offices) => {
     ],
     defaultValues: {
       query: "",
-      searchType: "email",
+      searchType: "name",
       accountState: "",
       office: "",
       limit: 10,
