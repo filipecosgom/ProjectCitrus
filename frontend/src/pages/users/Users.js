@@ -54,6 +54,10 @@ export default function Users() {
   const [searchParams, setSearchParams] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
 
+  // ✅ ADICIONAR: Flag para evitar loops
+  const [urlSyncEnabled, setUrlSyncEnabled] = useState(true);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
   // ✅ CORRIGIDO: Ler sortBy e sortOrder da URL com valores corretos
   const [sort, setSort] = useState(() => {
     const sortBy = urlSearchParams.get("sortBy") || "name";
@@ -89,19 +93,8 @@ export default function Users() {
     }, 300);
   };
 
-  // ✅ CORRIGIDO: useEffect para ler parâmetros da URL (apenas um)
+  // ✅ CORRIGIDO: useEffect APENAS para user ID (removido ordenação)
   useEffect(() => {
-    // Ler parâmetros de ordenação
-    const sortBy = urlSearchParams.get("sortBy");
-    const sortOrder = urlSearchParams.get("sortOrder");
-
-    if (sortBy || sortOrder) {
-      setSort({
-        sortBy: sortBy || "name",
-        sortOrder: sortOrder || "ASCENDING",
-      });
-    }
-
     // Ler user ID para offcanvas
     const userId = urlSearchParams.get("user");
     if (userId && users.length > 0) {
@@ -112,6 +105,55 @@ export default function Users() {
       }
     }
   }, [urlSearchParams, users]);
+
+  // ✅ NOVO: useEffect para ler TODOS os parâmetros da URL APENAS na inicialização
+  useEffect(() => {
+    if (
+      urlSearchParams.toString() &&
+      !searchParams &&
+      offices.length > 0 &&
+      !initialLoadComplete
+    ) {
+      const query = urlSearchParams.get("query") || "";
+      const searchType = urlSearchParams.get("searchType") || "email";
+      const limit = parseInt(urlSearchParams.get("limit")) || 10;
+      const accountState = urlSearchParams.get("accountState") || "";
+      const office = urlSearchParams.get("office") || "";
+      const isManager = urlSearchParams.get("isManager");
+      const isAdmin = urlSearchParams.get("isAdmin");
+      const isManaged = urlSearchParams.get("isManaged");
+
+      // ✅ TAMBÉM ler ordenação na inicialização
+      const sortBy = urlSearchParams.get("sortBy") || "name";
+      const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
+
+      const filters = {
+        accountState,
+        office,
+        isManager:
+          isManager === "true" ? true : isManager === "false" ? false : null,
+        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
+        isManaged:
+          isManaged === "true" ? true : isManaged === "false" ? false : null,
+      };
+
+      // ✅ DESABILITAR sincronização URL temporariamente
+      setUrlSyncEnabled(false);
+
+      // ✅ Atualizar sort se necessário
+      setSort({ sortBy, sortOrder });
+
+      const search = buildSearchParams(query, searchType, limit, filters);
+      setSearchParams(search);
+      setLastSearch(search);
+
+      // ✅ Marcar carregamento inicial como completo
+      setInitialLoadComplete(true);
+
+      // ✅ REABILITAR sincronização URL
+      setTimeout(() => setUrlSyncEnabled(true), 100);
+    }
+  }, [urlSearchParams, searchParams, offices, initialLoadComplete]);
 
   // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
@@ -140,7 +182,7 @@ export default function Users() {
     setSelectedUsers(new Set());
   }, [pagination.offset]);
 
-  // Externalized: set searching parameters
+  // ✅ CORRIGIDO: set searching parameters - só atualiza URL se habilitado
   const setSearchingParameters = async (
     query,
     searchType,
@@ -151,89 +193,69 @@ export default function Users() {
     setLastSearch(search);
     setSearchParams(search);
 
-    // Atualizar URL com parâmetros de pesquisa
-    const currentParams = new URLSearchParams(urlSearchParams);
+    // ✅ SÓ ATUALIZAR URL se sincronização estiver habilitada
+    if (urlSyncEnabled) {
+      // Atualizar URL com parâmetros de pesquisa
+      const currentParams = new URLSearchParams(urlSearchParams);
 
-    // Limpar parâmetros de pesquisa antigos
-    const searchKeys = [
-      "query",
-      "searchType",
-      "limit",
-      "accountState",
-      "office",
-      "isManager",
-      "isAdmin",
-      "isManaged",
-    ];
-    searchKeys.forEach((key) => currentParams.delete(key));
+      // Limpar parâmetros de pesquisa antigos
+      const searchKeys = [
+        "query",
+        "searchType",
+        "limit",
+        "accountState",
+        "office",
+        "isManager",
+        "isAdmin",
+        "isManaged",
+      ];
+      searchKeys.forEach((key) => currentParams.delete(key));
 
-    // Adicionar novos parâmetros (apenas se não forem valores padrão)
-    if (query && query.trim() !== "") {
-      currentParams.set("query", query);
-    }
-    if (searchType && searchType !== "email") {
-      currentParams.set("searchType", searchType);
-    }
-    if (limit && limit !== 10) {
-      currentParams.set("limit", limit.toString());
-    }
-
-    // Adicionar filtros (apenas se não forem valores padrão)
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== "") {
-        currentParams.set(key, value.toString());
+      // Adicionar novos parâmetros (apenas se não forem valores padrão)
+      if (query && query.trim() !== "") {
+        currentParams.set("query", query);
       }
-    });
+      if (searchType && searchType !== "email") {
+        currentParams.set("searchType", searchType);
+      }
+      if (limit && limit !== 10) {
+        currentParams.set("limit", limit.toString());
+      }
 
-    setUrlSearchParams(currentParams);
+      // Adicionar filtros (apenas se não forem valores padrão)
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== "") {
+          currentParams.set(key, value.toString());
+        }
+      });
+
+      setUrlSearchParams(currentParams);
+    }
 
     // Reset pagination quando filtros mudam
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
 
-  // ✅ ADICIONAR: useEffect para ler filtros da URL
-  useEffect(() => {
-    if (urlSearchParams.toString() && !searchParams) {
-      const query = urlSearchParams.get("query") || "";
-      const searchType = urlSearchParams.get("searchType") || "email";
-      const limit = parseInt(urlSearchParams.get("limit")) || 10;
-      const accountState = urlSearchParams.get("accountState") || "";
-      const office = urlSearchParams.get("office") || "";
-      const isManager = urlSearchParams.get("isManager");
-      const isAdmin = urlSearchParams.get("isAdmin");
-      const isManaged = urlSearchParams.get("isManaged");
-
-      const filters = {
-        accountState,
-        office,
-        isManager:
-          isManager === "true" ? true : isManager === "false" ? false : null,
-        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
-        isManaged:
-          isManaged === "true" ? true : isManaged === "false" ? false : null,
-      };
-
-      const search = buildSearchParams(query, searchType, limit, filters);
-      setSearchParams(search);
-      setLastSearch(search);
-    }
-  }, [urlSearchParams, searchParams]);
-
   // Externalized: handle page change
   const handlePageChange = createPageChangeHandler(setPagination);
 
-  // ✅ NOVO: handle sort change customizado que atualiza URL
+  // ✅ CORRIGIDO: handle sort change - não depende de useEffect
   const handleSortChange = ({ sortBy, sortOrder }) => {
+    // ✅ Atualizar estado primeiro
     setSort({ sortBy, sortOrder });
 
-    // Atualizar URL com parâmetros de ordenação
-    const currentParams = new URLSearchParams(urlSearchParams);
-    currentParams.set("sortBy", sortBy);
-    currentParams.set("sortOrder", sortOrder);
-    setUrlSearchParams(currentParams);
+    // ✅ Atualizar URL se habilitado
+    if (urlSyncEnabled) {
+      const currentParams = new URLSearchParams(urlSearchParams);
+      currentParams.set("sortBy", sortBy);
+      currentParams.set("sortOrder", sortOrder);
+      setUrlSearchParams(currentParams);
+    }
 
     // Reset pagination when sort changes
     setPagination((prev) => ({ ...prev, offset: 0 }));
+
+    // ✅ IMPORTANTE: NÃO chamar fetchUsers aqui - deixa o useEffect fazer isso
   };
 
   // Externalized: fetch users
