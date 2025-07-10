@@ -6,8 +6,8 @@ import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
-import SortControls from "../../components/sortControls/SortControls"; // ✅ CORRIGIDO
-import { usersSortFields } from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
+import SortControls from "../../components/sortControls/SortControls";
+import { usersSortFields } from "../../utils/usersSearchUtils";
 import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
 import { GrUserSettings } from "react-icons/gr";
@@ -15,24 +15,23 @@ import useAuthStore from "../../stores/useAuthStore";
 import {
   buildSearchParams,
   createPageChangeHandler,
-  createSortHandler,
 } from "../../utils/searchUtils";
 import {
   fetchInitialUsers,
   userSearchFilters,
-} from "../../utils/usersSearchUtils"; // ✅ CORRIGIDO
+} from "../../utils/usersSearchUtils";
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
-import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
+import { handleAssignManager } from "../../handles/handleAssignManager";
 import handleNotification from "../../handles/handleNotification";
 import {
   handleGetUsersCSV,
   handleGetUsersXLSX,
 } from "../../handles/handleGetUsers";
-import { useSearchParams } from "react-router-dom"; // ✅ ADICIONAR IMPORT
+import { useSearchParams } from "react-router-dom";
 
 export default function Users() {
   const { t } = useTranslation();
-  const [urlSearchParams, setUrlSearchParams] = useSearchParams(); // ✅ ADICIONAR
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
   const [users, setUsers] = useState([]);
   const [offices, setOffices] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -47,30 +46,32 @@ export default function Users() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-  // ✅ NOVOS ESTADOS para Assign Manager
+  // Estados para Assign Manager
   const [selectedUsers, setSelectedUsers] = useState(new Set());
-  const [assignManagerOpen, setAssignManagerOpen] = useState(false); // ✅ NOVO
+  const [assignManagerOpen, setAssignManagerOpen] = useState(false);
 
   // Use null as initial value for searchParams
   const [searchParams, setSearchParams] = useState(null);
   const [lastSearch, setLastSearch] = useState(null);
-  const [sort, setSort] = useState({
-    sortBy: "name",
-    sortOrder: "ascending",
+
+  // ✅ CORRIGIDO: Ler sortBy e sortOrder da URL com valores corretos
+  const [sort, setSort] = useState(() => {
+    const sortBy = urlSearchParams.get("sortBy") || "name";
+    const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
+    return { sortBy, sortOrder };
   });
+
   const lastSearchRef = useRef(lastSearch);
   const usersFilters = userSearchFilters(t, offices);
 
-  // ✅ VERIFICAR se user é admin
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
   const containerRef = useRef();
 
-  // Handlers para user offcanvas
+  // ✅ CORRIGIDO: Handlers para user offcanvas
   const handleUserClick = (user) => {
     setSelectedUser(user);
     setOffcanvasOpen(true);
 
-    // Preservar parâmetros existentes e adicionar user ID
     const currentParams = new URLSearchParams(urlSearchParams);
     currentParams.set("user", user.id.toString());
     setUrlSearchParams(currentParams);
@@ -79,7 +80,6 @@ export default function Users() {
   const handleCloseOffcanvas = () => {
     setOffcanvasOpen(false);
 
-    // Remover apenas o parâmetro user (preservar outros)
     const currentParams = new URLSearchParams(urlSearchParams);
     currentParams.delete("user");
     setUrlSearchParams(currentParams);
@@ -89,8 +89,20 @@ export default function Users() {
     }, 300);
   };
 
-  // ✅ ADICIONAR: useEffect para ler URL ao carregar
+  // ✅ CORRIGIDO: useEffect para ler parâmetros da URL (apenas um)
   useEffect(() => {
+    // Ler parâmetros de ordenação
+    const sortBy = urlSearchParams.get("sortBy");
+    const sortOrder = urlSearchParams.get("sortOrder");
+
+    if (sortBy || sortOrder) {
+      setSort({
+        sortBy: sortBy || "name",
+        sortOrder: sortOrder || "ASCENDING",
+      });
+    }
+
+    // Ler user ID para offcanvas
     const userId = urlSearchParams.get("user");
     if (userId && users.length > 0) {
       const user = users.find((u) => u.id === parseInt(userId));
@@ -101,7 +113,7 @@ export default function Users() {
     }
   }, [urlSearchParams, users]);
 
-  // ✅ NOVOS HANDLERS para Assign Manager
+  // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
     if (selectedUsers.size === 0) {
       handleNotification("info", t("users.noUsersSelected"));
@@ -138,22 +150,91 @@ export default function Users() {
     const search = buildSearchParams(query, searchType, limit, filters);
     setLastSearch(search);
     setSearchParams(search);
+
+    // Atualizar URL com parâmetros de pesquisa
+    const currentParams = new URLSearchParams(urlSearchParams);
+
+    // Limpar parâmetros de pesquisa antigos
+    const searchKeys = [
+      "query",
+      "searchType",
+      "limit",
+      "accountState",
+      "office",
+      "isManager",
+      "isAdmin",
+      "isManaged",
+    ];
+    searchKeys.forEach((key) => currentParams.delete(key));
+
+    // Adicionar novos parâmetros (apenas se não forem valores padrão)
+    if (query && query.trim() !== "") {
+      currentParams.set("query", query);
+    }
+    if (searchType && searchType !== "email") {
+      currentParams.set("searchType", searchType);
+    }
+    if (limit && limit !== 10) {
+      currentParams.set("limit", limit.toString());
+    }
+
+    // Adicionar filtros (apenas se não forem valores padrão)
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "") {
+        currentParams.set(key, value.toString());
+      }
+    });
+
+    setUrlSearchParams(currentParams);
+
+    // Reset pagination quando filtros mudam
+    setPagination((prev) => ({ ...prev, offset: 0 }));
   };
 
-  // Externalized: handle page change
-  const handlePageChange = createPageChangeHandler(
-    setPagination,
-    fetchUsers,
-    lastSearchRef
-  );
+  // ✅ ADICIONAR: useEffect para ler filtros da URL
+  useEffect(() => {
+    if (urlSearchParams.toString() && !searchParams) {
+      const query = urlSearchParams.get("query") || "";
+      const searchType = urlSearchParams.get("searchType") || "email";
+      const limit = parseInt(urlSearchParams.get("limit")) || 10;
+      const accountState = urlSearchParams.get("accountState") || "";
+      const office = urlSearchParams.get("office") || "";
+      const isManager = urlSearchParams.get("isManager");
+      const isAdmin = urlSearchParams.get("isAdmin");
+      const isManaged = urlSearchParams.get("isManaged");
 
-  // Externalized: handle sort change
-  const handleSortChange = createSortHandler(
-    setSort,
-    setPagination,
-    fetchUsers,
-    lastSearchRef
-  );
+      const filters = {
+        accountState,
+        office,
+        isManager:
+          isManager === "true" ? true : isManager === "false" ? false : null,
+        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
+        isManaged:
+          isManaged === "true" ? true : isManaged === "false" ? false : null,
+      };
+
+      const search = buildSearchParams(query, searchType, limit, filters);
+      setSearchParams(search);
+      setLastSearch(search);
+    }
+  }, [urlSearchParams, searchParams]);
+
+  // Externalized: handle page change
+  const handlePageChange = createPageChangeHandler(setPagination);
+
+  // ✅ NOVO: handle sort change customizado que atualiza URL
+  const handleSortChange = ({ sortBy, sortOrder }) => {
+    setSort({ sortBy, sortOrder });
+
+    // Atualizar URL com parâmetros de ordenação
+    const currentParams = new URLSearchParams(urlSearchParams);
+    currentParams.set("sortBy", sortBy);
+    currentParams.set("sortOrder", sortOrder);
+    setUrlSearchParams(currentParams);
+
+    // Reset pagination when sort changes
+    setPagination((prev) => ({ ...prev, offset: 0 }));
+  };
 
   // Externalized: fetch users
   async function fetchUsers(offset = 0, overrideParams = null) {
@@ -196,21 +277,9 @@ export default function Users() {
     });
   }, []);
 
-  // Adicionar este useEffect no Users.js
-  useEffect(() => {
-    const userId = urlSearchParams.get("user");
-    if (userId && users.length > 0) {
-      const user = users.find((u) => u.id === parseInt(userId));
-      if (user) {
-        setSelectedUser(user);
-        setOffcanvasOpen(true);
-      }
-    }
-  }, [urlSearchParams, users]);
-
   if (pageLoading) return <Spinner />;
 
-  // ✅ HANDLER para atribuir manager COM DEBUGGING
+  // Handler para atribuir manager
   const handleAssignManagerAction = async (assignments) => {
     console.log("🔧 Assigning manager:", assignments);
     try {
@@ -221,7 +290,6 @@ export default function Users() {
         userIds: assignments.userIds,
       });
 
-      // ✅ VERIFICAR se result.data existe antes de acessar propriedades
       if (!result.data) {
         console.error("❌ Users.js - result.data is undefined!");
         alert(
@@ -231,7 +299,6 @@ export default function Users() {
       }
 
       if (result.success) {
-        // ✅ FEEDBACK SUCCESS - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;
         handleNotification(
           "success",
@@ -241,7 +308,6 @@ export default function Users() {
           })
         );
       } else {
-        // ✅ FEEDBACK PARCIAL - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;
         const totalFailed = result.data.totalFailed || 0;
 
@@ -254,7 +320,6 @@ export default function Users() {
         }
       }
 
-      // ✅ REFRESH da lista sempre (mesmo com falhas parciais)
       await fetchUsers(pagination.offset);
       setSelectedUsers(new Set());
     } catch (error) {
@@ -273,14 +338,11 @@ export default function Users() {
 
   // CSV export handler
   const handleGetCSV = async () => {
-    // Build params from current search and sort
     let params = {
       ...searchParams,
       parameter: sort.sortBy,
       order: sort.sortOrder,
-      // Optionally, add language param here if needed (e.g., language: i18n.language)
     };
-    // Remove pagination params
     delete params.limit;
     delete params.offset;
     const result = await handleGetUsersCSV(params);
@@ -332,7 +394,6 @@ export default function Users() {
 
   return (
     <div className="users-container" ref={containerRef}>
-      {/* ✅ NOVA ESTRUTURA com SearchBar e botão Assign Managers */}
       <div className="searchBar-containerAndButton">
         <SearchBar
           onSearch={setSearchingParameters}
@@ -384,7 +445,7 @@ export default function Users() {
                 key={user.id}
                 user={user}
                 onClick={handleUserClick}
-                showCheckbox={isAdmin} // ✅ NOVA PROP: sempre visível para admins
+                showCheckbox={isAdmin}
                 isSelected={selectedUsers.has(user.id)}
                 onSelectionChange={handleUserSelection}
               />
@@ -399,22 +460,20 @@ export default function Users() {
         onChange={handlePageChange}
       />
 
-      {/* ✅ USER OFFCANVAS */}
       <UserOffcanvas
         user={selectedUser}
         isOpen={offcanvasOpen}
         onClose={handleCloseOffcanvas}
       />
 
-      {/* ✅ NOVO: ASSIGN MANAGER OFFCANVAS */}
       <AssignManagerOffcanvas
         selectedUserIds={Array.from(selectedUsers)}
-        selectedUsers={users.filter((user) => selectedUsers.has(user.id))} // ✅ Users selecionados
+        selectedUsers={users.filter((user) => selectedUsers.has(user.id))}
         isOpen={assignManagerOpen}
         onClose={() => {
           handleCloseAssignManager();
         }}
-        onAssign={handleAssignManagerAction} // ✅ FUNÇÃO REAL ao invés de log
+        onAssign={handleAssignManagerAction}
       />
     </div>
   );
