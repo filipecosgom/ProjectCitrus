@@ -1,5 +1,8 @@
 package pt.uc.dei.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Enum representing the available languages for courses.
  * <ul>
@@ -23,10 +26,12 @@ public enum Language {
         this.fieldName = fieldName;
     }
 
+    @JsonValue
     public String getFieldName() {
         return fieldName;
     }
 
+    @JsonCreator
     public static Language fromFieldName(String input) {
         if (input == null || input.trim().isEmpty()) return null;
         String trimmed = input.trim();
@@ -36,5 +41,10 @@ public enum Language {
             }
         }
         throw new IllegalArgumentException("Unknown parameter field name: " + input);
+    }
+
+    @Override
+    public String toString() {
+        return fieldName;
     }
 }

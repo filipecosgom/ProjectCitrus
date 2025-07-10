@@ -434,6 +434,7 @@ const pt = {
     details: "Detalhes do Curso",
     instructor: "Instrutor",
     duration: {
+      label: "Duração",
       hours: "{hours}h",
       minutes: "{minutes}min",
     },
@@ -444,6 +445,20 @@ const pt = {
     description: "Descrição",
     startCourse: "Ir para o curso",
     viewCourse: "Ver Curso",
+    addNewCourse: "Adicionar Curso",
+    newTitle: "Título",
+    newDescription: "Descrição",
+    selectArea: "Selecionar Área",
+    selectLanguage: "Selecionar Idioma",
+    link: "Link",
+    courseCreated: "Curso criado com sucesso",
+    errorTitleRequired: "O título é obrigatório",
+    errorAreaRequired: "A área é obrigatória",
+    errorLanguageRequired: "O idioma é obrigatório",
+    errorDescriptionRequired: "A descrição é obrigatória",
+    errorLinkRequired: "O link é obrigatório",
+    errorLinkInvalid: "URL inválido",
+    errorCourseNotCreated: "Curso não foi criado (título ou link duplicado)",
   },
 
   common: {
@@ -455,6 +470,12 @@ const pt = {
   // Adicionar estas traduções para o FilterMenu funcionar:
   filterMenuCategory: "Categoria",
   filterMenuLanguage: "Idioma",
+
+  login: {
+    success: "Login efetuado com sucesso!",
+    avatarError: "Login efetuado, mas falha ao carregar o avatar.",
+    failed: "Falha no login. Verifique as credenciais e tente novamente.",
+  },
 };
 
 export default pt;

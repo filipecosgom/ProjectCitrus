@@ -3,6 +3,7 @@ package pt.uc.dei.entities;
 import jakarta.persistence.*;
 import pt.uc.dei.enums.CourseArea;
 import pt.uc.dei.enums.Language;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

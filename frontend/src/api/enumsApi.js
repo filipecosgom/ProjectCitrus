@@ -1,4 +1,4 @@
-import { api, handleApiError } from './api'; // Your configured axios instance
+import { api } from './api'; // Your configured axios instance
 
 const enumsEndpoint = "/enums"; // Keep only the relative endpoint
 
@@ -9,7 +9,7 @@ export const getRoles = async () => {
     // Assuming the API returns an array of strings
     return response.data;
   } catch (error) {
-    handleApiError(error, "getRoles");
+    console.error("Error fetching roles:", error);
     throw error; // propagate the error if needed
   }
 };
@@ -21,7 +21,7 @@ export const getOffices = async () => {
     // Assuming the API returns an array of strings
     return response.data;
   } catch (error) {
-    handleApiError(error, "getOffices");
+    console.error("Error fetching offices:", error);
     throw error;
   }
 };
@@ -32,7 +32,7 @@ export const getAppraisalStates = async () => {
     // Assuming the API returns an array of strings
     return response.data;
   } catch (error) {
-    handleApiError(error, "getAppraisalStates");
+    console.error("Error fetching appraisal states:", error);
     throw error; // propagate the error if needed
   }
 };
@@ -43,7 +43,7 @@ export const getCourseAreas = async () => {
     // Assuming the API returns an array of strings
     return response.data;
   } catch (error) {
-    handleApiError(error, "getCourseAreas");
+    console.error("Error fetching course areas:", error);
     throw error; // propagate the error if needed
   }
 };

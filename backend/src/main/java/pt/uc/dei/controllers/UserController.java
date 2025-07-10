@@ -402,7 +402,7 @@ public class UserController {
                              @QueryParam("isManager") Boolean userIsManager,
                              @QueryParam("isAdmin") Boolean userIsAdmin,
                              @QueryParam("isManaged") Boolean userIsManaged,
-                             @QueryParam("parameter") @DefaultValue("name") String parameterStr,
+                             @QueryParam("parameter") @DefaultValue("email") String parameterStr,
                              @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
                              @QueryParam("offset") @DefaultValue("0") int offset,
                              @QueryParam("limit") @DefaultValue("10") int limit,
@@ -461,7 +461,7 @@ public class UserController {
             @QueryParam("isManager") Boolean userIsManager,
             @QueryParam("isAdmin") Boolean userIsAdmin,
             @QueryParam("isManaged") Boolean userIsManaged,
-            @QueryParam("parameter") @DefaultValue("name") String parameterStr,
+            @QueryParam("parameter") @DefaultValue("email") String parameterStr,
             @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
             @QueryParam("language") @DefaultValue("EN") String languageStr,
             @CookieParam("jwt") String jwtToken) {

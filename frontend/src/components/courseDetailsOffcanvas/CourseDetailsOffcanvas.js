@@ -113,11 +113,11 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course }) => {
   };
 
   const getLanguageFlag = (language) => {
-    return language === "pt" ? flagPt : flagEn;
+    return language === "PORTUGUESE" ? flagPt : flagEn;
   };
 
   const getLanguageLabel = (language) => {
-    return language === "pt"
+    return language === "PORTUGUESE"
       ? t("courses.filterPortuguese")
       : t("courses.filterEnglish");
   };

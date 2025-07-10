@@ -427,6 +427,7 @@ const en = {
     details: "Course Details",
     instructor: "Instructor",
     duration: {
+      label: "Duration",
       hours: "{hours}h",
       minutes: "{minutes}min",
     },
@@ -436,7 +437,21 @@ const en = {
     completionDate: "Completion Date",
     description: "Description",
     startCourse: "Go to course",
-    viewCourse: "View Course"
+    viewCourse: "View Course",
+    addNewCourse: "Add Course",
+    newTitle: "Title",
+    newDescription: "Description",
+    selectArea: "Select Area",
+    selectLanguage: "Select Language",
+    link: "Link",
+    courseCreated: "Course created successfully",
+    errorTitleRequired: "Title is required",
+    errorAreaRequired: "Area is required",
+    errorLanguageRequired: "Language is required",
+    errorDescriptionRequired: "Description is required",
+    errorLinkRequired: "Link is required",
+    errorLinkInvalid: "Invalid URL",
+    errorCourseNotCreated: "Course not created (duplicate title or link)",
   },
 
   common: {
