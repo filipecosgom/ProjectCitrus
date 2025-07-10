@@ -12,7 +12,11 @@ import { useTranslation } from "react-i18next";
 import UserOffcanvas from "../../components/userOffcanvas/UserOffcanvas";
 import { GrUserSettings } from "react-icons/gr";
 import useAuthStore from "../../stores/useAuthStore";
-import { buildSearchParams, createPageChangeHandler, createSortHandler } from "../../utils/searchUtils";
+import {
+  buildSearchParams,
+  createPageChangeHandler,
+  createSortHandler,
+} from "../../utils/searchUtils";
 import {
   fetchInitialUsers,
   userSearchFilters,
@@ -20,10 +24,15 @@ import {
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager"; // ✅ IMPORT
 import handleNotification from "../../handles/handleNotification";
-import { handleGetUsersCSV, handleGetUsersXLSX } from "../../handles/handleGetUsers";
+import {
+  handleGetUsersCSV,
+  handleGetUsersXLSX,
+} from "../../handles/handleGetUsers";
+import { useSearchParams } from "react-router-dom"; // ✅ ADICIONAR IMPORT
 
 export default function Users() {
   const { t } = useTranslation();
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams(); // ✅ ADICIONAR
   const [users, setUsers] = useState([]);
   const [offices, setOffices] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -60,14 +69,37 @@ export default function Users() {
   const handleUserClick = (user) => {
     setSelectedUser(user);
     setOffcanvasOpen(true);
+
+    // Preservar parâmetros existentes e adicionar user ID
+    const currentParams = new URLSearchParams(urlSearchParams);
+    currentParams.set("user", user.id.toString());
+    setUrlSearchParams(currentParams);
   };
 
   const handleCloseOffcanvas = () => {
     setOffcanvasOpen(false);
+
+    // Remover apenas o parâmetro user (preservar outros)
+    const currentParams = new URLSearchParams(urlSearchParams);
+    currentParams.delete("user");
+    setUrlSearchParams(currentParams);
+
     setTimeout(() => {
       setSelectedUser(null);
     }, 300);
   };
+
+  // ✅ ADICIONAR: useEffect para ler URL ao carregar
+  useEffect(() => {
+    const userId = urlSearchParams.get("user");
+    if (userId && users.length > 0) {
+      const user = users.find((u) => u.id === parseInt(userId));
+      if (user) {
+        setSelectedUser(user);
+        setOffcanvasOpen(true);
+      }
+    }
+  }, [urlSearchParams, users]);
 
   // ✅ NOVOS HANDLERS para Assign Manager
   const handleOpenAssignManager = () => {
@@ -155,7 +187,6 @@ export default function Users() {
     // eslint-disable-next-line
   }, [searchParams, pagination.offset, sort]);
 
-
   useEffect(() => {
     fetchInitialUsers({
       setPageLoading,
@@ -164,6 +195,18 @@ export default function Users() {
       handleGetOffices,
     });
   }, []);
+
+  // Adicionar este useEffect no Users.js
+  useEffect(() => {
+    const userId = urlSearchParams.get("user");
+    if (userId && users.length > 0) {
+      const user = users.find((u) => u.id === parseInt(userId));
+      if (user) {
+        setSelectedUser(user);
+        setOffcanvasOpen(true);
+      }
+    }
+  }, [urlSearchParams, users]);
 
   if (pageLoading) return <Spinner />;
 
@@ -198,7 +241,6 @@ export default function Users() {
           })
         );
       } else {
-
         // ✅ FEEDBACK PARCIAL - com verificação segura
         const totalSuccessful = result.data.totalSuccessful || 0;
         const totalFailed = result.data.totalFailed || 0;
@@ -270,7 +312,11 @@ export default function Users() {
     const result = await handleGetUsersXLSX(params);
     if (result.success) {
       const url = window.URL.createObjectURL(
-        new Blob([result.blob], { type: result.contentType || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        new Blob([result.blob], {
+          type:
+            result.contentType ||
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        })
       );
       const link = document.createElement("a");
       link.href = url;
