@@ -65,6 +65,18 @@ export default function Users() {
     return { sortBy, sortOrder };
   });
 
+  // ✅ ADICIONAR: estado para defaultValues
+  const [defaultValues, setDefaultValues] = useState({
+    query: "",
+    searchType: "email",
+    accountState: "",
+    office: "",
+    limit: 10,
+    isManager: null,
+    isAdmin: null,
+    isManaged: null,
+  });
+
   const lastSearchRef = useRef(lastSearch);
   const usersFilters = userSearchFilters(t, offices);
 
@@ -106,14 +118,29 @@ export default function Users() {
     }
   }, [urlSearchParams, users]);
 
-  // ✅ NOVO: useEffect para ler TODOS os parâmetros da URL APENAS na inicialização
+  // ✅ MODIFICAR: useEffect de inicialização
   useEffect(() => {
-    if (
-      urlSearchParams.toString() &&
-      !searchParams &&
-      offices.length > 0 &&
-      !initialLoadComplete
-    ) {
+    if (offices.length > 0 && !initialLoadComplete) {
+      const currentParams = new URLSearchParams(urlSearchParams);
+
+      // Se não há parâmetros na URL, adicionar padrões
+      if (!urlSearchParams.toString()) {
+        currentParams.set("sortBy", "name");
+        currentParams.set("sortOrder", "ASCENDING");
+        setUrlSearchParams(currentParams);
+        setInitialLoadComplete(true);
+        return;
+      }
+
+      // Se há parâmetros, garantir que os essenciais existem
+      if (!currentParams.has("sortBy")) {
+        currentParams.set("sortBy", "name");
+      }
+      if (!currentParams.has("sortOrder")) {
+        currentParams.set("sortOrder", "ASCENDING");
+      }
+
+      // Processar parâmetros da URL
       const query = urlSearchParams.get("query") || "";
       const searchType = urlSearchParams.get("searchType") || "email";
       const limit = parseInt(urlSearchParams.get("limit")) || 10;
@@ -123,7 +150,6 @@ export default function Users() {
       const isAdmin = urlSearchParams.get("isAdmin");
       const isManaged = urlSearchParams.get("isManaged");
 
-      // ✅ TAMBÉM ler ordenação na inicialização
       const sortBy = urlSearchParams.get("sortBy") || "name";
       const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
 
@@ -136,6 +162,22 @@ export default function Users() {
         isManaged:
           isManaged === "true" ? true : isManaged === "false" ? false : null,
       };
+
+      // ✅ ADICIONAR: Atualizar defaultValues com dados da URL
+      const urlDefaults = {
+        query,
+        searchType,
+        accountState,
+        office,
+        limit,
+        isManager:
+          isManager === "true" ? true : isManager === "false" ? false : null,
+        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
+        isManaged:
+          isManaged === "true" ? true : isManaged === "false" ? false : null,
+      };
+
+      setDefaultValues(urlDefaults);
 
       // ✅ DESABILITAR sincronização URL temporariamente
       setUrlSyncEnabled(false);
@@ -153,29 +195,7 @@ export default function Users() {
       // ✅ REABILITAR sincronização URL
       setTimeout(() => setUrlSyncEnabled(true), 100);
     }
-  }, [urlSearchParams, searchParams, offices, initialLoadComplete]);
-
-  // ✅ ADICIONAR: useEffect que garante parâmetros padrão na URL
-  useEffect(() => {
-    if (offices.length > 0 && !initialLoadComplete) {
-      const currentParams = new URLSearchParams(urlSearchParams);
-
-      // Garantir que sortBy e sortOrder estejam sempre na URL
-      if (!currentParams.has("sortBy")) {
-        currentParams.set("sortBy", "name");
-      }
-      if (!currentParams.has("sortOrder")) {
-        currentParams.set("sortOrder", "ASCENDING");
-      }
-
-      // Se algo foi adicionado, atualizar URL
-      if (!urlSearchParams.has("sortBy") || !urlSearchParams.has("sortOrder")) {
-        setUrlSearchParams(currentParams);
-      }
-
-      setInitialLoadComplete(true);
-    }
-  }, [offices, urlSearchParams, setUrlSearchParams, initialLoadComplete]);
+  }, [offices, urlSearchParams, searchParams, initialLoadComplete]);
 
   // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
@@ -215,7 +235,20 @@ export default function Users() {
     setLastSearch(search);
     setSearchParams(search);
 
-    // ✅ SÓ ATUALIZAR URL se sincronização estiver habilitada
+    // ✅ ADICIONAR: Atualizar defaultValues para refletir novos filtros
+    const newDefaults = {
+      query,
+      searchType,
+      limit,
+      accountState: filters.accountState || "",
+      office: filters.office || "",
+      isManager: filters.isManager,
+      isAdmin: filters.isAdmin,
+      isManaged: filters.isManaged,
+    };
+    setDefaultValues(newDefaults);
+
+    // SÓ ATUALIZAR URL se sincronização estiver habilitada
     if (urlSyncEnabled) {
       // Atualizar URL com parâmetros de pesquisa
       const currentParams = new URLSearchParams(urlSearchParams);
@@ -442,6 +475,7 @@ export default function Users() {
         <SearchBar
           onSearch={setSearchingParameters}
           {...usersFilters}
+          defaultValues={defaultValues} // ✅ ADICIONAR esta linha
           onExportCsv={handleGetCSV}
           onExportXlsx={handleGetXLSX}
           actions={

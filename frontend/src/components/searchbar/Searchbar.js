@@ -25,7 +25,7 @@ const SearchBar = ({
     // ✅ ADICIONAR reset
     defaultValues: {
       query: "",
-      searchType: "appraisedUserName", // ✅ CORRIGIR valor padrão
+      searchType: "email", // ✅ CORRIGIDO: usar "email" por padrão
       limit: 10,
       ...defaultValues,
     },
@@ -36,7 +36,7 @@ const SearchBar = ({
     console.log("🔍 SearchBar defaultValues changed:", defaultValues); // DEBUG
     reset({
       query: "",
-      searchType: "appraisedUserName", // ✅ CORRIGIR valor padrão
+      searchType: "email", // ✅ CORRIGIDO: usar "email" por padrão
       limit: 10,
       ...defaultValues,
     });
