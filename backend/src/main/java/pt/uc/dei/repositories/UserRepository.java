@@ -401,4 +401,27 @@ public class UserRepository extends AbstractRepository<UserEntity> {
             return false;
         }
     }
+
+    /**
+     * Finds all users who are managers or administrators with complete accounts.
+     *
+     * @return List of UserEntity objects representing managers and administrators
+     */
+    public List<UserEntity> findManagersAndAdmins() {
+        try {
+            TypedQuery<UserEntity> query = em.createQuery(
+            "SELECT u FROM UserEntity u WHERE " +
+            "(u.userIsManager = true OR u.userIsAdmin = true) " +
+            "AND u.accountState = :accountState " +
+            "AND u.userIsDeleted = false",
+            UserEntity.class
+        );
+        query.setParameter("accountState", AccountState.COMPLETE);
+        
+        return query.getResultList();
+        } catch (Exception e) {
+            LOGGER.error("Error finding managers and admins: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 }

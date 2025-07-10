@@ -376,8 +376,10 @@ const pt = {
     daysDuration: "{days} dias",
     createCycle: "Criar Ciclo",
     creating: "A criar...",
-    errorInvalidDateRange: "Selecione um período válido",
-    errorCreateCycle: "Erro ao criar ciclo",
+
+    // ✅ CORRIGIR: Remover duplicações e manter apenas estas versões:
+    errorCreateCycle: "Falha ao criar ciclo. Tente novamente.",
+    errorInvalidDateRange: "Por favor, selecione um intervalo de datas válido.",
 
     // Novas traduções para o CycleDetailsOffcanvas
     dateRange: "Período de Datas",
@@ -387,13 +389,18 @@ const pt = {
     appraisalsList: "Lista de Avaliações",
     statusCompleted: "Concluído",
     statusPending: "Pendente",
+    statusInProgress: "Em Progresso",
 
     // Correção da tradução existente
     cycleClosedSuccessToast:
       "Ciclo {id} fechado com sucesso! ({startDate} - {endDate})",
 
-    // Adicionar traduções em falta
-    statusInProgress: "Em Progresso",
+    // ✅ ADICIONAR: Traduções para notificações de email
+    cycleCreated: "Ciclo criado com sucesso!",
+    cycleCreatedEmailWarning:
+      "Ciclo criado, mas algumas notificações por email falharam.",
+
+    // Restantes traduções...
     userId: "Utilizador",
     cannotCloseCycle: "Não é possível fechar o ciclo",
     appraisalsNotClosed: "Existem avaliações que não estão fechadas",

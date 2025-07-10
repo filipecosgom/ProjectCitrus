@@ -405,6 +405,13 @@ const en = {
     closeCycleInstructionCompleted:
       "To close this cycle, all appraisals must be in 'Completed' state.",
     checkPendingAppraisals: "Check Pending Appraisals", // ✅ MOVER PARA AQUI
+
+    // ✅ ADICIONAR: Traduções para notificações de email
+    cycleCreated: "Cycle created successfully!",
+    cycleCreatedEmailWarning:
+      "Cycle created, but some email notifications failed to send.",
+    errorCreateCycle: "Failed to create cycle. Please try again.",
+    errorInvalidDateRange: "Please select a valid date range.",
   },
 
   courses: {
