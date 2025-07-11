@@ -4,25 +4,12 @@ import useAuthStore from "../stores/useAuthStore";
 export async function fetchInitialUsers({
   setPageLoading,
   setOffices,
-  setSearchParams,
   handleGetOffices,
 }) {
   setPageLoading(true);
   let offices = await handleGetOffices();
   // Add "All offices" option at the top
   offices = [{ label: "All offices", value: "" }, ...offices];
-  // FIX: Only use top-level fields, no 'filters' key
-  const initialSearch = {
-    query: "",
-    searchType: "email",
-    limit: 10,
-    office: "",
-    accountState: "",
-    isManager: null,
-    isAdmin: null,
-    isManaged: null,
-  };
-  setSearchParams(initialSearch);
   setOffices(offices);
   setPageLoading(false);
 }

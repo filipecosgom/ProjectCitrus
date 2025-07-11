@@ -1,3 +1,5 @@
+import { courseSearchFilters } from "../coursesSearchUtils";
+
 const pt = {
   welcomeMessage: "Bem-vindo {name}",
   goodByeMessage: "Até à próxima {name}",
@@ -313,10 +315,10 @@ const pt = {
   },
 
   // Avaliações
-  appraisalsSearchTypeUserName: "Nome do utilizador",
-  appraisalsSearchTypeUserEmail: "Email do utilizador",
-  appraisalsSearchTypeManagerName: "Nome do gestor",
-  appraisalsSearchTypeManagerEmail: "Email do gestor",
+  appraisalsSearchTypeUserName: "nome",
+  appraisalsSearchTypeUserEmail: "email",
+  appraisalsSearchTypeManagerName: "nome do gestor",
+  appraisalsSearchTypeManagerEmail: "email do gestor",
   appraisalStateAllStates: "Todos os estados",
 
   appraisal: {
@@ -450,7 +452,7 @@ const pt = {
     createdDate: "Data de Criação",
     completionDate: "Data de Conclusão",
     description: "Descrição",
-    startCourse: "Ir para o curso",
+    startCourse: "Abrir",
     viewCourse: "Ver Curso",
     addNewCourse: "Adicionar Curso",
     newTitle: "Título",
@@ -459,6 +461,11 @@ const pt = {
     selectLanguage: "Selecionar Idioma",
     link: "Link",
     courseCreated: "Curso criado com sucesso",
+    inactive: "Inativo",
+    editCourse: "Editar",
+    inactivateCourse: "Inativar",
+    activateCourse: "Ativar",
+    courseUpdateSuccess: "Curso atualizado com sucesso",
     errorTitleRequired: "O título é obrigatório",
     errorAreaRequired: "A área é obrigatória",
     errorLanguageRequired: "O idioma é obrigatório",
@@ -466,6 +473,8 @@ const pt = {
     errorLinkRequired: "O link é obrigatório",
     errorLinkInvalid: "URL inválido",
     errorCourseNotCreated: "Curso não foi criado (título ou link duplicado)",
+    confirmInactivate: "Tem certeza que deseja inativar este curso?",
+    confirmActivate: "Tem certeza que deseja ativar este curso?",
   },
 
   common: {

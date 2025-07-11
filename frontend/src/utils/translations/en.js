@@ -305,10 +305,10 @@ const en = {
   },
 
   // Appraisals Search
-  appraisalsSearchTypeUserName: "user name",
-  appraisalsSearchTypeUserEmail: "user email",
-  appraisalsSearchTypeManagerName: "manager name",
-  appraisalsSearchTypeManagerEmail: "manager email",
+  appraisalsSearchTypeUserName: "name",
+  appraisalsSearchTypeUserEmail: "email",
+  appraisalsSearchTypeManagerName: "manager's name",
+  appraisalsSearchTypeManagerEmail: "manager's email",
   appraisalStateAllStates: "all states",
 
   appraisal: {
@@ -450,7 +450,7 @@ const en = {
     createdDate: "Created Date",
     completionDate: "Completion Date",
     description: "Description",
-    startCourse: "Go to course",
+    startCourse: "Open",
     viewCourse: "View Course",
     addNewCourse: "Add Course",
     newTitle: "Title",
@@ -459,6 +459,11 @@ const en = {
     selectLanguage: "Select Language",
     link: "Link",
     courseCreated: "Course created successfully",
+    inactive: "INACTIVE",
+    editCourse: "Edit",
+    inactivateCourse: "Inactivate",
+    activateCourse: "Activate",
+    courseUpdateSuccess: "Course updated successfully",
     errorTitleRequired: "Title is required",
     errorAreaRequired: "Area is required",
     errorLanguageRequired: "Language is required",
@@ -466,6 +471,8 @@ const en = {
     errorLinkRequired: "Link is required",
     errorLinkInvalid: "Invalid URL",
     errorCourseNotCreated: "Course not created (duplicate title or link)",
+    confirmInactivate:" Are you sure you want to inactivate this course?",
+    confirmActivate: "Are you sure you want to activate this course?",
   },
 
   common: {

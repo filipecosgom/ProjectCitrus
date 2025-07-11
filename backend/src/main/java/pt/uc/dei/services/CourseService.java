@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import pt.uc.dei.dtos.CourseDTO;
 import pt.uc.dei.dtos.CourseNewDTO;
 import pt.uc.dei.dtos.CourseUpdateDTO;
@@ -134,18 +135,11 @@ public class CourseService implements Serializable {
             LOGGER.warn("Course with id {} not found", dto.getId());
             return false;
         }
-        // Update fields (add more as needed)
-        if (dto.getTitle() != null) entity.setTitle(dto.getTitle());
-        if (dto.getDescription() != null) entity.setDescription(dto.getDescription());
-        if (dto.getArea() != null) entity.setArea(dto.getArea());
-        if (dto.getLanguage() != null) entity.setLanguage(dto.getLanguage());
-        if (dto.getDuration() != null) entity.setDuration(dto.getDuration());
-        if (dto.getLink() != null) entity.setLink(dto.getLink());
-        if (dto.getCourseIsActive() != null) entity.setCourseIsActive(dto.getCourseIsActive());
-        if( dto.getCourseHasImage() != null) entity.setCourseHasImage(dto.getCourseHasImage());
-        // ...add more fields as needed
+        // Use MapStruct mapper for partial update
+        courseMapper.updateEntityFromUpdateDto(dto, entity);
         courseRepository.persist(entity);
-        LOGGER.info("Updated course with id {}", dto.getId());
+        LOGGER.info("clientIP = {}", ThreadContext.get("clientIP"));
+        LOGGER.info("Updated course with id {} (via mapper)", dto.getId());
         return true;
     }
 }

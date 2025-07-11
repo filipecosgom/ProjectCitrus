@@ -1,0 +1,186 @@
+/*---------------The Modal (background)-----------------------*/
+.modal-ConfirmModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-ConfirmModal input[type="text"] {
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  border: none;
+  border-bottom: 1px solid #000;
+  width: 200px;
+  outline: none;
+}
+
+.modal-content-ConfirmModal {
+  background: white;
+  border-radius: var(--border-radius-default, 12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+  padding: 0;
+  border: none;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header-ConfirmModal {
+  display: flex;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  background: none;
+  color: var(--text, #000000);
+  justify-content: space-between;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.modal-warning-icon {
+  flex-shrink: 0;
+  font-size: 24px;
+  color: #ff9800;
+  background: #fff3e0;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.modal-title-ConfirmModal {
+  font-family: var(--font-family-heading, "Istok Web", sans-serif);
+  color: var(--text, #000000);
+  font-size: 20px;
+  font-weight: var(--font-weight-bold, 700);
+  margin: 0;
+  flex: 1;
+}
+
+.close-ConfirmModal {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.close-ConfirmModal:hover,
+.close-ConfirmModal:focus {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-body-ConfirmModal {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-message1-confirmation {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 16px;
+  color: var(--text, #000000);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.modal-message2-confirmation {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 15px;
+  color: #666;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.confirmModalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.confirm-button {
+  background: var(--primary, #9c2f31);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-default, 8px);
+  padding: 10px 24px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 15px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.confirm-button:hover {
+  background: var(--light-red, #b61b23);
+}
+
+.cancel-button {
+  background: var(--secondary, #88909f);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-default, 8px);
+  padding: 10px 24px;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 15px;
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.cancel-button:hover {
+  background: #6c757d;
+}
+
+@media (max-width: 600px) {
+  .modal-content-ConfirmModal {
+    max-width: 100%;
+    padding: 0;
+  }
+  .modal-header-ConfirmModal,
+  .modal-body-ConfirmModal {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .confirmModalButtons {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .confirm-button,
+  .cancel-button {
+    width: 100%;
+    min-width: unset;
+  }
+}

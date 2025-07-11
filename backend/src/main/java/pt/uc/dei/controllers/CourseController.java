@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import pt.uc.dei.annotations.AdminOnly;
+import pt.uc.dei.config.IPLogger;
 import pt.uc.dei.dtos.CourseUpdateDTO;
 import pt.uc.dei.dtos.FileUploadDTO;
 import pt.uc.dei.dtos.CourseNewDTO;
@@ -46,7 +47,9 @@ public class CourseController {
     /**
      * Logger instance for logging operations within this controller.
      */
-    private static final Logger LOGGER = LogManager.getLogger(CourseController.class);
+    private static final IPLogger LOGGER = IPLogger.getLogger(CourseService.class);
+
+
 
     @EJB
     private CourseService courseService;
@@ -272,6 +275,55 @@ public class CourseController {
             }
         } catch (Exception e) {
             LOGGER.error("Unexpected error creating course", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
+                    .build();
+        }
+    }
+
+    /**
+     * Updates an existing course. Only accessible by admins.
+     *
+     * @param jwtToken JWT token from cookie for admin authentication
+     * @param id       The id of the course to update
+     * @param dto      The updated course data (fields are optional)
+     * @return Response indicating success or failure
+     */
+    @AdminOnly
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateCourse(
+            @CookieParam("jwt") String jwtToken,
+            @PathParam("id") Long id,
+            @Valid CourseUpdateDTO dto) {
+        LOGGER.info("Update course request received for id {}", id);
+        try {
+            if (!JWTUtil.isUserAdmin(jwtToken)) {
+                LOGGER.warn("Unauthorized attempt to update course");
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity(new ApiResponse(false, "Not authorized", "notAuthorized", null))
+                        .build();
+            }
+            if (dto == null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, "Missing course data", "missingCourseData", null))
+                        .build();
+            }
+            dto.setId(id); // Ensure path id is used
+            boolean updated = courseService.updateCourse(dto);
+            if (updated) {
+                LOGGER.info("Course updated successfully for id {}", id);
+                return Response.ok(new ApiResponse(true, "Course updated successfully", "successCourseUpdated", null)).build();
+            } else {
+                LOGGER.warn("Failed to update course with id {}", id);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, "Course not found", "courseNotFound", null))
+                        .build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error updating course", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ApiResponse(false, "Internal server error", "errorInternalServer", null))
                     .build();

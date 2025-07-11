@@ -3,6 +3,9 @@ import { FaBuromobelexperte } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
+import flagEs from "../../assets/flags/flag-es.png";
+import flagFr from "../../assets/flags/flag-fr.png";
+import flagIt from "../../assets/flags/flag-it.png";
 import "./CourseCard.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
@@ -15,6 +18,7 @@ const CourseCard = ({ course, onViewDetails }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("🔍 CourseCard useEffect - course:", course); // DEBUG
     if (!course || !course.id) {
       setCourseImageUrl(null);
       return;
@@ -51,7 +55,20 @@ const CourseCard = ({ course, onViewDetails }) => {
   };
 
   const getLanguageFlag = (language) => {
-    return language === "PORTUGUESE" ? flagPt : flagEn;
+    switch (language) {
+      case "pt":
+        return flagPt;
+      case "en":
+        return flagEn;
+      case "es":
+        return flagEs;
+      case "fr":
+        return flagFr;
+      case "it":
+        return flagIt;
+      default:
+        return flagEn;
+    }
   };
 
   const toTitleCase = (str) =>
@@ -59,8 +76,10 @@ const CourseCard = ({ course, onViewDetails }) => {
 
   if (loading) return <Spinner />;
 
+  const isInactive = course?.courseIsActive === false;
+
   return (
-    <div className="course-card">
+    <div className={`course-card${isInactive ? " course-card-inactive" : ""}`}> 
       <div className="course-card-image">
         <img
           src={
@@ -71,11 +90,15 @@ const CourseCard = ({ course, onViewDetails }) => {
             // ✅ FALLBACK se imagem falhar
             e.target.src = courseTemplateImage;
           }}
+          className={isInactive ? "course-card-image-inactive" : ""}
         />
+        {isInactive && <div className="course-card-overlay" />}
       </div>
 
       <div className="course-card-content">
-        <h3 className="course-card-title">{course.title}</h3>
+        <h3 className="course-card-title">
+          {course.title} {isInactive && <span className="course-card-inactive-label">({t("courses.inactive")})</span>}
+        </h3>
 
         <div className="course-card-info">
           <span className="course-card-category">{toTitleCase(course.area)}</span>

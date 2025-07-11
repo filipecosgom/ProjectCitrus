@@ -3,10 +3,17 @@ import { api } from "./api"; // No need to import handleApiError here
 const courseEndpoint = "/courses";
 
 export const fetchCourses = async (params = {}) => {
-  console.log("Fetching courses with params:", params);
+  // Transform {query, searchType, ...} into {[searchType]: query, ...}
+  let newParams = { ...params };
+  if (newParams.query && newParams.searchType) {
+    newParams[newParams.searchType] = newParams.query;
+    delete newParams.query;
+    delete newParams.searchType;
+  }
+  console.log("Fetching courses with params:", newParams);
   try {
     const query = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
+    Object.entries(newParams).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         // Ensure booleans are sent as strings
         query.append(key, typeof value === 'boolean' ? String(value) : value);
@@ -80,6 +87,32 @@ export const createCourse = async (courseData) => {
       {
         headers: {
           'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      }
+    );
+    return {
+      success: true,
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+export const updateCourse = async (courseId, updateData) => {
+  try {
+    const response = await api.put(
+      `${courseEndpoint}/${courseId}`,
+      updateData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
         },
         withCredentials: true,
       }
