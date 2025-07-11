@@ -1,6 +1,10 @@
 package pt.uc.dei.services;
+
 import jakarta.ejb.Stateless;
+import jakarta.ejb.Asynchronous; // ✅ ADICIONAR
 import jakarta.inject.Inject;
+import java.util.concurrent.Future; // ✅ ADICIONAR
+import jakarta.ejb.AsyncResult; // ✅ ADICIONAR
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.Transport;
@@ -210,5 +214,121 @@ public class EmailService {
             LOGGER.error("Failed to send cycle notification email to {}: {}", recipientEmail, e.getMessage());
             throw new RuntimeException("Failed to send cycle notification email", e);
         }
+    }
+
+    /**
+     * ✅ NOVO: Método assíncrono para envio de notificações de ciclo
+     * Envia emails com rate limiting conservador para evitar bloqueios de firewall
+     */
+    @Asynchronous
+    public Future<Boolean> sendCycleNotificationEmailsAsync(
+            String cycleId, String startDate, String endDate,
+            String adminName, int appraisalsCount,
+            java.util.List<pt.uc.dei.entities.UserEntity> recipients) {
+
+        LOGGER.info("🔄 Starting ASYNC email notification process for cycle {}", cycleId);
+
+        try {
+            boolean allEmailsSent = true;
+            int emailsSent = 0;
+            int emailsFailed = 0;
+
+            // ✅ RATE LIMITING ULTRA-CONSERVADOR para ambiente universitário
+            final int MAX_EMAILS_PER_BATCH = 1;          // 1 email por lote
+            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutos entre lotes
+            final long DELAY_BETWEEN_EMAILS_MS = 10000;   // 10 segundos base
+
+            LOGGER.info("📧 Will send {} emails with ultra-conservative rate limiting", recipients.size());
+            LOGGER.info("📧 Rate: 1 email every 3 minutes (max 20 emails/hour)");
+
+            for (int i = 0; i < recipients.size(); i++) {
+                pt.uc.dei.entities.UserEntity user = recipients.get(i);
+
+                try {
+                    // ✅ DELAY progressivo - aumenta com cada email
+                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000); // +1s por cada email
+
+                    if (i > 0) {
+                        LOGGER.info("⏳ Waiting {} ms before sending email {}/{}...",
+                                   delayMs, i + 1, recipients.size());
+                        Thread.sleep(delayMs);
+                    }
+
+                    // ✅ DELAY extra a cada lote
+                    if (i > 0 && i % MAX_EMAILS_PER_BATCH == 0) {
+                        LOGGER.info("⏳ Batch delay: waiting {} ms before next batch...",
+                                   DELAY_BETWEEN_BATCHES_MS);
+                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);
+                    }
+
+                    String userLanguage = "en"; // Default language
+
+                    LOGGER.info("📤 Sending cycle notification to {} ({}/{})",
+                               user.getEmail(), i + 1, recipients.size());
+
+                    // ✅ Usar o método síncrono existente
+                    sendCycleNotificationEmail(
+                        user.getEmail(),
+                        cycleId,
+                        startDate,
+                        endDate,
+                        adminName,
+                        appraisalsCount,
+                        userLanguage
+                    );
+
+                    emailsSent++;
+                    LOGGER.info("✅ Email {}/{} sent successfully to: {}",
+                               i + 1, recipients.size(), user.getEmail());
+
+                } catch (InterruptedException e) {
+                    LOGGER.error("❌ Email sending process was interrupted");
+                    Thread.currentThread().interrupt();
+                    allEmailsSent = false;
+                    break;
+                } catch (Exception e) {
+                    emailsFailed++;
+                    allEmailsSent = false;
+                    LOGGER.error("❌ Failed to send email {}/{} to {}: {}",
+                                i + 1, recipients.size(), user.getEmail(), e.getMessage());
+
+                    // ✅ Continue com outros emails mesmo se um falhar
+                    continue;
+                }
+            }
+
+            LOGGER.info("📧 ASYNC notification completed - Sent: {}, Failed: {}, Total: {}",
+                       emailsSent, emailsFailed, recipients.size());
+
+            return new AsyncResult<>(allEmailsSent);
+
+        } catch (Exception e) {
+            LOGGER.error("❌ Critical error in async email sending: {}", e.getMessage(), e);
+            return new AsyncResult<>(false);
+        }
+    }
+
+    /**
+     * ✅ NOVO: Properties com timeouts configurados
+     */
+    private Properties createEmailPropertiesWithTimeouts() {
+        Properties props = new Properties();
+
+        // Configuração base
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        // ✅ TIMEOUTS para prevenir bloqueios
+        props.put("mail.smtp.connectiontimeout", "15000");    // 15 segundos para conectar
+        props.put("mail.smtp.timeout", "15000");              // 15 segundos para resposta
+        props.put("mail.smtp.writetimeout", "15000");         // 15 segundos para escrita
+
+        // ✅ CONFIGURAÇÕES de segurança
+        props.put("mail.smtp.sendpartial", "true");           // Permite envio parcial
+        props.put("mail.smtp.quitwait", "false");             // Não espera resposta do QUIT
+
+        return props;
     }
 }
