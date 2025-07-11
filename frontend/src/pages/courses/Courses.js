@@ -182,6 +182,13 @@ const Courses = () => {
     }
   };
 
+  // NOVO: Função para atualizar curso na lista após status mudar
+  const handleCourseStatusChange = (updatedCourse) => {
+    setCourses((prevCourses) =>
+      prevCourses.map((c) => (c.id === updatedCourse.id ? { ...c, ...updatedCourse } : c))
+    );
+  };
+
   if (pageLoading) return <Spinner />;
 
   return (
@@ -241,6 +248,7 @@ const Courses = () => {
         onClose={handleCloseOffcanvas}
         course={selectedCourse}
         onSubmit={handleNewCourseCreated}
+        onCourseStatusChange={handleCourseStatusChange}
       />
       <CourseNewOffCanvas
         isOpen={newCourseOffcanvasOpen}

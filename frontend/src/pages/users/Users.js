@@ -14,7 +14,7 @@ import { GrUserSettings } from "react-icons/gr";
 import useAuthStore from "../../stores/useAuthStore";
 import {
   buildSearchParams,
-  createPageChangeHandler,
+  // createPageChangeHandler,
 } from "../../utils/searchUtils";
 import {
   fetchInitialUsers,
@@ -47,10 +47,6 @@ export default function Users() {
   const [selectedUsers, setSelectedUsers] = useState(new Set());
   const [assignManagerOpen, setAssignManagerOpen] = useState(false);
 
-  // Use URL search params for search/filter state
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [lastSearch, setLastSearch] = useState(null);
-
   // ✅ ADICIONAR: Flag para evitar loops
   const [urlSyncEnabled, setUrlSyncEnabled] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
@@ -74,7 +70,6 @@ export default function Users() {
     isManaged: null,
   });
 
-  const lastSearchRef = useRef(lastSearch);
   const usersFilters = userSearchFilters(t, offices);
 
   const isAdmin = useAuthStore((state) => state.user?.userIsAdmin);
@@ -119,16 +114,16 @@ export default function Users() {
   useEffect(() => {
     if (offices.length > 0 && !initialLoadComplete) {
       const currentParams = new URLSearchParams(urlSearchParams);
-
       // Se não há parâmetros na URL, adicionar padrões
       if (!urlSearchParams.toString()) {
         currentParams.set("sortBy", "name");
         currentParams.set("sortOrder", "ASCENDING");
+        currentParams.set("offset", "0");
+        currentParams.set("limit", "10");
         setUrlSearchParams(currentParams);
         setInitialLoadComplete(true);
         return;
       }
-
       // Se há parâmetros, garantir que os essenciais existem
       if (!currentParams.has("sortBy")) {
         currentParams.set("sortBy", "name");
@@ -136,20 +131,24 @@ export default function Users() {
       if (!currentParams.has("sortOrder")) {
         currentParams.set("sortOrder", "ASCENDING");
       }
-
+      if (!currentParams.has("offset")) {
+        currentParams.set("offset", "0");
+      }
+      if (!currentParams.has("limit")) {
+        currentParams.set("limit", "10");
+      }
       // Processar parâmetros da URL
       const query = urlSearchParams.get("query") || "";
       const searchType = urlSearchParams.get("searchType") || "email";
       const limit = parseInt(urlSearchParams.get("limit")) || 10;
+      const offset = parseInt(urlSearchParams.get("offset")) || 0;
       const accountState = urlSearchParams.get("accountState") || "";
       const office = urlSearchParams.get("office") || "";
       const isManager = urlSearchParams.get("isManager");
       const isAdmin = urlSearchParams.get("isAdmin");
       const isManaged = urlSearchParams.get("isManaged");
-
       const sortBy = urlSearchParams.get("sortBy") || "name";
       const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
-
       const filters = {
         accountState,
         office,
@@ -159,7 +158,6 @@ export default function Users() {
         isManaged:
           isManaged === "true" ? true : isManaged === "false" ? false : null,
       };
-
       // ✅ ADICIONAR: Atualizar defaultValues com dados da URL
       const urlDefaults = {
         query,
@@ -173,26 +171,16 @@ export default function Users() {
         isManaged:
           isManaged === "true" ? true : isManaged === "false" ? false : null,
       };
-
       setDefaultValues(urlDefaults);
-
       // ✅ DESABILITAR sincronização URL temporariamente
       setUrlSyncEnabled(false);
-
       // ✅ Atualizar sort se necessário
       setSort({ sortBy, sortOrder });
-
-      const search = buildSearchParams(query, searchType, limit, filters);
-      setSearchParams(search);
-      setLastSearch(search);
-
-      // ✅ Marcar carregamento inicial como completo
+      setPagination((prev) => ({ ...prev, offset, limit }));
       setInitialLoadComplete(true);
-
-      // ✅ REABILITAR sincronização URL
       setTimeout(() => setUrlSyncEnabled(true), 100);
     }
-  }, [offices, urlSearchParams, searchParams, initialLoadComplete]);
+  }, [offices, urlSearchParams, initialLoadComplete, setUrlSearchParams]);
 
   // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
@@ -222,24 +210,22 @@ export default function Users() {
   }, [pagination.offset]);
 
   const parseParams = () => {
-  const paramsObj = Object.fromEntries([...searchParams.entries()]);
-  // Tristate logic for isManager, isAdmin, isManaged
-  ["isManager", "isAdmin", "isManaged"].forEach((key) => {
-    if (paramsObj[key] === undefined) {
-      paramsObj[key] = null;
-    } else if (paramsObj[key] === "true") {
-      paramsObj[key] = true;
-    } else if (paramsObj[key] === "false") {
-      paramsObj[key] = false;
-    } else if (paramsObj[key] === "null" || paramsObj[key] === "") {
-      paramsObj[key] = null;
-    }
-  });
-  // ...existing code for accountState, limit, offset, etc.
-  if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
-  if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
-  return paramsObj;
-};
+    const paramsObj = Object.fromEntries([...urlSearchParams.entries()]);
+    ["isManager", "isAdmin", "isManaged"].forEach((key) => {
+      if (paramsObj[key] === undefined) {
+        paramsObj[key] = null;
+      } else if (paramsObj[key] === "true") {
+        paramsObj[key] = true;
+      } else if (paramsObj[key] === "false") {
+        paramsObj[key] = false;
+      } else if (paramsObj[key] === "null" || paramsObj[key] === "") {
+        paramsObj[key] = null;
+      }
+    });
+    if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
+    if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
+    return paramsObj;
+  };
 
   // Update setSearchingParameters to update URL and flatten filters
   const setSearchingParameters = async (
@@ -252,11 +238,24 @@ export default function Users() {
     const params = buildSearchParams(query, searchType, limit, filters);
     // Remove any 'filters' key if present (defensive)
     if (params.filters) delete params.filters;
-    setSearchParams(params);
+    // Reset offset to 0 in both state and URL
+    setPagination((prev) => ({ ...prev, offset: 0, limit }));
+    params.offset = 0;
+    params.limit = limit;
+    setUrlSearchParams(params);
   };
 
   // Externalized: handle page change
-  const handlePageChange = createPageChangeHandler(setPagination);
+  const handlePageChange = (newOffset) => {
+    setPagination((prev) => ({ ...prev, offset: newOffset }));
+    // Sync offset to URL
+    if (urlSyncEnabled) {
+      const currentParams = new URLSearchParams(urlSearchParams);
+      currentParams.set("offset", newOffset);
+      currentParams.set("limit", pagination.limit);
+      setUrlSearchParams(currentParams);
+    }
+  };
 
   // ✅ CORRIGIDO: handle sort change - não depende de useEffect
   const handleSortChange = ({ sortBy, sortOrder }) => {
@@ -302,23 +301,22 @@ export default function Users() {
       total: result.pagination.totalUsers,
     }));
     setResultsLoading(false);
-    setLastSearch(overrideParams || params);
   }
 
   // Only one effect for fetching users
   useEffect(() => {
-    fetchUsers(pagination.offset);
+    fetchUsers(parseParams().offset || 0);
     // eslint-disable-next-line
-  }, [searchParams, pagination.offset, sort]);
+  }, [urlSearchParams, pagination.offset, sort]);
 
   useEffect(() => {
     fetchInitialUsers({
       setPageLoading,
       setOffices,
-      setSearchParams,
       handleGetOffices,
     });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setUrlSearchParams]);
 
   if (pageLoading) return <Spinner />;
 
@@ -381,12 +379,24 @@ export default function Users() {
   // CSV export handler
   const handleGetCSV = async () => {
     let params = {
-      ...searchParams,
+      ...parseParams(),
       parameter: sort.sortBy,
       order: sort.sortOrder,
     };
     delete params.limit;
     delete params.offset;
+    // Convert tristate filters to string for export
+    ["isManager", "isAdmin", "isManaged"].forEach((key) => {
+      if (params[key] === true) params[key] = "true";
+      else if (params[key] === false) params[key] = "false";
+      else delete params[key];
+    });
+    // Convert query/searchType to field
+    if (params.query && params.searchType) {
+      params[params.searchType] = params.query;
+    }
+    delete params.query;
+    delete params.searchType;
     const result = await handleGetUsersCSV(params);
     if (result.success) {
       const url = window.URL.createObjectURL(
@@ -407,12 +417,22 @@ export default function Users() {
   // XLSX export handler
   const handleGetXLSX = async () => {
     let params = {
-      ...searchParams,
+      ...parseParams(),
       parameter: sort.sortBy,
       order: sort.sortOrder,
     };
     delete params.limit;
     delete params.offset;
+    ["isManager", "isAdmin", "isManaged"].forEach((key) => {
+      if (params[key] === true) params[key] = "true";
+      else if (params[key] === false) params[key] = "false";
+      else delete params[key];
+    });
+    if (params.query && params.searchType) {
+      params[params.searchType] = params.query;
+    }
+    delete params.query;
+    delete params.searchType;
     const result = await handleGetUsersXLSX(params);
     if (result.success) {
       const url = window.URL.createObjectURL(

@@ -23,7 +23,7 @@ public class MDCInjectionFilter implements Filter {
             }
             chain.doFilter(request, response);
         } finally {
-            ThreadContext.clearMap();  // Clean up after response is finished
+            //ThreadContext.clearMap();  // Clean up after response is finished
         }
     }
 

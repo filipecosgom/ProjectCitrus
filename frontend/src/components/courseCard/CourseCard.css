@@ -131,6 +131,38 @@
   transform: translateY(1px);
 }
 
+.course-card-inactive {
+  position: relative;
+  filter: grayscale(1) brightness(0.7);
+}
+
+.course-card-image-inactive {
+  filter: grayscale(1) brightness(0.7);
+}
+
+.course-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.course-card-inactive-label {
+  color: #b61b23;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.course-card-inactive .course-card-button {
+  opacity: 0.6;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .course-card {
