@@ -475,6 +475,9 @@ const pt = {
     errorCourseNotCreated: "Curso não foi criado (título ou link duplicado)",
     confirmInactivate: "Tem certeza que deseja inativar este curso?",
     confirmActivate: "Tem certeza que deseja ativar este curso?",
+    clearFilters: "Limpar filtros",
+    totalHours: "Horas totais",
+    allYears: "Todos os anos",
   },
 
   common: {
@@ -492,6 +495,8 @@ const pt = {
     avatarError: "Login efetuado, mas falha ao carregar o avatar.",
     failed: "Falha no login. Verifique as credenciais e tente novamente.",
   },
+
+  
 };
 
 export default pt;

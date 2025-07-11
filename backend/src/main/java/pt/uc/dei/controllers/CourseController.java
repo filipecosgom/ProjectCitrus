@@ -312,14 +312,30 @@ public class CourseController {
                         .build();
             }
             dto.setId(id); // Ensure path id is used
-            boolean updated = courseService.updateCourse(dto);
-            if (updated) {
-                LOGGER.info("Course updated successfully for id {}", id);
-                return Response.ok(new ApiResponse(true, "Course updated successfully", "successCourseUpdated", null)).build();
-            } else {
-                LOGGER.warn("Failed to update course with id {}", id);
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ApiResponse(false, "Course not found", "courseNotFound", null))
+            try {
+                boolean updated = courseService.updateCourse(dto);
+                if (updated) {
+                    LOGGER.info("Course updated successfully for id {}", id);
+                    return Response.ok(new ApiResponse(true, "Course updated successfully", "successCourseUpdated", null)).build();
+                } else {
+                    LOGGER.warn("Failed to update course with id {}", id);
+                    return Response.status(Response.Status.NOT_FOUND)
+                            .entity(new ApiResponse(false, "Course not found", "courseNotFound", null))
+                            .build();
+                }
+            } catch (IllegalArgumentException ex) {
+                String errorCode = ex.getMessage();
+                String errorMsg;
+                if ("duplicateTitle".equals(errorCode)) {
+                    errorMsg = "Course with this title already exists";
+                } else if ("duplicateLink".equals(errorCode)) {
+                    errorMsg = "Course with this link already exists";
+                } else {
+                    errorMsg = "Course not created (duplicate title or link)";
+                }
+                LOGGER.warn("Failed to create course: {}", errorMsg);
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, errorMsg, errorCode, null))
                         .build();
             }
         } catch (Exception e) {

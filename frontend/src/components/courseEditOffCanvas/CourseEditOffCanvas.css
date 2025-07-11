@@ -1,0 +1,95 @@
+.course-edit-offcanvas-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.course-edit-offcanvas-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.course-edit-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.8s ease;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.course-edit-offcanvas.open {
+  transform: translateX(0);
+}
+
+.course-edit-offcanvas-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 32px;
+  color: #000000;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-edit-offcanvas-close:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.course-edit-offcanvas-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100vh;
+}
+
+.course-edit-offcanvas-image {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+}
+
+.course-edit-offcanvas-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .course-edit-offcanvas {
+    width: 100vw;
+    right: 0;
+  }
+  .course-edit-offcanvas-image {
+    height: 200px;
+  }
+}
+@media (max-width: 768px) and (min-width: 481px) {
+  .course-edit-offcanvas {
+    width: 90vw;
+  }
+}

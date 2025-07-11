@@ -156,6 +156,7 @@ const Courses = () => {
     params.order = sort.sortOrder;
     setResultsLoading(true);
     const result = await handleGetCourses(params);
+    console.log("Fetched courses:", result);
     setCourses(result.courses);
     setPagination((prev) => ({
       ...prev,
@@ -197,7 +198,7 @@ const Courses = () => {
         <SearchBar
           onSearch={setSearchingParameters}
           {...coursesFilters}
-          defaultValues={searchParams || coursesFilters.defaultValues}
+          defaultValues={searchParamsState || coursesFilters.defaultValues}
           actions={
             isAdmin && (
               <button

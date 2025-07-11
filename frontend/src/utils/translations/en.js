@@ -1,3 +1,4 @@
+import { all } from "axios";
 import { login } from "../../api/authenticationApi";
 
 const en = {
@@ -241,6 +242,7 @@ const en = {
   searchByEmail: "email",
   searchByName: "name",
   searchByRole: "role",
+  clearFilters: "Clear filters",
 
   //User Sort Controls
   userSortControlsName: "Name",
@@ -473,6 +475,9 @@ const en = {
     errorCourseNotCreated: "Course not created (duplicate title or link)",
     confirmInactivate:" Are you sure you want to inactivate this course?",
     confirmActivate: "Are you sure you want to activate this course?",
+    clearFilters: "Clear filters",
+    totalHours: "Total hours",
+    allYears: "All years",
   },
 
   common: {

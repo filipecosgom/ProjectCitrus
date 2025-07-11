@@ -18,7 +18,6 @@ const CourseCard = ({ course, onViewDetails }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("🔍 CourseCard useEffect - course:", course); // DEBUG
     if (!course || !course.id) {
       setCourseImageUrl(null);
       return;

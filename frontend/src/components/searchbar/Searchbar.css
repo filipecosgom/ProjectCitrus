@@ -6,6 +6,7 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
+  flex: 1;
 }
 .searchBar-wrapper {
   flex: 1;
@@ -194,4 +195,71 @@
 .searchBar-xlsxIcon {
   color: var(--primary);
   font-size: 42px;
+}
+
+/*----------------------------------------*/
+/*----------------CLEAR BUTTON------------------*/
+/*----------------------------------------*/
+.searchBar-clearButton {
+  background: white;
+  border: none;
+  color: var(--secondary);
+  border-radius: 6px;
+  padding: 0.25rem 0.75rem;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.searchBar-clearButton:hover {
+  background: #f5f5f5;
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/*----------------------------------------*/
+/*----------------YEARS FILTER------------------*/
+/*----------------------------------------*/
+.years-filter-select {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.25rem 1rem;
+  font-size: 1rem;
+  color: var(--secondary);
+  margin-left: 0.5rem;
+  min-width: 120px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.years-filter-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+.years-filter-select:hover {
+  background: #f5f5f5;
+}
+.courses-total-hours {
+  text-align: right;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--primary);
+}
+.courses-total-hours-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 16px 32px 0 0;
+  gap: 0.5rem;
+}
+.courses-total-hours-label {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--primary);
+}
+.courses-total-hours-value {
+  font-weight: var(--font-weight-regular);
+  font-size: 20px;
+  color: black;
 }

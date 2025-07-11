@@ -7,15 +7,14 @@ import { handleGetCourseAreas } from "../../handles/handleGetEnums";
 import {
   courseSearchFilters,
   coursesSortFields,
-  mapFinishedCourseToCourseCard,
 } from "../../utils/coursesSearchUtils";
 import Spinner from "../../components/spinner/spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
+import './TrainingTab.css';
 
-export default function TrainingTab({ user }) {
+export default function TrainingTab({ courses = [] }) {
   const { t } = useTranslation();
-  const [courses, setCourses] = useState(user.completedCourses || []);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -27,11 +26,23 @@ export default function TrainingTab({ user }) {
   });
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+  // Extract years from courses
+  const years = Array.from(
+    new Set((courses || [])
+      .map((c) => Array.isArray(c.completionDate) ? c.completionDate[0] : null)
+      .filter((y) => y))
+  ).sort((a, b) => b - a);
+  const yearOptions = [
+    { value: '', label: t('courses.allYears') },
+    ...years.map((y) => ({ value: y.toString(), label: y.toString() }))
+  ];
+  // Add year to searchParams
   const [searchParams, setSearchParams] = useState({
-    query: "",
-    searchType: "title",
+    query: '',
+    searchType: 'title',
     limit: 10,
-    area: "",
+    area: '',
+    year: '',
   });
   const [sort, setSort] = useState({
     sortBy: "title",
@@ -49,16 +60,6 @@ export default function TrainingTab({ user }) {
     fetchAreas();
   }, []);
 
-  // Keep courses in sync with user
-  useEffect(() => {
-    setCourses(user.completedCourses || []);
-    setPagination((prev) => ({
-      ...prev,
-      offset: 0,
-      total: (user.completedCourses || []).length,
-    }));
-  }, [user]);
-
   // In-memory search, filter, sort, pagination
   useEffect(() => {
     let data = [...courses];
@@ -73,13 +74,20 @@ export default function TrainingTab({ user }) {
     if (searchParams.area) {
       data = data.filter((c) => c.area === searchParams.area);
     }
+    if (searchParams.language) {
+      data = data.filter((c) => c.language === searchParams.language);
+    }
+    if (searchParams.year) {
+      data = data.filter((c) => Array.isArray(c.completionDate) && c.completionDate[0] === Number(searchParams.year));
+    }
     // Sort
     if (sort.sortBy) {
+      const sortProp = sort.sortBy;
       data.sort((a, b) => {
         if (sort.sortOrder === "ascending") {
-          return (a[sort.sortBy] || "").localeCompare(b[sort.sortBy] || "");
+          return (a[sortProp] || "").localeCompare(b[sortProp] || "");
         } else {
-          return (b[sort.sortBy] || "").localeCompare(a[sort.sortBy] || "");
+          return (b[sortProp] || "").localeCompare(a[sortProp] || "");
         }
       });
     }
@@ -95,6 +103,7 @@ export default function TrainingTab({ user }) {
 
   // Handlers
   const handleSearch = (query, searchType, limit, filters = {}) => {
+    console.log('handleSearch called with:', { query, searchType, limit, filters }); // DEBUG
     setSearchParams((prev) => ({
       ...prev,
       query,
@@ -102,6 +111,12 @@ export default function TrainingTab({ user }) {
       limit,
       ...filters,
     }));
+    setPagination((prev) => ({ ...prev, offset: 0, limit })); // <-- update limit here
+  };
+
+  // Handler for year dropdown
+  const handleYearChange = (e) => {
+    setSearchParams((prev) => ({ ...prev, year: e.target.value }));
     setPagination((prev) => ({ ...prev, offset: 0 }));
   };
 
@@ -127,11 +142,31 @@ export default function TrainingTab({ user }) {
   if (pageLoading) return <Spinner />;
 
   const coursesFilters = courseSearchFilters(t, areas);
+  // Calculate total hours for selected year
+  const totalHours = (courses || [])
+    .filter((c) => !searchParams.year || (Array.isArray(c.completionDate) && c.completionDate[0] === Number(searchParams.year)))
+    .reduce((sum, c) => sum + (c.duration || 0), 0);
 
   return (
     <div className="courses-page">
       <div className="courses-header">
-        <SearchBar onSearch={handleSearch} {...coursesFilters} />
+        <div className="courses-header-row">
+          <SearchBar
+            onSearch={handleSearch}
+            {...coursesFilters}
+            renderYearDropdown={() => (
+              <select
+                className="years-filter-select"
+                value={searchParams.year}
+                onChange={handleYearChange}
+              >
+                {yearOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            )}
+          />
+        </div>
       </div>
       <SortControls
         fields={coursesSortFields}
@@ -151,19 +186,25 @@ export default function TrainingTab({ user }) {
           </div>
         ) : (
           <div className="courses-grid">
-            {filteredCourses.map((course) => {
-              const mappedCourse = mapFinishedCourseToCourseCard(course);
-              return (
-                <CourseCard
-                  key={mappedCourse.id}
-                  course={mappedCourse}
-                  onViewDetails={handleViewDetails}
-                />
-              );
-            })}
+            {filteredCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                onViewDetails={handleViewDetails}
+              />
+            ))}
           </div>
         )}
       </div>
+      <div className="courses-total-hours-container">
+        <div className="courses-total-hours-label">
+          {t('courses.totalHours', 'Total hours')}:
+        </div>
+        <div className="courses-total-hours-value">
+          {totalHours}h
+        </div>
+      </div>
+      
 
       {/* NOVO: Offcanvas */}
       <CourseDetailsOffcanvas
@@ -177,6 +218,7 @@ export default function TrainingTab({ user }) {
         total={pagination.total}
         onChange={handlePageChange}
       />
+      
     </div>
   );
 }

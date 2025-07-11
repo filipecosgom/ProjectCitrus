@@ -3,8 +3,11 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaTimes, FaPen } from "react-icons/fa";
 import handleUpdateCourse from "../../handles/handleUpdateCourse";
+import {handleGetCourseAreas } from "../../handles/handleGetEnums";
+import handleGetCourseImage from "../../handles/handleGetCourseImage";
+import { handleUploadCourseImage } from "../../handles/handleCreateNewCourse";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
-import "../courseNewOffCanvas/CourseNewOffCanvas.css";
+import "./CourseEditOffCanvas.css";
 
 const LANGUAGES = [
   { code: "pt", label: "Português", flag: require("../../assets/flags/flag-pt.png") },
@@ -19,6 +22,7 @@ const CourseEditOffCanvas = ({ isOpen, onClose, course, onSuccess }) => {
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [language, setLanguage] = useState(course?.language || "pt");
   const [areaOptions, setAreaOptions] = useState([]);
 
@@ -53,20 +57,61 @@ const CourseEditOffCanvas = ({ isOpen, onClose, course, onSuccess }) => {
   }, [isOpen, course, reset]);
 
   useEffect(() => {
-    // Fetch course areas (reuse your handleGetCourseAreas if available)
-    // handleGetCourseAreas().then((areas) => setAreaOptions(areas || []));
-    setAreaOptions(["Area1", "Area2", "Area3"]); // TODO: Replace with real fetch
+    // Fetch course areas
+    handleGetCourseAreas().then((areas) => setAreaOptions(areas || []));
   }, [isOpen]);
+
+  useEffect(() => {
+    // Set image preview to course image if available
+    let courseBlobUrl = null;
+    if (isOpen && course?.id && course?.courseHasImage) {
+      handleGetCourseImage(course.id)
+        .then((result) => {
+          if (result.success && result.image) {
+            courseBlobUrl = result.image;
+            setImagePreview(result.image);
+          } else {
+            setImagePreview(null);
+          }
+        })
+        .catch(() => setImagePreview(null));
+    } else {
+      setImagePreview(null);
+    }
+    return () => {
+      if (courseBlobUrl?.startsWith("blob:")) URL.revokeObjectURL(courseBlobUrl);
+    };
+  }, [isOpen, course]);
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) onClose();
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    const maxSize = 5 * 1024 * 1024; // 5mb
+    if (!validTypes.includes(file.type)) {
+      // Optionally show notification
+      return;
+    }
+    if (file.size > maxSize) {
+      // Optionally show notification
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
   const onFormSubmit = async (data) => {
-    const updateData = { ...course, ...data, language };
-    const result = await handleUpdateCourse(updateData);
-    if (result.success && onSuccess) onSuccess();
-    if (result.success) onClose();
+  const updateData = { ...course, ...data, language };
+  const result = await handleUpdateCourse(updateData);
+  if (result.success && imageFile && course?.id) {
+    await handleUploadCourseImage(course.id, imageFile);
+  }
+  if (result.success && onSuccess) onSuccess(updateData);
+  if (result.success) onClose();
   };
 
   const errorMessages = {
@@ -95,6 +140,22 @@ const CourseEditOffCanvas = ({ isOpen, onClose, course, onSuccess }) => {
               src={imagePreview || courseTemplateImage}
               alt={t("courses.imagePreviewAlt")}
             />
+            <label
+              htmlFor="course-image-upload-edit"
+              className="course-newCourse-edit-label"
+            >
+              <FaPen
+                className="course-newCourse-edit-icon"
+                title={t("courses.editImage")}
+              />
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              id="course-image-upload-edit"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+            />
           </div>
           <form className="course-newCourse-form" onSubmit={handleSubmit(onFormSubmit)}>
             <div className="course-newCourse-info-item">
@@ -115,11 +176,13 @@ const CourseEditOffCanvas = ({ isOpen, onClose, course, onSuccess }) => {
                 <select
                   className="course-newCourse-input"
                   {...register("area", { required: errorMessages.area })}
-                  defaultValue={course?.area || ""}
+                  onChange={e => setValue("area", e.target.value)}
                 >
                   <option value="" disabled>{t("courses.selectArea")}</option>
-                  {areaOptions.map((area) => (
-                    <option key={area} value={area}>{area}</option>
+                  {areaOptions.map((enumVal) => (
+                    <option key={enumVal} value={enumToAreaValue(enumVal)}>
+                      {enumToLabel(enumVal)}
+                    </option>
                   ))}
                 </select>
                 <span className="error-message">{errors.area ? errors.area.message : "\u00A0"}</span>
@@ -196,6 +259,18 @@ const CourseEditOffCanvas = ({ isOpen, onClose, course, onSuccess }) => {
     </div>
   );
 };
+
+// Utility to map enum to course area value and label
+function enumToAreaValue(enumStr) {
+  return enumStr.replace(/_/g, "/").toLowerCase();
+}
+function enumToLabel(enumStr) {
+  return enumStr
+    .replace(/_/g, "/")
+    .replace(/\b([a-z])/g, (m) => m.toUpperCase())
+    .replace("/Ui", "/UI")
+    .replace("/Ux", "/UX");
+}
 
 function LanguageDropdownForForm({ value, onChange }) {
   const [showDropdown, setShowDropdown] = useState(false);

@@ -22,6 +22,7 @@ import { formatStringToDate } from "../../utils/utilityFunctions";
 import handleUpdateCourse from "../../handles/handleUpdateCourse";
 import useAuthStore from "../../stores/useAuthStore";
 import ConfirmationModal from "../confirmationModal/ConfirmationModal";
+import CourseEditOffCanvas from "../courseEditOffCanvas/CourseEditOffCanvas";
 
 const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange }) => {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
   const [isAnimating, setIsAnimating] = useState(false);
   const [criationDate, setCriationDate] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [localCourse, setLocalCourse] = useState(course);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingActiveState, setPendingActiveState] = useState(null);
   const userIsAdmin = useAuthStore((state) => state.isUserAdmin());
@@ -50,20 +52,33 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
       }, 400);
       return () => clearTimeout(timer);
     }
+    
   }, [isOpen]);
 
   useEffect(() => {
-    if (!course || !course.id) {
+    setLocalCourse(course);
+  }, [course]);
+
+  // Reset localCourse when Offcanvas closes
+  useEffect(() => {
+    if (!isOpen) {
+      setLocalCourse(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const c = localCourse;
+    if (!c || !c.id) {
       setCourseImageUrl(null);
       return;
     }
     let courseBlobUrl = null;
-    if (!hasImage) {
+    if (!c.courseHasImage) {
       setCourseImageUrl(null);
       return;
     }
     setShouldRender(false);
-    handleGetCourseImage(course.id)
+    handleGetCourseImage(c.id)
       .then((result) => {
         if (result.success && result.image) {
           courseBlobUrl = result.image;
@@ -78,7 +93,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
       if (courseBlobUrl?.startsWith("blob:"))
         URL.revokeObjectURL(courseBlobUrl);
     };
-  }, [course, course?.id, hasImage]);
+  }, [localCourse, localCourse?.id, localCourse?.courseHasImage]);
 
   useEffect(() => {
     if (course?.creationDate) {
@@ -187,7 +202,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
     setPendingActiveState(null);
   };
 
-  if (!shouldRender || !course) return null;
+  if (!shouldRender || !localCourse) return null;
 
   return (
     <>
@@ -201,13 +216,12 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
             <div className="course-details-image">
               <img
                 src={
-                  hasImage && courseImageUrl
+                  localCourse.courseHasImage && courseImageUrl
                     ? courseImageUrl
                     : courseTemplateImage
                 }
-                alt={`${course.title}`}
+                alt={`${localCourse.title}`}
                 onError={(e) => {
-                  // ✅ FALLBACK se imagem falhar
                   e.target.src = courseTemplateImage;
                 }}
                 className={isInactive ? "course-details-image-inactive" : ""}
@@ -216,27 +230,27 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
             </div>
 
             <h1 className="course-details-title">
-              {course.title} {isInactive && <span className="course-details-inactive-label"> - {t("courses.inactive")}</span>}
+              {localCourse.title} {isInactive && <span className="course-details-inactive-label"> - {t("courses.inactive")}</span>}
             </h1>
 
             <div className="course-details-info">
               <div className="course-details-info-item">
                 <FaGraduationCap className="course-details-icon" />
                 <span className="course-details-label">{t("courses.area")}:</span>
-                <span className="course-details-value">{course.area}</span>
+                <span className="course-details-value">{localCourse.area}</span>
               </div>
 
               <div className="course-details-info-item">
                 <img
-                  src={getLanguageFlag(course.language)}
-                  alt={course.language}
+                  src={getLanguageFlag(localCourse.language)}
+                  alt={localCourse.language}
                   className="course-details-flag"
                 />
                 <span className="course-details-label">
                   {t("courses.language")}:
                 </span>
                 <span className="course-details-value">
-                  {getLanguageLabel(course.language)}
+                  {getLanguageLabel(localCourse.language)}
                 </span>
               </div>
 
@@ -246,7 +260,7 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
                   {t("courses.sortDuration")}:
                 </span>
                 <span className="course-details-value">
-                  {formatDuration(course.duration)}
+                  {formatDuration(localCourse.duration)}
                 </span>
               </div>
 
@@ -256,18 +270,18 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
                   {t("courses.createdDate") || "Criado a"}:
                 </span>
                 <span className="course-details-value">
-                  {course.creationDate ? criationDate : t("profilePlaceholderNA")}
+                  {localCourse.creationDate ? criationDate : t("profilePlaceholderNA")}
                 </span>
               </div>
 
-              {course.completionDate && (
+              {localCourse.completionDate && (
                 <div className="course-details-info-item">
                   <FaCircleCheck className="course-details-icon" />
                   <span className="course-details-label">
                     {t("courses.completionDate") || "Concluído a"}:
                   </span>
                   <span className="course-details-value">
-                    {course.creationDate
+                    {localCourse.creationDate
                       ? criationDate
                       : t("profilePlaceholderNA")}
                   </span>
@@ -281,14 +295,14 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
               </h3>
               <div className="course-details-description">
                 <p>
-                  {course.description ||
-                    `${t("courses.details")}: ${course.title}.`}
+                  {localCourse.description ||
+                    `${t("courses.details")}: ${localCourse.title}.`}
                 </p>
               </div>
             </div>
 
             <div className="course-details-actions">
-              <Link to={course.link} className="course-details-start-btn">
+              <Link to={localCourse.link} className="course-details-start-btn">
                 <FaPlay className="course-details-play-icon" />
                 {t("courses.startCourse", t("course.startCourse"))}
               </Link>
@@ -322,6 +336,15 @@ const CourseDetailsOffcanvas = ({ isOpen, onClose, course, onCourseStatusChange 
         message2={course.title}
         onConfirm={handleConfirmToggle}
         onClose={handleCancelToggle}
+      />
+      <CourseEditOffCanvas
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        course={localCourse}
+        onSuccess={(editedCourse) => {
+          setLocalCourse(editedCourse);
+          if (onCourseStatusChange) onCourseStatusChange(editedCourse);
+        }}
       />
     </>
   );

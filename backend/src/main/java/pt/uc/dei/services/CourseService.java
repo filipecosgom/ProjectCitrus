@@ -135,6 +135,14 @@ public class CourseService implements Serializable {
             LOGGER.warn("Course with id {} not found", dto.getId());
             return false;
         }
+        if (courseRepository.existsByTitle(dto.getTitle())) {
+            LOGGER.info("Course with title '{}' already exists", dto.getTitle());
+            throw new IllegalArgumentException("duplicateTitle");
+        }
+        if (courseRepository.existsByLink(dto.getLink())) {
+            LOGGER.info("Course with link '{}' already exists", dto.getLink());
+            throw new IllegalArgumentException("duplicateLink");
+        }
         // Use MapStruct mapper for partial update
         courseMapper.updateEntityFromUpdateDto(dto, entity);
         courseRepository.persist(entity);

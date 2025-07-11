@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import AppraisalsTab from "./AppraisalsTab";
 import TrainingTab from "./TrainingTab";
 import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffcanvas";
+import { normalizeUserCourses } from "../../utils/normalizeUserCourses";
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -242,6 +243,9 @@ export default function Profile() {
     if (tab !== activeTab) setActiveTab(tab);
     // eslint-disable-next-line
   }, [location.search]);
+
+  // Prepare normalized courses for TrainingTab
+  const normalizedCourses = normalizeUserCourses(user?.completedCourses || []);
 
   if (loading) return <Spinner />;
 
@@ -792,7 +796,7 @@ export default function Profile() {
         </div>
       )}
       {activeTab === "appraisals" && authorized && <AppraisalsTab user={user} />}
-      {activeTab === "training" && <TrainingTab user={user} />}
+      {activeTab === "training" && <TrainingTab courses={normalizedCourses} />}
     </div>
   );
 }

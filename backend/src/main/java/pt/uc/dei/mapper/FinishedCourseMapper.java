@@ -52,8 +52,7 @@ public interface FinishedCourseMapper {
     @Mapping(source = "course.area", target = "courseArea")
     @Mapping(source = "course.creationDate", target = "courseCreationDate")
     @Mapping(source = "course.duration", target = "courseDuration")
-    @Mapping(source = "course.language", target = "courseLanguage")
-    @Mapping(source = "course.link", target = "courseLink")
+    @Mapping(target = "courseLanguage", expression = "java(finishedCourseEntity.getCourse() != null && finishedCourseEntity.getCourse().getLanguage() != null ? finishedCourseEntity.getCourse().getLanguage().getFieldName() : null)")    @Mapping(source = "course.link", target = "courseLink")
     @Mapping(source = "course.courseHasImage", target = "courseHasImage")
     @Mapping(source = "course.courseIsActive", target = "courseIsActive")
     FinishedCourseDTO toDto(FinishedCourseEntity finishedCourseEntity);

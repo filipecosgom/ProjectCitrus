@@ -22,7 +22,6 @@ const SearchBar = ({
 }) => {
   const { t } = useTranslation();
   const { register, handleSubmit, watch, setValue, reset } = useForm({
-    // ✅ ADICIONAR reset
     defaultValues: {
       query: "",
       limit: 10,
@@ -30,14 +29,19 @@ const SearchBar = ({
     },
   });
 
-  // ✅ NOVO: Atualizar form quando defaultValues mudam
-  /*useEffect(() => {
+  // Sync form with new defaultValues (especially limit) when they change
+  useEffect(() => {
+    // Always use a number for limit
+    const limitValue = defaultValues.limit !== undefined ? Number(defaultValues.limit) : 10;
+      console.log("SearchBar useEffect: defaultValues", defaultValues, "limitValue", limitValue);
+
     reset({
-      query: "",
-      limit: 10,
+      query: defaultValues.query ?? "",
       ...defaultValues,
+      limit: limitValue, // override in case ...defaultValues has string
     });
-  }, [defaultValues, reset]);*/
+    setShowResultsMenu(false); // Close dropdown on reset
+  }, [defaultValues, reset]);
 
   const [showResultsMenu, setShowResultsMenu] = useState(false);
 
@@ -54,6 +58,32 @@ const SearchBar = ({
     onSearch(formData.query, formData.searchType, formData.limit, filters);
   };
 
+  // Add a function to clear all filters and search fields
+  const handleClearFilters = () => {
+    // Always default to 10 for Courses page
+    reset({
+      query: "",
+      limit: 10,
+      searchType: props.searchTypes?.[0]?.value || "title",
+      ...Object.fromEntries(filtersConfig.map((f) => [f, ""])),
+      ...Object.fromEntries(tristateFilters.map((f) => [f.key, ""])),
+    });
+    // Also trigger a search with cleared values
+    handleSubmit(onSubmit)();
+  };
+
+  // If area filter exists, ensure it has an 'All areas' option
+  if (
+    filterOptions &&
+    filterOptions.area &&
+    !filterOptions.area.some((opt) => opt.value === "")
+  ) {
+    filterOptions.area = [
+      { value: "", label: t("allAreas", "All areas") },
+      ...filterOptions.area,
+    ];
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="searchBar-container">
       <div className="searchBar-wrapper">
@@ -67,7 +97,7 @@ const SearchBar = ({
         <input
           {...register("query")}
           placeholder={t("searchBarPlaceholder", {
-            type: (
+            type:
               (props.searchTypes &&
                 props.searchTypes.find(
                   (type) => type.value === watch("searchType")
@@ -77,8 +107,7 @@ const SearchBar = ({
                   (watch("searchType") || "name").charAt(0).toLowerCase() +
                   (watch("searchType") || "name").slice(1)
                 }`
-              )
-            )?.toLowerCase(),
+              ),
           })}
           className="searchBar-input"
         />
@@ -101,7 +130,16 @@ const SearchBar = ({
           filtersConfig={filtersConfig}
           filterOptions={filterOptions}
           tristateFilters={tristateFilters}
+          register={register} // Pass register to FilterMenu
         />
+        <button
+          type="button"
+          className="searchBar-clearButton"
+          onClick={handleClearFilters}
+          style={{ marginLeft: 8 }}
+        >
+          {t("courses.clearFilters")}
+        </button>
       </div>
       <div className="searchBar-dropdown">
         <button
@@ -114,16 +152,25 @@ const SearchBar = ({
           {watch("limit")} <FiChevronDown />
         </button>
         {showResultsMenu && (
-          <div className="searchBar-dropdownMenu">
+          <div className="searchBar-dropdownMenu" role="menu" aria-label={t("searchBarLimitMenu")}> {/* Added accessibility */}
             {limitOptions.map((num) => (
               <div
                 key={num}
                 className="searchBar-menuItem"
-                data-active={watch("limit") === num}
+                data-active={String(watch("limit")) === String(num)}
+                role="menuitem"
+                tabIndex={0}
                 onClick={() => {
                   setValue("limit", num);
                   setShowResultsMenu(false);
                   handleSubmit(onSubmit)();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setValue("limit", num);
+                    setShowResultsMenu(false);
+                    handleSubmit(onSubmit)();
+                  }
                 }}
               >
                 {num}
@@ -132,6 +179,7 @@ const SearchBar = ({
           </div>
         )}
       </div>
+      
       {/* PDF Export Button */}
       {onExportPdf && (
         <button
