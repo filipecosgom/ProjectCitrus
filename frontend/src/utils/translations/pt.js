@@ -479,9 +479,9 @@ const pt = {
     totalHours: "Horas totais",
     allYears: "Todos os anos",
     // Adições para AddCompletedCourseOffcanvas e CourseSearchBar
-    addCompletedCourse: "Adicionar Curso Concluído",
-    addCompletedCourseTitle: "Adicionar Curso Concluído",
-    selectCourse: "Selecionar Curso",
+    addCompletedCourse: "Adicionar cursos",
+    addCompletedCourseTitle: "Registar novos cursos a {userName} {userSurname}",
+    selectCourse: "Selecionar curso",
     adding: "Adicionando...",
     completedCourseAdded: "Curso(s) concluído(s) adicionado(s) com sucesso!",
     errorCompletedCourseNotAdded: "Não foi possível adicionar o curso concluído.",

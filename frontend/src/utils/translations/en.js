@@ -479,9 +479,9 @@ const en = {
     totalHours: "Total hours",
     allYears: "All years",
     // AddCompletedCourseOffcanvas & CourseSearchBar additions
-    addCompletedCourse: "Add Completed Course",
-    addCompletedCourseTitle: "Add Completed Course",
-    selectCourse: "Select Course",
+    addCompletedCourse: "Add courses",
+    addCompletedCourseTitle: "Register new courses for {userName} {userSurname}",
+    selectCourse: "Select course",
     adding: "Adding...",
     completedCourseAdded: "Completed course(s) added successfully!",
     errorCompletedCourseNotAdded: "Could not add completed course.",

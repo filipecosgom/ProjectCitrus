@@ -523,6 +523,10 @@ public class UserService implements Serializable {
             LOGGER.error("Course not found with id: {}", courseId);
             throw new IllegalArgumentException("Course not found with id: " + courseId);
         }
+        if (course.getCourseIsActive() == null || !course.getCourseIsActive()) {
+            LOGGER.error("Course is not active: {}", courseId);
+            throw new IllegalArgumentException("Course is no longer active.");
+        }
         // Check if already completed using user's completed courses
         if (user.getCompletedCourses() != null && user.getCompletedCourses().stream().anyMatch(fc -> fc.getCourse() != null && fc.getCourse().getId().equals(courseId))) {
             LOGGER.warn("User {} already has course {} as completed.", userId, courseId);

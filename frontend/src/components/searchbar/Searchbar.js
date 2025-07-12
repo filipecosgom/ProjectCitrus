@@ -186,6 +186,7 @@ const SearchBar = ({
               type="button"
               className="searchBar-addCourseButton"
               onClick={props.onAddCourseToUser}
+              user={props.user}
             >
               <FaBookBookmark className="searchBar-addCourseIcon" />
               {t("courses.addCompletedCourse", "Add Completed Course")}

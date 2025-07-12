@@ -14,6 +14,8 @@ const AddCompletedCourseOffcanvas = ({
   onAdd,
   availableCourses = [],
   userId,
+  userName,
+  userSurname
 }) => {
   const { t } = useTranslation();
   const [shouldRender, setShouldRender] = useState(false);
@@ -59,6 +61,7 @@ const AddCompletedCourseOffcanvas = ({
 
   // Reset state when closing
   useEffect(() => {
+    console.log(userId)
     console.log("Offcanvas open state changed:", isOpen);
     if (!isOpen) {
       setSelectedCourses([]);
@@ -123,7 +126,7 @@ const AddCompletedCourseOffcanvas = ({
         {/* Header */}
         <div className="add-completed-course-header">
           <h2 className="add-completed-course-title">
-            {t("courses.addCompletedCourseTitle", "Add Completed Course")}
+            {t("courses.addCompletedCourseTitle", { userName, userSurname })}
           </h2>
           <button
             className="add-completed-course-close"
@@ -155,19 +158,7 @@ const AddCompletedCourseOffcanvas = ({
                     <CourseRow course={course} onSelect={() => {}} />
                     <button
                       type="button"
-                      style={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        background: "#eee",
-                        border: "none",
-                        borderRadius: "50%",
-                        width: 24,
-                        height: 24,
-                        cursor: "pointer",
-                        fontWeight: 700,
-                        color: "#a44",
-                      }}
+                      className="add-completed-course-remove-btn"
                       title={t("courses.remove")}
                       onClick={() =>
                         setSelectedCourses((prev) =>
@@ -187,11 +178,8 @@ const AddCompletedCourseOffcanvas = ({
 
         {/* Footer */}
         <div className="add-completed-course-footer">
-          <button className="cancel-btn" onClick={onClose} disabled={isAdding}>
-            {t("courses.cancel")}
-          </button>
           <button
-            className="add-btn"
+            className="add-completed-course-btn add-completed-course-btn-add"
             onClick={handleAddClick}
             disabled={!selectedCourses.length || isAdding}
           >
@@ -201,8 +189,15 @@ const AddCompletedCourseOffcanvas = ({
                 {t("courses.adding")}
               </>
             ) : (
-              t("courses.addCompletedCourse", "Add Completed Course")
-            )}
+              t("courses.addCompletedCourse")
+                   )}
+          </button>
+          <button
+            className="add-completed-course-btn add-completed-course-btn-cancel"
+            onClick={onClose}
+            disabled={isAdding}
+          >
+            {t("courses.cancel")}
           </button>
         </div>
       </div>

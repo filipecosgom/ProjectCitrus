@@ -15,7 +15,7 @@ import Pagination from "../../components/pagination/Pagination";
 import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
 import './TrainingTab.css';
 
-export default function TrainingTab({ courses: initialCourses = [], isTheManagerOfUser, userId }) {
+export default function TrainingTab({ courses: initialCourses = [], isTheManagerOfUser, userId, userName, userSurname }) {
   const { t } = useTranslation();
   const [courses, setCourses] = useState(initialCourses);
   const [filteredCourses, setFilteredCourses] = useState([]);
@@ -245,6 +245,8 @@ export default function TrainingTab({ courses: initialCourses = [], isTheManager
           onClose={() => setShowAddOffcanvas(false)}
           onAdd={handleAddCompletedCourses}
           userId={userId}
+          userName={userName}
+          userSurname={userSurname}
         />
       )}
       <Pagination

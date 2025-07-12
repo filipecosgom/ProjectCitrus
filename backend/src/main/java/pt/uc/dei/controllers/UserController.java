@@ -586,8 +586,14 @@ public class UserController {
             return Response.status(Response.Status.CONFLICT)
                     .entity(new ApiResponse(false, e.getMessage(), "errorAlreadyCompleted", null)).build();
         } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(new ApiResponse(false, e.getMessage(), "errorNotFound", null)).build();
+            String msg = e.getMessage();
+            if (msg != null && msg.toLowerCase().contains("not active")) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, msg, "errorCourseNotActive", null)).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ApiResponse(false, msg, "errorNotFound", null)).build();
+            }
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Failed to add finished course", "errorAddFinishedCourse", null)).build();

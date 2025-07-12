@@ -802,7 +802,7 @@ export default function Profile() {
       )}
       {activeTab === "appraisals" && authorized && <AppraisalsTab user={user} />}
       {activeTab === "training" && (
-        <TrainingTab courses={normalizedCourses} isTheManagerOfUser={isTheManagerOfUser} userId={userId} />
+        <TrainingTab courses={normalizedCourses} isTheManagerOfUser={isTheManagerOfUser} userId={userId} userName={user.name} userSurname={user.surname} />
       )}
     </div>
   );

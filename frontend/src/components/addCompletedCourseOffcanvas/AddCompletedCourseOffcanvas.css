@@ -1,3 +1,30 @@
+/* Remove button for selected course (×) */
+.add-completed-course-remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #eee;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #a44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.add-completed-course-remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.add-completed-course-remove-btn:hover:not(:disabled),
+.add-completed-course-remove-btn:focus:not(:disabled) {
+  background: #f8d7da;
+  color: #721c24;
+}
 .add-completed-course-backdrop {
   position: fixed;
   top: 0;
@@ -87,41 +114,39 @@
 }
 .add-completed-course-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 0.7rem;
   padding: 1rem 1.5rem;
   border-top: 1px solid #eee;
   background: #fafbfc;
 }
-.cancel-btn {
-  background: none;
-  border: 1px solid #bbb;
-  color: #555;
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.cancel-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.add-btn {
-  background: #1e90ff;
-  color: #fff;
+
+/* Unified button style for AddCompletedCourseOffcanvas, mimicking AppraisalOffCanvas */
+.add-completed-course-btn {
   border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius-default, 10px);
+  padding: 6px 16px;
+  font-weight: 600;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.add-btn:disabled {
+.add-completed-course-btn-cancel {
+  background: var(--secondary, #88909f);
+  color: #fff;
+}
+.add-completed-course-btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.add-completed-course-btn-add {
+  background: var(--primary, #1e90ff);
+  color: #fff;
+}
+.add-completed-course-btn-add:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
