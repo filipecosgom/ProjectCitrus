@@ -478,6 +478,20 @@ const pt = {
     clearFilters: "Limpar filtros",
     totalHours: "Horas totais",
     allYears: "Todos os anos",
+    // Adições para AddCompletedCourseOffcanvas e CourseSearchBar
+    addCompletedCourse: "Adicionar Curso Concluído",
+    addCompletedCourseTitle: "Adicionar Curso Concluído",
+    selectCourse: "Selecionar Curso",
+    adding: "Adicionando...",
+    completedCourseAdded: "Curso(s) concluído(s) adicionado(s) com sucesso!",
+    errorCompletedCourseNotAdded: "Não foi possível adicionar o curso concluído.",
+    errorAlreadyCompleted: "Este curso já está marcado como concluído.",
+    errorUserOrCourseNotFound: "Usuário ou curso não encontrado.",
+    clear: "Limpar",
+    searching: "Pesquisando...",
+    noAvailable: "Nenhum curso disponível.",
+    cancel: "Cancelar",
+    remove: "Remover",
   },
 
   common: {

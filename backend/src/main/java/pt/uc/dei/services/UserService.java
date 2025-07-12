@@ -1,5 +1,7 @@
-package pt.uc.dei.services;
 
+package pt.uc.dei.services;
+import pt.uc.dei.dtos.FinishedCourseDTO;
+import pt.uc.dei.mapper.FinishedCourseMapper;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
@@ -9,9 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.repositories.AppraisalRepository;
+import pt.uc.dei.repositories.CourseRepository;
+import pt.uc.dei.repositories.FinishedCourseRepository;
 import pt.uc.dei.utils.CSVGenerator;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.entities.ActivationTokenEntity;
+import pt.uc.dei.entities.CourseEntity;
+import pt.uc.dei.entities.FinishedCourseEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.*;
@@ -23,6 +29,7 @@ import pt.uc.dei.utils.PasswordUtils;
 import pt.uc.dei.utils.TwoFactorUtil;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -74,11 +81,20 @@ public class UserService implements Serializable {
     @EJB
     TokenService tokenService;
 
+    @EJB
+    CourseRepository courseRepository;
+
+    @EJB
+    FinishedCourseRepository finishedCourseRepository;
+
     @Inject
     JWTUtil jwtUtil;
 
     @Inject
     UserMapper userMapper;
+
+    @Inject
+    FinishedCourseMapper finishedCourseMapper;
 
     @Inject
     TwoFactorUtil twoFactorUtil;
@@ -486,6 +502,39 @@ public class UserService implements Serializable {
         }
         LOGGER.info("User account state updated for user ID: " + userId + ", new state: " + user.getAccountState());
         return true;
+    }
+    /**
+     * Adds a finished course for a user. Throws exceptions if user or course not found.
+     *
+     * @param userId   The user ID
+     * @param courseId The course ID
+     * @return The created FinishedCourseEntity
+     * @throws IllegalArgumentException if user or course not found
+     */
+    @Transactional
+    public FinishedCourseDTO addFinishedCourse(Long userId, Long courseId) {
+        UserEntity user = userRepository.findUserById(userId);
+        if (user == null) {
+            LOGGER.error("User not found with id: {}", userId);
+            throw new IllegalArgumentException("User not found with id: " + userId);
+        }
+        CourseEntity course = courseRepository.findCourseById(courseId);
+        if (course == null) {
+            LOGGER.error("Course not found with id: {}", courseId);
+            throw new IllegalArgumentException("Course not found with id: " + courseId);
+        }
+        // Check if already completed using user's completed courses
+        if (user.getCompletedCourses() != null && user.getCompletedCourses().stream().anyMatch(fc -> fc.getCourse() != null && fc.getCourse().getId().equals(courseId))) {
+            LOGGER.warn("User {} already has course {} as completed.", userId, courseId);
+            throw new IllegalStateException("User already has this course as completed.");
+        }
+        FinishedCourseEntity finished = new FinishedCourseEntity();
+        finished.setUser(user);
+        finished.setCourse(course);
+        finished.setCompletionDate(LocalDate.now());
+        finishedCourseRepository.persist(finished);
+        LOGGER.info("Added finished course: userId={}, courseId={}, date={}", userId, courseId, finished.getCompletionDate());
+        return finishedCourseMapper.toDto(finished);
     }
 
     private boolean checkIfUserStillIsManager(Long managerId) {

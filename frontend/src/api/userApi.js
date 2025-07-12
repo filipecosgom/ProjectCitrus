@@ -1,4 +1,4 @@
-import { GiConsoleController } from "react-icons/gi";
+
 import { api } from "./api"; // No need to import handleApiError here
 
 const userEndpoint = "/users";
@@ -248,6 +248,26 @@ export const fetchUsersXLSX = async ({
       status: response.status,
       contentType: response.headers["content-type"],
       blob: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+// Add a finished course for a user
+export const addFinishedCourseToUser = async (userId, courseId) => {
+  try {
+    const response = await api.post(
+      `/users/${userId}/finished-courses/${courseId}`
+    );
+    return {
+      success: true,
+      status: response.status,
+      data: response.data, // Should be FinishedCourseDTO
     };
   } catch (error) {
     return {

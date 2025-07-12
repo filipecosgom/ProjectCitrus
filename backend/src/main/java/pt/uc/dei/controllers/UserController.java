@@ -1,5 +1,7 @@
-package pt.uc.dei.controllers;
 
+
+package pt.uc.dei.controllers;
+import pt.uc.dei.annotations.ManagerOfUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -33,6 +35,8 @@ import java.util.Map;
  */
 @Path("/users")
 public class UserController {
+    @Inject
+    pt.uc.dei.mapper.FinishedCourseMapper finishedCourseMapper;
     /**
      * Logger for user registration and management events.
      */
@@ -560,5 +564,33 @@ public class UserController {
         return Response.ok(new ByteArrayInputStream(xlsxData))
                 .header("Content-Disposition", "attachment; filename=users.xlsx")
                 .build();
+    }
+
+    
+    /**
+     * Adds a finished course for a user (manager only).
+     *
+     * @param id User ID
+     * @param courseId Course ID
+     * @return HTTP 200 if added, 409 if already completed, 404 if not found, 400 for bad input
+     */
+    @POST
+    @Path("/{id}/course/{courseId}")
+    @ManagerOfUser
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addFinishedCourseForUser(@PathParam("id") Long id, @PathParam("courseId") Long courseId) {
+        try {
+            FinishedCourseDTO finishedDTO = userService.addFinishedCourse(id, courseId);
+            return Response.ok(new ApiResponse(true, "Finished course added", "successFinishedCourseAdded", finishedDTO)).build();
+        } catch (IllegalStateException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorAlreadyCompleted", null)).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, e.getMessage(), "errorNotFound", null)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Failed to add finished course", "errorAddFinishedCourse", null)).build();
+        }
     }
 }

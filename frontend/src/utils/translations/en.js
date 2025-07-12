@@ -478,6 +478,20 @@ const en = {
     clearFilters: "Clear filters",
     totalHours: "Total hours",
     allYears: "All years",
+    // AddCompletedCourseOffcanvas & CourseSearchBar additions
+    addCompletedCourse: "Add Completed Course",
+    addCompletedCourseTitle: "Add Completed Course",
+    selectCourse: "Select Course",
+    adding: "Adding...",
+    completedCourseAdded: "Completed course(s) added successfully!",
+    errorCompletedCourseNotAdded: "Could not add completed course.",
+    errorAlreadyCompleted: "This course is already marked as completed.",
+    errorUserOrCourseNotFound: "User or course not found.",
+    clear: "Clear",
+    searching: "Searching...",
+    noAvailable: "No available courses.",
+    cancel: "Cancel",
+    remove: "Remove",
   },
 
   common: {

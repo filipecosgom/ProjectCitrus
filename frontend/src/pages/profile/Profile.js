@@ -52,6 +52,7 @@ export default function Profile() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [authorized, setAuthorized] = useState(false);
+  const [isTheManagerOfUser, setIsTheManagerOfUser] = useState(false);
 
   // react-hook-form setup
   const {
@@ -61,15 +62,19 @@ export default function Profile() {
     formState: { errors },
   } = useForm();
 
-  const setAuthorization = () => {
+  const setAuthorizationAndManagment = () => {
     if (useAuthStore.getState().user?.userIsAdmin) {
       setAuthorized(true);
+      setIsTheManagerOfUser(false);
     } else if (user?.id === useAuthStore.getState().user?.id) {
       setAuthorized(true);
+      setIsTheManagerOfUser(false);
     } else if (user?.manager?.id === useAuthStore.getState().user?.id) {
       setAuthorized(true);
+      setIsTheManagerOfUser(true);
     } else {
       setAuthorized(false);
+      setIsTheManagerOfUser(false);
     }
   };
 
@@ -109,7 +114,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (user) {
-      setAuthorization();
+      setAuthorizationAndManagment();
     }
   }, [user]);
 
@@ -796,7 +801,9 @@ export default function Profile() {
         </div>
       )}
       {activeTab === "appraisals" && authorized && <AppraisalsTab user={user} />}
-      {activeTab === "training" && <TrainingTab courses={normalizedCourses} />}
+      {activeTab === "training" && (
+        <TrainingTab courses={normalizedCourses} isTheManagerOfUser={isTheManagerOfUser} userId={userId} />
+      )}
     </div>
   );
 }

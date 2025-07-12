@@ -29,7 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.Request;
@@ -65,7 +67,6 @@ public class CourseController {
      * @param offset   Starting position for pagination
      * @return Response with list of filtered course DTOs
      */
-    @AdminOnly
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -78,6 +79,8 @@ public class CourseController {
             @QueryParam("language") String languageStr,
             @QueryParam("adminName") String adminName,
             @QueryParam("courseIsActive") Boolean courseIsActive,
+            @QueryParam("excludeCompletedByUserId") Long excludeCompletedByUserId,
+            @QueryParam("excludeCourseIds") String excludeCourseIdsStr,
             @QueryParam("parameter") @DefaultValue("title") String parameterStr,
             @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
@@ -88,9 +91,18 @@ public class CourseController {
         OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
         try {
             LOGGER.debug("Retrieving courses with filters");
+            // Parse excludeCourseIdsStr (comma-separated) to List<Long>
+            List<Long> excludeCourseIds = new ArrayList<>();
+            if (excludeCourseIdsStr != null && !excludeCourseIdsStr.trim().isEmpty()) {
+                for (String s : excludeCourseIdsStr.split(",")) {
+                    try {
+                        excludeCourseIds.add(Long.parseLong(s.trim()));
+                    } catch (NumberFormatException ignored) {}
+                }
+            }
             Map<String, Object> courseData = courseService.getCoursesWithFilters(
                     id, title, duration, description, area, language, adminName, courseIsActive,
-                    parameter, orderBy, offset, limit);
+                    parameter, orderBy, offset, limit, excludeCompletedByUserId, excludeCourseIds);
             return Response.ok(new ApiResponse(true, "Courses retrieved successfully", "success", courseData))
                     .build();
         } catch (Exception e) {

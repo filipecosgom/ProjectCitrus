@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import SearchBar from "../../components/searchbar/Searchbar";
 import CourseCard from "../../components/courseCard/CourseCard";
 import CourseDetailsOffcanvas from "../../components/courseDetailsOffcanvas/CourseDetailsOffcanvas";
+import AddCompletedCourseOffcanvas from "../../components/addCompletedCourseOffcanvas/AddCompletedCourseOffcanvas";
 import { handleGetCourseAreas } from "../../handles/handleGetEnums";
 import {
   courseSearchFilters,
@@ -11,10 +12,12 @@ import {
 import Spinner from "../../components/spinner/spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
+import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
 import './TrainingTab.css';
 
-export default function TrainingTab({ courses = [] }) {
+export default function TrainingTab({ courses: initialCourses = [], isTheManagerOfUser, userId }) {
   const { t } = useTranslation();
+  const [courses, setCourses] = useState(initialCourses);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -26,6 +29,7 @@ export default function TrainingTab({ courses = [] }) {
   });
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+  const [showAddOffcanvas, setShowAddOffcanvas] = useState(false);
   // Extract years from courses
   const years = Array.from(
     new Set((courses || [])
@@ -139,6 +143,24 @@ export default function TrainingTab({ courses = [] }) {
     setTimeout(() => setSelectedCourse(null), 300);
   };
 
+  // Handler for Add Completed Course button (to be used by SearchBar)
+  const handleAddCourseToUser = () => {
+    setShowAddOffcanvas(true);
+  };
+
+  // When the offcanvas submits, add the new courses to the local state
+  const handleOffcanvasSubmit = async (userId, courseIds, courseObjs) => {
+    const result = await handleAddCompletedCourseToUser(userId, courseIds);
+    if (result.success && Array.isArray(courseObjs)) {
+      setCourses(prev => {
+        const existingIds = new Set(prev.map(c => c.id));
+        const newOnes = courseObjs.filter(c => !existingIds.has(c.id));
+        return [...prev, ...newOnes];
+      });
+    }
+    setShowAddOffcanvas(false);
+  };
+
   if (pageLoading) return <Spinner />;
 
   const coursesFilters = courseSearchFilters(t, areas);
@@ -146,6 +168,7 @@ export default function TrainingTab({ courses = [] }) {
   const totalHours = (courses || [])
     .filter((c) => !searchParams.year || (Array.isArray(c.completionDate) && c.completionDate[0] === Number(searchParams.year)))
     .reduce((sum, c) => sum + (c.duration || 0), 0);
+
 
   return (
     <div className="courses-page">
@@ -165,6 +188,8 @@ export default function TrainingTab({ courses = [] }) {
                 ))}
               </select>
             )}
+            userId={userId}
+            {...(isTheManagerOfUser ? { onAddCourseToUser: handleAddCourseToUser } : {})}
           />
         </div>
       </div>
@@ -212,6 +237,15 @@ export default function TrainingTab({ courses = [] }) {
         onClose={handleCloseOffcanvas}
         course={selectedCourse}
       />
+      {isTheManagerOfUser && (
+        <AddCompletedCourseOffcanvas
+          isOpen={showAddOffcanvas}
+          onClose={() => setShowAddOffcanvas(false)}
+          onAdd={async ({ userId, courseId, course }) => true}
+          userId={userId}
+          onSubmit={handleOffcanvasSubmit}
+        />
+      )}
       <Pagination
         offset={pagination.offset}
         limit={pagination.limit}

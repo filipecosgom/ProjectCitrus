@@ -1,3 +1,51 @@
+/* AddCourseButton styling to match assign-managers-btn */
+.searchBar-addCourseButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--red, #a44);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-default, 10px);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  font-weight: var(--font-weight-regular, 400);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 48px;
+  max-height: 48px;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.searchBar-addCourseButton:hover:not(:disabled) {
+  background-color: var(--red-dark, #933);
+  transform: translateY(-1px);
+}
+
+.searchBar-addCourseButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.searchBar-addCourseButton:disabled,
+.searchBar-addCourseButton.disabled {
+  background-color: var(--secondary, #88909f);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.searchBar-addCourseButton:disabled:hover,
+.searchBar-addCourseButton.disabled:hover {
+  transform: none;
+  background-color: var(--secondary, #88909f);
+}
+
+.searchBar-addCourseIcon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
 /*----------------------------------------*/
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
