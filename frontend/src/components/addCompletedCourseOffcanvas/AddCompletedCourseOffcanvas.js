@@ -38,19 +38,28 @@ const AddCompletedCourseOffcanvas = ({
     }
     setIsAdding(true);
     try {
+      console.log("Adding completed courses:", selectedCourses);
       const courseIds = selectedCourses.map((c) => c.id);
       await handleAddCompletedCourseToUser(userId, courseIds);
+      // Notify parent with the new courses (if onAdd is provided)
+      if (typeof onAdd === "function") {
+        console.log("Calling onAdd with selected courses:", selectedCourses);
+        await onAdd(selectedCourses);
+        console.log("onAdd completed");
+        onClose(); // Close after adding
+      }
       setSelectedCourses([]);
-      onClose();
     } catch (error) {
       console.error("Error adding completed courses:", error);
     } finally {
       setIsAdding(false);
+      // Do not call onClose here; let parent control closing after onAdd
     }
   };
 
   // Reset state when closing
   useEffect(() => {
+    console.log("Offcanvas open state changed:", isOpen);
     if (!isOpen) {
       setSelectedCourses([]);
       setIsAdding(false);

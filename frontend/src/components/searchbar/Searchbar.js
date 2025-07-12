@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./Searchbar.css";
 import FilterMenu from "../filterMenu/FilterMenu";
-import AddCompletedCourseOffcanvas from "../addCompletedCourseOffcanvas/AddCompletedCourseOffcanvas";
 import { useTranslation } from "react-i18next";
 import { GrDocumentPdf, GrDocumentCsv, GrDocumentExcel } from "react-icons/gr";
 import { FaBookBookmark } from "react-icons/fa6";
@@ -28,7 +27,6 @@ const SearchBar = ({
       limit: defaultValues.limit !== undefined ? Number(defaultValues.limit) : 10,
     },
   });
-  const [showAddCourseOffcanvas, setShowAddCourseOffcanvas] = useState(false);
   const [showResultsMenu, setShowResultsMenu] = useState(false);
 
   useEffect(() => {
@@ -172,26 +170,7 @@ const SearchBar = ({
               {props.renderYearDropdown()}
             </div>
           )}
-          {onExportPdf && (
-            <button
-              type="button"
-              className="searchBar-pdfButton"
-              onClick={onExportPdf}
-              title={t("exportPdf")}
-            >
-              <GrDocumentPdf className="searchBar-pdfIcon" />
-            </button>
-          )}
-          {onExportCsv && (
-            <button
-              type="button"
-              className="searchBar-csvButton"
-              onClick={onExportCsv}
-              title={t("exportCsv")}
-            >
-              <GrDocumentCsv className="searchBar-csvIcon" />
-            </button>
-          )}
+      {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
           {onExportXlsx && (
             <button
               type="button"
@@ -206,8 +185,7 @@ const SearchBar = ({
             <button
               type="button"
               className="searchBar-addCourseButton"
-              onClick={() => setShowAddCourseOffcanvas(true)}
-              style={{ marginLeft: 8 }}
+              onClick={props.onAddCourseToUser}
             >
               <FaBookBookmark className="searchBar-addCourseIcon" />
               {t("courses.addCompletedCourse", "Add Completed Course")}
@@ -215,15 +193,7 @@ const SearchBar = ({
           )}
           {actions && <div className="searchBar-actions">{actions}</div>}
       </form>
-      {props.onAddCourseToUser && (
-        <AddCompletedCourseOffcanvas
-          isOpen={showAddCourseOffcanvas}
-          onClose={() => setShowAddCourseOffcanvas(false)}
-          onAdd={props.onAddCourseToUser}
-          availableCourses={props.availableCourses || []}
-          userId={props.userId}
-        />
-      )}
+      {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
     </>
   );
 };

@@ -260,9 +260,10 @@ export const fetchUsersXLSX = async ({
 
 // Add a finished course for a user
 export const addFinishedCourseToUser = async (userId, courseId) => {
+
   try {
     const response = await api.post(
-      `/users/${userId}/finished-courses/${courseId}`
+      `/users/${userId}/course/${courseId}`
     );
     return {
       success: true,

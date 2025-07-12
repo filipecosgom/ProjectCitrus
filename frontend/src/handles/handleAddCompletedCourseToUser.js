@@ -3,6 +3,7 @@ import { addFinishedCourseToUser } from "../api/userApi";
 
 // Add a finished course for a user and notify
 export const handleAddCompletedCourseToUser = async (userId, courseIds) => {
+  console.log("handleAddCompletedCourseToUser called with:", { userId, courseIds }); // DEBUG
   if (!Array.isArray(courseIds)) courseIds = [courseIds];
   let allSuccess = true;
   let errors = [];

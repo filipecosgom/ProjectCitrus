@@ -145,16 +145,18 @@ export default function TrainingTab({ courses: initialCourses = [], isTheManager
 
   // Handler for Add Completed Course button (to be used by SearchBar)
   const handleAddCourseToUser = () => {
+    if (!showAddOffcanvas) {
+    console.log("Opening add completed course offcanvas");
     setShowAddOffcanvas(true);
-  };
+  }
+};
 
-  // When the offcanvas submits, add the new courses to the local state
-  const handleOffcanvasSubmit = async (userId, courseIds, courseObjs) => {
-    const result = await handleAddCompletedCourseToUser(userId, courseIds);
-    if (result.success && Array.isArray(courseObjs)) {
+  // When the offcanvas adds courses, update the local state immediately
+  const handleAddCompletedCourses = async (newCourses) => {
+    if (Array.isArray(newCourses)) {
       setCourses(prev => {
         const existingIds = new Set(prev.map(c => c.id));
-        const newOnes = courseObjs.filter(c => !existingIds.has(c.id));
+        const newOnes = newCourses.filter(c => !existingIds.has(c.id));
         return [...prev, ...newOnes];
       });
     }
@@ -241,9 +243,8 @@ export default function TrainingTab({ courses: initialCourses = [], isTheManager
         <AddCompletedCourseOffcanvas
           isOpen={showAddOffcanvas}
           onClose={() => setShowAddOffcanvas(false)}
-          onAdd={async ({ userId, courseId, course }) => true}
+          onAdd={handleAddCompletedCourses}
           userId={userId}
-          onSubmit={handleOffcanvasSubmit}
         />
       )}
       <Pagination
