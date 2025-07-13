@@ -202,13 +202,14 @@ export default function Notifications() {
             disabled={selectedNotifications.size === 0}
           >
             <FaEye className="notifications-markAsSeen-icon" />
-            {t("markAllAsSeen")}
+            {t("notifications.markAllAsSeen")}
           </button>
         )}
+        placeholder={t("searchBarPlaceholder", { type: t("notifications.content", "content") })}
       />
       <div className="notifications-list">
         {paginatedNotifications.length === 0 ? (
-          <div className="notifications-empty">{t("noNotificationsFound")}</div>
+          <div className="notifications-empty">{t("notifications.noNotificationsFound")}</div>
         ) : (
           paginatedNotifications.map((notification) => (
             <NotificationRow
