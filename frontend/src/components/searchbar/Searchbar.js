@@ -85,19 +85,23 @@ const SearchBar = ({
           </button>
           <input
             {...register("query")}
-            placeholder={t("searchBarPlaceholder", {
-              type:
-                (props.searchTypes &&
-                  props.searchTypes.find(
-                    (type) => type.value === watch("searchType")
-                  )?.label) ||
-                t(
-                  `filterMenuOption${
-                    (watch("searchType") || "name").charAt(0).toLowerCase() +
-                    (watch("searchType") || "name").slice(1)
-                  }`
-                ),
-            })}
+            placeholder={
+              props.placeholder !== undefined
+                ? props.placeholder
+                : t("searchBarPlaceholder", {
+                    type:
+                      (props.searchTypes &&
+                        props.searchTypes.find(
+                          (type) => type.value === watch("searchType")
+                        )?.label) ||
+                      t(
+                        `filterMenuOption${
+                          (watch("searchType") || "name").charAt(0).toLowerCase() +
+                          (watch("searchType") || "name").slice(1)
+                        }`
+                      ),
+                  })
+            }
             className="searchBar-input"
           />
           {props.searchTypes && (

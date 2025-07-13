@@ -1,21 +1,26 @@
 import React from "react";
+import "./NotificationRow.css";
 import { useTranslation } from "react-i18next";
 import UserIcon from "../userIcon/UserIcon";
 import { GrCycle } from "react-icons/gr";
 import { FaAward, FaBook } from "react-icons/fa";
-import { formatMessageTimestamp } from "../../utils/utilityFunctions";
+import { formatMessageTimestamp } from "../../utils/utilityFunctions"; // Assuming you have a utility function for formatting timestamps
 
-// Generic notification item for message or other notification types
-export default function NotificationItem({ notification, onClick }) {
+// NotificationRow styled like NotificationDropdown
+
+export default function NotificationRow({ notification, onClick, onSelectionChange, isSelected }) {
   const { t } = useTranslation();
-
-  // Use shared timestamp formatting
-
-
-  let icon = null;
+    let icon = null;
   let senderName = "";
   let message = "";
   let timestamp = null;
+
+  const handleCheckboxChange = (e) => {
+    e.stopPropagation(); // Evitar propagação para o card
+    if (onSelectionChange) {
+      onSelectionChange(notification.id, e.target.checked);
+    }
+  };
 
   switch (notification.type) {
     case "MESSAGE":
@@ -51,29 +56,34 @@ export default function NotificationItem({ notification, onClick }) {
 
   return (
     <div
-      className={`notification-item${notification.notificationIsSeen ? " notification-seen" : ""}`}
+      className={`notificationRow-row${notification.notificationIsSeen ? " notification-seen" : ""}`}
       key={notification.id}
       onClick={() => onClick(notification)}
       style={{ cursor: "pointer" }}
     >
-      <div className="notification-icon-cell">
-        <div className="message-user-icon">
-          {icon}
+      <div className="notificationRow-checkbox">
+      <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={handleCheckboxChange}
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
+      <div className="notificationRow-iconAndSender-cell">
+      <div className="notificationRow-icon-cell">
+          {icon}
       </div>
-      <div className="notification-text-cell">
-        <div className="notification-sender">
+      <div className="notificationRow-sender">
           {senderName}
         </div>
-        <div
-          className={`notification-message ${!notification.notificationIsRead ? "unread" : ""}`}
-        >
+        </div>
+    <div
+          className={`notificationRow-message ${!notification.notificationIsRead ? "unread" : ""}`}>
           {message}
         </div>
-        <div className="notification-timestamp">
+        <div className="notificationRow-timestamp">
           {formatMessageTimestamp(timestamp)}
         </div>
       </div>
-    </div>
   );
 }

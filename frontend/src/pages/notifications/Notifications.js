@@ -1,219 +1,231 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import SearchBar from "../../components/searchbar/Searchbar";
-import SortControls from "../../components/sortControls/SortControls";
+import { useNavigate } from "react-router-dom";
+import { handleUpdateNotification } from "../../handles/handleNotificationApi";
 import Pagination from "../../components/pagination/Pagination";
-import Spinner from "../../components/spinner/spinner";
-import {
-  FaBell,
-  FaEnvelope,
-  FaAward,
-  FaBook,
-  FaCheckCircle,
-  FaEyeSlash,
-  FaEye,
-} from "react-icons/fa";
-import useAuthStore from "../../stores/useAuthStore";
-import handleNotification from "../../handles/handleNotification";
+import Spinner from "../../components/spinner/Spinner";
+import NotificationRow from "../../components/dropdowns/NotificationRow";
+import SearchBar from "../../components/searchbar/Searchbar";
+import useNotificationStore from "../../stores/useNotificationStore";
 import "./Notifications.css";
+import { FaEye } from "react-icons/fa";
 
 export default function Notifications() {
   const { t } = useTranslation();
-  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const messageNotifications = useNotificationStore(
+    (state) => state.messageNotifications
+  );
+  const otherNotifications = useNotificationStore(
+    (state) => state.otherNotifications
+  );
+  const fetchAndSetNotifications = useNotificationStore(
+    (state) => state.fetchAndSetNotifications
+  );
+  const markAllMessagesAsRead = useNotificationStore(
+    (state) => state.markAllMessagesAsRead
+  );
+  const markAllOthersAsRead = useNotificationStore(
+    (state) => state.markAllOthersAsRead
+  );
+  const markMessageAsSeen = useNotificationStore(
+    (state) => state.markMessageAsSeen
+  );
+  const markOtherAsSeen = useNotificationStore(
+    (state) => state.markOtherAsSeen
+  );
+  const setMessageUnreadCountToZero = useNotificationStore(
+    (state) => state.setMessageUnreadCountToZero
+  );
   const navigate = useNavigate();
-
-  const [notifications, setNotifications] = useState([]);
-  const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [resultsLoading, setResultsLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [pagination, setPagination] = useState({
     offset: 0,
     limit: 10,
     total: 0,
   });
-
-  const [searchParams, setSearchParams] = useState({
-    query: "",
-    searchType: "content",
-    limit: 10,
-    type: "",
-    isRead: "",
-  });
-
-  const [sort, setSort] = useState({
-    sortBy: "creationDate",
-    sortOrder: "DESCENDING",
-  });
-
-  const user = useAuthStore((state) => state.user);
+  const [notifications, setNotifications] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef();
+  const [selectedNotification, setNotificationSelection] = useState(null);
+  const [selectedNotifications, setSelectedNotifications] = useState(new Set());
 
-  // Apply search, filter, sort, and pagination
+  // Fetch notifications from API/store on mount and mark all as read
   useEffect(() => {
-    let data = [...notifications];
+    const markAllAsRead = async () => {
+      await fetchAndSetNotifications();
+      // Mark all as read in store
+      markAllMessagesAsRead();
+      markAllOthersAsRead();
+      // Mark all as read in backend
+      for (const n of messageNotifications.filter(
+        (n) => !n.notificationIsRead
+      )) {
+        await handleUpdateNotification({
+          notificationId: n.id,
+          notificationIsRead: true,
+        });
+      }
+      for (const n of otherNotifications.filter((n) => !n.notificationIsRead)) {
+        await handleUpdateNotification({
+          notificationId: n.id,
+          notificationIsRead: true,
+        });
+      }
+      setPageLoading(false);
+    };
+    markAllAsRead();
+    // eslint-disable-next-line
+  }, []);
 
-    // Search/filter
-    if (searchParams.query) {
-      const query = searchParams.query.toLowerCase();
-      data = data.filter((notification) => {
-        switch (searchParams.searchType) {
-          case "content":
-            return notification.content?.toLowerCase().includes(query);
-          case "type":
-            return notification.type?.toLowerCase().includes(query);
-          default:
-            return notification.content?.toLowerCase().includes(query);
-        }
-      });
-    }
+  // Merge notifications from store whenever they change
+  useEffect(() => {
+    // Merge and sort all notifications by timestamp (descending)
+    const all = [...messageNotifications, ...otherNotifications];
+    all.sort((a, b) => {
+      const aTime = Array.isArray(a.timestamp)
+        ? new Date(...a.timestamp.slice(0, 6))
+        : new Date(a.timestamp);
+      const bTime = Array.isArray(b.timestamp)
+        ? new Date(...b.timestamp.slice(0, 6))
+        : new Date(b.timestamp);
+      return bTime - aTime;
+    });
+    setNotifications(all);
+    setPagination((prev) => ({ ...prev, total: all.length }));
+  }, [messageNotifications, otherNotifications]);
 
-    // Filter by type
-    if (searchParams.type) {
-      data = data.filter(
-        (notification) => notification.type === searchParams.type
-      );
-    }
+  // Filter notifications by search query (content)
+  const filteredNotifications = searchQuery
+    ? notifications.filter((n) =>
+        (n.content || "").toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : notifications;
 
-    // Filter by read status
-    if (searchParams.isRead !== "") {
-      const isRead = searchParams.isRead === "true";
-      data = data.filter((notification) => notification.read === isRead);
-    }
-
-    // Sort
-    if (sort.sortBy) {
-      data.sort((a, b) => {
-        let aValue = a[sort.sortBy];
-        let bValue = b[sort.sortBy];
-
-        // Handle date sorting
-        if (sort.sortBy === "creationDate") {
-          aValue = new Date(aValue);
-          bValue = new Date(bValue);
-        }
-
-        if (sort.sortOrder === "ASCENDING") {
-          return aValue > bValue ? 1 : -1;
-        } else {
-          return aValue < bValue ? 1 : -1;
-        }
-      });
-    }
-
-    // Pagination
-    const start = pagination.offset;
-    const end = start + pagination.limit;
-    setFilteredNotifications(data.slice(start, end));
+  // Pagination: get current page notifications
+  const paginatedNotifications = filteredNotifications.slice(
+    pagination.offset,
+    pagination.offset + pagination.limit
+  );
+  // Handle search from SearchBar
+  const handleSearch = (query, _searchType, newLimit) => {
+    setSearchQuery(query);
     setPagination((prev) => ({
       ...prev,
-      total: data.length,
+      offset: 0,
+      limit: newLimit || prev.limit,
     }));
-  }, [notifications, searchParams, sort, pagination.offset, pagination.limit]);
-
-  const handleSortChange = (newSort) => {
-    setSort(newSort);
   };
 
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-  // Get notification icon
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case "MESSAGE":
-        return <FaEnvelope className="notification-type-icon message" />;
-      case "EVALUATION":
-        return <FaAward className="notification-type-icon evaluation" />;
-      case "COURSE":
-        return <FaBook className="notification-type-icon course" />;
-      default:
-        return <FaBell className="notification-type-icon default" />;
-    }
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffMs = now - date;
-      const diffHours = diffMs / (1000 * 60 * 60);
-      const diffDays = diffMs / (1000 * 60 * 60 * 24);
-
-      if (diffHours < 1) {
-        return t("justNow");
-      } else if (diffHours < 24) {
-        return t("hoursAgo", { count: Math.floor(diffHours) });
-      } else if (diffDays < 7) {
-        return t("daysAgo", { count: Math.floor(diffDays) });
+    // Mark all notifications as seen
+  const handleMarkAllAsSeen = async () => {
+    const unseen = notifications.filter(n => !n.notificationIsSeen);
+    for (const n of unseen) {
+      await handleUpdateNotification({ notificationId: n.id, notificationIsSeen: true, notificationIsRead: true });
+      if (n.type === "MESSAGE") {
+        markMessageAsSeen(n.id);
+        setMessageUnreadCountToZero(n.id);
+        markAllMessagesAsRead();
       } else {
-        return date.toLocaleDateString();
+        markOtherAsSeen(n.id);
+        markAllOthersAsRead();
       }
-    } catch (err) {
-      return t("invalidDate");
     }
+    setSelectedNotifications(new Set());
   };
 
   if (pageLoading) {
     return <Spinner />;
   }
 
-  const notificationFilters = {
-    searchTypes: [
-      { value: "content", label: t("notificationSearchContent") },
-      { value: "type", label: t("notificationSearchType") },
-    ],
-    filters: [
-      {
-        key: "type",
-        label: t("notificationType"),
-        type: "select",
-        options: [
-          { value: "", label: t("allTypes") },
-          { value: "MESSAGE", label: t("notificationTypeMessage") },
-          { value: "EVALUATION", label: t("notificationTypeEvaluation") },
-          { value: "COURSE", label: t("notificationTypeCourse") },
-        ],
-      },
-      {
-        key: "isRead",
-        label: t("notificationStatus"),
-        type: "select",
-        options: [
-          { value: "", label: t("allStatuses") },
-          { value: "false", label: t("notificationUnread") },
-          { value: "true", label: t("notificationRead") },
-        ],
-      },
-    ],
+  // Handle click on a notification: mark as seen and redirect
+  const handleNotificationClick = async (notification) => {
+    if (notification.type === "MESSAGE") {
+      if (!notification.notificationIsSeen) {
+        await handleUpdateNotification({
+          notificationId: notification.id,
+          notificationIsSeen: true,
+        });
+        markMessageAsSeen(notification.id);
+      }
+      setMessageUnreadCountToZero(notification.id);
+      navigate(`/messages?id=${notification.sender?.id}`);
+    } else {
+      if (!notification.notificationIsSeen) {
+        await handleUpdateNotification({
+          notificationId: notification.id,
+          notificationIsSeen: true,
+        });
+        markOtherAsSeen(notification.id);
+      }
+      // Redirect based on type
+      if (notification.type === "APPRAISAL") {
+        navigate(`/profile?id=${notification.recipient?.id}&tab=appraisals`);
+      } else if (notification.type === "CYCLE") {
+        navigate(`/appraisals?state=IN_PROGRESS`);
+      } else if (notification.type === "COURSE") {
+        navigate(`/profile?id=${notification.recipient?.id}&tab=training`);
+      } else {
+        navigate(`/notifications`);
+      }
+    }
   };
 
-  const sortFields = [
-    { value: "creationDate", label: t("notificationSortDate") },
-    { value: "type", label: t("notificationSortType") },
-    { value: "read", label: t("notificationSortStatus") },
-  ];
+  const handleNotificationSelection = (notification, isSelected) => {
+    const newSelectedNotifications = new Set(selectedNotifications);
+    if (isSelected) {
+      newSelectedNotifications.add(notification);
+    } else {
+      newSelectedNotifications.delete(notification);
+    }
+    setSelectedNotifications(newSelectedNotifications);
+  };
 
   return (
     <div className="notifications-container" ref={containerRef}>
-      <div className="notifications-header">
-        <div className="notifications-searchBarAndButton"></div>
-      </div>
-
-      <SortControls
-        fields={sortFields}
-        sortBy={sort.sortBy}
-        sortOrder={sort.sortOrder}
-        onSortChange={handleSortChange}
-        isCardMode={true}
+      <SearchBar
+        onSearch={handleSearch}
+        defaultValues={{
+          query: searchQuery,
+          searchType: "content",
+          limit: pagination.limit,
+        }}
+        limitOptions={[5, 10, 20]}
+        actions={(
+          <button
+            className={`notifications-markAsSeen-btn${selectedNotifications.size === 0 ? " disabled" : ""}`}
+            onClick={handleMarkAllAsSeen}
+            disabled={selectedNotifications.size === 0}
+          >
+            <FaEye className="notifications-markAsSeen-icon" />
+            {t("notifications.markAllAsSeen")}
+          </button>
+        )}
+        placeholder={t("searchBarPlaceholder", { type: t("notifications.content", "content") })}
       />
-
+      <div className="notifications-list">
+        {paginatedNotifications.length === 0 ? (
+          <div className="notifications-empty">{t("notifications.noNotificationsFound")}</div>
+        ) : (
+          paginatedNotifications.map((notification) => (
+            <NotificationRow
+              key={notification.id}
+              notification={notification}
+              onClick={handleNotificationClick}
+              isSelected={selectedNotifications.has(notification.id)}
+              onSelectionChange={handleNotificationSelection}
+            />
+          ))
+        )}
+      </div>
       <Pagination
         offset={pagination.offset}
         limit={pagination.limit}
-        total={pagination.total}
+        total={filteredNotifications.length}
         onChange={handlePageChange}
       />
     </div>
