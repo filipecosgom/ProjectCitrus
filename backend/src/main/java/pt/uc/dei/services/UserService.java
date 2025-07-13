@@ -1,5 +1,5 @@
-
 package pt.uc.dei.services;
+
 import pt.uc.dei.dtos.FinishedCourseDTO;
 import pt.uc.dei.mapper.FinishedCourseMapper;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
@@ -555,5 +555,48 @@ public class UserService implements Serializable {
         user.setUserIsManager(false);
         userRepository.persist(user);
         LOGGER.info("User with ID {} is no longer a manager", user.getId());
+    }
+
+    /**
+     * Updates admin permissions for a user.
+     * Only administrators can use this functionality.
+     * Users cannot remove their own admin permissions.
+     *
+     * @param userId The ID of the user to update
+     * @param isAdmin The new admin status
+     * @param requesterId The ID of the user making the request
+     * @return true if update was successful, false otherwise
+     */
+    @Transactional
+    public Boolean updateAdminPermissions(Long userId, boolean isAdmin, Long requesterId) {
+        try {
+            // Verify requester is admin
+            if (!checkIfUserIsAdmin(requesterId)) {
+                LOGGER.error("Non-admin user {} attempted to modify admin permissions", requesterId);
+                return false;
+            }
+            
+            // Prevent self-removal of admin permissions
+            if (userId.equals(requesterId) && !isAdmin) {
+                LOGGER.error("User {} attempted to remove their own admin permissions", requesterId);
+                return false;
+            }
+            
+            UserEntity user = userRepository.findUserById(userId);
+            if (user == null) {
+                LOGGER.error("User not found with ID: {}", userId);
+                return false;
+            }
+            
+            user.setUserIsAdmin(isAdmin);
+            userRepository.persist(user);
+            
+            LOGGER.info("Admin permissions updated: User {} isAdmin={} by user {}", userId, isAdmin, requesterId);
+            return true;
+            
+        } catch (Exception e) {
+            LOGGER.error("Error updating admin permissions for user {}: {}", userId, e.getMessage());
+            return false;
+        }
     }
 }
