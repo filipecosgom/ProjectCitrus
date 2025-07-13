@@ -19,7 +19,6 @@ function debounce(func, wait) {
   };
 }
 
-
 const CourseSearchBar = ({
   onCourseSelect,
   maxResults = 50,

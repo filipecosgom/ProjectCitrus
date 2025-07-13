@@ -151,4 +151,12 @@ public class CourseService implements Serializable {
         LOGGER.info("Updated course with id {} (via mapper)", dto.getId());
         return true;
     }
+
+    public long countAllCourses() {
+        return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, null, null, null);
+    }
+
+    public long countCoursesByActive(boolean active) {
+        return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, active, null, null);
+    }
 }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -140,11 +139,15 @@ export default function Notifications() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-    // Mark all notifications as seen
+  // Mark all notifications as seen
   const handleMarkAllAsSeen = async () => {
-    const unseen = notifications.filter(n => !n.notificationIsSeen);
+    const unseen = notifications.filter((n) => !n.notificationIsSeen);
     for (const n of unseen) {
-      await handleUpdateNotification({ notificationId: n.id, notificationIsSeen: true, notificationIsRead: true });
+      await handleUpdateNotification({
+        notificationId: n.id,
+        notificationIsSeen: true,
+        notificationIsRead: true,
+      });
       if (n.type === "MESSAGE") {
         markMessageAsSeen(n.id);
         setMessageUnreadCountToZero(n.id);
@@ -206,7 +209,6 @@ export default function Notifications() {
 
   return (
     <div className="notifications-container" ref={containerRef}>
-      
       <SearchBar
         onSearch={handleSearch}
         defaultValues={{
@@ -215,23 +217,36 @@ export default function Notifications() {
           limit: pagination.limit,
         }}
         limitOptions={[5, 10, 20]}
-        actions={(
+        actions={
           <button
-            className={`notifications-markAsSeen-btn${selectedNotifications.size === 0 ? " disabled" : ""}`}
+            className={`notifications-markAsSeen-btn${
+              selectedNotifications.size === 0 ? " disabled" : ""
+            }`}
             onClick={handleMarkAllAsSeen}
             disabled={selectedNotifications.size === 0}
           >
             <FaEye className="notifications-markAsSeen-icon" />
             {t("notifications.markAllAsSeen")}
           </button>
-        )}
-        placeholder={t("searchBarPlaceholder", { type: t("notifications.content", "content") })}
+        }
+        placeholder={t("searchBarPlaceholder", {
+          type: t("notifications.content", "content"),
+        })}
       />
       <SortControls
         fields={[
-          { id: "notifications.sortByType", className:"notifications-sortByType", key: "type", label: () => t("notifications.sortByType", "Type") },
-          { id: "notifications.sortByDate", className:"notifications-sortByDate", key: "date", label: () => t("notifications.sortByDate", "Date") },
-          
+          {
+            id: "notifications.sortByType",
+            className: "notifications-sortByType",
+            key: "type",
+            label: () => t("notifications.sortByType", "Type"),
+          },
+          {
+            id: "notifications.sortByDate",
+            className: "notifications-sortByDate",
+            key: "date",
+            label: () => t("notifications.sortByDate", "Date"),
+          },
         ]}
         sortBy={sort.sortBy}
         sortOrder={sort.sortOrder}
@@ -240,7 +255,9 @@ export default function Notifications() {
       />
       <div className="notifications-list">
         {paginatedNotifications.length === 0 ? (
-          <div className="notifications-empty">{t("notifications.noNotificationsFound")}</div>
+          <div className="notifications-empty">
+            {t("notifications.noNotificationsFound")}
+          </div>
         ) : (
           paginatedNotifications.map((notification) => (
             <NotificationRow

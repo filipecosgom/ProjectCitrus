@@ -55,7 +55,6 @@ function AppraisalsTab({ userId: userIdProp }) {
   const [selectedAppraisal, setSelectedAppraisal] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
 
-
   useEffect(() => {
     lastSearchRef.current = searchParams;
   }, [searchParams]);
@@ -97,8 +96,10 @@ function AppraisalsTab({ userId: userIdProp }) {
         const aValue = a[sort.sortBy];
         const bValue = b[sort.sortBy];
         // Convert both values to strings for localeCompare, fallback to empty string
-        const aStr = aValue === undefined || aValue === null ? "" : String(aValue);
-        const bStr = bValue === undefined || bValue === null ? "" : String(bValue);
+        const aStr =
+          aValue === undefined || aValue === null ? "" : String(aValue);
+        const bStr =
+          bValue === undefined || bValue === null ? "" : String(bValue);
         if (sort.sortOrder === "DESCENDING") {
           return bStr.localeCompare(aStr);
         } else {

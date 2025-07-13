@@ -212,7 +212,6 @@ export default function Appraisals() {
 
   // ✅ MODIFICAR: Handlers para atualizar tanto estado quanto URL
   const handleSearch = (query, searchType, limit, filters = {}) => {
-
     const newSearchParams = {
       query,
       searchType,
@@ -220,12 +219,10 @@ export default function Appraisals() {
       ...filters,
     };
 
-
     // Always ensure appraisingUserId is present for non-admins
     const finalParams = isAdmin
       ? newSearchParams
       : { ...newSearchParams, appraisingUserId: user?.id };
-
 
     setSearchParams(finalParams);
     setPagination((prev) => ({ ...prev, offset: 0 }));

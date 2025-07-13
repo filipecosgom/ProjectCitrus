@@ -61,7 +61,7 @@ export default function Profile() {
   const setAuthorizationAndManagment = () => {
     if (useAuthStore.getState().user?.userIsAdmin) {
       setAuthorized(true);
-    } 
+    }
     if (user?.id === useAuthStore.getState().user?.id) {
       setAuthorized(true);
     }
@@ -94,7 +94,6 @@ export default function Profile() {
   }, []);
 
   const onSubmit = async (data) => {
-
     try {
       const response = await handleUpdateUserInfo(
         userId,
@@ -764,9 +763,17 @@ export default function Profile() {
           </div>
         </div>
       )}
-      {activeTab === "appraisals" && authorized && <AppraisalsTab user={user} />}
+      {activeTab === "appraisals" && authorized && (
+        <AppraisalsTab user={user} />
+      )}
       {activeTab === "training" && (
-        <TrainingTab courses={normalizedCourses} isTheManagerOfUser={isTheManagerOfUser} userId={userId} userName={user.name} userSurname={user.surname} />
+        <TrainingTab
+          courses={normalizedCourses}
+          isTheManagerOfUser={isTheManagerOfUser}
+          userId={userId}
+          userName={user.name}
+          userSurname={user.surname}
+        />
       )}
     </div>
   );

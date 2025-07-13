@@ -14,9 +14,15 @@ import Spinner from "../../components/spinner/Spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
-import './TrainingTab.css';
+import "./TrainingTab.css";
 
-export default function TrainingTab({ courses: initialCourses, isTheManagerOfUser, userId, userName, userSurname }) {
+export default function TrainingTab({
+  courses: initialCourses,
+  isTheManagerOfUser,
+  userId,
+  userName,
+  userSurname,
+}) {
   // If courses not provided, fetch user and use completedCourses
   const { user, loading } = useUserProfile(userId);
   const { t } = useTranslation();
@@ -35,21 +41,25 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
   const [showAddOffcanvas, setShowAddOffcanvas] = useState(false);
   // Extract years from courses
   const years = Array.from(
-    new Set((courses || [])
-      .map((c) => Array.isArray(c.completionDate) ? c.completionDate[0] : null)
-      .filter((y) => y))
+    new Set(
+      (courses || [])
+        .map((c) =>
+          Array.isArray(c.completionDate) ? c.completionDate[0] : null
+        )
+        .filter((y) => y)
+    )
   ).sort((a, b) => b - a);
   const yearOptions = [
-    { value: '', label: t('courses.allYears') },
-    ...years.map((y) => ({ value: y.toString(), label: y.toString() }))
+    { value: "", label: t("courses.allYears") },
+    ...years.map((y) => ({ value: y.toString(), label: y.toString() })),
   ];
   // Add year to searchParams
   const [searchParams, setSearchParams] = useState({
-    query: '',
-    searchType: 'title',
+    query: "",
+    searchType: "title",
     limit: 10,
-    area: '',
-    year: '',
+    area: "",
+    year: "",
   });
   const [sort, setSort] = useState({
     sortBy: "title",
@@ -92,7 +102,11 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
       data = data.filter((c) => c.language === searchParams.language);
     }
     if (searchParams.year) {
-      data = data.filter((c) => Array.isArray(c.completionDate) && c.completionDate[0] === Number(searchParams.year));
+      data = data.filter(
+        (c) =>
+          Array.isArray(c.completionDate) &&
+          c.completionDate[0] === Number(searchParams.year)
+      );
     }
     // Sort
     if (sort.sortBy) {
@@ -117,7 +131,12 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
 
   // Handlers
   const handleSearch = (query, searchType, limit, filters = {}) => {
-    console.log('handleSearch called with:', { query, searchType, limit, filters }); // DEBUG
+    console.log("handleSearch called with:", {
+      query,
+      searchType,
+      limit,
+      filters,
+    }); // DEBUG
     setSearchParams((prev) => ({
       ...prev,
       query,
@@ -156,17 +175,17 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
   // Handler for Add Completed Course button (to be used by SearchBar)
   const handleAddCourseToUser = () => {
     if (!showAddOffcanvas) {
-    console.log("Opening add completed course offcanvas");
-    setShowAddOffcanvas(true);
-  }
-};
+      console.log("Opening add completed course offcanvas");
+      setShowAddOffcanvas(true);
+    }
+  };
 
   // When the offcanvas adds courses, update the local state immediately
   const handleAddCompletedCourses = async (newCourses) => {
     if (Array.isArray(newCourses)) {
-      setCourses(prev => {
-        const existingIds = new Set(prev.map(c => c.id));
-        const newOnes = newCourses.filter(c => !existingIds.has(c.id));
+      setCourses((prev) => {
+        const existingIds = new Set(prev.map((c) => c.id));
+        const newOnes = newCourses.filter((c) => !existingIds.has(c.id));
         return [...prev, ...newOnes];
       });
     }
@@ -178,9 +197,13 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
   const coursesFilters = courseSearchFilters(t, areas);
   // Calculate total hours for selected year
   const totalHours = (courses || [])
-    .filter((c) => !searchParams.year || (Array.isArray(c.completionDate) && c.completionDate[0] === Number(searchParams.year)))
+    .filter(
+      (c) =>
+        !searchParams.year ||
+        (Array.isArray(c.completionDate) &&
+          c.completionDate[0] === Number(searchParams.year))
+    )
     .reduce((sum, c) => sum + (c.duration || 0), 0);
-
 
   return (
     <div className="courses-page">
@@ -196,12 +219,16 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
                 onChange={handleYearChange}
               >
                 {yearOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
             )}
             userId={userId}
-            {...(isTheManagerOfUser ? { onAddCourseToUser: handleAddCourseToUser } : {})}
+            {...(isTheManagerOfUser
+              ? { onAddCourseToUser: handleAddCourseToUser }
+              : {})}
           />
         </div>
       </div>
@@ -235,13 +262,10 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
       </div>
       <div className="courses-total-hours-container">
         <div className="courses-total-hours-label">
-          {t('courses.totalHours', 'Total hours')}:
+          {t("courses.totalHours", "Total hours")}:
         </div>
-        <div className="courses-total-hours-value">
-          {totalHours}h
-        </div>
+        <div className="courses-total-hours-value">{totalHours}h</div>
       </div>
-      
 
       {/* NOVO: Offcanvas */}
       <CourseDetailsOffcanvas
@@ -265,7 +289,6 @@ export default function TrainingTab({ courses: initialCourses, isTheManagerOfUse
         total={pagination.total}
         onChange={handlePageChange}
       />
-      
     </div>
   );
 }

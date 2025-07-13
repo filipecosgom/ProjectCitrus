@@ -48,8 +48,10 @@ const UserCard = ({
   };
 
   return (
-    <div className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}
-      ${showCheckbox && isSelected ? " selected" : ""}`}>
+    <div
+      className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}
+      ${showCheckbox && isSelected ? " selected" : ""}`}
+    >
       {/* ✅ CHECKBOX - sempre visível para admins */}
       <div className="userCard-checkbox">
         {showCheckbox && (

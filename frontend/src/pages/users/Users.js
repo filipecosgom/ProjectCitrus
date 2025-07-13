@@ -23,7 +23,10 @@ import {
 import AssignManagerOffcanvas from "../../components/assignManagerOffcanvas/AssignManagerOffcanvas";
 import { handleAssignManager } from "../../handles/handleAssignManager";
 import handleNotification from "../../handles/handleNotification";
-import { handleGetUsersCSV, handleGetUsersXLSX } from "../../handles/handleGetUsers";
+import {
+  handleGetUsersCSV,
+  handleGetUsersXLSX,
+} from "../../handles/handleGetUsers";
 import { useSearchParams } from "react-router-dom";
 
 export default function Users() {
@@ -140,7 +143,9 @@ export default function Users() {
     // Processar parâmetros da URL
     const query = urlSearchParams.get("query") || "";
     const searchType = urlSearchParams.get("searchType") || "email";
-    const limit = urlSearchParams.has("limit") ? parseInt(urlSearchParams.get("limit")) : 10;
+    const limit = urlSearchParams.has("limit")
+      ? parseInt(urlSearchParams.get("limit"))
+      : 10;
     const offset = parseInt(urlSearchParams.get("offset")) || 0;
     const accountState = urlSearchParams.get("accountState") || "";
     const office = urlSearchParams.get("office") || "";
@@ -306,7 +311,14 @@ export default function Users() {
       ...Object.fromEntries(
         Object.entries(params).filter(
           ([key]) =>
-            !["query", "searchType", "limit", "offset", "parameter", "order"].includes(key)
+            ![
+              "query",
+              "searchType",
+              "limit",
+              "offset",
+              "parameter",
+              "order",
+            ].includes(key)
         )
       ),
       parameter: sort.sortBy,
