@@ -505,6 +505,7 @@ const en = {
   systemSettings: "System Settings",
   saveChanges: "Save Changes",
   generalSettings: "General Settings",
+  adminPermissions: "Admin Permissions",
   manageAdminPermissions: "Manage Admin Permissions",
   manageAdminPermissionsDesc:
     "Grant or revoke administrator permissions for users.",

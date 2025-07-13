@@ -44,6 +44,30 @@ const Settings = () => {
       </div>
 
       <div className="settings-content">
+        {/* --- Admin Permissions section moved to the top --- */}
+        <div className="settings-section">
+          <h2>{t("adminPermissions")}</h2>
+          <div className="setting-item">
+            <div className="setting-label">
+              <h3>
+                <IoShieldCheckmark
+                  style={{ marginRight: 8, color: "#2e7d2e" }}
+                />
+                {t("manageAdminPermissions")}
+              </h3>
+              <p>{t("manageAdminPermissionsDesc")}</p>
+            </div>
+            <button
+              className="btn-save-settings"
+              style={{ background: "#2e7d2e" }}
+              onClick={() => setShowAdminOffcanvas(true)}
+            >
+              {t("manageAdminPermissions")}
+            </button>
+          </div>
+        </div>
+
+        {/* --- General Settings section --- */}
         <div className="settings-section">
           <h2>{t("generalSettings")}</h2>
 
@@ -107,6 +131,7 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* --- System Maintenance section --- */}
         <div className="settings-section">
           <h2>System Maintenance</h2>
 
@@ -130,29 +155,6 @@ const Settings = () => {
           <div className="setting-item">
             <button className="btn-maintenance-action">
               <IoRefresh /> Clear System Cache
-            </button>
-          </div>
-        </div>
-
-        <div className="settings-section">
-          <h2>{t("adminPermissions")}</h2>
-
-          <div className="setting-item">
-            <div className="setting-label">
-              <h3>
-                <IoShieldCheckmark
-                  style={{ marginRight: 8, color: "#2e7d2e" }}
-                />
-                {t("manageAdminPermissions")}
-              </h3>
-              <p>{t("manageAdminPermissionsDesc")}</p>
-            </div>
-            <button
-              className="btn-save-settings"
-              style={{ background: "#2e7d2e" }}
-              onClick={() => setShowAdminOffcanvas(true)}
-            >
-              {t("manageAdminPermissions")}
             </button>
           </div>
         </div>

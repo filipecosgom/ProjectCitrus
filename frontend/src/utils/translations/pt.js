@@ -514,6 +514,7 @@ const pt = {
   systemSettings: "Definições do Sistema",
   saveChanges: "Guardar Alterações",
   generalSettings: "Definições Gerais",
+  adminPermissions: "Permissões de Administrador",
   manageAdminPermissions: "Gerir Permissões de Administrador",
   manageAdminPermissionsDesc:
     "Atribua ou remova permissões de administrador aos utilizadores.",
