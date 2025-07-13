@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {
   IoSettings,
   IoSave,
-  IoRefresh,
   IoShieldCheckmark,
-} from "react-icons/io5";
+  IoRefresh,
+} from "react-icons/io5"; // <-- Adiciona IoRefresh aqui!
 import "./Settings.css";
 import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
 import { useTranslation } from "react-i18next";

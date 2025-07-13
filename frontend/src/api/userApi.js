@@ -1,4 +1,3 @@
-
 import { api } from "./api"; // No need to import handleApiError here
 
 const userEndpoint = "/users";
@@ -111,12 +110,18 @@ export const fetchPaginatedUsers = async ({
     if (role) params.append("role", role);
     if (office) params.append("office", office);
     // Only send isManager, isAdmin, isManaged if value is exactly true/false (boolean) or "true"/"false" (string)
-    if (isManager === true || isManager === "true") params.append("isManager", "true");
-    if (isManager === false || isManager === "false") params.append("isManager", "false");
-    if (isAdmin === true || isAdmin === "true") params.append("isAdmin", "true");
-    if (isAdmin === false || isAdmin === "false") params.append("isAdmin", "false");
-    if (isManaged === true || isManaged === "true") params.append("isManaged", "true");
-    if (isManaged === false || isManaged === "false") params.append("isManaged", "false");
+    if (isManager === true || isManager === "true")
+      params.append("isManager", "true");
+    if (isManager === false || isManager === "false")
+      params.append("isManager", "false");
+    if (isAdmin === true || isAdmin === "true")
+      params.append("isAdmin", "true");
+    if (isAdmin === false || isAdmin === "false")
+      params.append("isAdmin", "false");
+    if (isManaged === true || isManaged === "true")
+      params.append("isManaged", "true");
+    if (isManaged === false || isManaged === "false")
+      params.append("isManaged", "false");
 
     // Add pagination and sorting parameters
     params.append("parameter", parameter);
@@ -165,12 +170,18 @@ export const fetchUsersCSV = async ({
     if (accountState) params.append("accountState", accountState);
     if (role) params.append("role", role);
     if (office) params.append("office", office);
-    if (isManager === true || isManager === "true") params.append("isManager", "true");
-    if (isManager === false || isManager === "false") params.append("isManager", "false");
-    if (isAdmin === true || isAdmin === "true") params.append("isAdmin", "true");
-    if (isAdmin === false || isAdmin === "false") params.append("isAdmin", "false");
-    if (isManaged === true || isManaged === "true") params.append("isManaged", "true");
-    if (isManaged === false || isManaged === "false") params.append("isManaged", "false");
+    if (isManager === true || isManager === "true")
+      params.append("isManager", "true");
+    if (isManager === false || isManager === "false")
+      params.append("isManager", "false");
+    if (isAdmin === true || isAdmin === "true")
+      params.append("isAdmin", "true");
+    if (isAdmin === false || isAdmin === "false")
+      params.append("isAdmin", "false");
+    if (isManaged === true || isManaged === "true")
+      params.append("isManaged", "true");
+    if (isManaged === false || isManaged === "false")
+      params.append("isManaged", "false");
     params.append("parameter", parameter);
     params.append("order", order);
     params.append("language", language);
@@ -222,12 +233,18 @@ export const fetchUsersXLSX = async ({
     if (accountState) params.append("accountState", accountState);
     if (role) params.append("role", role);
     if (office) params.append("office", office);
-    if (isManager === true || isManager === "true") params.append("isManager", "true");
-    if (isManager === false || isManager === "false") params.append("isManager", "false");
-    if (isAdmin === true || isAdmin === "true") params.append("isAdmin", "true");
-    if (isAdmin === false || isAdmin === "false") params.append("isAdmin", "false");
-    if (isManaged === true || isManaged === "true") params.append("isManaged", "true");
-    if (isManaged === false || isManaged === "false") params.append("isManaged", "false");
+    if (isManager === true || isManager === "true")
+      params.append("isManager", "true");
+    if (isManager === false || isManager === "false")
+      params.append("isManager", "false");
+    if (isAdmin === true || isAdmin === "true")
+      params.append("isAdmin", "true");
+    if (isAdmin === false || isAdmin === "false")
+      params.append("isAdmin", "false");
+    if (isManaged === true || isManaged === "true")
+      params.append("isManaged", "true");
+    if (isManaged === false || isManaged === "false")
+      params.append("isManaged", "false");
     params.append("parameter", parameter);
     params.append("order", order);
     params.append("language", language);
@@ -260,11 +277,8 @@ export const fetchUsersXLSX = async ({
 
 // Add a finished course for a user
 export const addFinishedCourseToUser = async (userId, courseId) => {
-
   try {
-    const response = await api.post(
-      `/users/${userId}/course/${courseId}`
-    );
+    const response = await api.post(`/users/${userId}/course/${courseId}`);
     return {
       success: true,
       status: response.status,
@@ -276,5 +290,36 @@ export const addFinishedCourseToUser = async (userId, courseId) => {
       status: error.response?.status || 500,
       error: error.response?.data || error.message,
     };
+  }
+};
+
+export const fetchAllUsers = async () => {
+  try {
+    const response = await api.get("/users?limit=1000"); // ou sem limite, conforme backend
+    // Espera que a resposta tenha { success, data: { users: [...] } }
+    if (response.data?.success && response.data?.data?.users) {
+      return response.data.data.users;
+    }
+    throw new Error("Failed to fetch users");
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateAdminPermission = async (userId, isAdmin) => {
+  try {
+    const response = await api.put(
+      `/users/${userId}/admin-permissions`,
+      { isAdmin },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data?.success) {
+      return response.data.data;
+    }
+    throw new Error(
+      response.data?.message || "Failed to update admin permission"
+    );
+  } catch (error) {
+    throw error;
   }
 };
