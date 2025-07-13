@@ -1,0 +1,10 @@
+.courses-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.courses-header-row {
+  display: flex;
+ flex-direction: row;
+}

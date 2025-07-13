@@ -1,0 +1,131 @@
+/* ================================
+   COURSE SEARCH BAR COMPONENT
+   ================================ */
+
+.course-search-bar {
+  position: relative;
+  width: 100%;
+}
+
+.course-search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--secondary, #88909f);
+  font-size: 0.9rem;
+  z-index: 2;
+}
+
+.course-search-input {
+  width: 100%;
+  padding: 12px 40px 12px 36px;
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius-default, 10px);
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: var(--font-size-main, 1rem);
+  height: 48px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.course-search-input:focus {
+  outline: none;
+  border-color: var(--blue, #007bff);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.course-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--secondary, #88909f);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.course-search-clear:hover {
+  background-color: #f8f9fa;
+  color: var(--red, #a44);
+}
+
+.course-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.course-search-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  color: var(--secondary, #88909f);
+}
+
+.course-search-loading span {
+  font-size: 0.9rem;
+}
+
+.course-search-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--secondary, #88909f);
+  font-style: italic;
+}
+
+.course-search-empty p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.course-search-results {
+  padding: 8px;
+}
+
+
+@media (max-width: 480px) {
+  .course-search-input {
+    font-size: 16px;
+  }
+  .course-search-dropdown {
+    max-height: 280px;
+  }
+}
+
+.course-search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.course-search-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.course-search-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.course-search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

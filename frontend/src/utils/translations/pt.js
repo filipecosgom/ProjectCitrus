@@ -475,6 +475,23 @@ const pt = {
     errorCourseNotCreated: "Curso não foi criado (título ou link duplicado)",
     confirmInactivate: "Tem certeza que deseja inativar este curso?",
     confirmActivate: "Tem certeza que deseja ativar este curso?",
+    clearFilters: "Limpar filtros",
+    totalHours: "Horas totais",
+    allYears: "Todos os anos",
+    // Adições para AddCompletedCourseOffcanvas e CourseSearchBar
+    addCompletedCourse: "Adicionar cursos",
+    addCompletedCourseTitle: "Registar novos cursos a {userName} {userSurname}",
+    selectCourse: "Selecionar curso",
+    adding: "Adicionando...",
+    completedCourseAdded: "Curso(s) concluído(s) adicionado(s) com sucesso!",
+    errorCompletedCourseNotAdded: "Não foi possível adicionar o curso concluído.",
+    errorAlreadyCompleted: "Este curso já está marcado como concluído.",
+    errorUserOrCourseNotFound: "Usuário ou curso não encontrado.",
+    clear: "Limpar",
+    searching: "Pesquisando...",
+    noAvailable: "Nenhum curso disponível.",
+    cancel: "Cancelar",
+    remove: "Remover",
   },
 
   common: {
@@ -492,6 +509,8 @@ const pt = {
     avatarError: "Login efetuado, mas falha ao carregar o avatar.",
     failed: "Falha no login. Verifique as credenciais e tente novamente.",
   },
+
+  
 };
 
 export default pt;

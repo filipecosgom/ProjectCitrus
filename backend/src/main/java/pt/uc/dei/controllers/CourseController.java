@@ -29,7 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.Request;
@@ -65,7 +67,6 @@ public class CourseController {
      * @param offset   Starting position for pagination
      * @return Response with list of filtered course DTOs
      */
-    @AdminOnly
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -78,6 +79,8 @@ public class CourseController {
             @QueryParam("language") String languageStr,
             @QueryParam("adminName") String adminName,
             @QueryParam("courseIsActive") Boolean courseIsActive,
+            @QueryParam("excludeCompletedByUserId") Long excludeCompletedByUserId,
+            @QueryParam("excludeCourseIds") String excludeCourseIdsStr,
             @QueryParam("parameter") @DefaultValue("title") String parameterStr,
             @QueryParam("order") @DefaultValue("ASCENDING") String orderStr,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
@@ -88,9 +91,18 @@ public class CourseController {
         OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));
         try {
             LOGGER.debug("Retrieving courses with filters");
+            // Parse excludeCourseIdsStr (comma-separated) to List<Long>
+            List<Long> excludeCourseIds = new ArrayList<>();
+            if (excludeCourseIdsStr != null && !excludeCourseIdsStr.trim().isEmpty()) {
+                for (String s : excludeCourseIdsStr.split(",")) {
+                    try {
+                        excludeCourseIds.add(Long.parseLong(s.trim()));
+                    } catch (NumberFormatException ignored) {}
+                }
+            }
             Map<String, Object> courseData = courseService.getCoursesWithFilters(
                     id, title, duration, description, area, language, adminName, courseIsActive,
-                    parameter, orderBy, offset, limit);
+                    parameter, orderBy, offset, limit, excludeCompletedByUserId, excludeCourseIds);
             return Response.ok(new ApiResponse(true, "Courses retrieved successfully", "success", courseData))
                     .build();
         } catch (Exception e) {
@@ -312,14 +324,30 @@ public class CourseController {
                         .build();
             }
             dto.setId(id); // Ensure path id is used
-            boolean updated = courseService.updateCourse(dto);
-            if (updated) {
-                LOGGER.info("Course updated successfully for id {}", id);
-                return Response.ok(new ApiResponse(true, "Course updated successfully", "successCourseUpdated", null)).build();
-            } else {
-                LOGGER.warn("Failed to update course with id {}", id);
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ApiResponse(false, "Course not found", "courseNotFound", null))
+            try {
+                boolean updated = courseService.updateCourse(dto);
+                if (updated) {
+                    LOGGER.info("Course updated successfully for id {}", id);
+                    return Response.ok(new ApiResponse(true, "Course updated successfully", "successCourseUpdated", null)).build();
+                } else {
+                    LOGGER.warn("Failed to update course with id {}", id);
+                    return Response.status(Response.Status.NOT_FOUND)
+                            .entity(new ApiResponse(false, "Course not found", "courseNotFound", null))
+                            .build();
+                }
+            } catch (IllegalArgumentException ex) {
+                String errorCode = ex.getMessage();
+                String errorMsg;
+                if ("duplicateTitle".equals(errorCode)) {
+                    errorMsg = "Course with this title already exists";
+                } else if ("duplicateLink".equals(errorCode)) {
+                    errorMsg = "Course with this link already exists";
+                } else {
+                    errorMsg = "Course not created (duplicate title or link)";
+                }
+                LOGGER.warn("Failed to create course: {}", errorMsg);
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ApiResponse(false, errorMsg, errorCode, null))
                         .build();
             }
         } catch (Exception e) {

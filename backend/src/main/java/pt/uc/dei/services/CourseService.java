@@ -65,14 +65,15 @@ public class CourseService implements Serializable {
     public Map<String, Object> getCoursesWithFilters(
             Long id, String title, Integer duration, String description,
             CourseArea area, Language language, String adminName, Boolean courseIsActive,
-            CourseParameter parameter, OrderBy orderBy, Integer offset, Integer limit) {
+            CourseParameter parameter, OrderBy orderBy, Integer offset, Integer limit, Long excludeCompletedByUserId,
+            List<Long> excludeCourseIds) {
         LOGGER.debug("Retrieving courses with filters");
 
         List<CourseEntity> courses = courseRepository.findCoursesWithFilters(
                 id, title, duration, description, area, language, adminName, courseIsActive,
-                parameter, orderBy, offset, limit);
+                parameter, orderBy, offset, limit, excludeCompletedByUserId, excludeCourseIds);
         long totalCourses = courseRepository.countCoursesWithFilters(
-                id, title, duration, description, area, language, adminName, courseIsActive);
+                id, title, duration, description, area, language, adminName, courseIsActive, excludeCompletedByUserId, excludeCourseIds);
 
         List<CourseDTO> courseDTOs = courses.stream()
                 .map(courseMapper::toDto)
@@ -134,6 +135,14 @@ public class CourseService implements Serializable {
         if (entity == null) {
             LOGGER.warn("Course with id {} not found", dto.getId());
             return false;
+        }
+        if (courseRepository.existsByTitle(dto.getTitle())) {
+            LOGGER.info("Course with title '{}' already exists", dto.getTitle());
+            throw new IllegalArgumentException("duplicateTitle");
+        }
+        if (courseRepository.existsByLink(dto.getLink())) {
+            LOGGER.info("Course with link '{}' already exists", dto.getLink());
+            throw new IllegalArgumentException("duplicateLink");
         }
         // Use MapStruct mapper for partial update
         courseMapper.updateEntityFromUpdateDto(dto, entity);

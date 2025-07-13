@@ -1,0 +1,141 @@
+/* ================================
+   COURSE ROW COMPONENT
+   ================================ */
+
+.course-search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  min-height: 60px;
+}
+
+.course-search-row:hover {
+  background-color: #f8f9fa;
+}
+
+.course-search-row.inactive {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.course-search-image {
+  width: 50px;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-search-image img {
+  height: 100%;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.course-search-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+.course-search-title {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-weight: var(--font-weight-bold, 700);
+  font-size: 0.95rem;
+  color: var(--blue);
+}
+
+.course-search-area {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 0.8rem;
+  color: var(--secondary, #88909f);
+}
+
+.course-search-duration {
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-size: 0.8rem;
+  color: var(--secondary, #88909f);
+}
+
+.course-search-language {
+  width: 40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-left: 8px;
+  margin-bottom: 8px;
+}
+.course-search-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.course-search-flag {
+  width: 24px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+
+.course-search-add {
+  background: var(--blue, #007bff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 18px;
+  font-size: 0.9rem;
+  font-family: var(--font-family-secondary, "Catamaran", sans-serif);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-left: 12px;
+}
+
+.course-search-add:disabled {
+  background: #bfc9d1;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .course-search-row {
+    padding: 8px;
+    gap: 8px;
+  }
+  .course-search-image {
+    width: 36px;
+    height: 36px;
+  }
+  .course-search-image img {
+    width: 34px;
+    height: 34px;
+  }
+  .course-search-title {
+    font-size: 0.9rem;
+  }
+  .course-search-area, .course-search-duration {
+    font-size: 0.75rem;
+  }
+  .course-search-flag {
+    width: 18px;
+    height: 12px;
+  }
+  .course-search-add {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+}

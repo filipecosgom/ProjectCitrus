@@ -112,75 +112,91 @@ export default function Users() {
 
   // ✅ MODIFICAR: useEffect de inicialização
   useEffect(() => {
-    if (offices.length > 0 && !initialLoadComplete) {
-      const currentParams = new URLSearchParams(urlSearchParams);
-      // Se não há parâmetros na URL, adicionar padrões
-      if (!urlSearchParams.toString()) {
-        currentParams.set("sortBy", "name");
-        currentParams.set("sortOrder", "ASCENDING");
-        currentParams.set("offset", "0");
-        currentParams.set("limit", "10");
-        setUrlSearchParams(currentParams);
-        setInitialLoadComplete(true);
-        return;
-      }
-      // Se há parâmetros, garantir que os essenciais existem
-      if (!currentParams.has("sortBy")) {
-        currentParams.set("sortBy", "name");
-      }
-      if (!currentParams.has("sortOrder")) {
-        currentParams.set("sortOrder", "ASCENDING");
-      }
-      if (!currentParams.has("offset")) {
-        currentParams.set("offset", "0");
-      }
-      if (!currentParams.has("limit")) {
-        currentParams.set("limit", "10");
-      }
-      // Processar parâmetros da URL
-      const query = urlSearchParams.get("query") || "";
-      const searchType = urlSearchParams.get("searchType") || "email";
-      const limit = parseInt(urlSearchParams.get("limit")) || 10;
-      const offset = parseInt(urlSearchParams.get("offset")) || 0;
-      const accountState = urlSearchParams.get("accountState") || "";
-      const office = urlSearchParams.get("office") || "";
-      const isManager = urlSearchParams.get("isManager");
-      const isAdmin = urlSearchParams.get("isAdmin");
-      const isManaged = urlSearchParams.get("isManaged");
-      const sortBy = urlSearchParams.get("sortBy") || "name";
-      const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
-      const filters = {
-        accountState,
-        office,
-        isManager:
-          isManager === "true" ? true : isManager === "false" ? false : null,
-        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
-        isManaged:
-          isManaged === "true" ? true : isManaged === "false" ? false : null,
-      };
-      // ✅ ADICIONAR: Atualizar defaultValues com dados da URL
-      const urlDefaults = {
-        query,
-        searchType,
-        accountState,
-        office,
-        limit,
-        isManager:
-          isManager === "true" ? true : isManager === "false" ? false : null,
-        isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
-        isManaged:
-          isManaged === "true" ? true : isManaged === "false" ? false : null,
-      };
-      setDefaultValues(urlDefaults);
-      // ✅ DESABILITAR sincronização URL temporariamente
-      setUrlSyncEnabled(false);
-      // ✅ Atualizar sort se necessário
-      setSort({ sortBy, sortOrder });
-      setPagination((prev) => ({ ...prev, offset, limit }));
+    if (offices.length === 0) return;
+    const currentParams = new URLSearchParams(urlSearchParams);
+    // Only set defaults if there are no params in the URL (first load)
+    if (!urlSearchParams.toString()) {
+      currentParams.set("sortBy", "name");
+      currentParams.set("sortOrder", "ASCENDING");
+      currentParams.set("offset", "0");
+      currentParams.set("limit", "10");
+      setUrlSearchParams(currentParams);
       setInitialLoadComplete(true);
-      setTimeout(() => setUrlSyncEnabled(true), 100);
+      return;
     }
-  }, [offices, urlSearchParams, initialLoadComplete, setUrlSearchParams]);
+    // For subsequent loads, only add missing essentials, but do NOT overwrite limit if present
+    if (!currentParams.has("sortBy")) {
+      currentParams.set("sortBy", "name");
+    }
+    if (!currentParams.has("sortOrder")) {
+      currentParams.set("sortOrder", "ASCENDING");
+    }
+    if (!currentParams.has("offset")) {
+      currentParams.set("offset", "0");
+    }
+    if (!currentParams.has("limit")) {
+      currentParams.set("limit", "10");
+    }
+    // Processar parâmetros da URL
+    const query = urlSearchParams.get("query") || "";
+    const searchType = urlSearchParams.get("searchType") || "email";
+    const limit = urlSearchParams.has("limit") ? parseInt(urlSearchParams.get("limit")) : 10;
+    const offset = parseInt(urlSearchParams.get("offset")) || 0;
+    const accountState = urlSearchParams.get("accountState") || "";
+    const office = urlSearchParams.get("office") || "";
+    const isManager = urlSearchParams.get("isManager");
+    const isAdmin = urlSearchParams.get("isAdmin");
+    const isManaged = urlSearchParams.get("isManaged");
+    const sortBy = urlSearchParams.get("sortBy") || "name";
+    const sortOrder = urlSearchParams.get("sortOrder") || "ASCENDING";
+    const filters = {
+      accountState,
+      office,
+      isManager:
+        isManager === "true" ? true : isManager === "false" ? false : null,
+      isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
+      isManaged:
+        isManaged === "true" ? true : isManaged === "false" ? false : null,
+    };
+    // ✅ ADICIONAR: Atualizar defaultValues com dados da URL
+    const urlDefaults = {
+      query,
+      searchType,
+      accountState,
+      office,
+      // Always use the latest limit from URL or state, as a number
+      limit: limit,
+      isManager:
+        isManager === "true" ? true : isManager === "false" ? false : null,
+      isAdmin: isAdmin === "true" ? true : isAdmin === "false" ? false : null,
+      isManaged:
+        isManaged === "true" ? true : isManaged === "false" ? false : null,
+    };
+    // Force update if limit in URL/state changes
+    setDefaultValues((prev) => {
+      // Only update if something actually changed (especially limit)
+      if (
+        prev.query !== urlDefaults.query ||
+        prev.searchType !== urlDefaults.searchType ||
+        prev.accountState !== urlDefaults.accountState ||
+        prev.office !== urlDefaults.office ||
+        prev.limit !== urlDefaults.limit ||
+        prev.isManager !== urlDefaults.isManager ||
+        prev.isAdmin !== urlDefaults.isAdmin ||
+        prev.isManaged !== urlDefaults.isManaged
+      ) {
+        return urlDefaults;
+      }
+      return prev;
+    });
+    // ✅ DESABILITAR sincronização URL temporariamente
+    setUrlSyncEnabled(false);
+    // ✅ Atualizar sort se necessário
+    setSort({ sortBy, sortOrder });
+    setPagination((prev) => ({ ...prev, offset, limit }));
+    setInitialLoadComplete(true);
+    setTimeout(() => setUrlSyncEnabled(true), 100);
+  }, [offices, urlSearchParams, setUrlSearchParams, pagination.limit]);
 
   // Handlers para Assign Manager
   const handleOpenAssignManager = () => {
@@ -248,11 +264,14 @@ export default function Users() {
   // Externalized: handle page change
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
-    // Sync offset to URL
+    // Sync offset and limit to URL
     if (urlSyncEnabled) {
       const currentParams = new URLSearchParams(urlSearchParams);
       currentParams.set("offset", newOffset);
-      currentParams.set("limit", pagination.limit);
+      // Always set the latest limit from URL or state
+      const urlLimit = urlSearchParams.get("limit");
+      const limitToSet = urlLimit ? urlLimit : pagination.limit;
+      currentParams.set("limit", limitToSet);
       setUrlSearchParams(currentParams);
     }
   };

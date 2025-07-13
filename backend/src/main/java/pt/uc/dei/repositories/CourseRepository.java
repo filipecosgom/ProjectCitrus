@@ -85,7 +85,9 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             Long id, String title, Integer duration, String description,
             CourseArea area, Language language, String adminName, Boolean courseIsActive,
             CourseParameter parameter, OrderBy orderBy,
-            Integer offset, Integer limit) {
+            Integer offset, Integer limit, Long excludeCompletedByUserId, List<Long> excludeCourseIds) {
+            // Exclude specific course IDs
+            
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<CourseEntity> cq = cb.createQuery(CourseEntity.class);
@@ -95,6 +97,10 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
 
             if (id != null) {
                 predicates.add(cb.equal(course.get("id"), id));
+            }
+            // Exclude specific course IDs
+            if (excludeCourseIds != null && !excludeCourseIds.isEmpty()) {
+                predicates.add(cb.not(course.get("id").in(excludeCourseIds)));
             }
             if (SearchUtils.isNotBlank(title)) {
                 if (SearchUtils.isQuoted(title)) {
@@ -131,6 +137,21 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             if (courseIsActive != null) {
                 predicates.add(cb.equal(course.get("courseIsActive"), courseIsActive));
             }
+
+            // Exclude completed courses for excludeCompletedByUserId
+            if (excludeCompletedByUserId != null) {
+                Subquery<Long> subquery = cq.subquery(Long.class);
+                Root<pt.uc.dei.entities.FinishedCourseEntity> finished = subquery.from(pt.uc.dei.entities.FinishedCourseEntity.class);
+                subquery.select(finished.get("course").get("id"))
+                        .where(
+                                cb.equal(finished.get("user").get("id"), excludeCompletedByUserId),
+                                cb.equal(finished.get("course").get("id"), course.get("id"))
+                        );
+                predicates.add(cb.not(cb.exists(subquery)));
+            }
+            if (excludeCourseIds != null && !excludeCourseIds.isEmpty()) {
+                predicates.add(cb.not(course.get("id").in(excludeCourseIds)));
+            }
             cq.where(predicates.toArray(new Predicate[0]));
 
             // Sorting
@@ -160,7 +181,8 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
     }
 
     public long countCoursesWithFilters(Long id, String title, Integer duration, String description,
-                                        CourseArea area, Language language, String adminName, Boolean courseIsActive) {
+                                        CourseArea area, Language language, String adminName, Boolean courseIsActive, Long excludeCompletedByUserId, List<Long> excludeCourseIds) {
+            // Exclude specific course IDs
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -170,6 +192,10 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
 
             if (id != null) {
                 predicates.add(cb.equal(course.get("id"), id));
+            }
+            // Exclude specific course IDs
+            if (excludeCourseIds != null && !excludeCourseIds.isEmpty()) {
+                predicates.add(cb.not(course.get("id").in(excludeCourseIds)));
             }
             if (SearchUtils.isNotBlank(title)) {
                 if (SearchUtils.isQuoted(title)) {
@@ -205,6 +231,20 @@ public class CourseRepository extends AbstractRepository<CourseEntity> {
             }
             if (Boolean.TRUE.equals(courseIsActive)) {
                 predicates.add(cb.isTrue(course.get("courseIsActive")));
+            }
+            // Exclude completed courses for excludeCompletedByUserId
+            if (excludeCompletedByUserId != null) {
+                Subquery<Long> subquery = cq.subquery(Long.class);
+                Root<pt.uc.dei.entities.FinishedCourseEntity> finished = subquery.from(pt.uc.dei.entities.FinishedCourseEntity.class);
+                subquery.select(finished.get("course").get("id"))
+                        .where(
+                                cb.equal(finished.get("user").get("id"), excludeCompletedByUserId),
+                                cb.equal(finished.get("course").get("id"), course.get("id"))
+                        );
+                predicates.add(cb.not(cb.exists(subquery)));
+            }
+            if (excludeCourseIds != null && !excludeCourseIds.isEmpty()) {
+                predicates.add(cb.not(course.get("id").in(excludeCourseIds)));
             }
             cq.where(predicates.toArray(new Predicate[0]));
             cq.select(cb.count(course));

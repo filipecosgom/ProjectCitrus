@@ -1,7 +1,6 @@
 package pt.uc.dei.repositories;
 
 import jakarta.ejb.Stateless;
-import jakarta.persistence.NoResultException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.entities.NotificationEntity;
