@@ -125,8 +125,8 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
               compact={true}
               className="admin-permissions-search"
               onSearch={handleSearchChange} // filtra os cards
-              onUserSelect={() => {}} // função vazia, não seleciona user
-              disableDropdown={true} // não mostra dropdown
+              onUserSelect={() => {}} // função vazia
+              disableDropdown={true} // oculta dropdown!
             />
           </div>
 
