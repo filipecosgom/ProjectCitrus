@@ -49,53 +49,47 @@
   font-size: 1.2rem;
   align-content: center;
 } 
-/*----------------------------------------*/
-/*----------------MOBILE------------------*/
-/*----------------------------------------*/
 
+.notifications-sort-controls {
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+@media (min-width: 480px) {
+  .notifications-sort-controls {
+    width: 600px;
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .notifications-sort-controls {
+    width: 600px;
+    max-width: 600px;
+  }
+}
+
+@media screen {
+  
+}
 /*----------------------------------------*/
 /*----------------MOBILE------------------*/
 /*----------------------------------------*/
 .notifications-container {
   display: flex;
   flex-direction: column;
-  padding: var(--padding-sm);
-  gap: var(--gap-vertical-mobile);
+  padding: var(--padding-lg);
   align-items: center;
 }
 
 .notifications-list {
-  width: 100%;
-  max-width: 100%;
+  max-width: 600px;
+  width: 600px;
   flex-direction: column;
-}
-
-/*----------------------------------------*/
-/*----------------TABLET------------------*/
-/*----------------------------------------*/
-@media (min-width: 480px) {
-  .notifications-container {
-    padding: var(--padding-sm);
-    gap: var(--gap-vertical-tablet);
-  }
-  .notifications-list {
-    max-width: 600px;
-    width: 600px;
-  }
-}
-
-/*----------------------------------------*/
-/*----------------DESKTOP-----------------*/
-/*----------------------------------------*/
-@media (min-width: 1024px) {
-  .notifications-container {
-    padding: var(--padding-lg);
-    gap: var(--gap-vertical-desktop);
-  }
-  .notifications-list {
-    max-width: 600px;
-    width: 600px;
-  }
 }
 
 .notification-message.unread {
