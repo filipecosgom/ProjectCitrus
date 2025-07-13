@@ -628,4 +628,12 @@ public class CycleService implements Serializable {
             LOGGER.warn("No appraisals were created for cycle ID: {}", cycle.getId());
         }
     }
+
+    public long countAllCycles() {
+        return cycleRepository.getTotalCycles();
+    }
+
+    public long countCyclesByState(CycleState state) {
+        return cycleRepository.countCyclesWithFilters(state, null, null, null);
+    }
 }

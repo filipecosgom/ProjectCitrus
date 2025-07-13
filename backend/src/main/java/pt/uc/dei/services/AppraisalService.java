@@ -570,4 +570,12 @@ public class AppraisalService implements Serializable {
             return false;
         }
     }
+
+    public long countAllAppraisals() {
+        return appraisalRepository.getTotalAppraisalsWithFilters(null, null, null, null, null, null, null, null);
+    }
+
+    public long countAppraisalsByState(AppraisalState state) {
+        return appraisalRepository.getTotalAppraisalsWithFilters(null, null, null, null, null, null, null, state);
+    }
 }
