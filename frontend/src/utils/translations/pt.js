@@ -484,7 +484,8 @@ const pt = {
     selectCourse: "Selecionar curso",
     adding: "Adicionando...",
     completedCourseAdded: "Curso(s) concluído(s) adicionado(s) com sucesso!",
-    errorCompletedCourseNotAdded: "Não foi possível adicionar o curso concluído.",
+    errorCompletedCourseNotAdded:
+      "Não foi possível adicionar o curso concluído.",
     errorAlreadyCompleted: "Este curso já está marcado como concluído.",
     errorUserOrCourseNotFound: "Usuário ou curso não encontrado.",
     clear: "Limpar",
@@ -510,7 +511,26 @@ const pt = {
     failed: "Falha no login. Verifique as credenciais e tente novamente.",
   },
 
-  
+  systemSettings: "Definições do Sistema",
+  saveChanges: "Guardar Alterações",
+  generalSettings: "Definições Gerais",
+  manageAdminPermissions: "Gerir Permissões de Administrador",
+  manageAdminPermissionsDesc:
+    "Atribua ou remova permissões de administrador aos utilizadores.",
+  admin: "Administrador",
+  user: "Utilizador",
+  activeAdmins: "Administradores ativos",
+  confirmAction: "Confirmar ação",
+  confirmGrantAdmin: "Atribuir permissões de administrador a {name}?",
+  confirmRevokeAdmin: "Remover permissões de administrador de {name}?",
+  adminGrantedSuccess: "Permissões de administrador atribuídas a {name}.",
+  adminRevokedSuccess: "Permissões de administrador removidas de {name}.",
+  errorUpdatingAdmin: "Falha ao atualizar permissões de administrador.",
+  errorLoadingUsers: "Falha ao carregar utilizadores.",
+  cannotRemoveOwnAdmin:
+    "Não pode remover a sua própria permissão de administrador.",
+  close: "Fechar",
+  loading: "A carregar...",
 };
 
 export default pt;

@@ -473,14 +473,15 @@ const en = {
     errorLinkRequired: "Link is required",
     errorLinkInvalid: "Invalid URL",
     errorCourseNotCreated: "Course not created (duplicate title or link)",
-    confirmInactivate:" Are you sure you want to inactivate this course?",
+    confirmInactivate: " Are you sure you want to inactivate this course?",
     confirmActivate: "Are you sure you want to activate this course?",
     clearFilters: "Clear filters",
     totalHours: "Total hours",
     allYears: "All years",
     // AddCompletedCourseOffcanvas & CourseSearchBar additions
     addCompletedCourse: "Add courses",
-    addCompletedCourseTitle: "Register new courses for {userName} {userSurname}",
+    addCompletedCourseTitle:
+      "Register new courses for {userName} {userSurname}",
     selectCourse: "Select course",
     adding: "Adding...",
     completedCourseAdded: "Completed course(s) added successfully!",
@@ -499,6 +500,27 @@ const en = {
     cancel: "Cancel",
     confirmMessage: "Are you sure you want to proceed?",
   },
+
+  // New translations for System Settings
+  systemSettings: "System Settings",
+  saveChanges: "Save Changes",
+  generalSettings: "General Settings",
+  manageAdminPermissions: "Manage Admin Permissions",
+  manageAdminPermissionsDesc:
+    "Grant or revoke administrator permissions for users.",
+  admin: "Admin",
+  user: "User",
+  activeAdmins: "Active Admins",
+  confirmAction: "Confirm Action",
+  confirmGrantAdmin: "Grant admin permissions to {name}?",
+  confirmRevokeAdmin: "Revoke admin permissions from {name}?",
+  adminGrantedSuccess: "Admin permissions granted to {name}.",
+  adminRevokedSuccess: "Admin permissions revoked from {name}.",
+  errorUpdatingAdmin: "Failed to update admin permissions.",
+  errorLoadingUsers: "Failed to load users.",
+  cannotRemoveOwnAdmin: "You cannot remove your own admin permissions.",
+  close: "Close",
+  loading: "Loading...",
 };
 
 export default en;

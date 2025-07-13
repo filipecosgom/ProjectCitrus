@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { IoSettings, IoSave, IoRefresh } from "react-icons/io5";
+import {
+  IoSettings,
+  IoSave,
+  IoRefresh,
+  IoShieldCheckmark,
+} from "react-icons/io5";
 import "./Settings.css";
+import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
+import { useTranslation } from "react-i18next";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState({
     emailNotifications: true,
     autoCloseExpiredCycles: false,
@@ -10,10 +18,12 @@ const Settings = () => {
     systemMaintenance: false,
   });
 
+  const [showAdminOffcanvas, setShowAdminOffcanvas] = useState(false);
+
   const handleSettingChange = (key, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -26,17 +36,17 @@ const Settings = () => {
       <div className="settings-header">
         <div className="settings-title">
           <IoSettings className="settings-icon" />
-          <h1>System Settings</h1>
+          <h1>{t("systemSettings")}</h1>
         </div>
         <button className="btn-save-settings" onClick={handleSave}>
-          <IoSave /> Save Changes
+          <IoSave /> {t("saveChanges")}
         </button>
       </div>
 
       <div className="settings-content">
         <div className="settings-section">
-          <h2>General Settings</h2>
-          
+          <h2>{t("generalSettings")}</h2>
+
           <div className="setting-item">
             <div className="setting-label">
               <h3>Email Notifications</h3>
@@ -46,7 +56,9 @@ const Settings = () => {
               <input
                 type="checkbox"
                 checked={settings.emailNotifications}
-                onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
+                onChange={(e) =>
+                  handleSettingChange("emailNotifications", e.target.checked)
+                }
               />
               <span className="toggle-slider"></span>
             </label>
@@ -61,7 +73,12 @@ const Settings = () => {
               <input
                 type="checkbox"
                 checked={settings.autoCloseExpiredCycles}
-                onChange={(e) => handleSettingChange('autoCloseExpiredCycles', e.target.checked)}
+                onChange={(e) =>
+                  handleSettingChange(
+                    "autoCloseExpiredCycles",
+                    e.target.checked
+                  )
+                }
               />
               <span className="toggle-slider"></span>
             </label>
@@ -76,7 +93,12 @@ const Settings = () => {
               <input
                 type="number"
                 value={settings.defaultCycleDuration}
-                onChange={(e) => handleSettingChange('defaultCycleDuration', parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleSettingChange(
+                    "defaultCycleDuration",
+                    parseInt(e.target.value)
+                  )
+                }
                 min="30"
                 max="365"
               />
@@ -87,7 +109,7 @@ const Settings = () => {
 
         <div className="settings-section">
           <h2>System Maintenance</h2>
-          
+
           <div className="setting-item">
             <div className="setting-label">
               <h3>Maintenance Mode</h3>
@@ -97,7 +119,9 @@ const Settings = () => {
               <input
                 type="checkbox"
                 checked={settings.systemMaintenance}
-                onChange={(e) => handleSettingChange('systemMaintenance', e.target.checked)}
+                onChange={(e) =>
+                  handleSettingChange("systemMaintenance", e.target.checked)
+                }
               />
               <span className="toggle-slider"></span>
             </label>
@@ -109,6 +133,34 @@ const Settings = () => {
             </button>
           </div>
         </div>
+
+        <div className="settings-section">
+          <h2>{t("adminPermissions")}</h2>
+
+          <div className="setting-item">
+            <div className="setting-label">
+              <h3>
+                <IoShieldCheckmark
+                  style={{ marginRight: 8, color: "#2e7d2e" }}
+                />
+                {t("manageAdminPermissions")}
+              </h3>
+              <p>{t("manageAdminPermissionsDesc")}</p>
+            </div>
+            <button
+              className="btn-save-settings"
+              style={{ background: "#2e7d2e" }}
+              onClick={() => setShowAdminOffcanvas(true)}
+            >
+              {t("manageAdminPermissions")}
+            </button>
+          </div>
+        </div>
+
+        <AdminPermissionsOffcanvas
+          show={showAdminOffcanvas}
+          onClose={() => setShowAdminOffcanvas(false)}
+        />
       </div>
     </div>
   );
