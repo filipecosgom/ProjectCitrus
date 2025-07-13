@@ -3,7 +3,7 @@ import SearchBar from "../../components/searchbar/Searchbar";
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../../components/pagination/Pagination";
-import Spinner from "../../components/spinner/Spinner";
+import Spinner from "../../components/spinner/spinner";
 import AppraisalCard from "../../components/appraisalCard/AppraisalCard";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";
@@ -212,7 +212,6 @@ export default function Appraisals() {
 
   // ✅ MODIFICAR: Handlers para atualizar tanto estado quanto URL
   const handleSearch = (query, searchType, limit, filters = {}) => {
-
     const newSearchParams = {
       query,
       searchType,
@@ -220,12 +219,10 @@ export default function Appraisals() {
       ...filters,
     };
 
-
     // Always ensure appraisingUserId is present for non-admins
     const finalParams = isAdmin
       ? newSearchParams
       : { ...newSearchParams, appraisingUserId: user?.id };
-
 
     setSearchParams(finalParams);
     setPagination((prev) => ({ ...prev, offset: 0 }));

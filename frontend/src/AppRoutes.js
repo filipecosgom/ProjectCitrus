@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
 import useAuthStore from "./stores/useAuthStore";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
-import Spinner from "./components/spinner/Spinner";
+import Spinner from "./components/spinner/spinner";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from "./pages/profile/Profile";
@@ -57,7 +57,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/messages",
     "/courses",
     "/notifications",
-    "/dashboard"
+    "/dashboard",
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);

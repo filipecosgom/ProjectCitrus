@@ -13,7 +13,7 @@ import {
 } from "../../utils/coursesSearchUtils";
 import "./Courses.css";
 import { handleGetCourses } from "../../handles/handleGetCourses";
-import Spinner from "../../components/spinner/Spinner";
+import Spinner from "../../components/spinner/spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import useAuthStore from "../../stores/useAuthStore";
@@ -64,8 +64,10 @@ const Courses = () => {
     const paramsObj = Object.fromEntries([...searchParams.entries()]);
     // Tristate logic for courseIsActive
     if (paramsObj.courseIsActive === undefined) paramsObj.courseIsActive = null;
-    else if (paramsObj.courseIsActive === "true") paramsObj.courseIsActive = true;
-    else if (paramsObj.courseIsActive === "false") paramsObj.courseIsActive = false;
+    else if (paramsObj.courseIsActive === "true")
+      paramsObj.courseIsActive = true;
+    else if (paramsObj.courseIsActive === "false")
+      paramsObj.courseIsActive = false;
     if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
     if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
     // Default searchType to 'title' if not present
@@ -131,7 +133,8 @@ const Courses = () => {
     // Parse params from URL and ensure correct types
     const paramsObj = Object.fromEntries([...searchParams.entries()]);
     if (paramsObj.courseIsActive === "true") paramsObj.courseIsActive = true;
-    else if (paramsObj.courseIsActive === "false") paramsObj.courseIsActive = false;
+    else if (paramsObj.courseIsActive === "false")
+      paramsObj.courseIsActive = false;
     if (paramsObj.limit) paramsObj.limit = Number(paramsObj.limit);
     if (paramsObj.offset) paramsObj.offset = Number(paramsObj.offset);
     // Remove any 'filters' key if present (defensive)
@@ -186,7 +189,9 @@ const Courses = () => {
   // NOVO: Função para atualizar curso na lista após status mudar
   const handleCourseStatusChange = (updatedCourse) => {
     setCourses((prevCourses) =>
-      prevCourses.map((c) => (c.id === updatedCourse.id ? { ...c, ...updatedCourse } : c))
+      prevCourses.map((c) =>
+        c.id === updatedCourse.id ? { ...c, ...updatedCourse } : c
+      )
     );
   };
 

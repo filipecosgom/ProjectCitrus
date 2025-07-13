@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styles from "./UserCard.css";
 import UserIcon from "../userIcon/UserIcon";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../spinner/spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 
@@ -48,8 +48,10 @@ const UserCard = ({
   };
 
   return (
-    <div className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}
-      ${showCheckbox && isSelected ? " selected" : ""}`}>
+    <div
+      className={`userCard-wrapper${showCheckbox ? " with-checkbox" : ""}
+      ${showCheckbox && isSelected ? " selected" : ""}`}
+    >
       {/* ✅ CHECKBOX - sempre visível para admins */}
       <div className="userCard-checkbox">
         {showCheckbox && (

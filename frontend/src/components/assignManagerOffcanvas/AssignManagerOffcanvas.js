@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import UserSearchBar from "../userSearchBar/UserSearchBar";
-import Spinner from "../spinner/Spinner"; // ✅ ADICIONAR IMPORT
+import Spinner from "../spinner/spinner"; // ✅ ADICIONAR IMPORT
 import UserIcon from "../userIcon/UserIcon";
 import "./AssignManagerOffcanvas.css";
 import handleNotification from "../../handles/handleNotification";

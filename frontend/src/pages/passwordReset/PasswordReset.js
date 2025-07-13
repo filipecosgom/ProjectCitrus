@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import handleCheckPasswordResetToken from "../../handles/handleCheckPasswordResetToken";
 import handleChangePassword from "../../handles/handleChangePassword";
-import Spinner from "../../components/spinner/Spinner";
+import Spinner from "../../components/spinner/spinner";
 import useLocaleStore from "../../stores/useLocaleStore";
 import handleNotification from "../../handles/handleNotification";
 

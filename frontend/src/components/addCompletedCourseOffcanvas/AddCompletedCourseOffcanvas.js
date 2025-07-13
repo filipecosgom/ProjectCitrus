@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../spinner/spinner";
 import CourseSearchBar from "../courseSearchBar/CourseSearchBar";
 import CourseRow from "../courseRow/CourseRow";
 import "./AddCompletedCourseOffcanvas.css";
@@ -15,7 +15,7 @@ const AddCompletedCourseOffcanvas = ({
   availableCourses = [],
   userId,
   userName,
-  userSurname
+  userSurname,
 }) => {
   const { t } = useTranslation();
   const [shouldRender, setShouldRender] = useState(false);
@@ -61,7 +61,7 @@ const AddCompletedCourseOffcanvas = ({
 
   // Reset state when closing
   useEffect(() => {
-    console.log(userId)
+    console.log(userId);
     console.log("Offcanvas open state changed:", isOpen);
     if (!isOpen) {
       setSelectedCourses([]);
@@ -190,7 +190,7 @@ const AddCompletedCourseOffcanvas = ({
               </>
             ) : (
               t("courses.addCompletedCourse")
-                   )}
+            )}
           </button>
           <button
             className="add-completed-course-btn add-completed-course-btn-cancel"

@@ -9,7 +9,7 @@ import flagIt from "../../assets/flags/flag-it.png";
 import "./CourseCard.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../spinner/spinner";
 
 const CourseCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();
@@ -71,14 +71,17 @@ const CourseCard = ({ course, onViewDetails }) => {
   };
 
   const toTitleCase = (str) =>
-    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+    str.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    );
 
   if (loading) return <Spinner />;
 
   const isInactive = course?.courseIsActive === false;
 
   return (
-    <div className={`course-card${isInactive ? " course-card-inactive" : ""}`}> 
+    <div className={`course-card${isInactive ? " course-card-inactive" : ""}`}>
       <div className="course-card-image">
         <img
           src={
@@ -96,11 +99,18 @@ const CourseCard = ({ course, onViewDetails }) => {
 
       <div className="course-card-content">
         <h3 className="course-card-title">
-          {course.title} {isInactive && <span className="course-card-inactive-label">({t("courses.inactive")})</span>}
+          {course.title}{" "}
+          {isInactive && (
+            <span className="course-card-inactive-label">
+              ({t("courses.inactive")})
+            </span>
+          )}
         </h3>
 
         <div className="course-card-info">
-          <span className="course-card-category">{toTitleCase(course.area)}</span>
+          <span className="course-card-category">
+            {toTitleCase(course.area)}
+          </span>
 
           <div className="course-card-language">
             <img

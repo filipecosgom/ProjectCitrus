@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import SearchBar from "../../components/searchbar/Searchbar";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
-import Spinner from "../../components/spinner/Spinner";
+import Spinner from "../../components/spinner/spinner";
 import {
   FaBell,
   FaEnvelope,
@@ -111,7 +111,6 @@ export default function Notifications() {
     }));
   }, [notifications, searchParams, sort, pagination.offset, pagination.limit]);
 
-
   const handleSortChange = (newSort) => {
     setSort(newSort);
   };
@@ -119,8 +118,6 @@ export default function Notifications() {
   const handlePageChange = (newOffset) => {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
-
-  
 
   // Get notification icon
   const getNotificationIcon = (type) => {
@@ -202,8 +199,7 @@ export default function Notifications() {
   return (
     <div className="notifications-container" ref={containerRef}>
       <div className="notifications-header">
-        <div className="notifications-searchBarAndButton">
-        </div>
+        <div className="notifications-searchBarAndButton"></div>
       </div>
 
       <SortControls
@@ -213,8 +209,6 @@ export default function Notifications() {
         onSortChange={handleSortChange}
         isCardMode={true}
       />
-
-    
 
       <Pagination
         offset={pagination.offset}

@@ -3,7 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import { handleGetUsers } from "../../handles/handleGetUsers";
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import UserIcon from "../userIcon/UserIcon";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../spinner/spinner";
 import "./UserSearchBar.css";
 
 const UserSearchBar = ({

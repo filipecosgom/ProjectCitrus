@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { handleGetCourses } from "../../handles/handleGetCourses";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../spinner/spinner";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
 import CourseRow from "../courseRow/CourseRow";
 import "./CourseSearchBar.css";
@@ -18,7 +18,6 @@ function debounce(func, wait) {
     timeout = setTimeout(later, wait);
   };
 }
-
 
 const CourseSearchBar = ({
   onCourseSelect,
