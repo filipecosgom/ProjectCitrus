@@ -571,7 +571,8 @@ public class UserService implements Serializable {
     public Boolean updateAdminPermissions(Long userId, boolean isAdmin, Long requesterId) {
         try {
             // Verify requester is admin
-            if (!checkIfUserIsAdmin(requesterId)) {
+            UserEntity requester = userRepository.findUserById(requesterId);
+            if (requester == null || !requester.getUserIsAdmin()) {
                 LOGGER.error("Non-admin user {} attempted to modify admin permissions", requesterId);
                 return false;
             }
@@ -589,7 +590,7 @@ public class UserService implements Serializable {
             }
             
             user.setUserIsAdmin(isAdmin);
-            userRepository.persist(user);
+            userRepository.merge(user);
             
             LOGGER.info("Admin permissions updated: User {} isAdmin={} by user {}", userId, isAdmin, requesterId);
             return true;
