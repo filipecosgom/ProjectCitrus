@@ -180,7 +180,7 @@ const UserSearchBar = ({
               {users.map((user) => (
                 <button
                   key={user.id}
-                  onClick={() => handleUserSelect(user)}
+                  onMouseDown={() => handleUserSelect(user)}
                   className={`user-search-item ${
                     selectedUser?.id === user.id ? "selected" : ""
                   }`}

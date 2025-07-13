@@ -4,7 +4,7 @@ import {
   IoSave,
   IoShieldCheckmark,
   IoRefresh,
-} from "react-icons/io5"; // <-- Adiciona IoRefresh aqui!
+} from "react-icons/io5";
 import "./Settings.css";
 import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
 import { useTranslation } from "react-i18next";

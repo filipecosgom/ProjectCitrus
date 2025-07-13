@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getAllUsers, updateAdminPermission } from "../../api/user";
+import { fetchAllUsers, updateAdminPermission } from "../../api/userApi";
 import useAuthStore from "../../stores/useAuthStore";
+import UserSearchBar from "../userSearchBar/UserSearchBar";
 import "./AdminPermissionsOffcanvas.css";
 
 const AdminPermissionsOffcanvas = ({ show, onClose }) => {
   const { t } = useTranslation();
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -18,12 +20,28 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
   useEffect(() => {
     if (show) {
       setLoading(true);
-      getAllUsers()
+      fetchAllUsers()
         .then((data) => setUsers(data))
         .catch(() => setError(t("errorLoadingUsers")))
         .finally(() => setLoading(false));
     }
   }, [show, t]);
+
+  // Filtra os users conforme o termo de pesquisa
+  const filteredUsers = users.filter((u) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.trim().toLowerCase();
+    return (
+      u.name?.toLowerCase().includes(term) ||
+      u.surname?.toLowerCase().includes(term) ||
+      u.email?.toLowerCase().includes(term)
+    );
+  });
+
+  // Handler para atualizar o termo de pesquisa
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+  };
 
   const handleToggle = (user) => {
     // Prevent self-removal of admin
@@ -95,8 +113,25 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
           {success && (
             <div className="admin-permissions-alert success">{success}</div>
           )}
+
+          {/* Pesquisa de utilizadores */}
+          <div style={{ marginBottom: "16px" }}>
+            <UserSearchBar
+              placeholder={t("searchBarPlaceholder", {
+                type: t("searchByName"),
+              })}
+              maxResults={30}
+              showUserInfo={true}
+              compact={true}
+              className="admin-permissions-search"
+              onSearch={handleSearchChange} // filtra os cards
+              onUserSelect={() => {}} // função vazia, não seleciona user
+              disableDropdown={true} // não mostra dropdown
+            />
+          </div>
+
           <ul className="admin-permissions-list">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <li key={user.id} className="admin-permissions-user">
                 <div className="admin-permissions-user-info">
                   <span className="admin-permissions-user-name">
