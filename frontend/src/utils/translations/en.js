@@ -1,4 +1,3 @@
-
 import { all } from "axios";
 import { login } from "../../api/authenticationApi";
 
@@ -528,6 +527,12 @@ const en = {
   cannotRemoveOwnAdmin: "You cannot remove your own admin permissions.",
   close: "Close",
   loading: "Loading...",
+  dashboard: {
+    users: "Active users",
+    courses: "Active courses",
+    appraisals: "Pending appraisals",
+    cycles: "Active cycles",
+  },
 };
 
 export default en;
