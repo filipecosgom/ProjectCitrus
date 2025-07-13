@@ -1,3 +1,24 @@
+/* Message count badge (top-right corner) */
+.user-icon-message-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  z-index: 2;
+  border: 2px solid #fff;
+  pointer-events: none;
+}
 .user-icon {
   position: relative;
   width: 46px;

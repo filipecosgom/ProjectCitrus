@@ -1,14 +1,18 @@
+
 package pt.uc.dei.services;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.MessageDTO;
 import pt.uc.dei.dtos.NotificationDTO;
+import pt.uc.dei.dtos.NotificationUpdateDTO;
+import pt.uc.dei.entities.AppraisalEntity;
+import pt.uc.dei.entities.CycleEntity;
+import pt.uc.dei.entities.FinishedCourseEntity;
 import pt.uc.dei.entities.NotificationEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.NotificationType;
@@ -18,7 +22,6 @@ import pt.uc.dei.repositories.NotificationRepository;
 import pt.uc.dei.repositories.UserRepository;
 import pt.uc.dei.websocket.WsNotifications;
 
-import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +50,8 @@ public class NotificationService {
 
     /**
      * Creates and sends a new message notification based on a MessageDTO.
-     * Checks unread messages, builds NotificationEntity, maps to NotificationDTO, and tries WebSocket delivery.
+     * Checks unread messages, builds NotificationEntity, maps to NotificationDTO,
+     * and tries WebSocket delivery.
      * Falls back to persistence if WebSocket fails.
      */
     public boolean newMessageNotification(MessageDTO messageDTO) {
@@ -60,21 +64,36 @@ public class NotificationService {
                 logger.error("Recipient user {} not found", recipientId);
                 return false;
             }
-
-            // Build NotificationEntity using the mapper
-            // Build NotificationEntity using the mapper
-            NotificationEntity notificationEntity = new NotificationEntity();
-            notificationEntity.setSenderId(senderId);
-            notificationEntity.setUser(recipientUser);  // Set managed entity
-            notificationEntity.setType(NotificationType.MESSAGE);
-            notificationEntity.setContent(messageDTO.getContent());
-            notificationEntity.setCreationDate(LocalDateTime.now());
-            notificationEntity.setNotificationIsRead(false);
-            notificationEntity.setNotificationIsSeen(false);
-            notificationEntity.setMessageCount(unreadCount);
-
-            notificationRepository.persist(notificationEntity);
-
+            UserEntity senderUser = userRepository.findUserById(senderId);
+            if (senderUser == null) {
+                logger.error("Recipient user {} not found", senderUser);
+                return false;
+            }
+            // Try to get existing unread MESSAGE notification between these users
+            NotificationEntity notificationEntity = notificationRepository.getMessageNotificationBetween(recipientId,
+                    senderId);
+            if (notificationEntity == null) {
+                // No existing unread notification, create new
+                notificationEntity = new NotificationEntity();
+                notificationEntity.setSender(senderUser);
+                notificationEntity.setUser(recipientUser); // Set managed entity
+                notificationEntity.setType(NotificationType.MESSAGE);
+                notificationEntity.setContent(messageDTO.getContent());
+                notificationEntity.setCreationDate(LocalDateTime.now());
+                notificationEntity.setNotificationIsRead(false);
+                notificationEntity.setNotificationIsSeen(false);
+                notificationEntity.setMessageCount(unreadCount);
+                notificationRepository.persist(notificationEntity);
+            } else {
+                // Update existing notification
+                notificationEntity.setContent(messageDTO.getContent());
+                notificationEntity.setMessageCount(unreadCount);
+                notificationEntity.setCreationDate(LocalDateTime.now());
+                notificationEntity.setNotificationIsRead(false);
+                notificationEntity.setNotificationIsSeen(false);
+                // No need to persist explicitly if managed, but can call merge if needed
+                // notificationRepository.merge(notificationEntity);
+            }
 
             // Map to NotificationDTO for WebSocket delivery
             NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
@@ -103,24 +122,35 @@ public class NotificationService {
     }
 
     /**
-     * Marks a notification as read for a user. Returns true if successful, false if not found or not updated.
+     * Updates notification status (isRead, isSeen) for a user. Returns true if
+     * successful, false if not found or not updated.
      */
     @Transactional
-    public boolean readNotification(Long notificationId, Long userId) {
+    public boolean updateNotificationStatus(NotificationUpdateDTO updateDTO, Long userId) {
         try {
-            boolean exists = notificationRepository.isNotificationIdValid(notificationId, userId);
-            if (!exists) {
+            Long notificationId = updateDTO.getNotificationId();
+            NotificationEntity notification = notificationRepository.findById(notificationId);
+            if (notification == null || !notification.getUser().getId().equals(userId)) {
                 logger.warn("Notification {} does not exist for userId {}", notificationId, userId);
                 return false;
             }
-            boolean updated = notificationRepository.readNotification(notificationId, userId);
-            if (!updated) {
-                logger.error("Failed to mark notification {} as read for userId {}", notificationId, userId);
-                return false;
+            boolean changed = false;
+            if (updateDTO.getNotificationIsRead() != null) {
+                notification.setNotificationIsRead(updateDTO.getNotificationIsRead());
+                changed = true;
             }
-            return true;
+            if (updateDTO.getNotificationIsSeen() != null) {
+                notification.setNotificationIsSeen(updateDTO.getNotificationIsSeen());
+                notification.setMessageCount(0);
+                changed = true;
+            }
+            if (changed) {
+                notificationRepository.merge(notification);
+            }
+            return changed;
         } catch (Exception e) {
-            logger.error("Error reading notification {} for userId {}", notificationId, userId, e);
+            logger.error("Error updating notification status {} for userId {}", updateDTO.getNotificationId(), userId,
+                    e);
             return false;
         }
     }
@@ -140,6 +170,157 @@ public class NotificationService {
         } catch (Exception e) {
             logger.error("Error marking message notifications as read for user {}", userId, e);
             return false;
+        }
+    }
+
+    /**
+     * Creates and sends a new appraisal notification.
+     * The recipient is the appraisedUser, sender is the appraisingUser, content is
+     * the score (as string or "N/A").
+     */
+    @Transactional
+    public boolean newAppraisalNotification(AppraisalEntity appraisal) {
+        try {
+            if (appraisal == null || appraisal.getAppraisedUser() == null || appraisal.getAppraisingUser() == null) {
+                logger.error("Invalid appraisal or users for notification");
+                return false;
+            }
+            Long recipientId = appraisal.getAppraisedUser().getId();
+            Long senderId = appraisal.getAppraisingUser().getId();
+            UserEntity recipientUser = userRepository.findUserById(recipientId);
+            if (recipientUser == null) {
+                logger.error("Appraised user {} not found", recipientId);
+                return false;
+            }
+            UserEntity senderUser = userRepository.findUserById(senderId);
+            if (senderUser == null) {
+                logger.error("Appraised user {} not found", senderId);
+                return false;
+            }
+
+            NotificationEntity notificationEntity = new NotificationEntity();
+            notificationEntity.setSender(senderUser);
+            notificationEntity.setUser(recipientUser);
+            notificationEntity.setType(NotificationType.APPRAISAL);
+            String scoreStr = appraisal.getScore() != null ? String.valueOf(appraisal.getScore()) : "N/A";
+            notificationEntity.setContent(scoreStr);
+            notificationEntity.setCreationDate(LocalDateTime.now());
+            notificationEntity.setNotificationIsRead(false);
+            notificationEntity.setNotificationIsSeen(false);
+            notificationEntity.setMessageCount(0); // Not relevant for appraisal
+            notificationRepository.persist(notificationEntity);
+
+            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
+            boolean delivered = wsNotifications.notifyUser(notificationDTO);
+            if (!delivered) {
+                logger.info("WebSocket delivery failed, appraisal notification persisted for userId {}", recipientId);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error("Error creating/sending new appraisal notification", e);
+            return false;
+        }
+    }
+
+    /**
+     * Creates and sends a new course notification.
+     * The recipient is the user, sender is the user's manager, content is the
+     * course id.
+     */
+    @Transactional
+    public boolean newCourseNotification(FinishedCourseEntity finishedCourse) {
+        try {
+            if (finishedCourse == null || finishedCourse.getUser() == null
+                    || finishedCourse.getUser().getManager() == null) {
+                logger.error("Invalid finished course or users for notification");
+                return false;
+            }
+            Long recipientId = finishedCourse.getUser().getId();
+            Long senderId = finishedCourse.getUser().getManager().getId();
+            UserEntity recipientUser = userRepository.findUserById(recipientId);
+            if (recipientUser == null) {
+                logger.error("Course recipient user {} not found", recipientId);
+                return false;
+            }
+            UserEntity sender = userRepository.findUserById(senderId);
+            if (sender == null) {
+                logger.error("Course recipient user {} not found", senderId);
+                return false;
+            }
+
+            NotificationEntity notificationEntity = new NotificationEntity();
+            notificationEntity.setSender(sender);
+            notificationEntity.setUser(recipientUser);
+            notificationEntity.setType(NotificationType.COURSE);
+            String courseIdStr = finishedCourse.getCourse() != null ? String.valueOf(finishedCourse.getCourse().getTitle())
+                    : "N/A";
+            notificationEntity.setContent(courseIdStr);
+            notificationEntity.setCreationDate(LocalDateTime.now());
+            notificationEntity.setNotificationIsRead(false);
+            notificationEntity.setNotificationIsSeen(false);
+            notificationEntity.setMessageCount(0); // Not relevant for course
+            notificationRepository.persist(notificationEntity);
+
+            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
+            boolean delivered = wsNotifications.notifyUser(notificationDTO);
+            if (!delivered) {
+                logger.info("WebSocket delivery failed, course notification persisted for userId {}", recipientId);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error("Error creating/sending new course notification", e);
+            return false;
+        }
+    }
+
+    /**
+     * Creates and sends a new cycle notification to a list of users.
+     * For each user, creates a CYCLE notification with the cycle end date as
+     * content.
+     */
+    @Transactional
+    public void newCycleNotification(CycleEntity cycle, List<UserEntity> users) {
+        try {
+            if (cycle == null || cycle.getAdmin() == null || users == null) {
+                logger.error("Invalid cycle or user list for cycle notification");
+                return;
+            }
+            Long senderId = cycle.getAdmin().getId();
+            String endDateStr = cycle.getEndDate() != null ? cycle.getEndDate().toString() : "N/A";
+            for (UserEntity user : users) {
+                if (user == null)
+                    continue;
+                Long recipientId = user.getId();
+                UserEntity recipientUser = userRepository.findUserById(recipientId);
+                if (recipientUser == null) {
+                    logger.error("Cycle notification recipient user {} not found", recipientId);
+                    continue;
+                }
+                UserEntity sender = userRepository.findUserById(senderId);
+                if (sender == null) {
+                    logger.error("Cycle notification recipient user {} not found", senderId);
+                    continue;
+                }
+
+                NotificationEntity notificationEntity = new NotificationEntity();
+                notificationEntity.setSender(sender);
+                notificationEntity.setUser(recipientUser);
+                notificationEntity.setType(NotificationType.CYCLE);
+                notificationEntity.setContent(endDateStr);
+                notificationEntity.setCreationDate(LocalDateTime.now());
+                notificationEntity.setNotificationIsRead(false);
+                notificationEntity.setNotificationIsSeen(false);
+                notificationEntity.setMessageCount(0); // Not relevant for cycle
+                notificationRepository.persist(notificationEntity);
+
+                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
+                boolean delivered = wsNotifications.notifyUser(notificationDTO);
+                if (!delivered) {
+                    logger.info("WebSocket delivery failed, cycle notification persisted for userId {}", recipientId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error creating/sending new cycle notifications", e);
         }
     }
 }

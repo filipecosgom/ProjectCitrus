@@ -570,4 +570,12 @@ public class UserEntity implements Serializable {
     public void setOnlineStatus(Boolean onlineStatus) {
         this.onlineStatus = onlineStatus;
     }
+
+    public UserEntity getManager() {
+        return managerUser;
+    }
+
+    public void setManager(UserEntity manager) {
+        this.managerUser = manager;
+    }
 }

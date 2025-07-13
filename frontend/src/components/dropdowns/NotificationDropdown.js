@@ -1,47 +1,61 @@
+
 import React from "react";
-import { Link } from "react-router-dom";
-import { FaAward, FaBook } from "react-icons/fa";
-import { IoMdNotifications } from "react-icons/io";
+import { Link, useNavigate } from "react-router-dom";
+import NotificationItem from "./NotificationItem";
+import useNotificationStore from "../../stores/useNotificationStore";
+import { handleUpdateNotification } from "../../handles/handleNotificationApi";
 import "./NotificationDropdown.css";
+import { useTranslation } from "react-i18next";
+import useAuthStore from "../../stores/useAuthStore";
 
-// Função para escolher ícone conforme tipo
-function getIcon(type) {
-  switch (type) {
-    case "appraisal":
-      return <FaAward className="notif-icon" color="#B61B23" />;
-    case "course":
-      return <FaBook className="notif-icon" color="#818488" />;
-    default:
-      return <IoMdNotifications className="notif-icon" color="#B61B23" />;
-  }
-}
 
-export default function NotificationDropdown({ notifications = [] }) {
-  // Mostra no máximo 6, mas só 3 visíveis sem scroll
+export default function NotificationDropdown({ isVisible, onClose }) {
+  const notifications = useNotificationStore(state => state.otherNotifications || []);
+  const markOtherAsSeen = useNotificationStore(state => state.markOtherAsSeen);
+  const userId = useAuthStore(state => state.user?.id);
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+
+  // Mark as read logic should be handled in the parent (Header) when opening the dropdown.
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.notificationIsSeen) {
+      handleUpdateNotification({ notificationId: notification.id, notificationIsSeen: true });
+      markOtherAsSeen(notification.id); // Update local store for real-time UI
+    }
+    // Navigate based on notification type
+    if (notification.type === "APPRAISAL") {
+      navigate(`/profile?id=${notification.recipient.id}&tab=appraisals`)
+    } else if (notification.type === "CYCLE") {
+      navigate(`/appraisals?state=IN_PROGRESS`);
+    } else if (notification.type === "COURSE") {
+      navigate(`/profile?id=${notification.recipient.id}&tab=training`);
+    } else {
+      navigate(`/notifications`);
+    }
+    onClose?.();
+  };
+
   const visibleNotifications = notifications.slice(0, 6);
 
   return (
     <div className="notification-dropdown">
       <div className="notification-list">
         {visibleNotifications.length === 0 ? (
-          <div className="notification-empty">No notifications</div>
+          <div className="notification-empty">{t("No notifications")}</div>
         ) : (
-          visibleNotifications.map((notif, idx) => (
-            <div className="notification-item" key={idx}>
-              <div className="notification-icon-cell">
-                {getIcon(notif.type)}
-              </div>
-              <div className="notification-text-cell">
-                <div className="notification-message">{notif.message}</div>
-                <div className="notification-timestamp">{notif.time}</div>
-              </div>
-            </div>
+          visibleNotifications.map((notification, idx) => (
+            <NotificationItem
+              key={notification.id || idx}
+              notification={notification}
+              onClick={handleNotificationClick}
+            />
           ))
         )}
       </div>
-      <Link to="/notifications" className="notification-center-btn">
-        TO NOTIFICATION CENTER{" "}
-        <span className="notification-center-arrow">↗</span>
+      <Link to="/notifications" className="notification-center-btn" onClick={onClose}>
+        {t("TO NOTIFICATION CENTER")} <span className="notification-center-arrow">↗</span>
       </Link>
     </div>
   );

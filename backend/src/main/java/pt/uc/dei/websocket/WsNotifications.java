@@ -34,20 +34,21 @@ import java.util.Set;
 public class WsNotifications {
 
     // Logger para registrar informações sobre conexões, erros ou eventos importantes
-    private static final Logger logger = LogManager.getLogger(WsNotifications.class);
+    private static final Logger LOGGER = LogManager.getLogger(WsNotifications.class);
 
     // HashMap que armazena as sessões WebSocket de cada usuário autenticado.
     // A chave é o nome do usuário, e o valor é o conjunto de sessões do usuário.
     private HashMap<Long, Set<Session>> sessions = new HashMap<>();
 
-    @Inject
-    private WebSocketAuthentication webSocketAuthentication;
 
     @Inject
     private AuthenticationService authenticationService;
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private WebSocketAuthentication webSocketAuthentication;
 
     /**
      * Método chamado automaticamente quando uma nova conexão WebSocket é estabelecida.
@@ -64,12 +65,12 @@ public class WsNotifications {
             HandshakeRequest request = (HandshakeRequest) config.getUserProperties().get("HandshakeRequest");
             boolean authenticated = webSocketAuthentication.authenticate(session, request, sessions);
             if (!authenticated) {
-                logger.warn("WebSocket authentication failed: missing or invalid JWT/token");
+                LOGGER.warn("WebSocket authentication failed: missing or invalid JWT/token");
                 session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT/token"));
                 return;
             }
             // Após a autenticação bem-sucedida, envia a contagem de notificações para o usuário
-            Long userId = webSocketAuthentication.findUserIdBySession(sessions, session);
+            Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
             if (userId != null && notificationService != null) {
                 int notificationsCount = notificationService.getTotalNotifications(userId);
                 JsonObject notificationsJSON = Json.createObjectBuilder()
@@ -79,7 +80,7 @@ public class WsNotifications {
                 session.getBasicRemote().sendText(notificationsJSON.toString());
             }
         } catch (Exception e) {
-            logger.error("WebSocket authentication error", e);
+            LOGGER.error("WebSocket authentication error", e);
             try { session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Authentication error")); } catch (Exception ignore) {}
         }
     }
@@ -105,9 +106,9 @@ public class WsNotifications {
                     sessions.remove(userId); // Remove o usuário se não tiver mais sessões
                 }
             }
-            logger.info("User {} disconnected from notifications. Reason: {}", userId, reason.getReasonPhrase());
+            LOGGER.info("User {} disconnected from notifications. Reason: {}", userId, reason.getReasonPhrase());
         } else {
-            logger.info("Unknown WebSocket session closed: {}", reason.getReasonPhrase());
+            LOGGER.info("Unknown WebSocket session closed: {}", reason.getReasonPhrase());
         }
     }
 
@@ -127,8 +128,20 @@ public class WsNotifications {
         String messageType = jsonMessage.getString("type");
 
         switch (messageType) {
-            default: // Se o tipo de mensagem não for reconhecido
-                logger.info("Received unknown message type: " + messageType);
+            case "CYCLE":
+                LOGGER.info("Received CYCLE notification message from client: " + msg);
+                break;
+            case "APPRAISAL":
+                LOGGER.info("Received APPRAISAL notification message from client: " + msg);
+                break;
+            case "COURSE":
+                LOGGER.info("Received COURSE notification message from client: " + msg);
+                break;
+            case "MESSAGE":
+                LOGGER.info("Received MESSAGE notification message from client: " + msg);
+                break;
+            default:
+                LOGGER.info("Received unknown message type: " + messageType);
         }
     }
 
@@ -146,13 +159,13 @@ public class WsNotifications {
             String notificationJsonString = notificationsJson.toString();
 
             // Envia a notificação para as sessões do usuário
-            if (sendNotificationToUserSessions(notificationDto.getId(), notificationJsonString)) {
+            if (sendNotificationToUserSessions(notificationDto.getRecipient().getId(), notificationJsonString)) {
                 return true;
             } else {
                 return false;
             }
         } catch (Exception e) {
-            logger.error("Error while creating JSON object", e);
+            LOGGER.error("Error while creating JSON object", e);
             return false;
         }
     }
@@ -181,7 +194,7 @@ public class WsNotifications {
                 return false;
             }
         } catch (IOException e) {
-            logger.error("Failed to send notification to user {}", recipientId, e);
+            LOGGER.error("Failed to send notification to user {}", recipientId, e);
             return false;
         }
     }
@@ -195,7 +208,7 @@ public class WsNotifications {
      */
     @OnMessage
     public void handlePing(Session session, PongMessage pongMessage) {
-        logger.info("Received WebSocket PONG from session {}: {}", session.getId(), pongMessage);
+        LOGGER.info("Received WebSocket PONG from session {}: {}", session.getId(), pongMessage);
     }
 
     /**
@@ -210,7 +223,7 @@ public class WsNotifications {
                     try {
                         session.getBasicRemote().sendPing(ByteBuffer.wrap(new byte[0])); // Envia o PING
                     } catch (IOException e) {
-                        logger.error("Failed to send WebSocket PING to session {}", session.getId(), e);
+                        LOGGER.error("Failed to send WebSocket PING to session {}", session.getId(), e);
                     }
                 }
             }

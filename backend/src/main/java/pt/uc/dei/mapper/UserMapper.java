@@ -74,6 +74,7 @@ public interface UserMapper {
     @Mapping(target = "lastSeen", source = "lastSeen")
     @Mapping(target = "onlineStatus", source = "onlineStatus")
     @Mapping(target = "manager", source = "managerUser", qualifiedByName = "toManagerDto")
+    @Mapping(target = "password", ignore = true)
     UserResponseDTO toUserResponseDto(UserEntity entity);
 
     @Named("toManagerDto")

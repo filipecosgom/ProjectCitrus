@@ -10,6 +10,17 @@ import pt.uc.dei.enums.NotificationType;
 
 @Stateless
 public class NotificationRepository extends AbstractRepository<NotificationEntity> {
+    /**
+     * Fetch a NotificationEntity by its id.
+     */
+    public NotificationEntity findById(Long id) {
+        try {
+            return em.find(NotificationEntity.class, id);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching notification by id", e);
+            return null;
+        }
+    }
     private static final Logger LOGGER = LogManager.getLogger(NotificationRepository.class);
     private static final long serialVersionUID = 1L;
 
@@ -29,9 +40,22 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
-    public NotificationEntity getChatNotificationBetween(Long recipientId, Long senderId) {
-        // Implement this method and its named query using user IDs
-        throw new UnsupportedOperationException("Not implemented yet");
+
+    /**
+     * Returns the existing unread MESSAGE notification between recipient and sender, or null if none exists.
+     */
+    public NotificationEntity getMessageNotificationBetween(Long recipientId, Long senderId) {
+        try {
+            return em.createNamedQuery("NotificationEntity.getMessageNotification", NotificationEntity.class)
+                .setParameter("recipientId", recipientId)
+                .setParameter("senderId", senderId)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching message notification between users", e);
+            return null;
+        }
     }
 
     public int getTotalNotifications(Long userId) {

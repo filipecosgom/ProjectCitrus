@@ -10,6 +10,7 @@ package pt.uc.dei.enums;
  */
 public enum NotificationType {
     MESSAGE,
-    EVALUATION,
+    APPRAISAL,
+    CYCLE,
     COURSE;
 }

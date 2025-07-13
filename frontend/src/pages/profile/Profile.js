@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,8 +13,7 @@ import {
 } from "react-icons/fa";
 import UserIcon from "../../components/userIcon/UserIcon";
 import Spinner from "../../components/spinner/spinner";
-import handleGetUserInformation from "../../handles/handleGetUserInformation";
-import handleGetUserAvatar from "../../handles/handleGetUserAvatar";
+import useUserProfile from "../../hooks/useUserProfile";
 import template_backup from "../../assets/templates/template_backup.png";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";
 import { handleGetRoles, handleGetOffices } from "../../handles/handleGetEnums";
@@ -34,11 +33,8 @@ export default function Profile() {
   // Read tab from URL, default to 'profile'
   const tabFromUrl =
     new URLSearchParams(location.search).get("tab") || "profile";
-  const [user, setUser] = useState(null);
-  const [userAvatar, setUserAvatar] = useState(null);
-  const [managerAvatar, setManagerAvatar] = useState(null);
+  const { user, userAvatar, managerAvatar, loading } = useUserProfile(userId);
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [roleOptions, setRoleOptions] = useState([]);
   const [officeOptions, setOfficeOptions] = useState([]);
   const [showAddressFields, setShowAddressFields] = useState(false);
@@ -65,52 +61,22 @@ export default function Profile() {
   const setAuthorizationAndManagment = () => {
     if (useAuthStore.getState().user?.userIsAdmin) {
       setAuthorized(true);
-      setIsTheManagerOfUser(false);
-    } else if (user?.id === useAuthStore.getState().user?.id) {
+    } 
+    if (user?.id === useAuthStore.getState().user?.id) {
       setAuthorized(true);
-      setIsTheManagerOfUser(false);
-    } else if (user?.manager?.id === useAuthStore.getState().user?.id) {
+    }
+    if (user?.manager?.id === useAuthStore.getState().user?.id) {
       setAuthorized(true);
       setIsTheManagerOfUser(true);
-    } else {
-      setAuthorized(false);
-      setIsTheManagerOfUser(false);
     }
   };
 
-  // Carrega dados do utilizador
+  // Reset form when user changes
   useEffect(() => {
-    const fetchUserInformation = async () => {
-      try {
-        const userInfo = await handleGetUserInformation(userId);
-        if (userInfo) {
-          setUser(userInfo);
-          reset(userInfo); // Preenche o formulário com os dados do utilizador
-        }
-        if (userInfo.hasAvatar) {
-          const userAvatar = await handleGetUserAvatar(userId);
-          if (userAvatar) {
-            setUserAvatar(userAvatar.avatar);
-          }
-        }
-        if (userInfo.manager) {
-          if (userInfo.manager.hasAvatar) {
-            const managerAvatar = await handleGetUserAvatar(
-              userInfo.manager.id
-            );
-            if (managerAvatar) {
-              setManagerAvatar(managerAvatar.avatar);
-            }
-          }
-        }
-      } catch (error) {
-        navigate("/");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserInformation();
-  }, [userId, reset, navigate]);
+    if (user) {
+      reset(user);
+    }
+  }, [user, reset]);
 
   useEffect(() => {
     if (user) {
@@ -128,7 +94,6 @@ export default function Profile() {
   }, []);
 
   const onSubmit = async (data) => {
-    setLoading(true);
 
     try {
       const response = await handleUpdateUserInfo(
@@ -144,13 +109,12 @@ export default function Profile() {
         if (response?.success) {
           if (avatarFile && avatarPreview) {
             updatedUser.hasAvatar = true;
-            setUserAvatar(avatarPreview);
             setStoreAvatar(avatarPreview, avatarFile);
             setAvatarPreview(null);
             setAvatarFile(null);
           }
         }
-        setUser(updatedUser);
+        // setUser is not needed, user is managed by useUserProfile
         setUserAndExpiration(
           updatedUser,
           useAuthStore.getState().tokenExpiration
@@ -162,7 +126,7 @@ export default function Profile() {
     } catch (error) {
       console.error("Update error:", error);
     } finally {
-      setLoading(false);
+      // setLoading is not needed, loading is managed by useUserProfile
     }
   };
 

@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
 import "./Header.css";
 import logo from "../../assets/logos/citrus_white.png";
 import NotificationDropdown from "../dropdowns/NotificationDropdown";
 import MessageDropdown from "../dropdowns/MessageDropdown";
+import { handleUpdateNotification } from "../../handles/handleNotificationApi";
 import Menu from "../menu/Menu";
 import useAuthStore from "../../stores/useAuthStore"; // <-- Importa o store
 import UserIcon from "../userIcon/UserIcon";
-import useUnreadConversations from "../../hooks/useUnreadConversations";
+// import useUnreadConversations from "../../hooks/useUnreadConversations";
+// import { openNotificationWebSocket } from "../../websockets/useWebSocketNotifications";
+import useNotificationStore from "../../stores/useNotificationStore";
+import useWebSocketNotifications from "../../websockets/useWebSocketNotifications";
 
-export default function Header({
-  unreadMessages = 0,
-  unreadNotifications = 0,
-  language,
-  setLanguage,
-}) {
+export default function Header({ language, setLanguage }) {
+  useWebSocketNotifications();
   // Lê o user do store global
   const { user } = useAuthStore();
 
@@ -23,14 +23,42 @@ export default function Header({
   const lastName = user?.surname || "";
   const userEmail = user?.email || "";
   const [showNotifications, setShowNotifications] = useState(false);
-  const notifRef = useRef();
   const [showMessages, setShowMessages] = useState(false);
-  const messagesRef = useRef();
   const [showMenu, setShowMenu] = useState(false);
+  // useWebSocketNotifications(); // TEMP: Disabled to test for infinite loop cause
 
-  // ✅ DESCOMENTAR ESTAS LINHAS:
-  const { conversationCount, resetConversationCount } =
-    useUnreadConversations();
+  // Simple Zustand selectors for badge counts (no shallow needed)
+  const unreadMessageCount = useNotificationStore(
+    state => state.messageNotifications.reduce((acc, n) => acc + (!n.notificationIsRead ? 1 : 0), 0)
+  );
+  const unreadOtherCount = useNotificationStore(
+    state => state.otherNotifications.reduce((acc, n) => acc + (!n.notificationIsRead ? 1 : 0), 0)
+  );
+  // Selector for notifications array
+  const otherNotifications = useNotificationStore(state => state.otherNotifications);
+
+  // Selector for messages array
+  const messageNotifications = useNotificationStore(state => state.messageNotifications);
+
+  // Handler: Mark all messages as read (local + backend)
+  const handleMarkAllMessagesAsRead = async () => {
+    useNotificationStore.getState().markAllMessagesAsRead();
+    // Backend: mark all unread messages as read
+    const unreadMessages = messageNotifications.filter(n => !n.notificationIsRead);
+    for (const n of unreadMessages) {
+      await handleUpdateNotification({ notificationId: n.id, notificationIsRead: true });
+    }
+  };
+
+  // Handler: Mark all notifications as read (local + backend)
+  const handleMarkAllNotificationsAsRead = async () => {
+    useNotificationStore.getState().markAllOthersAsRead();
+    // Backend: mark all unread notifications as read
+    const unreadOthers = otherNotifications.filter(n => !n.notificationIsRead);
+    for (const n of unreadOthers) {
+      await handleUpdateNotification({ notificationId: n.id, notificationIsRead: true });
+    }
+  };
 
   // Fecha o menu se deixares de estar em mobile
   useEffect(() => {
@@ -43,12 +71,6 @@ export default function Header({
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (notifRef.current && !notifRef.current.contains(event.target)) {
-        setShowNotifications(false);
-      }
-      if (messagesRef.current && !messagesRef.current.contains(event.target)) {
-        setShowMessages(false);
-      }
     }
     if (showNotifications) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -61,73 +83,7 @@ export default function Header({
     };
   }, [showNotifications, showMessages]);
 
-  const notifications = [
-    {
-      id: 1,
-      type: "appraisal",
-      message: "Nova mensagem de João",
-      time: "2 mins ago",
-      read: false,
-    },
-    {
-      id: 2,
-      type: "appraisal",
-      message: "Seu relatório foi aprovado",
-      time: "1 hour ago",
-      read: true,
-    },
-    {
-      id: 3,
-      type: "course",
-      message: "Lembrete: Reunião às 15h",
-      time: "3 hours ago",
-      read: false,
-    },
-    {
-      id: 4,
-      type: "course",
-      message: "Novo curso disponível: React Avançado",
-      time: "Hoje 14:30",
-      read: false,
-    },
-    {
-      id: 5,
-      type: "appraisal",
-      message: "Avaliação anual disponível",
-      time: "Ontem 17:00",
-      read: false,
-    },
-    {
-      id: 6,
-      type: "course",
-      message: "Curso de UX/UI atualizado",
-      time: "Ontem 15:45",
-      read: true,
-    },
-    {
-      id: 7,
-      type: "appraisal",
-      message: "Feedback recebido do gestor",
-      time: "10/06/2025 09:00",
-      read: false,
-    },
-    {
-      id: 8,
-      type: "course",
-      message: "Novo módulo: Design Systems",
-      time: "09/06/2025 11:30",
-      read: false,
-    },
-  ];
 
-  // ✅ FUNÇÃO PARA ABRIR DROPDOWN
-  const handleOpenMessageDropdown = () => {
-    setShowMessages(true);
-    setShowNotifications(false);
-
-    // ✅ RESETAR CONTADOR IMEDIATAMENTE
-    resetConversationCount();
-  };
 
   return (
     <header className="citrus-header">
@@ -148,15 +104,20 @@ export default function Header({
       <div className="header-cell header-empty" />
       {/* Ícones */}
       <div className="header-cell header-icons">
-        <div className="header-icon-wrapper" ref={messagesRef}>
+        <div className="header-icon-wrapper">
           <FaRegComments
-            onClick={handleOpenMessageDropdown}
             style={{ cursor: "pointer" }}
+            onClick={async () => {
+              if (!showMessages && unreadMessageCount > 0) {
+                await handleMarkAllMessagesAsRead();
+              }
+              setShowMessages((v) => !v);
+              setShowNotifications(false);
+            }}
           />
-          {/* ✅ MOSTRAR CONTADOR DE CONVERSAS */}
-          {conversationCount > 0 && (
-            <span className="header-badge header-conversation-badge">
-              {conversationCount}
+          {unreadMessageCount > 0 && (
+            <span className="header-badge header-message-badge">
+              {unreadMessageCount}
             </span>
           )}
           {showMessages && (
@@ -166,19 +127,24 @@ export default function Header({
             />
           )}
         </div>
-        <div className="header-icon-wrapper" ref={notifRef}>
+        <div className="header-icon-wrapper">
           <FaRegBell
-            onClick={() => {
-              setShowNotifications((v) => !v);
-              setShowMessages(false); // Fecha mensagens ao abrir notificações
-            }}
             style={{ cursor: "pointer" }}
+            onClick={async () => {
+              if (!showNotifications && unreadOtherCount > 0) {
+                await handleMarkAllNotificationsAsRead();
+              }
+              setShowNotifications((v) => !v);
+              setShowMessages(false);
+            }}
           />
-          {unreadNotifications > 0 && (
-            <span className="header-badge">{unreadNotifications}</span>
+          {unreadOtherCount > 0 && (
+            <span className="header-badge">
+              {unreadOtherCount}
+            </span>
           )}
           {showNotifications && (
-            <NotificationDropdown notifications={notifications} />
+            <NotificationDropdown notifications={otherNotifications} />
           )}
         </div>
         {/* FIX: Pass the full user object to UserIcon, not just avatar */}

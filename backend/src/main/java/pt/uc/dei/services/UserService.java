@@ -82,6 +82,9 @@ public class UserService implements Serializable {
     TokenService tokenService;
 
     @EJB
+    NotificationService notificationService;
+
+    @EJB
     CourseRepository courseRepository;
 
     @EJB
@@ -537,6 +540,7 @@ public class UserService implements Serializable {
         finished.setCourse(course);
         finished.setCompletionDate(LocalDate.now());
         finishedCourseRepository.persist(finished);
+        notificationService.newCourseNotification(finished);
         LOGGER.info("Added finished course: userId={}, courseId={}, date={}", userId, courseId, finished.getCompletionDate());
         return finishedCourseMapper.toDto(finished);
     }
