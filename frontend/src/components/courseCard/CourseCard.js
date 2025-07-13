@@ -9,7 +9,7 @@ import flagIt from "../../assets/flags/flag-it.png";
 import "./CourseCard.css";
 import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
-import Spinner from "../spinner/spinner";
+import Spinner from "../spinner/Spinner";
 
 const CourseCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();

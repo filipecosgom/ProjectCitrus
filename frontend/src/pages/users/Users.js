@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import UserCard from "../../components/userCard/UserCard";
 import { handleGetUsers } from "../../handles/handleGetUsers";
 import Pagination from "../../components/pagination/Pagination";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import { handleGetOffices } from "../../handles/handleGetEnums";
 import SortControls from "../../components/sortControls/SortControls";
 import { usersSortFields } from "../../utils/usersSearchUtils";

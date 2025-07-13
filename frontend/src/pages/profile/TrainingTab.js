@@ -10,7 +10,7 @@ import {
   courseSearchFilters,
   coursesSortFields,
 } from "../../utils/coursesSearchUtils";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
