@@ -7,7 +7,6 @@ export const handleGetNotifications = async (onSuccess, onError) => {
     const result = await getAllNotifications();
     if (result.success) {
       if (onSuccess) onSuccess(result.data);
-      showSuccessToast("Notificações carregadas com sucesso.");
     } else {
       throw new Error(result.error || "Erro ao buscar notificações.");
     }

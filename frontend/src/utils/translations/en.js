@@ -228,6 +228,7 @@ const en = {
     viewProfile: "View Profile",
     noUsersSelected: "No users selected",
     managerAssignSuccess: "{managerName} is now the manager of {total} user(s)",
+    noResults: "No users found matching your criteria",
   },
   //Usercard
   userCardNoManager: "No manager",
