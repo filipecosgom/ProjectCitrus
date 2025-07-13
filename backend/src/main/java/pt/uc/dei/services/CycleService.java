@@ -64,6 +64,9 @@ public class CycleService implements Serializable {
     @Inject
     private CycleMapper cycleMapper;
 
+    @EJB
+    private NotificationService notificationService;
+
     /**
      * Creates a new cycle and initializes appraisals for all active users.
      * Validates that all users have managers before creation.
@@ -138,6 +141,7 @@ public class CycleService implements Serializable {
             
             // Get recipients
             List<UserEntity> managersAndAdmins = userRepository.findManagersAndAdmins();
+            notificationService.newCycleNotification(cycleEntity, managersAndAdmins);
             
             if (!managersAndAdmins.isEmpty()) {
                 LOGGER.info("🔄 Starting ASYNC email notification for {} recipients", managersAndAdmins.size());
@@ -371,7 +375,7 @@ public class CycleService implements Serializable {
 
         long totalAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId).size();
 
-         boolean canClose = (completedCount + closedCount) == totalAppraisals;
+        boolean canClose = (completedCount + closedCount) == totalAppraisals;
 
         Map<String, Object> result = new HashMap<>();
         result.put("canClose", canClose);
@@ -431,6 +435,7 @@ public class CycleService implements Serializable {
         for (AppraisalEntity appraisal : cycleAppraisals) {
             if (appraisal.getState() == AppraisalState.COMPLETED) {
                 appraisal.setState(AppraisalState.CLOSED);
+                notificationService.newAppraisalNotification(appraisal);
                 appraisalRepository.merge(appraisal);
                 updatedAppraisals++;
             }

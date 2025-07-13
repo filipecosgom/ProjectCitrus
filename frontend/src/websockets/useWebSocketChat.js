@@ -35,8 +35,6 @@ function useWebSocketChat() {
   };
 
   useEffect(() => {
-    // Reconnect when user info changes (e.g., login/logout)
-    // If you want to reconnect on login/logout, add user as a dependency
   }, [user]);
 
   useEffect(() => {

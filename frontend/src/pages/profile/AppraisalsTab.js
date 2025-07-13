@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import useUserProfile from "../../hooks/useUserProfile";
 import "./AppraisalsTab.css";
+import { useLocation } from "react-router-dom";
 import Spinner from "../../components/spinner/spinner";
 import AppraisalCard from "../../components/appraisalCard/AppraisalCard";
 import SortControls from "../../components/sortControls/SortControls";
@@ -15,11 +17,18 @@ import {
 } from "../../utils/appraisalsSearchUtils";
 import AppraisalOffCanvas from "../../components/appraisalOffCanvas/AppraisalOffCanvas";
 import handleNotification from "../../handles/handleNotification";
-import { set } from "react-hook-form";
 
-export default function AppraisalsTab({ user }) {
+// ...existing imports...
+
+function AppraisalsTab({ userId: userIdProp }) {
   const { t } = useTranslation();
-  const [appraisals, setAppraisals] = useState(user.evaluationsReceived || []);
+  // Get userId from prop or from query string (?id=...)
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const userIdQuery = queryParams.get("id");
+  const userId = userIdProp || userIdQuery;
+  const { user, loading } = useUserProfile(userId);
+  const [appraisals, setAppraisals] = useState([]);
   const [filteredAppraisals, setFilteredAppraisals] = useState([]);
   const [appraisalStates, setAppraisalStates] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -33,7 +42,7 @@ export default function AppraisalsTab({ user }) {
     query: "",
     searchType: "creationDate",
     limit: 10,
-    state: "",
+    state: "CLOSED",
     score: "",
     appraisedUserId: user?.id,
   });
@@ -45,6 +54,7 @@ export default function AppraisalsTab({ user }) {
   // Estados para appraisal offcanvas
   const [selectedAppraisal, setSelectedAppraisal] = useState(null);
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
+
 
   useEffect(() => {
     lastSearchRef.current = searchParams;
@@ -84,11 +94,15 @@ export default function AppraisalsTab({ user }) {
     // Sort logic
     if (sort.sortBy) {
       data.sort((a, b) => {
-        // Example: sort by creationDate descending
+        const aValue = a[sort.sortBy];
+        const bValue = b[sort.sortBy];
+        // Convert both values to strings for localeCompare, fallback to empty string
+        const aStr = aValue === undefined || aValue === null ? "" : String(aValue);
+        const bStr = bValue === undefined || bValue === null ? "" : String(bValue);
         if (sort.sortOrder === "DESCENDING") {
-          return (b[sort.sortBy] || "").localeCompare(a[sort.sortBy] || "");
+          return bStr.localeCompare(aStr);
         } else {
-          return (a[sort.sortBy] || "").localeCompare(b[sort.sortBy] || "");
+          return aStr.localeCompare(bStr);
         }
       });
     }
@@ -119,6 +133,10 @@ export default function AppraisalsTab({ user }) {
         total: user.evaluationsReceived.length,
       }));
       setPageLoading(false);
+    } else {
+      setAppraisals([]);
+      setFilteredAppraisals([]);
+      setPagination((prev) => ({ ...prev, offset: 0, total: 0 }));
     }
   }, [user]);
 
@@ -173,7 +191,7 @@ export default function AppraisalsTab({ user }) {
     }
   };
 
-  if (pageLoading) return <Spinner />;
+  if (pageLoading || loading) return <Spinner />;
 
   const filtersConfig = appraisalSearchFilters(t, appraisalStates);
 
@@ -238,3 +256,5 @@ export default function AppraisalsTab({ user }) {
     </div>
   );
 }
+
+export default AppraisalsTab;

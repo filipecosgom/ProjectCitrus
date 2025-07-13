@@ -109,6 +109,7 @@ const SearchBar = ({
               ))}
             </select>
           )}
+          
           <FilterMenu
             watch={watch}
             setValue={setValue}

@@ -1,81 +1,93 @@
-import { useState, useEffect } from "react";
 import useAuthStore from "../stores/useAuthStore";
-import handleNotification from "../handles/handleNotification";
-import { useTranslation } from "react-i18next";
-import {
-  transformArrayDatetoDate,
-  dateToFormattedTime,
-} from "../utils/utilityFunctions";
+import { useEffect, useRef } from "react";
+import useNotificationStore from "../stores/useNotificationStore";
 
-function useWebSocketNotifications(isAuthenticated) {
-  const { user } = useAuthStore(); // get user info, not token
+function useWebSocketNotifications() {
+  const { user } = useAuthStore();
   const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
-  const [notificationCount, setNotificationCount] = useState(0);
-  const [websocket, setWebSocket] = useState(null);
-  const { t } = useTranslation();
+  const websocketRef = useRef(null); // <-- Only use ref
+  const addMessageNotification =
+    useNotificationStore.getState().addMessageNotification;
+  const addOtherNotification =
+    useNotificationStore.getState().addOtherNotification;
+  const setMessageNotifications =
+    useNotificationStore.getState().setMessageNotifications;
+  const setOtherNotifications =
+    useNotificationStore.getState().setOtherNotifications;
 
   useEffect(() => {
-    return; // ← SAIR IMEDIATAMENTE
-  }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated || !user) {
-      if (websocket) {
-        websocket.close();
-        setWebSocket(null);
-      }
+    if (websocketRef.current) {
       return;
     }
-    if (websocket) return;
 
     const ws = new WebSocket(WS_URL);
+    websocketRef.current = ws;
 
     ws.onopen = () => {
+      console.log("WebSocket connected");
+      // Fetch and set notifications on WebSocket open
+      useNotificationStore.getState().fetchAndSetNotifications();
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
 
-      if (data.type === "NOTIFICATION_COUNT") {
-        setNotificationCount(data.count);
-      }
-      if (data.type === "MESSAGE") {
-        let notification = data.notification;
-        let timestamp = transformArrayDatetoDate(notification.timestamp);
-        timestamp = dateToFormattedTime(timestamp);
-        handleNotification("success", "wsNotificationsLastMessage", {
-          sender: notification.senderUsername,
-          message: notification.content,
-          timestamp: timestamp,
-        });
-        handleNotification("success", "wsNotificationsUnreadMessages", {
-          numMessages: notification.messageCount,
-          sender: notification.senderUsername,
-        });
-      }
-      if (data.type === "AUTH_FAILED") {
-        handleNotification("error", "WebSocket authentication failed");
-        ws.close();
-      }
-      if (data.type === "PING") {
-        ws.send(JSON.stringify({ type: "PONG" }));
+      switch (data.type) {
+        case "MESSAGE":
+          console.log("Received message notification:", data);
+          if (data.notification) {
+            addMessageNotification(data.notification);
+          }
+          break;
+        case "APPRAISAL":
+          console.log("Received cycle notification:", data);
+          addOtherNotification(data.notification);
+          break;
+        case "COURSE":
+          console.log("Received course notification:", data);
+          if (data.notification) {
+            addOtherNotification(data.notification);
+          }
+          break;
+        case "CYCLE":
+          console.log("Received cycle notification:", data);
+          addOtherNotification(data.notification);
+          break;
+        case "AUTH_FAILED":
+          console.error("WebSocket authentication failed");
+          ws.close();
+          break;
+        case "PING":
+          ws.send(JSON.stringify({ type: "PONG" }));
+          break;
+        default:
+          console.warn("Unknown message type:", data.type);
+          break;
       }
     };
 
     ws.onclose = () => {
-      console.log("WebSocket notifications closed.");
-      setWebSocket(null);
+      console.log("WebSocket closed.");
     };
-
-    setWebSocket(ws);
 
     return () => {
-      console.log("Cleaning up WebSocket notifications...");
+      console.log("Cleaning up WebSocket...");
       ws.close();
+      websocketRef.current = null;
     };
-  }, [isAuthenticated, user]);
+  }, []);
 
-  return { notificationCount, websocket };
+  const closeWebSocket = () => {
+    if (
+      websocketRef.current &&
+      websocketRef.current.readyState === WebSocket.OPEN
+    ) {
+      console.log("Closing WebSocket connection...");
+      websocketRef.current.close();
+    }
+  };
+
+  return { closeWebSocket };
 }
 
 export default useWebSocketNotifications;

@@ -40,7 +40,7 @@ public class AppraisalEntity implements Serializable {
      * The date and time when the appraisal was last edited.
      * Can be updated.
      */
-    @Column(name = "submission_date", nullable = false, unique = false, updatable = true)
+    @Column(name = "submission_date")
     private LocalDate submissionDate;
 
     /**

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import useUserProfile from "../../hooks/useUserProfile";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../../components/searchbar/Searchbar";
 import CourseCard from "../../components/courseCard/CourseCard";
@@ -15,9 +16,11 @@ import Pagination from "../../components/pagination/Pagination";
 import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
 import './TrainingTab.css';
 
-export default function TrainingTab({ courses: initialCourses = [], isTheManagerOfUser, userId, userName, userSurname }) {
+export default function TrainingTab({ courses: initialCourses, isTheManagerOfUser, userId, userName, userSurname }) {
+  // If courses not provided, fetch user and use completedCourses
+  const { user, loading } = useUserProfile(userId);
   const { t } = useTranslation();
-  const [courses, setCourses] = useState(initialCourses);
+  const [courses, setCourses] = useState(initialCourses || []);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -63,6 +66,13 @@ export default function TrainingTab({ courses: initialCourses = [], isTheManager
     }
     fetchAreas();
   }, []);
+
+  // If no courses provided, use completedCourses from user
+  useEffect(() => {
+    if (!initialCourses && user?.completedCourses) {
+      setCourses(user.completedCourses);
+    }
+  }, [user, initialCourses]);
 
   // In-memory search, filter, sort, pagination
   useEffect(() => {
@@ -163,7 +173,7 @@ export default function TrainingTab({ courses: initialCourses = [], isTheManager
     setShowAddOffcanvas(false);
   };
 
-  if (pageLoading) return <Spinner />;
+  if (pageLoading || loading) return <Spinner />;
 
   const coursesFilters = courseSearchFilters(t, areas);
   // Calculate total hours for selected year

@@ -1,4 +1,5 @@
 package pt.uc.dei.websocket;
+
 import jakarta.ejb.Schedule;
 import jakarta.ejb.Singleton;
 import jakarta.inject.Inject;
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Set;
 
-
 /**
  * Endpoint WebSocket responsável pela comunicação em tempo real no chat.
  * Lida com mensagens de autenticação, envio de mensagens, notificações,
@@ -35,7 +35,8 @@ import java.util.Set;
 @ServerEndpoint(value = "/websocket/chat/", configurator = CustomConfigurator.class)
 public class WsChat {
 
-    // Logger usado para registrar eventos do WebSocket (ex.: conexões, mensagens, erros)
+    // Logger usado para registrar eventos do WebSocket (ex.: conexões, mensagens,
+    // erros)
     private static final Logger logger = LogManager.getLogger(WsChat.class);
 
     // Mapa que armazena as sessões dos usuários. A chave é o ID do usuário,
@@ -53,9 +54,9 @@ public class WsChat {
     @Inject
     private NotificationService notificationService;
 
-
     /**
-     * Método chamado automaticamente quando uma nova conexão WebSocket é estabelecida.
+     * Método chamado automaticamente quando uma nova conexão WebSocket é
+     * estabelecida.
      * Extrai o JWT dos cookies, autentica o usuário e registra a sessão.
      *
      * @param session A nova sessão WebSocket.
@@ -68,14 +69,17 @@ public class WsChat {
             boolean authenticated = webSocketAuthentication.authenticate(session, request, sessions);
             if (!authenticated) {
                 logger.warn("WebSocket authentication failed: missing or invalid JWT cookie");
-                session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Unauthorized: missing or invalid JWT"));
+                session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY,
+                        "Unauthorized: missing or invalid JWT"));
             }
         } catch (Exception e) {
             logger.error("WebSocket authentication error", e);
-            try { session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Authentication error")); } catch (Exception ignore) {}
+            try {
+                session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION, "Authentication error"));
+            } catch (Exception ignore) {
+            }
         }
     }
-
 
     /**
      * Método chamado automaticamente quando uma conexão WebSocket é fechada.
@@ -105,7 +109,8 @@ public class WsChat {
 
     /**
      * Método chamado automaticamente quando uma mensagem é recebida pelo WebSocket.
-     * Este método processa tipos específicos de mensagens, como autenticação e envio de mensagens.
+     * Este método processa tipos específicos de mensagens, como autenticação e
+     * envio de mensagens.
      *
      * @param session A sessão WebSocket de onde veio a mensagem.
      * @param msg     A mensagem enviada pelo cliente, no formato JSON.
@@ -122,16 +127,17 @@ public class WsChat {
             case "MESSAGE": {
                 if (!checkIfValidMessage(jsonMessage)) {
                     session.getBasicRemote().sendText(
-                        JsonCreator.createJson("ERROR", "message", "Invalid message format").toString());
+                            JsonCreator.createJson("ERROR", "message", "Invalid message format").toString());
                 } else {
                     Long recipientId = jsonMessage.getJsonNumber("recipientId").longValue();
                     String message = jsonMessage.getString("message").trim();
                     Long senderId = WebSocketAuthentication.findUserIdBySession(sessions, session);
                     UserDTO recipientUser = userService.getUser(recipientId);
                     if (recipientUser != null) {
-                        if(recipientUser.getUserIsDeleted()) {
+                        if (recipientUser.getUserIsDeleted()) {
                             logger.info("Recipient {} is deleted", recipientUser.getId());
-                            JsonObject errorJson = JsonCreator.createJson("ERROR", "message", "Recipient user is deleted");
+                            JsonObject errorJson = JsonCreator.createJson("ERROR", "message",
+                                    "Recipient user is deleted");
                             session.getBasicRemote().sendText(errorJson.toString());
                             return;
                         }
@@ -141,23 +147,26 @@ public class WsChat {
                         messageDTO.setContent(message);
                         messageDTO.setSentDate(LocalDateTime.now());
                         messageDTO.setMessageIsRead(false);
-                        // Archive the message only (no delivery attempt here)
-                        messageDTO = messageService.archiveMessage(messageDTO);
                         if (messageDTO != null) {
                             boolean delivered = sendMessageToUser(messageDTO);
                             if (delivered) {
-                                JsonObject confirmationJson = JsonCreator.createJson("SUCCESS", "message", "Message sent successfully");
+                                messageDTO.setMessageIsRead(true);
+                                messageDTO = messageService.archiveMessage(messageDTO);
+                                JsonObject confirmationJson = JsonCreator.createJson("SUCCESS", "message",
+                                        "Message sent successfully");
                                 session.getBasicRemote().sendText(confirmationJson.toString());
                             } else {
+                                messageDTO = messageService.archiveMessage(messageDTO);
                                 notificationService.newMessageNotification(messageDTO);
                             }
                         } else {
                             session.getBasicRemote().sendText(
-                                JsonCreator.createJson("ERROR", "message", "Failed to archive message").toString());
+                                    JsonCreator.createJson("ERROR", "message", "Failed to archive message").toString());
                         }
                     } else {
                         logger.info("Recipient {} does not exist", recipientId);
-                        JsonObject errorJson = JsonCreator.createJson("ERROR", "message", "Recipient user does not exist");
+                        JsonObject errorJson = JsonCreator.createJson("ERROR", "message",
+                                "Recipient user does not exist");
                         session.getBasicRemote().sendText(errorJson.toString());
                     }
                 }
@@ -176,12 +185,12 @@ public class WsChat {
         }
     }
 
-    
     /**
      * Envia uma mensagem para todas as sessões associadas ao usuário destinatário.
      *
      * @param messageDTO O DTO da mensagem a ser enviada.
-     * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário, `false`.
+     * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário,
+     *         `false`.
      */
     public boolean sendMessageToUser(MessageDTO messageDTO) {
         Long recipientUserId = messageDTO.getRecipientId();
@@ -204,11 +213,13 @@ public class WsChat {
     }
 
     /**
-     * Envia um objeto JSON para todas as sessões associadas ao usuário destinatário.
+     * Envia um objeto JSON para todas as sessões associadas ao usuário
+     * destinatário.
      *
-     * @param json O objeto JSON a ser enviado.
+     * @param json            O objeto JSON a ser enviado.
      * @param recipientUserId O ID do usuário destinatário.
-     * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário, `false`.
+     * @return `true` se pelo menos uma sessão recebeu a mensagem; caso contrário,
+     *         `false`.
      */
     public boolean sendJsonToUser(JsonObject json, Long recipientUserId) {
         System.out.println("Sending JSON to user: " + recipientUserId + ", JSON: " + json);

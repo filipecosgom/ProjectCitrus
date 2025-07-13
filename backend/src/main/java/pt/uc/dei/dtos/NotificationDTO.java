@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object (DTO) representing a notification.
- * Contains details such as notification type, content, timestamps, and recipient information.
+ * Contains details such as notification type, content, timestamps, and
+ * recipient information.
  */
 public class NotificationDTO {
 
@@ -47,10 +48,10 @@ public class NotificationDTO {
      * Must always be sent.
      */
     @NotNull(message = "Read status is required")
-    private Boolean isRead;
+    private Boolean notificationIsRead;
 
     @NotNull(message = "Seen status is required")
-    private Boolean isSeen;
+    private Boolean notificationIsSeen;
 
     /**
      * The number of messages associated with the notification.
@@ -59,8 +60,8 @@ public class NotificationDTO {
     @NotNull(message = "Message count is required")
     private Integer messageCount;
 
-    private Long senderId;
-    private Long recipientId;
+    private UserResponseDTO sender;
+    private UserResponseDTO recipient;
 
     // Getters and Setters
 
@@ -96,13 +97,6 @@ public class NotificationDTO {
         this.creationDate = creationDate;
     }
 
-    public Boolean getRead() {
-        return isRead;
-    }
-
-    public void setRead(Boolean read) {
-        isRead = read;
-    }
 
     public Integer getMessageCount() {
         return messageCount;
@@ -112,28 +106,18 @@ public class NotificationDTO {
         this.messageCount = messageCount;
     }
 
-    public Boolean getSeen() {
-        return isSeen;
-    }
 
-    public void setSeen(Boolean seen) {
-        isSeen = seen;
+    public UserResponseDTO getSender() {
+        return sender;
     }
-
-    public Long getSenderId() {
-        return senderId;
+    public void setSender(UserResponseDTO sender) {
+        this.sender = sender;
     }
-
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
+    public UserResponseDTO getRecipient() {
+        return recipient;
     }
-
-    public Long getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(Long recipientId) {
-        this.recipientId = recipientId;
+    public void setRecipient(UserResponseDTO recipient) {
+        this.recipient = recipient;
     }
 
     // Alias for timestamp
@@ -152,5 +136,21 @@ public class NotificationDTO {
 
     public void setUnreadCount(Integer unreadCount) {
         setMessageCount(unreadCount);
+    }
+
+    public Boolean getNotificationIsRead() {
+        return notificationIsRead;
+    }
+
+    public void setNotificationIsRead(Boolean notificationIsRead) {
+        this.notificationIsRead = notificationIsRead;
+    }
+
+    public Boolean getNotificationIsSeen() {
+        return notificationIsSeen;
+    }
+
+    public void setNotificationIsSeen(Boolean notificationIsSeen) {
+        this.notificationIsSeen = notificationIsSeen;
     }
 }

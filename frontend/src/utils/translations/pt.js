@@ -1,6 +1,11 @@
 import { courseSearchFilters } from "../coursesSearchUtils";
 
 const pt = {
+  notifications: {
+    appraisal: "Teve {content} numa nova avaliação",
+    cycle: "Novo ciclo iniciado até {content}",
+    course: "Registou o curso {content}",
+  },
   welcomeMessage: "Bem-vindo {name}",
   goodByeMessage: "Até à próxima {name}",
   //Login

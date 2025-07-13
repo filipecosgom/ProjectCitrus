@@ -1,7 +1,13 @@
+
 import { all } from "axios";
 import { login } from "../../api/authenticationApi";
 
 const en = {
+  notifications: {
+    appraisal: "You got {content} in a new appraisal",
+    cycle: "New cycle has opened until {content}",
+    course: "Registered your course {content}",
+  },
   welcomeMessage: "Welcome {name}",
   goodByeMessage: "Goodbye {name}",
   //Login

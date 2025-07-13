@@ -4,7 +4,7 @@ import { generateInitialsAvatar } from "../../components/userOffcanvas/UserOffca
 import { handleGetUserAvatar } from "../../handles/handleGetUserAvatar";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function UserIcon({ user, avatar }) {
+export default function UserIcon({ user, avatar, messageCount }) {
   // ✅ HOOKS PRIMEIRO - SEMPRE NA MESMA ORDEM
   const [avatarUrl, setAvatarUrl] = useState(avatar || null);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ export default function UserIcon({ user, avatar }) {
   }
 
   return (
-    <div className="user-icon">
+    <div className="user-icon" style={{ position: 'relative' }}>
       <img
         src={
           hasAvatar && avatarUrl
@@ -80,6 +80,12 @@ export default function UserIcon({ user, avatar }) {
         className={`user-icon-status ${onlineStatus ? "online" : "offline"}`}
         title={onlineStatus ? "Online" : "Offline"}
       />
+      {/* Message count badge */}
+      {typeof messageCount === 'number' && messageCount > 0 && (
+        <span className="user-icon-message-badge">
+          {messageCount > 99 ? '99+' : messageCount}
+        </span>
+      )}
     </div>
   );
 }
