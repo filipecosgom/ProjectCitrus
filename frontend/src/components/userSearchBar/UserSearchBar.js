@@ -9,6 +9,7 @@ import "./UserSearchBar.css";
 const UserSearchBar = ({
   selectedUser = null,
   onUserSelect,
+  onSearch, // <-- Adiciona esta linha!
   placeholder = "Search for users...",
   maxResults = 50,
   showUserInfo = true,
@@ -16,6 +17,7 @@ const UserSearchBar = ({
   className = "",
   excludeUserIds = [],
   filterOptions = {},
+  disableDropdown = false, // Novo prop para controlar o dropdown
 }) => {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -96,6 +98,12 @@ const UserSearchBar = ({
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
+
+    if (disableDropdown && onSearch) {
+      onSearch(query); // <-- dispara para o offcanvas filtrar os cards
+      return; // não faz pesquisa interna
+    }
+
     setIsOpen(query.length > 0);
 
     if (query.trim()) {
@@ -118,6 +126,9 @@ const UserSearchBar = ({
     setUsers([]);
     setIsOpen(false);
     onUserSelect(null);
+    if (disableDropdown && onSearch) {
+      onSearch(""); // <-- dispara reset do filtro no AdminPermissionsOffcanvas
+    }
   };
 
   // ✅ HANDLER para focus
@@ -160,7 +171,7 @@ const UserSearchBar = ({
       </div>
 
       {/* ✅ DROPDOWN LIST */}
-      {isOpen && (
+      {isOpen && !disableDropdown && (
         <div className="user-search-dropdown">
           {usersLoading ? (
             <div className="user-search-loading">
@@ -180,7 +191,7 @@ const UserSearchBar = ({
               {users.map((user) => (
                 <button
                   key={user.id}
-                  onClick={() => handleUserSelect(user)}
+                  onMouseDown={() => handleUserSelect(user)}
                   className={`user-search-item ${
                     selectedUser?.id === user.id ? "selected" : ""
                   }`}

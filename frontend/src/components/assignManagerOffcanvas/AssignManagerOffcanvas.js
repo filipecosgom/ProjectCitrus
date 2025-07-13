@@ -185,6 +185,7 @@ const AssignManagerOffcanvas = ({
               compact={true}
               excludeUserIds={selectedUserIds}
               className="assign-manager-search"
+              disableDropdown={false} // ou omite, por defeito mostra dropdown
             />
 
             {/* ✅ FEEDBACK do user selecionado */}
