@@ -42,3 +42,11 @@
   color: #888;
   text-align: center;
 }
+
+@media (max-width: 480px) {
+  .dashboard-grid {
+    justify-content: center;
+    margin-left: 0;
+    padding: 16px;
+  }
+}
