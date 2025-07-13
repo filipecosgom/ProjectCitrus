@@ -92,7 +92,6 @@ public class WsChat {
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         Long userId = WebSocketAuthentication.findUserIdBySession(sessions, session);
-        authenticationService.setUserOffline(userId);
         if (userId != null) {
             Set<Session> userSessions = sessions.get(userId);
             if (userSessions != null) {

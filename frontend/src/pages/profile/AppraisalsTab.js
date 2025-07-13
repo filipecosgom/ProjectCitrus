@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import useUserProfile from "../../hooks/useUserProfile";
 import "./AppraisalsTab.css";
 import { useLocation } from "react-router-dom";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import AppraisalCard from "../../components/appraisalCard/AppraisalCard";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";

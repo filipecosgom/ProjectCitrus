@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import Spinner from "../spinner/spinner";
+import Spinner from "../spinner/Spinner";
 import CourseSearchBar from "../courseSearchBar/CourseSearchBar";
 import CourseRow from "../courseRow/CourseRow";
 import "./AddCompletedCourseOffcanvas.css";

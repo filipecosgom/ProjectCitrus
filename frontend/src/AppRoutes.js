@@ -3,7 +3,7 @@ import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
 import useAuthStore from "./stores/useAuthStore";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
-import Spinner from "./components/spinner/spinner";
+import Spinner from "./components/spinner/Spinner";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from "./pages/profile/Profile";
@@ -16,6 +16,7 @@ import Courses from "./pages/courses/Courses";
 import AccountActivation from "./pages/landing/AccountActivation";
 import ActivatedAccount from "./pages/landing/ActivatedAccount";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
+import Notifications from "./pages/notifications/Notifications";
 import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
@@ -54,6 +55,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/settings",
     "/messages",
     "/courses",
+    "/notifications"
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -160,6 +162,14 @@ function AppRoutes({ currentLocale, setLocale }) {
           element={
             <ProtectedRoute>
               <Courses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
             </ProtectedRoute>
           }
         />

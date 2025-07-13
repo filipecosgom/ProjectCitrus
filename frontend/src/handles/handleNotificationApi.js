@@ -19,12 +19,10 @@ export const handleGetNotifications = async (onSuccess, onError) => {
 
 // Handle updating a notification (isRead, isSeen, etc)
 export const handleUpdateNotification = async (notificationUpdate, onSuccess, onError) => {
-    console.log("Updating notification:", notificationUpdate);
   try {
     const result = await updateNotification(notificationUpdate);
     if (result.success) {
       if (onSuccess) onSuccess(result.data);
-      showSuccessToast("Notificação atualizada com sucesso.");
     } else {
       throw new Error(result.error || "Erro ao atualizar notificação.");
     }

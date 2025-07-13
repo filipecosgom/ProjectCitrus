@@ -3,7 +3,7 @@ import SearchBar from "../../components/searchbar/Searchbar";
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../../components/pagination/Pagination";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import AppraisalCard from "../../components/appraisalCard/AppraisalCard";
 import SortControls from "../../components/sortControls/SortControls";
 import { useTranslation } from "react-i18next";

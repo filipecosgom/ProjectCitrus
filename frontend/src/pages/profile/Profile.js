@@ -12,7 +12,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import UserIcon from "../../components/userIcon/UserIcon";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import useUserProfile from "../../hooks/useUserProfile";
 import template_backup from "../../assets/templates/template_backup.png";
 import { handleUpdateUserInfo } from "../../handles/handleUpdateUser";

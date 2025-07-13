@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import SearchBar from "../../components/searchBar/SearchBar";
+import SearchBar from "../../components/searchbar/Searchbar";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import Spinner from "../../components/spinner/Spinner";
-import NotificationCard from "../../components/notificationCard/NotificationCard";
 import {
   FaBell,
   FaEnvelope,
@@ -16,10 +15,6 @@ import {
   FaEye,
 } from "react-icons/fa";
 import useAuthStore from "../../stores/useAuthStore";
-import {
-  fetchNotifications,
-  markNotificationAsRead,
-} from "../../api/notificationsApi";
 import handleNotification from "../../handles/handleNotification";
 import "./Notifications.css";
 
@@ -53,33 +48,6 @@ export default function Notifications() {
 
   const user = useAuthStore((state) => state.user);
   const containerRef = useRef();
-
-  // Fetch notifications from API
-  const loadNotifications = async () => {
-    try {
-      setResultsLoading(true);
-      const result = await fetchNotifications();
-
-      if (result.success && result.data.success) {
-        setNotifications(result.data.data || []);
-      } else {
-        handleNotification("error", "errorLoadingNotifications");
-        setNotifications([]);
-      }
-    } catch (error) {
-      console.error("Error loading notifications:", error);
-      handleNotification("error", "errorLoadingNotifications");
-      setNotifications([]);
-    } finally {
-      setResultsLoading(false);
-      setPageLoading(false);
-    }
-  };
-
-  // Load notifications on mount
-  useEffect(() => {
-    loadNotifications();
-  }, []);
 
   // Apply search, filter, sort, and pagination
   useEffect(() => {
@@ -143,17 +111,6 @@ export default function Notifications() {
     }));
   }, [notifications, searchParams, sort, pagination.offset, pagination.limit]);
 
-  // Handlers
-  const handleSearch = (query, searchType, limit, filters = {}) => {
-    setSearchParams((prev) => ({
-      ...prev,
-      query,
-      searchType,
-      limit,
-      ...filters,
-    }));
-    setPagination((prev) => ({ ...prev, offset: 0 }));
-  };
 
   const handleSortChange = (newSort) => {
     setSort(newSort);
@@ -163,69 +120,7 @@ export default function Notifications() {
     setPagination((prev) => ({ ...prev, offset: newOffset }));
   };
 
-  const handleNotificationClick = async (notification) => {
-    try {
-      // Mark as read if not already read
-      if (!notification.read) {
-        const result = await markNotificationAsRead(notification.id);
-        if (result.success) {
-          // Update local state
-          setNotifications((prev) =>
-            prev.map((n) =>
-              n.id === notification.id ? { ...n, read: true } : n
-            )
-          );
-        }
-      }
-
-      // Handle navigation based on notification type
-      switch (notification.type) {
-        case "MESSAGE":
-          navigate(`/messages?id=${notification.senderId}`);
-          break;
-        case "EVALUATION":
-          navigate("/appraisals");
-          break;
-        case "COURSE":
-          navigate("/courses");
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      console.error("Error handling notification click:", error);
-      handleNotification("error", "errorProcessingNotification");
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      const unreadNotifications = notifications.filter((n) => !n.read);
-
-      if (unreadNotifications.length === 0) {
-        handleNotification("info", "noUnreadNotifications");
-        return;
-      }
-
-      // Mark all as read (you might need to implement a bulk endpoint)
-      const promises = unreadNotifications.map((notification) =>
-        markNotificationAsRead(notification.id)
-      );
-
-      const results = await Promise.all(promises);
-      const successCount = results.filter((r) => r.success).length;
-
-      if (successCount > 0) {
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-        handleNotification("success", "notificationsMarkedAsRead", {
-          count: successCount,
-        });
-      }
-    } catch (error) {
-      console.error("Error marking all as read:", error);
-      handleNotification("error", "errorMarkingNotifications");
-    }
-  };
+  
 
   // Get notification icon
   const getNotificationIcon = (type) => {
@@ -308,20 +203,6 @@ export default function Notifications() {
     <div className="notifications-container" ref={containerRef}>
       <div className="notifications-header">
         <div className="notifications-searchBarAndButton">
-          <SearchBar
-            onSearch={handleSearch}
-            searchTypes={notificationFilters.searchTypes}
-            filters={notificationFilters.filters}
-            placeholder={t("notificationSearchPlaceholder")}
-          />
-          <button
-            className="mark-all-read-btn"
-            onClick={handleMarkAllAsRead}
-            disabled={resultsLoading}
-          >
-            <FaCheckCircle className="mark-all-read-icon" />
-            <span className="mark-all-read-text">{t("markAllAsRead")}</span>
-          </button>
         </div>
       </div>
 
@@ -333,63 +214,7 @@ export default function Notifications() {
         isCardMode={true}
       />
 
-      <div className="notifications-content">
-        {resultsLoading ? (
-          <div className="notifications-loading">
-            <Spinner />
-          </div>
-        ) : filteredNotifications.length === 0 ? (
-          <div className="notifications-empty">
-            <FaBell className="notifications-empty-icon" />
-            <p>{t("noNotificationsFound")}</p>
-          </div>
-        ) : (
-          <div className="notifications-grid">
-            {filteredNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`notification-card ${
-                  !notification.read ? "unread" : "read"
-                }`}
-                onClick={() => handleNotificationClick(notification)}
-              >
-                <div className="notification-card-header">
-                  <div className="notification-type">
-                    {getNotificationIcon(notification.type)}
-                    <span className="notification-type-text">
-                      {t(`notificationType${notification.type}`)}
-                    </span>
-                  </div>
-                  <div className="notification-status">
-                    {notification.read ? (
-                      <FaEye className="notification-status-icon read" />
-                    ) : (
-                      <FaEyeSlash className="notification-status-icon unread" />
-                    )}
-                  </div>
-                </div>
-
-                <div className="notification-card-content">
-                  <p className="notification-content">{notification.content}</p>
-                  {notification.messageCount > 1 && (
-                    <div className="notification-message-count">
-                      {t("notificationMessageCount", {
-                        count: notification.messageCount,
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                <div className="notification-card-footer">
-                  <span className="notification-date">
-                    {formatDate(notification.creationDate)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+    
 
       <Pagination
         offset={pagination.offset}

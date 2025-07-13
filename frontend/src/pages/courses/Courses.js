@@ -13,7 +13,7 @@ import {
 } from "../../utils/coursesSearchUtils";
 import "./Courses.css";
 import { handleGetCourses } from "../../handles/handleGetCourses";
-import Spinner from "../../components/spinner/spinner";
+import Spinner from "../../components/spinner/Spinner";
 import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import useAuthStore from "../../stores/useAuthStore";
