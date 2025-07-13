@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styles from "./UserCard.css";
 import UserIcon from "../userIcon/UserIcon";
-import Spinner from "../spinner/spinner";
+import Spinner from "../spinner/Spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 

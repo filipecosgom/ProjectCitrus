@@ -25,7 +25,8 @@ export default function Header({ language, setLanguage }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  // useWebSocketNotifications(); // TEMP: Disabled to test for infinite loop cause
+  const notificationRef = useRef();
+  const messageRef = useRef();
 
   // Simple Zustand selectors for badge counts (no shallow needed)
   const unreadMessageCount = useNotificationStore(
@@ -71,11 +72,16 @@ export default function Header({ language, setLanguage }) {
 
   useEffect(() => {
     function handleClickOutside(event) {
+      // If notifications dropdown is open and click is outside
+      if (showNotifications && notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+      // If messages dropdown is open and click is outside
+      if (showMessages && messageRef.current && !messageRef.current.contains(event.target)) {
+        setShowMessages(false);
+      }
     }
-    if (showNotifications) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    if (showMessages) {
+    if (showNotifications || showMessages) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
@@ -104,7 +110,7 @@ export default function Header({ language, setLanguage }) {
       <div className="header-cell header-empty" />
       {/* Ícones */}
       <div className="header-cell header-icons">
-        <div className="header-icon-wrapper">
+        <div className="header-icon-wrapper" ref={messageRef}>
           <FaRegComments
             style={{ cursor: "pointer" }}
             onClick={async () => {
@@ -127,7 +133,7 @@ export default function Header({ language, setLanguage }) {
             />
           )}
         </div>
-        <div className="header-icon-wrapper">
+        <div className="header-icon-wrapper" ref={notificationRef}>
           <FaRegBell
             style={{ cursor: "pointer" }}
             onClick={async () => {
