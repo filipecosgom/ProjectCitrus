@@ -3,6 +3,9 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 32px;
   padding: 32px;
+  margin-left: 80px; /* Corrige sobreposição pelo menu lateral */
+  max-width: 1200px;
+  margin-right: auto;
 }
 
 .dashboard-card {
