@@ -76,3 +76,32 @@ export const formatStringToDate = (dateStr) => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  // Date formatting helpers (copied from MessageCenter for consistency)
+    function toDateUniversal(date) {
+      if (!date) return null;
+      if (Array.isArray(date)) {
+        return transformArrayDatetoDate(date);
+      }
+      if (date instanceof Date) return date;
+      return new Date(date);
+    }
+  
+    export function formatMessageTimestamp(date) {
+      const d = toDateUniversal(date);
+      if (!d) return "";
+      const now = new Date();
+      const isToday =
+        d.getDate() === now.getDate() &&
+        d.getMonth() === now.getMonth() &&
+        d.getFullYear() === now.getFullYear();
+      const pad = (n) => n.toString().padStart(2, "0");
+      if (isToday) {
+        return dateToFormattedTime(d);
+      } else {
+        return (
+          `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ` +
+          dateToFormattedTime(d)
+        );
+      }
+    }

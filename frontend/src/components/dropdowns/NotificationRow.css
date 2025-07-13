@@ -1,0 +1,120 @@
+.notificationRow-row.notification-seen,
+.notificationRow-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  border-bottom: 1px solid #ececec;
+  cursor: pointer; /* ✅ ADICIONAR */
+  transition: background-color 0.2s ease; /* ✅ ADICIONAR */
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.notificationRow-row:hover {
+  background-color: var(--secondary);
+}
+
+.notificationRow-row:not(.notification-seen) {
+  border-left: 4px solid var(--primary);
+  background: var(--tertiary);
+}
+
+.notificationRow-row.notification-seen {
+  border-left: 4px solid transparent;
+}
+
+.notificationRow-row:not(.notification-seen) .notificationRow-message {
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.notificationRow-row:not(.notification-seen) .notificationRow-sender {
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.notificationRow-iconAndSender-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.notificationRow-icon-cell {
+  width: 50px; /* ← AUMENTAR de 36px para 50px */
+  height: 50px; /* ← AUMENTAR de 36px para 50px */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationRow-icon-cell .user-icon {
+  width: 50px; /* ← AUMENTAR de 36px para 50px */
+  height: 50px; /* ← AUMENTAR de 36px para 50px */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.notificationRow-icon-cell .user-icon img,
+.notificationRow-icon-cell .user-icon .user-initials {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: top; /* ← CORRIGIR ALINHAMENTO */
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.notificationRow-icon-cell .user-icon-status {
+  display: none; /* Esconder indicador de status online no dropdown */
+}
+
+.notificationRow-message {
+    flex: 1;
+  font-family: var(--font-family-secondary);
+  font-size: var(--font-size-main);
+  color: #000;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notificationRow-timestamp {
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-main);
+}
+
+.notificationRow-checkbox {
+  width: calc(20px + 0.5rem); /* or your preferred width */
+  min-width: calc(20px + 0.5rem);
+  max-width: calc(20px + 0.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationRow-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--blue, #007bff);
+}
+
+
+
+.notif-icon-appraisal {
+  font-size: 2.1rem;
+  color: var(--primary);
+}
+.notif-icon-cycle {
+  font-size: 2.1rem;
+  color: var(--secondary);
+}
+.notif-icon-course {
+  font-size: 2.1rem;
+  color: var(--blue);
+}
