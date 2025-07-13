@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
         "WHERE n.user.id = :recipientId " +
         "AND n.sender.id = :senderId " +
         "AND n.type = NotificationType.MESSAGE " +
-        "AND n.notificationIsRead = false")
+        "AND n.notificationIsSeen = false")
 
 @Entity
 @Table(name = "notification", indexes = {

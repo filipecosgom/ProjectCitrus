@@ -72,7 +72,7 @@ const useNotificationStore = create((set, get) => ({
   setMessageUnreadCountToZero: (notificationId) => {
     set((state) => ({
       messageNotifications: state.messageNotifications.map((n) =>
-        n.id === notificationId ? { ...n, unreadCount: 0 } : n
+        n.id === notificationId ? { ...n, messageCount: 0 } : n
       ),
     }));
   },
