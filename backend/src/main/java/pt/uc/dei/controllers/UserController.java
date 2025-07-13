@@ -1,5 +1,3 @@
-
-
 package pt.uc.dei.controllers;
 import pt.uc.dei.annotations.ManagerOfUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -597,6 +595,91 @@ public class UserController {
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ApiResponse(false, "Failed to add finished course", "errorAddFinishedCourse", null)).build();
+        }
+    }
+
+    /**
+     * Updates admin permissions for a user.
+     * Only administrators can access this endpoint.
+     *
+     * @param userId The ID of the user to update
+     * @param requestData JSON containing isAdmin boolean
+     * @param jwtToken JWT authentication token
+     * @return HTTP response with success/error status
+     */
+    @PUT
+    @Path("/{id}/admin-permissions")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateAdminPermissions(
+            @PathParam("id") Long userId,
+            Map<String, Object> requestData,
+            @CookieParam("jwt") String jwtToken) {
+        
+        LOGGER.info("Admin permissions update request for user: {}", userId);
+        
+        try {
+            // Extract and validate JWT
+            Long requesterId = JWTUtil.extractUserIdOrAbort(jwtToken);
+            
+            // Verify requester is admin
+            if (!JWTUtil.isUserAdmin(jwtToken)) {
+                LOGGER.warn("Non-admin user {} attempted to access admin permissions endpoint", requesterId);
+                return Response.status(Response.Status.FORBIDDEN)
+                    .entity(new ApiResponse(false, "Only administrators can manage permissions", "errorForbidden", null))
+                    .build();
+            }
+            
+            // Validate request data
+            if (requestData == null || !requestData.containsKey("isAdmin")) {
+                LOGGER.warn("Invalid request data for admin permissions update");
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Missing isAdmin field", "errorMissingField", null))
+                    .build();
+            }
+            
+            Boolean isAdmin = (Boolean) requestData.get("isAdmin");
+            if (isAdmin == null) {
+                LOGGER.warn("Invalid isAdmin value in request");
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid isAdmin value", "errorInvalidValue", null))
+                    .build();
+            }
+            
+            // Prevent self-removal of admin permissions
+            if (userId.equals(requesterId) && !isAdmin) {
+                LOGGER.warn("User {} attempted to remove their own admin permissions", requesterId);
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Cannot remove your own admin permissions", "errorSelfRemoval", null))
+                    .build();
+            }
+            
+            // Update permissions
+            Boolean success = userService.updateAdminPermissions(userId, isAdmin, requesterId);
+            
+            if (success) {
+                UserDTO updatedUser = userService.getUser(userId);
+                LOGGER.info("Admin permissions updated successfully for user: {}", userId);
+                return Response.ok(
+                    new ApiResponse(true, "Admin permissions updated successfully", "successPermissionsUpdated", updatedUser)
+                ).build();
+            } else {
+                LOGGER.error("Failed to update admin permissions for user: {}", userId);
+                return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ApiResponse(false, "User not found", "errorUserNotFound", null))
+                    .build();
+            }
+            
+        } catch (JWTUtil.JwtValidationException e) {
+            LOGGER.warn("Invalid JWT token in admin permissions request: {}", e.getMessage());
+            return Response.status(Response.Status.UNAUTHORIZED)
+                .entity(new ApiResponse(false, "Invalid or expired token", "errorInvalidToken", null))
+                .build();
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error updating admin permissions for user {}: {}", userId, e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ApiResponse(false, "Internal server error", "errorServerIssue", null))
+                .build();
         }
     }
 }
