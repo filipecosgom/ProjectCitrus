@@ -56,8 +56,8 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/settings",
     "/messages",
     "/courses",
-    "/notifications"
-    "/dashboard",
+    "/notifications",
+    "/dashboard"
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
