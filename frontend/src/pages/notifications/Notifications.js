@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { handleUpdateNotification } from "../../handles/handleNotificationApi";
 import Pagination from "../../components/pagination/Pagination";
+import SortControls from "../../components/sortControls/SortControls";
 import Spinner from "../../components/spinner/Spinner";
 import NotificationRow from "../../components/dropdowns/NotificationRow";
 import SearchBar from "../../components/searchbar/Searchbar";
@@ -45,6 +46,7 @@ export default function Notifications() {
     total: 0,
   });
   const [notifications, setNotifications] = useState([]);
+  const [sort, setSort] = useState({ sortBy: "date", sortOrder: "DESCENDING" });
   const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef();
   const [selectedNotification, setNotificationSelection] = useState(null);
@@ -80,27 +82,44 @@ export default function Notifications() {
 
   // Merge notifications from store whenever they change
   useEffect(() => {
-    // Merge and sort all notifications by timestamp (descending)
+    // Merge all notifications
     const all = [...messageNotifications, ...otherNotifications];
-    all.sort((a, b) => {
-      const aTime = Array.isArray(a.timestamp)
-        ? new Date(...a.timestamp.slice(0, 6))
-        : new Date(a.timestamp);
-      const bTime = Array.isArray(b.timestamp)
-        ? new Date(...b.timestamp.slice(0, 6))
-        : new Date(b.timestamp);
-      return bTime - aTime;
-    });
     setNotifications(all);
     setPagination((prev) => ({ ...prev, total: all.length }));
   }, [messageNotifications, otherNotifications]);
 
+  // Sort notifications when notifications or sort changes
+  const sortedNotifications = React.useMemo(() => {
+    const arr = [...notifications];
+    if (sort.sortBy === "date") {
+      arr.sort((a, b) => {
+        const aTime = Array.isArray(a.timestamp)
+          ? new Date(...a.timestamp.slice(0, 6))
+          : new Date(a.timestamp);
+        const bTime = Array.isArray(b.timestamp)
+          ? new Date(...b.timestamp.slice(0, 6))
+          : new Date(b.timestamp);
+        return sort.sortOrder === "DESCENDING" ? bTime - aTime : aTime - bTime;
+      });
+    } else if (sort.sortBy === "type") {
+      arr.sort((a, b) => {
+        if (a.type === b.type) return 0;
+        if (sort.sortOrder === "ASCENDING") {
+          return a.type.localeCompare(b.type);
+        } else {
+          return b.type.localeCompare(a.type);
+        }
+      });
+    }
+    return arr;
+  }, [notifications, sort]);
+
   // Filter notifications by search query (content)
   const filteredNotifications = searchQuery
-    ? notifications.filter((n) =>
+    ? sortedNotifications.filter((n) =>
         (n.content || "").toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : notifications;
+    : sortedNotifications;
 
   // Pagination: get current page notifications
   const paginatedNotifications = filteredNotifications.slice(
@@ -187,6 +206,7 @@ export default function Notifications() {
 
   return (
     <div className="notifications-container" ref={containerRef}>
+      
       <SearchBar
         onSearch={handleSearch}
         defaultValues={{
@@ -206,6 +226,17 @@ export default function Notifications() {
           </button>
         )}
         placeholder={t("searchBarPlaceholder", { type: t("notifications.content", "content") })}
+      />
+      <SortControls
+        fields={[
+          { id: "notifications.sortByType", className:"notifications-sortByType", key: "type", label: () => t("notifications.sortByType", "Type") },
+          { id: "notifications.sortByDate", className:"notifications-sortByDate", key: "date", label: () => t("notifications.sortByDate", "Date") },
+          
+        ]}
+        sortBy={sort.sortBy}
+        sortOrder={sort.sortOrder}
+        onSortChange={({ sortBy, sortOrder }) => setSort({ sortBy, sortOrder })}
+        className="notifications-sort-controls"
       />
       <div className="notifications-list">
         {paginatedNotifications.length === 0 ? (
