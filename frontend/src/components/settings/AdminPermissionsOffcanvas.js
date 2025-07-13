@@ -195,13 +195,13 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
                   className="admin-permissions-modal-btn cancel"
                   onClick={() => setConfirmOpen(false)}
                 >
-                  {t("cancel")}
+                  {t("cancel").charAt(0).toUpperCase() + t("cancel").slice(1)}
                 </button>
                 <button
                   className="admin-permissions-modal-btn confirm"
                   onClick={handleConfirm}
                 >
-                  {t("confirm")}
+                  {t("confirm").charAt(0).toUpperCase() + t("confirm").slice(1)}
                 </button>
               </div>
             </div>
