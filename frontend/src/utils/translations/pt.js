@@ -537,6 +537,12 @@ const pt = {
     "Não pode remover a sua própria permissão de administrador.",
   close: "Fechar",
   loading: "A carregar...",
+  dashboard: {
+    users: "Utilizadores ativos",
+    courses: "Cursos ativos",
+    appraisals: "Avaliações pendentes",
+    cycles: "Ciclos ativos",
+  },
 };
 
 export default pt;

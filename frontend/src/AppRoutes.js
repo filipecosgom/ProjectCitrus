@@ -20,6 +20,7 @@ import NotFound404 from "./pages/404/404NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
@@ -54,6 +55,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/settings",
     "/messages",
     "/courses",
+    "/dashboard",
   ];
 
   const is404 = !knownRoutes.includes(location.pathname);
@@ -161,6 +163,14 @@ function AppRoutes({ currentLocale, setLocale }) {
             <ProtectedRoute>
               <Courses />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
           }
         />
         <Route path="*" element={<NotFound404 />} />
