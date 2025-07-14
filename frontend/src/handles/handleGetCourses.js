@@ -1,3 +1,18 @@
+/**
+ * @file handleGetCourses.js
+ * @module handleGetCourses
+ * @description Handles fetching courses from the backend with filtering, pagination, and search options.
+ * Returns courses array, pagination info, and success/error status.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Fetches courses from the backend with filtering, pagination, and search options.
+ * Returns courses array, pagination info, and success/error status.
+ * @param {Object} [params={}] - Parameters for fetching courses (area, language, adminId, etc.)
+ * @returns {Promise<Object>} Object with courses, pagination, success, and error info
+ */
+
 import { fetchCourses } from "../api/coursesApi";
 
 // paramsBuilder is a function or object that builds the params for the API call
@@ -40,12 +55,12 @@ export const handleGetCourses = async ({
     const paginationInfo = {
       totalCourses: response.data?.data?.totalCourses || 0,
       offset: response.data?.data?.offset || 0,
-      limit: response.data?.data?.limit || 10
+      limit: response.data?.data?.limit || 10,
     };
     return {
       courses,
       pagination: paginationInfo,
-      success: true
+      success: true,
     };
   } else {
     // Handle error cases
@@ -53,12 +68,12 @@ export const handleGetCourses = async ({
       return {
         success: false,
         error: response.error,
-        suppressToast: true
+        suppressToast: true,
       };
     }
     return {
       success: false,
-      error: response.error
+      error: response.error,
     };
   }
 };

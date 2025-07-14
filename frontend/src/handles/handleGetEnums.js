@@ -1,5 +1,24 @@
-import { getRoles, getOffices, getAppraisalStates, getCourseAreas } from '../api/enumsApi';
-import handleNotification from './handleNotification';
+/**
+ * @file handleGetEnums.js
+ * @module handleGetEnums
+ * @description Handles fetching enum values (roles, offices, appraisal states, course areas) from the backend.
+ * Notifies user of errors and returns arrays of enum values.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Fetches available user roles from the backend.
+ * Notifies user of errors and returns array of roles.
+ * @returns {Promise<Array>} Array of role strings
+ */
+
+import {
+  getRoles,
+  getOffices,
+  getAppraisalStates,
+  getCourseAreas,
+} from "../api/enumsApi";
+import handleNotification from "./handleNotification";
 
 export const handleGetRoles = async () => {
   try {
@@ -41,4 +60,9 @@ export const handleGetCourseAreas = async () => {
   }
 };
 
-export default { handleGetRoles, handleGetOffices, handleGetAppraisalStates, handleGetCourseAreas };
+export default {
+  handleGetRoles,
+  handleGetOffices,
+  handleGetAppraisalStates,
+  handleGetCourseAreas,
+};
