@@ -25,7 +25,7 @@ export default function AppraisalStatePieChart({
       <h3 style={{ textAlign: "center", marginBottom: 12 }}>
         {t("dashboard.appraisalsDistribution")}
       </h3>
-      <PieChart width={220} height={220}>
+      <PieChart width={264} height={220}>
         <Pie
           data={data}
           cx="50%"
