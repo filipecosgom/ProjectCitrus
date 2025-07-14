@@ -176,6 +176,26 @@ const SearchBar = ({
             </div>
           )}
       {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
+      {onExportPdf && (
+            <button
+              type="button"
+              className="searchBar-pdfButton"
+              onClick={onExportPdf}
+              title={t("exportPdf")}
+            >
+              <GrDocumentPdf className="searchBar-pdfIcon" />
+            </button>
+          )}
+          {onExportCsv && (
+            <button
+              type="button"
+              className="searchBar-csvButton"
+              onClick={onExportCsv}
+              title={t("exportCsv")}
+            >
+              <GrDocumentCsv className="searchBar-csvIcon" />
+            </button>
+          )}
           {onExportXlsx && (
             <button
               type="button"

@@ -1,4 +1,8 @@
-package pt.uc.dei.entities;
+package pt.uc.dei.unit.entities;
+
+import pt.uc.dei.entities.CourseEntity;
+import pt.uc.dei.entities.UserEntity;
+import pt.uc.dei.entities.FinishedCourseEntity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

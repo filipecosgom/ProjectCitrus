@@ -1,7 +1,11 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.PasswordResetTokenDTO;
+import pt.uc.dei.dtos.UserDTO;
 
 /**
  * Unit tests for {@link PasswordResetTokenDTO}.

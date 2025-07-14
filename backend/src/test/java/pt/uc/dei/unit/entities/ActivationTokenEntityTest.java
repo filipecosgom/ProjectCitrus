@@ -1,4 +1,7 @@
-package pt.uc.dei.entities;
+package pt.uc.dei.unit.entities;
+
+import pt.uc.dei.entities.ActivationTokenEntity;
+import pt.uc.dei.entities.TemporaryUserEntity;
 
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;

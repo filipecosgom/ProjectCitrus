@@ -1,4 +1,6 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.unit.utils;
+
+import pt.uc.dei.utils.SearchUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.params.ParameterizedTest;

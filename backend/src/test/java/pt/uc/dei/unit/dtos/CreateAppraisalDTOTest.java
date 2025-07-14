@@ -1,6 +1,9 @@
-package pt.uc.dei.dtos;
+
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.CreateAppraisalDTO;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

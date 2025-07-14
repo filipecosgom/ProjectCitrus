@@ -1,9 +1,13 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
+import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.enums.AppraisalState;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link AppraisalDTO}.

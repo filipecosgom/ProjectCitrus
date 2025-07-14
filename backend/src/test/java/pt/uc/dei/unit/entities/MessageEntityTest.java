@@ -1,4 +1,7 @@
-package pt.uc.dei.entities;
+package pt.uc.dei.unit.entities;
+
+import pt.uc.dei.entities.MessageEntity;
+import pt.uc.dei.entities.UserEntity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

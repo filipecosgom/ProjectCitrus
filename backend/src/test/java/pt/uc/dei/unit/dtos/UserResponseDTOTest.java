@@ -1,7 +1,12 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.FinishedCourseDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
+
 import java.util.HashSet;
 import java.util.Set;
 

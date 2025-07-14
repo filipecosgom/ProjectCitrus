@@ -1,4 +1,6 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.unit.utils;
+
+import pt.uc.dei.utils.TwoFactorUtil;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.junit.jupiter.api.Test;

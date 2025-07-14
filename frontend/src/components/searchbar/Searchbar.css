@@ -59,7 +59,6 @@
 .searchBar-wrapper {
   flex: 1;
   display: flex;
-  border: 2px solid #cbb4b4;
   border-radius: var(--border-radius-default, 10px);
   box-shadow: var(--shadow-text);
   padding: 0rem 0.5rem;
@@ -169,6 +168,8 @@
 
   .searchBar-dropdown {
     width: auto;
+    box-shadow: var(--shadow-text);
+    border-radius: var(--border-radius-default, 10px);
   }
 }
 /*----------------------------------------*/
@@ -268,14 +269,17 @@
 /*----------------------------------------*/
 /*----------------YEARS FILTER------------------*/
 /*----------------------------------------*/
+.searchBar-yearDropdown {
+  height:100%;
+}
 .years-filter-select {
-  background: white;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.25rem 1rem;
+  height: 100%;
   font-size: 1rem;
-  color: var(--secondary);
-  margin-left: 0.5rem;
+  text-align: center;
+  color: black;
+  border-radius: var(--border-radius-default, 10px);
+  box-shadow: var(--shadow-text);
   min-width: 120px;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;

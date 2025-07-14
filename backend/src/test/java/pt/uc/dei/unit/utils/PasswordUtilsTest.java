@@ -1,4 +1,6 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.unit.utils;
+
+import pt.uc.dei.utils.PasswordUtils;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,7 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.unit.utils;
+
+import pt.uc.dei.utils.XLSXGenerator;
+import pt.uc.dei.dtos.UserDTO;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

@@ -1,11 +1,16 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Arrays;
-import pt.uc.dei.enums.CycleState;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.CycleDTO;
+import pt.uc.dei.enums.CycleState;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link CycleDTO}.

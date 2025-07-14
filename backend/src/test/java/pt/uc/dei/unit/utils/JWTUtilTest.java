@@ -1,4 +1,6 @@
-package pt.uc.dei.utils;
+package pt.uc.dei.unit.utils;
+
+import pt.uc.dei.utils.JWTUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

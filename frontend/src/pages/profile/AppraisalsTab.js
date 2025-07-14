@@ -231,7 +231,6 @@ function AppraisalsTab({ userId: userIdProp }) {
           <p>{t("appraisalsNoResults")}</p>
         </div>
       ) : (
-        <div>
           <div className="appraisalsTab-grid">
             {filteredAppraisals.map((appraisal) => (
               <AppraisalCard
@@ -241,7 +240,6 @@ function AppraisalsTab({ userId: userIdProp }) {
               />
             ))}
           </div>
-        </div>
       )}
       <AppraisalOffCanvas
         appraisal={selectedAppraisal}

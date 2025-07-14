@@ -108,16 +108,6 @@ export default function Menu({
       managerOnly: false,
     },
     {
-      key: "darkmode",
-      label: menuDarkMode,
-      icon: <MdDarkMode />,
-      color: "#818488",
-      route: null,
-      adminOnly: false,
-      managerOnly: false,
-      isToggle: true,
-    },
-    {
       key: "language",
       label: menuLanguage,
       icon: null,

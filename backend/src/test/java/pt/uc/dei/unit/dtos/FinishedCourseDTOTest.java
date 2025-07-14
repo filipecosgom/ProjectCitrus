@@ -1,8 +1,12 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.FinishedCourseDTO;
+
+import java.time.LocalDate;
 
 /**
  * Unit tests for {@link FinishedCourseDTO}.

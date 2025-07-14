@@ -1,4 +1,8 @@
-package pt.uc.dei.entities;
+package pt.uc.dei.unit.entities;
+
+import pt.uc.dei.entities.AppraisalEntity;
+import pt.uc.dei.entities.UserEntity;
+import pt.uc.dei.entities.CycleEntity;
 
 import org.junit.jupiter.api.Test;
 import pt.uc.dei.enums.AppraisalState;

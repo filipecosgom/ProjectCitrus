@@ -1,8 +1,12 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.ActivationTokenDTO;
+import pt.uc.dei.dtos.TemporaryUserDTO;
+
 import java.time.LocalDateTime;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link ActivationTokenDTO}.

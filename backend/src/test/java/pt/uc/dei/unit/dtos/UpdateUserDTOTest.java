@@ -1,7 +1,10 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.UpdateUserDTO;
 
 /**
  * Unit tests for {@link UpdateUserDTO}.

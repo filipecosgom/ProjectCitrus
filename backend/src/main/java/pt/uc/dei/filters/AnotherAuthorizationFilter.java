@@ -14,8 +14,11 @@ import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.utils.ApiResponse;
 
 /**
- * JAX-RS filter that allows access only to the user themselves or an admin.
- * Checks the path parameter 'id' against the authenticated user's ID and admin status.
+ * JAX-RS filter that denies access if the authenticated user attempts to access their own resource.
+ * <p>
+ * This filter checks the path parameter 'id' against the authenticated user's ID. If the user attempts
+ * to access a resource with an ID matching their own, the request is denied with a 403 Forbidden response.
+ * This is the inverse of a typical self-or-admin filter: it blocks self-access.
  */
 @AnotherOnly
 @Provider
@@ -26,9 +29,9 @@ public class AnotherAuthorizationFilter implements ContainerRequestFilter {
     private ResourceInfo resourceInfo;
 
     /**
-     * Filters requests to ensure only the user themselves or an admin can access the resource.
+     * Filters requests to deny access if the user attempts to access their own resource.
      *
-     * @param requestContext the request context
+     * @param requestContext the request context containing user and path information
      */
     @Override
     public void filter(ContainerRequestContext requestContext) {

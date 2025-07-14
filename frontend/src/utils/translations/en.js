@@ -124,6 +124,7 @@ const en = {
     "Password must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
   passwordResetSuccess: "Password changed. You log in with the new password.",
   passwordResetError: "Error resetting password. Please try again later.",
+  passwordResetTokenInvalid: "Invalid or expired password reset token.",
 
   //ERRORS
   protectedRoute: "You need to be logged in to access this page",
@@ -176,6 +177,7 @@ const en = {
   profileSave: "Save",
   profileEdit: "Edit",
   profileCancel: "Cancel",
+  profileOf: "Profile of",
 
   // Profile Errors
   profileErrorFirstNameRequired: "First name is required",

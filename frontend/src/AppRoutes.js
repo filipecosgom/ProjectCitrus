@@ -23,6 +23,7 @@ import AdminRoute from "./utils/AdminRoute";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./pages/dashboard/Dashboard";
 
+
 function AppRoutes({ currentLocale, setLocale }) {
   const [hydrating, setHydrating] = useState(true);
   const location = useLocation();
@@ -39,7 +40,7 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/header",
   ];
 
-  // ✅ ATUALIZAR: Lista de todas as rotas conhecidas
+  // List of all known routes
   const knownRoutes = [
     "/",
     "/login",
@@ -60,16 +61,33 @@ function AppRoutes({ currentLocale, setLocale }) {
     "/dashboard",
   ];
 
+  // List of public routes that do NOT require user hydration
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/password-reset",
+    "/offcanvas-forgot-password",
+    "/account-activation",
+    "/activated-account",
+    "/header",
+  ];
+
   const is404 = !knownRoutes.includes(location.pathname);
   const showHeader = !hideHeaderRoutes.includes(location.pathname) && !is404;
 
   useEffect(() => {
+    // Only hydrate user if not on a public route
+    if (publicRoutes.includes(location.pathname)) {
+      setHydrating(false);
+      return;
+    }
     const hydrate = async () => {
       if (!useAuthStore.getState().user) {
         const response = await useAuthStore
           .getState()
           .fetchAndSetUserInformation();
-        if (!useAuthStore.getState().avatar && response.data) {
+        if (!useAuthStore.getState().avatar && response?.data) {
           if (response.data.user.hasAvatar) {
             await useAuthStore.getState().fetchAndSetUserAvatar();
           }
@@ -83,7 +101,8 @@ function AppRoutes({ currentLocale, setLocale }) {
       setHydrating(false);
     };
     hydrate();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   if (hydrating) return <Spinner />;
 

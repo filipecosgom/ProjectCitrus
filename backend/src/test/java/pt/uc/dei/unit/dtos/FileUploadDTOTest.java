@@ -1,9 +1,13 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.FileUploadDTO;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link FileUploadDTO}.

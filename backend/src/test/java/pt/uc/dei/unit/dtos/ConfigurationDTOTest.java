@@ -1,8 +1,12 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.ConfigurationDTO;
+import pt.uc.dei.dtos.UserDTO;
+
 import java.time.LocalDateTime;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link ConfigurationDTO}.

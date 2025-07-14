@@ -1,11 +1,17 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.AppraisalDTO;
+import pt.uc.dei.dtos.FinishedCourseDTO;
+import pt.uc.dei.dtos.UserFullDTO;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Unit tests for {@link UserFullDTO}.

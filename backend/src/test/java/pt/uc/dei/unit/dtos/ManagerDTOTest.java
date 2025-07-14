@@ -1,7 +1,12 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import pt.uc.dei.dtos.ManagerDTO;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit tests for {@link ManagerDTO}.

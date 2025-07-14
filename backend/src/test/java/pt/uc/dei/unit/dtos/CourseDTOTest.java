@@ -1,10 +1,13 @@
-package pt.uc.dei.dtos;
+package pt.uc.dei.unit.dtos;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import java.time.LocalDate;
+import pt.uc.dei.dtos.CourseDTO;
 import pt.uc.dei.enums.CourseArea;
 import pt.uc.dei.enums.Language;
+
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for {@link CourseDTO}.
