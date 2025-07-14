@@ -10,6 +10,9 @@ const en = {
     content: "message",
     noNotificationsFound: "No notifications found",
   },
+  login: {
+    failed: "Login failed. Please check your credentials and try again.",
+  },
   welcomeMessage: "Welcome {name}",
   goodByeMessage: "Goodbye {name}",
   //Login
