@@ -1,6 +1,12 @@
-// filepath: c:\Users\apoca\OneDrive\Documentos\ACERTAR O RUMO\2 TRIMESTRE\PAJ - Programação Avançada em Java\Projetos\projectcitrus\frontend\jest.config.js
+// jest.config.js
 module.exports = {
-  transformIgnorePatterns: ["/node_modules/(?!axios)/"],
+  testEnvironment: "jsdom",
+  transform: {
+    "^.+\\.[jt]sx?$": "babel-jest",
+  },
+  transformIgnorePatterns: [
+    "/node_modules/(?!(axios)/)", // força a transpilar axios
+  ],
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
     "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/__mocks__/fileMock.js",
