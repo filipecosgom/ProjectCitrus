@@ -1,4 +1,15 @@
+/*
+ * ===== AppraisalScoreVerbose Component Styles =====
+ *
+ * This stylesheet provides the layout and typography for the AppraisalScoreVerbose React component.
+ * It includes:
+ *   - Container styling for verbose score display
+ *   - Font family and size variables for consistent appearance
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 .scoreStarCard-container-verbose {
-    font-family: var(--font-family-secondary);
-    font-size: var(--font-size-main);
+  font-family: var(--font-family-secondary);
+  font-size: var(--font-size-main);
 }

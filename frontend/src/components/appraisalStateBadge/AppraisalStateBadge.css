@@ -1,3 +1,16 @@
+/*
+ * ===== AppraisalStateBadge Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AppraisalStateBadge React component.
+ * It includes:
+ *   - Container and icon styles
+ *   - Color logic for each badge state (in progress, completed, closed, unknown)
+ *   - Responsive adjustments for different screen sizes
+ *   - Utility classes for compact and label display
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 .appraisal-state-badge {
   display: inline-flex;
   align-items: center;
@@ -53,23 +66,23 @@
   }
 
   .badge-label {
-  display: block;
-}
+    display: block;
+  }
 
   .badge-icon {
     font-size: 0.9em;
   }
 
   /* ✅ RESPONSIVE para telas pequenas */
-@media (min-width: 1024px) {
-  .appraisal-state-badge {
-    gap: 0.1em;
-    font-size: 0.75em;
-    width: 120px;
-  }
+  @media (min-width: 1024px) {
+    .appraisal-state-badge {
+      gap: 0.1em;
+      font-size: 0.75em;
+      width: 120px;
+    }
 
-  .badge-label {
-    margin-left: 0.05em;
+    .badge-label {
+      margin-left: 0.05em;
+    }
   }
-}
 }

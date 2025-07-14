@@ -129,13 +129,19 @@ export default function Dashboard() {
           complete={stats.users.profileCompletion.complete}
           incomplete={stats.users.profileCompletion.incomplete}
           t={t}
+          className="dashboard-profile-piechart"
         />
-        <UserRolePieChart roles={stats.users.roles} t={t} />
+        <UserRolePieChart
+          roles={stats.users.roles}
+          t={t}
+          className="dashboard-role-piechart"
+        />
         <AppraisalStatePieChart
           inProgress={stats.appraisals.inProgress}
           completed={stats.appraisals.completed}
           closed={stats.appraisals.closed}
           t={t}
+          className="dashboard-role-piechart"
         />
         <CourseBarChart
           active={stats.courses.active}
