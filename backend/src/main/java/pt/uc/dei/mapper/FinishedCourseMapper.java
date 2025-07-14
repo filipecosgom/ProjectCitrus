@@ -17,19 +17,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Mapper interface for converting FinishedCourseEntity objects into FinishedCourseDTO objects.
- * Uses MapStruct for automatic field mapping, ensuring clean transformations.
- *
- * <p>Supports:
+ * MapStruct mapper interface for converting between {@link FinishedCourseEntity} and {@link FinishedCourseDTO}.
+ * <p>
+ * <b>Features:</b>
  * <ul>
- *   <li>Automatic mapping between entity and DTO</li>
- *   <li>Handling collections (List and Set)</li>
- *   <li>Ignoring null values for PATCH updates</li>
- *   <li>Preventing circular references with UserEntity</li>
+ *   <li>Automatic mapping between entity and DTO, including nested user and course fields</li>
+ *   <li>Handles mapping of collections (List and Set) of finished courses and DTOs</li>
+ *   <li>Ignores null values for PATCH updates (partial updates)</li>
+ *   <li>Prevents circular references by ignoring user field in inverse mapping</li>
  * </ul>
+ * <p>
+ * <b>Usage:</b> This interface is implemented automatically by MapStruct at build time.
+ * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
  *
- * @author [Your Name]
- * @version 1.0
+ * @author ProjectCitrus Team
+ * @version 1.1
  */
 @Mapper(
         componentModel = "cdi",
@@ -39,57 +41,74 @@ import java.util.Set;
 public interface FinishedCourseMapper {
 
     /**
-     * Converts a FinishedCourseEntity object to a FinishedCourseDTO object.
+     * Maps a {@link FinishedCourseEntity} to a {@link FinishedCourseDTO}.
+     * <p>
+     * Maps nested user and course fields to flat DTO fields for API use.
      *
      * @param finishedCourseEntity the entity to convert
-     * @return the mapped DTO
+     * @return the mapped DTO, or null if input is null
      */
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.email", target = "userEmail")
-    @Mapping(source = "course.id", target = "courseId")
-    @Mapping(source = "course.title", target = "courseTitle")
-    @Mapping(source = "course.description", target = "courseDescription")
-    @Mapping(source = "course.area", target = "courseArea")
-    @Mapping(source = "course.creationDate", target = "courseCreationDate")
-    @Mapping(source = "course.duration", target = "courseDuration")
-    @Mapping(target = "courseLanguage", expression = "java(finishedCourseEntity.getCourse() != null && finishedCourseEntity.getCourse().getLanguage() != null ? finishedCourseEntity.getCourse().getLanguage().getFieldName() : null)")    @Mapping(source = "course.link", target = "courseLink")
-    @Mapping(source = "course.courseHasImage", target = "courseHasImage")
-    @Mapping(source = "course.courseIsActive", target = "courseIsActive")
+    @Mappings({
+        @Mapping(source = "user.id", target = "userId"),
+        @Mapping(source = "user.email", target = "userEmail"),
+        @Mapping(source = "course.id", target = "courseId"),
+        @Mapping(source = "course.title", target = "courseTitle"),
+        @Mapping(source = "course.description", target = "courseDescription"),
+        @Mapping(target = "courseArea", expression = "java(courseAreaToString(finishedCourseEntity.getCourse() != null ? finishedCourseEntity.getCourse().getArea() : null))"),
+        @Mapping(source = "course.creationDate", target = "courseCreationDate"),
+        @Mapping(source = "course.duration", target = "courseDuration"),
+        @Mapping(target = "courseLanguage", expression = "java(finishedCourseEntity.getCourse() != null && finishedCourseEntity.getCourse().getLanguage() != null ? finishedCourseEntity.getCourse().getLanguage().getFieldName() : null)"),
+        @Mapping(source = "course.link", target = "courseLink"),
+        @Mapping(source = "course.courseHasImage", target = "courseHasImage"),
+        @Mapping(source = "course.courseIsActive", target = "courseIsActive")
+    })
     FinishedCourseDTO toDto(FinishedCourseEntity finishedCourseEntity);
 
     /**
-     * Converts a list of FinishedCourseEntity objects into a list of FinishedCourseDTO objects.
+     * Helper to map CourseArea enum to its fieldName (lowercase string) for DTO.
+     */
+    default String courseAreaToString(pt.uc.dei.enums.CourseArea area) {
+        return area == null ? null : area.getFieldName();
+    }
+
+    /**
+     * Maps a list of {@link FinishedCourseEntity} objects to a list of {@link FinishedCourseDTO} objects.
      *
      * @param finishedCourses the list of entities to convert
-     * @return the mapped list of DTOs
+     * @return the mapped list of DTOs (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     List<FinishedCourseDTO> toDtoList(List<FinishedCourseEntity> finishedCourses);
 
     /**
-     * Converts a set of FinishedCourseEntity objects into a set of FinishedCourseDTO objects.
+     * Maps a set of {@link FinishedCourseEntity} objects to a set of {@link FinishedCourseDTO} objects.
      *
      * @param finishedCourses the set of entities to convert
-     * @return the mapped set of DTOs
+     * @return the mapped set of DTOs (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     Set<FinishedCourseDTO> toDtoSet(Set<FinishedCourseEntity> finishedCourses);
 
     /**
-     * Converts a FinishedCourseDTO object back into a FinishedCourseEntity object.
-     * Ignores mapping of the user field to prevent infinite recursion.
+     * Maps a {@link FinishedCourseDTO} back to a {@link FinishedCourseEntity}.
+     * <p>
+     * Ignores mapping of the user field to prevent infinite recursion; set user in the service layer if needed.
      *
      * @param finishedCourseDTO the DTO to convert
-     * @return the mapped entity
+     * @return the mapped entity, or null if input is null
      */
     @InheritInverseConfiguration(name = "toDto")
     @Mapping(target = "user", ignore = true) // Avoid infinite recursion
     FinishedCourseEntity toEntity(FinishedCourseDTO finishedCourseDTO);
 
     /**
-     * Updates an existing FinishedCourseEntity with non-null values from FinishedCourseDTO.
+     * Updates an existing {@link FinishedCourseEntity} with non-null values from a {@link FinishedCourseDTO}.
+     * <p>
      * Useful for PATCH updates where only specific fields should be modified.
+     * Ignores the ID field to prevent accidental changes.
      *
      * @param dto    the DTO containing updated fields
-     * @param entity the entity to update
+     * @param entity the entity to update (modified in place)
      */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true) // ID should never be updated in PATCH requests

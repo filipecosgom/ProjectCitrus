@@ -16,24 +16,36 @@
         <maven.compiler.source>21</maven.compiler.source>
         <junit.version>5.11.4</junit.version>
         <wildfly.home>/path/to/wildfly</wildfly.home>
+        <selenium.version>4.29.0</selenium.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.34.0</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-grid</artifactId>
+            <version>4.34.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.12.7</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
+            <version>5.13.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -284,67 +296,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>integration-tests</id>
-            <build>
-                <plugins>
-                    <!-- Failsafe configuration -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <webdriver.base.url>http://localhost:8080/${project.artifactId}</webdriver.base.url>
-                            </systemPropertyVariables>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- WildFly lifecycle management -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>start-wildfly</id>
-                                <phase>pre-integration-test</phase>
-                                <goals><goal>exec</goal></goals>
-                                <configuration>
-                                    <executable>${wildfly.home}/bin/standalone.sh</executable>
-                                    <arguments>
-                                        <argument>-Djboss.socket.binding.port-offset=100</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-wildfly</id>
-                                <phase>post-integration-test</phase>
-                                <goals><goal>exec</goal></goals>
-                                <configuration>
-                                    <executable>${wildfly.home}/bin/jboss-cli.sh</executable>
-                                    <arguments>
-                                        <argument>--connect</argument>
-                                        <argument>command=:shutdown</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 
 </project>

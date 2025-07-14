@@ -17,14 +17,27 @@ import java.util.Set;
 import org.mapstruct.*;
 
 /**
- * Mapper interface for converting UserEntity objects into UserDTO objects.
+ * MapStruct mapper interface for converting between {@link UserEntity} and its DTO representations.
  * <p>
- * - Uses Jakarta EE CDI (`componentModel = "jakarta"`) for automatic bean management.
- * - Handles nested mappings for `AppraisalMapper` and `FinishedCourseMapper`.
- * - Ensures sensitive fields like passwords are ignored.
- * - Prevents infinite recursion by excluding circular references.
- * - Provides a minimal DTO conversion for lightweight data transfer.
- * </p>
+ * <ul>
+ *   <li>Uses CDI component model for dependency injection.</li>
+ *   <li>Handles nested mappings for manager, appraisals, and finished courses.</li>
+ *   <li>Ignores sensitive fields (e.g., password) in DTOs for security.</li>
+ *   <li>Prevents infinite recursion by using qualified mappings for manager fields.</li>
+ *   <li>Supports partial updates via {@code updateUserFromDto}.</li>
+ *   <li>Provides minimal and full DTO conversions for different use cases.</li>
+ * </ul>
+ * <b>Mapping summary:</b>
+ * <ul>
+ *   <li>{@code toDto}: Maps {@link UserEntity} to {@link UserDTO} (basic user info, manager as {@link ManagerDTO}).</li>
+ *   <li>{@code toEntity}: Maps {@link UserDTO} to {@link UserEntity} (manager as UserEntity, ignores some fields).</li>
+ *   <li>{@code updateUserFromDto}: Updates an existing {@link UserEntity} from a {@link UserDTO}, ignoring nulls and immutable fields.</li>
+ *   <li>{@code toFullDto}: Maps {@link UserEntity} to {@link UserFullDTO} (includes appraisals and completed courses).</li>
+ *   <li>{@code toUserResponseDto}: Maps {@link UserEntity} to {@link UserResponseDTO} (for API responses, includes online status, last seen, etc.).</li>
+ *   <li>{@code toManagerDto}: Maps a manager {@link UserEntity} to {@link ManagerDTO} (for nested manager info).</li>
+ *   <li>{@code toManagerEntity}: Maps {@link ManagerDTO} to a minimal {@link UserEntity} (for manager references).</li>
+ * </ul>
+ * <b>Note:</b> Uses {@link AppraisalMapper}, {@link FinishedCourseMapper}, and {@link CourseMapper} for nested mappings.
  */
 @Mapper(
         componentModel = "cdi",

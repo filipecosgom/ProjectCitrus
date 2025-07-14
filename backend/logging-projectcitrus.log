@@ -4,4 +4,3 @@
 14/07/2025 12:39:27.111 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 946 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
 14/07/2025 14:26:17.414 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 955 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
 14/07/2025 14:26:43.842 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 958 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 22:40:10.006 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 943 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 

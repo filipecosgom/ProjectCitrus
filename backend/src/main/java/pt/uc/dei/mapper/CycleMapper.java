@@ -8,19 +8,23 @@ import pt.uc.dei.entities.CycleEntity;
 import java.util.List;
 
 /**
- * Mapper interface for converting CycleEntity objects into CycleDTO objects.
- * Uses MapStruct for automatic field mapping and ensures proper handling of relations.
- *
- * <p>Supports:
+ * MapStruct mapper interface for converting between {@link CycleEntity} and its DTO representations.
+ * <p>
+ * <b>Features:</b>
  * <ul>
- *   <li>Automatic mapping between entity and DTO</li>
- *   <li>Handling collections (Lists)</li>
- *   <li>Preventing circular references with UserEntity</li>
- *   <li>Safely ignoring sensitive or unnecessary fields</li>
+ *   <li>Automatic mapping between {@code CycleEntity}, {@code CycleDTO}, and {@code CycleUpdateDTO}</li>
+ *   <li>Handles mapping of nested admin and evaluations fields, mapping admin to adminId</li>
+ *   <li>Supports mapping of collections (lists) of cycles and DTOs</li>
+ *   <li>Prevents circular references by mapping only IDs for admin</li>
+ *   <li>Ignores sensitive or unnecessary fields as needed for security and clarity</li>
+ *   <li>Provides update methods for partial entity updates from DTOs</li>
  * </ul>
+ * <p>
+ * <b>Usage:</b> This interface is implemented automatically by MapStruct at build time.
+ * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
  *
  * @author ProjectCitrus Team
- * @version 1.0
+ * @version 1.1
  */
 @Mapper(
         componentModel = "cdi",
@@ -30,11 +34,13 @@ import java.util.List;
 public interface CycleMapper {
 
     /**
-     * Converts a CycleEntity object to a CycleDTO object.
+     * Maps a {@link CycleEntity} to a {@link CycleDTO}.
+     * <p>
      * Maps the admin relationship to just the admin ID to prevent circular references.
+     * Includes evaluations as a list of DTOs.
      *
      * @param cycleEntity the entity to convert
-     * @return the mapped DTO
+     * @return the mapped DTO, or null if input is null
      */
     @Mapping(source = "admin.id", target = "adminId")
     @Mapping(source = "state", target = "state")
@@ -42,12 +48,12 @@ public interface CycleMapper {
     CycleDTO toDto(CycleEntity cycleEntity);
 
     /**
-     * Converts a CycleDTO object to a CycleEntity object.
-     * Note: This mapping ignores the admin relationship to prevent issues.
-     * Admin should be set separately in the service layer.
+     * Maps a {@link CycleDTO} to a {@link CycleEntity}.
+     * <p>
+     * Ignores admin, state, id, and evaluations fields; set these in the service layer if needed.
      *
      * @param cycleDTO the DTO to convert
-     * @return the mapped entity
+     * @return the mapped entity, or null if input is null
      */
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "state", ignore = true)
@@ -56,27 +62,31 @@ public interface CycleMapper {
     CycleEntity toEntity(CycleDTO cycleDTO);
 
     /**
-     * Converts a list of CycleEntity objects into a list of CycleDTO objects.
+     * Maps a list of {@link CycleEntity} objects to a list of {@link CycleDTO} objects.
      *
      * @param cycles the list of entities to convert
-     * @return the mapped list of DTOs
+     * @return the mapped list of DTOs (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     List<CycleDTO> toDtoList(List<CycleEntity> cycles);
 
     /**
-     * Converts a list of CycleDTO objects into a list of CycleEntity objects.
+     * Maps a list of {@link CycleDTO} objects to a list of {@link CycleEntity} objects.
      *
      * @param cycleDTOs the list of DTOs to convert
-     * @return the mapped list of entities
+     * @return the mapped list of entities (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     List<CycleEntity> toEntityList(List<CycleDTO> cycleDTOs);
 
     /**
-     * Updates an existing CycleEntity with values from a CycleDTO.
-     * Useful for partial updates while preserving existing relationships.
+     * Updates an existing {@link CycleEntity} with values from a {@link CycleUpdateDTO}.
+     * <p>
+     * Useful for partial updates while preserving existing entity relationships and IDs.
+     * Ignores admin and id fields to avoid accidental changes.
      *
      * @param cycleUpdateDTO the DTO containing the new values
-     * @param cycleEntity the existing entity to update
+     * @param cycleEntity the existing entity to update (modified in place)
      */
     @Mapping(target = "admin", ignore = true)
     @Mapping(target = "id", ignore = true)
