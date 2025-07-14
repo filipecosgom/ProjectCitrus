@@ -4,19 +4,23 @@ import { useTranslation } from "react-i18next";
 import citrus404 from "../../assets/logos/citrus404.png";
 import "./404NotFound.css";
 
-export default function NotFound404() {
+export default function NotFound404({ testMode = false }) {
   const { t } = useTranslation();
   const [seconds, setSeconds] = useState(10);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (testMode) {
+      navigate("/login");
+      return;
+    }
     if (seconds === 0) {
       navigate("/login");
       return;
     }
     const timer = setTimeout(() => setSeconds((s) => s - 1), 1000);
     return () => clearTimeout(timer);
-  }, [seconds, navigate]);
+  }, [seconds, navigate, testMode]);
 
   return (
     <div className="notfound-bg">

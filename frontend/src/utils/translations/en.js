@@ -1,5 +1,3 @@
-import { all } from "axios";
-import { login } from "../../api/authenticationApi";
 
 const en = {
   notifications: {
