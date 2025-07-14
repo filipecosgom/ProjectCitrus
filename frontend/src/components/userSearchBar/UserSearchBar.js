@@ -1,3 +1,11 @@
+/**
+ * @file UserSearchBar.js
+ * @module UserSearchBar
+ * @description Search bar component for searching and selecting users.
+ * Supports dropdown results, avatars, admin/manager badges, and integration with external filtering.
+ * @author Project Citrus Team
+ */
+
 import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import { handleGetUsers } from "../../handles/handleGetUsers";
@@ -6,10 +14,26 @@ import UserIcon from "../userIcon/UserIcon";
 import Spinner from "../spinner/Spinner";
 import "./UserSearchBar.css";
 
+/**
+ * UserSearchBar component for searching and selecting users.
+ * @param {Object} props - Component props
+ * @param {Object|null} [props.selectedUser=null] - Currently selected user object
+ * @param {Function} props.onUserSelect - Callback when a user is selected
+ * @param {Function} [props.onSearch] - Callback for search input changes (for external filtering)
+ * @param {string} [props.placeholder="Search for users..."] - Input placeholder text
+ * @param {number} [props.maxResults=50] - Maximum number of results to show
+ * @param {boolean} [props.showUserInfo=true] - Whether to show user role/office info
+ * @param {boolean} [props.compact=false] - Compact mode for styling
+ * @param {string} [props.className=""] - Additional CSS class
+ * @param {Array<number>} [props.excludeUserIds=[]] - List of user IDs to exclude from results
+ * @param {Object} [props.filterOptions={}] - Additional filter options for search
+ * @param {boolean} [props.disableDropdown=false] - If true, disables dropdown and only triggers onSearch
+ * @returns {JSX.Element} The rendered user search bar
+ */
 const UserSearchBar = ({
   selectedUser = null,
   onUserSelect,
-  onSearch, // <-- Adiciona esta linha!
+  onSearch,
   placeholder = "Search for users...",
   maxResults = 50,
   showUserInfo = true,
@@ -17,7 +41,7 @@ const UserSearchBar = ({
   className = "",
   excludeUserIds = [],
   filterOptions = {},
-  disableDropdown = false, // Novo prop para controlar o dropdown
+  disableDropdown = false,
 }) => {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -25,7 +49,10 @@ const UserSearchBar = ({
   const [userAvatars, setUserAvatars] = useState({});
   const [isOpen, setIsOpen] = useState(false);
 
-  // ✅ DEBOUNCED SEARCH - busca após 300ms de pausa
+  /**
+   * Debounced search function to avoid excessive backend calls.
+   * @type {Function}
+   */
   const debouncedSearch = useCallback(
     debounce((query) => {
       searchUsers(query);
@@ -33,7 +60,10 @@ const UserSearchBar = ({
     [excludeUserIds, maxResults, filterOptions]
   );
 
-  // ✅ BUSCAR USERS - MESMA LÓGICA que Users.js
+  /**
+   * Fetches users from backend based on search query and filter options.
+   * @param {string} [query=""] - Search query
+   */
   const searchUsers = async (query = "") => {
     setUsersLoading(true);
 
@@ -66,7 +96,10 @@ const UserSearchBar = ({
     }
   };
 
-  // ✅ CARREGAR AVATARS dos users (mantém igual)
+  /**
+   * Loads avatars for users who have avatars.
+   * @param {Array<Object>} usersList - List of user objects
+   */
   const loadUserAvatars = async (usersList) => {
     const avatarPromises = usersList
       .filter((user) => user.hasAvatar)
@@ -94,14 +127,18 @@ const UserSearchBar = ({
     setUserAvatars((prev) => ({ ...prev, ...avatarsMap }));
   };
 
-  // ✅ HANDLER para mudança na search box
+  /**
+   * Handles changes in the search input field.
+   * Triggers external onSearch if dropdown is disabled.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Change event
+   */
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
     if (disableDropdown && onSearch) {
-      onSearch(query); // <-- dispara para o offcanvas filtrar os cards
-      return; // não faz pesquisa interna
+      onSearch(query);
+      return;
     }
 
     setIsOpen(query.length > 0);
@@ -113,32 +150,41 @@ const UserSearchBar = ({
     }
   };
 
-  // ✅ HANDLER para selecionar user
+  /**
+   * Handles user selection from the dropdown.
+   * @param {Object} user - Selected user object
+   */
   const handleUserSelect = (user) => {
     setSearchQuery(`${user.name} ${user.surname}`);
     setIsOpen(false);
     onUserSelect(user);
   };
 
-  // ✅ HANDLER para limpar
+  /**
+   * Clears the search input and results.
+   */
   const handleClear = () => {
     setSearchQuery("");
     setUsers([]);
     setIsOpen(false);
     onUserSelect(null);
     if (disableDropdown && onSearch) {
-      onSearch(""); // <-- dispara reset do filtro no AdminPermissionsOffcanvas
+      onSearch("");
     }
   };
 
-  // ✅ HANDLER para focus
+  /**
+   * Handles input focus to open dropdown if results exist.
+   */
   const handleFocus = () => {
     if (searchQuery && users.length > 0) {
       setIsOpen(true);
     }
   };
 
-  // ✅ HANDLER para blur
+  /**
+   * Handles input blur to close dropdown after a short delay.
+   */
   const handleBlur = () => {
     setTimeout(() => {
       setIsOpen(false);
@@ -147,7 +193,7 @@ const UserSearchBar = ({
 
   return (
     <div className={`user-search-bar ${compact ? "compact" : ""} ${className}`}>
-      {/* ✅ SEARCH INPUT */}
+      {/* Search Input */}
       <div className="user-search-input-wrapper">
         <FaSearch className="search-icon" />
         <input
@@ -170,7 +216,7 @@ const UserSearchBar = ({
         )}
       </div>
 
-      {/* ✅ DROPDOWN LIST */}
+      {/* Dropdown List */}
       {isOpen && !disableDropdown && (
         <div className="user-search-dropdown">
           {usersLoading ? (
@@ -196,17 +242,17 @@ const UserSearchBar = ({
                     selectedUser?.id === user.id ? "selected" : ""
                   }`}
                 >
-                  {/* ✅ AVATAR CORRIGIDO COM UserIcon */}
+                  {/* Avatar */}
                   <div className="user-avatar">
                     <UserIcon
                       user={{
                         id: user.id,
                         name: user.name,
                         surname: user.surname,
-                        hasAvatar: user.hasAvatar || user.avatar, // Compatibilidade
+                        hasAvatar: user.hasAvatar || user.avatar,
                         onlineStatus: user.onlineStatus || false,
                       }}
-                      avatar={userAvatars[user.id]} // Manter para cache
+                      avatar={userAvatars[user.id]}
                     />
                   </div>
                   <div className="user-info">
@@ -243,7 +289,12 @@ const UserSearchBar = ({
   );
 };
 
-// ✅ UTILITY: Debounce function
+/**
+ * Utility: Debounce function to delay execution.
+ * @param {Function} func - Function to debounce
+ * @param {number} wait - Delay in milliseconds
+ * @returns {Function} Debounced function
+ */
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

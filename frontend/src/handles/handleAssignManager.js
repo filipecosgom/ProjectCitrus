@@ -1,3 +1,19 @@
+/**
+ * @file handleAssignManager.js
+ * @module handleAssignManager
+ * @description Handles assigning a manager to selected users, promoting the manager if needed, and returns assignment results.
+ * Uses PATCH requests via userApi.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Assigns a manager to selected users, promoting the manager if not already.
+ * Returns detailed results for each assignment.
+ * @param {Object} assignmentData - Assignment data
+ * @param {string} assignmentData.newManagerId - ID of the user to be promoted to manager
+ * @param {Array<number>} assignmentData.userIds - IDs of users to receive the manager
+ * @returns {Promise<Object>} Result of the operation, including success, message, and assignment details
+ */
 import { fetchUserInformation, updateUserInformation } from "../api/userApi"; // ✅ USAR userApi
 
 /**
@@ -8,7 +24,6 @@ import { fetchUserInformation, updateUserInformation } from "../api/userApi"; //
  * @returns {Promise<Object>} Resultado da operação
  */
 export const handleAssignManager = async (assignmentData) => {
-
   try {
     const { newManagerId, userIds } = assignmentData;
 

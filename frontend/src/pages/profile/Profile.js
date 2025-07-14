@@ -33,7 +33,8 @@ export default function Profile() {
   // Read tab from URL, default to 'profile'
   const tabFromUrl =
     new URLSearchParams(location.search).get("tab") || "profile";
-  const { user, userAvatar, managerAvatar, loading } = useUserProfile(userId);
+  const { user, userAvatar, managerAvatar, loading, refreshUser } =
+    useUserProfile(userId);
   const [editMode, setEditMode] = useState(false);
   const [roleOptions, setRoleOptions] = useState([]);
   const [officeOptions, setOfficeOptions] = useState([]);
@@ -103,7 +104,6 @@ export default function Profile() {
       );
 
       if (response?.success) {
-        // Immediately update form fields to reflect new values
         if (avatarFile && avatarPreview) {
           setStoreAvatar(avatarPreview, avatarFile);
           setAvatarPreview(null);
@@ -112,11 +112,10 @@ export default function Profile() {
         reset(data);
         setEditMode(false);
         setShowAddressFields(false);
+        await refreshUser(); // <-- Atualiza os dados do utilizador após guardar
       }
     } catch (error) {
       console.error("Update error:", error);
-    } finally {
-      // setLoading is not needed, loading is managed by useUserProfile
     }
   };
 
@@ -227,58 +226,15 @@ export default function Profile() {
         </div>
       </div>
       <div className="profile-actions">
-          {/* Só mostra os botões de edição se a tab ativa for "profile" */}
-          {activeTab === "profile" && (
-            <>
-              {editMode && (
-                <>
-                  {/* Botão desktop/tablet: texto + ícone */}
-                  <button
-                    className="edit-btn edit-cancel-btn"
-                    type="button"
-                    onClick={() => {
-                      setEditMode(false);
-                      setShowAddressFields(false);
-                      reset(user);
-                      setAvatarPreview(null);
-                      setAvatarFile(null);
-                    }}
-                  >
-                    <FaTimes style={{ marginRight: 8 }} />
-                    {t("profileCancel")}
-                  </button>
-                </>
-              )}
-              <button
-                className={`edit-btn${editMode ? " edit-save-btn" : ""}`}
-                type={editMode ? "submit" : "button"}
-                onClick={
-                  editMode
-                    ? handleSubmit(onSubmit)
-                    : () => {
-                        setEditMode(true);
-                        setShowAddressFields(true);
-                      }
-                }
-              >
-                {editMode ? (
-                  <>
-                    <FaCheck style={{ marginRight: 8 }} />
-                    {t("profileSave")}
-                  </>
-                ) : (
-                  <>
-                    <FaPen style={{ marginRight: 8 }} />
-                    {t("profileEdit")}
-                  </>
-                )}
-              </button>
-              {/* Botões mobile (ícones) */}
-              {editMode && (
+        {/* Só mostra os botões de edição se a tab ativa for "profile" */}
+        {activeTab === "profile" && (
+          <>
+            {editMode && (
+              <>
+                {/* Botão desktop/tablet: texto + ícone */}
                 <button
-                  className="icon-btn edit-cancel-btn"
+                  className="edit-btn edit-cancel-btn"
                   type="button"
-                  title={t("profileCancel")}
                   onClick={() => {
                     setEditMode(false);
                     setShowAddressFields(false);
@@ -287,27 +243,70 @@ export default function Profile() {
                     setAvatarFile(null);
                   }}
                 >
-                  <FaTimes />
+                  <FaTimes style={{ marginRight: 8 }} />
+                  {t("profileCancel")}
                 </button>
+              </>
+            )}
+            <button
+              className={`edit-btn${editMode ? " edit-save-btn" : ""}`}
+              type={editMode ? "submit" : "button"}
+              onClick={
+                editMode
+                  ? handleSubmit(onSubmit)
+                  : () => {
+                      setEditMode(true);
+                      setShowAddressFields(true);
+                    }
+              }
+            >
+              {editMode ? (
+                <>
+                  <FaCheck style={{ marginRight: 8 }} />
+                  {t("profileSave")}
+                </>
+              ) : (
+                <>
+                  <FaPen style={{ marginRight: 8 }} />
+                  {t("profileEdit")}
+                </>
               )}
+            </button>
+            {/* Botões mobile (ícones) */}
+            {editMode && (
               <button
-                className={`icon-btn edit-save-btn`}
-                type={editMode ? "submit" : "button"}
-                title={editMode ? t("profileSave") : t("profileEdit")}
-                onClick={
-                  editMode
-                    ? handleSubmit(onSubmit)
-                    : () => {
-                        setEditMode(true);
-                        setShowAddressFields(true);
-                      }
-                }
+                className="icon-btn edit-cancel-btn"
+                type="button"
+                title={t("profileCancel")}
+                onClick={() => {
+                  setEditMode(false);
+                  setShowAddressFields(false);
+                  reset(user);
+                  setAvatarPreview(null);
+                  setAvatarFile(null);
+                }}
               >
-                {editMode ? <FaCheck /> : <FaPen />}
+                <FaTimes />
               </button>
-            </>
-          )}
-        </div>
+            )}
+            <button
+              className={`icon-btn edit-save-btn`}
+              type={editMode ? "submit" : "button"}
+              title={editMode ? t("profileSave") : t("profileEdit")}
+              onClick={
+                editMode
+                  ? handleSubmit(onSubmit)
+                  : () => {
+                      setEditMode(true);
+                      setShowAddressFields(true);
+                    }
+              }
+            >
+              {editMode ? <FaCheck /> : <FaPen />}
+            </button>
+          </>
+        )}
+      </div>
       {activeTab === "profile" && (
         <div className="profile-section">
           <div className="profile-header">

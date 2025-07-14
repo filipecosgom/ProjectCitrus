@@ -1,3 +1,11 @@
+/**
+ * @file UserCard.js
+ * @module UserCard
+ * @description Card component for displaying user information, including avatar, role, office, manager, and selection checkbox.
+ * Supports click and selection handlers, admin/manager status, and internationalization.
+ * @author Project Citrus Team
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 import styles from "./UserCard.css";
@@ -6,6 +14,16 @@ import Spinner from "../spinner/Spinner";
 import { ImCross } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 
+/**
+ * UserCard component for displaying user information and selection.
+ * @param {Object} props - Component props
+ * @param {Object} props.user - User object to display
+ * @param {Function} [props.onClick] - Callback for card click
+ * @param {boolean} [props.showCheckbox=false] - Whether to show selection checkbox
+ * @param {boolean} [props.isSelected=false] - Whether the user is selected
+ * @param {Function} [props.onSelectionChange] - Callback for checkbox change (userId, checked)
+ * @returns {JSX.Element} The rendered user card
+ */
 const UserCard = ({
   user,
   onClick,
@@ -15,7 +33,10 @@ const UserCard = ({
 }) => {
   const { t } = useTranslation();
 
-  // Determine status for UserIcon
+  /**
+   * Determines the status icon for the UserIcon component.
+   * @returns {string|null} Status type ("check", "cross", "stroke", or null)
+   */
   const getStatusIcon = () => {
     if (user.userIsAdmin) return "check";
     if (user.userIsDeleted) return "cross";
@@ -23,13 +44,20 @@ const UserCard = ({
     return null;
   };
 
+  /**
+   * Determines the CSS class for user status (admin/manager).
+   * @returns {string} CSS class name
+   */
   const getStatusClass = () => {
     if (user.userIsAdmin) return styles.admin;
     if (user.isManager) return styles.manager;
     return "";
   };
 
-  // ✅ HANDLER para click do card
+  /**
+   * Handles card click event, ignoring clicks on the checkbox.
+   * @param {React.MouseEvent} e - Click event
+   */
   const handleCardClick = (e) => {
     // Se clicou na checkbox, não propagar
     if (e.target.type === "checkbox") return;
@@ -39,7 +67,10 @@ const UserCard = ({
     }
   };
 
-  // ✅ HANDLER para checkbox
+  /**
+   * Handles checkbox change event for selection.
+   * @param {React.ChangeEvent} e - Change event
+   */
   const handleCheckboxChange = (e) => {
     e.stopPropagation(); // Evitar propagação para o card
     if (onSelectionChange) {
