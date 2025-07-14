@@ -129,7 +129,7 @@ const pt = {
   passwordResetSuccess: "Password redefinida. Pode entrar com a nova password.",
   passwordResetError:
     "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
-    passwordResetTokenInvalid: "Token de nova senha inválido ou expirado.",
+  passwordResetTokenInvalid: "Token de nova senha inválido ou expirado.",
 
   //ERRORS
   protectedRoute: "Tem de iniciar sessão para aceder a esta página",
@@ -556,6 +556,13 @@ const pt = {
     expiringCourses: "Cursos a expirar em breve",
     closingAppraisals: "Avaliações a fechar em breve",
   },
+  twoFactorAuthentication: "Autenticação de Dois Fatores",
+  disableGoogleAuthenticator: "Desativar Google Authenticator",
+  disableGoogleAuthenticatorDesc:
+    "Desativar o Google Authenticator para todos os utilizadores",
+  emailNotifications: "Notificações por Email",
+  emailNotificationsDesc:
+    "Enviar notificações por email para eventos importantes",
 };
 
 export default pt;
