@@ -518,6 +518,7 @@ const en = {
   manageAdminPermissionsDesc:
     "Grant or revoke administrator permissions for users.",
   admin: "Admin",
+  manager: "Manager",
   user: "User",
   activeAdmins: "Active Admins",
   confirmAction: "Confirm Action",
@@ -535,6 +536,11 @@ const en = {
     courses: "Active courses",
     appraisals: "Pending appraisals",
     cycles: "Active cycles",
+    totalAppraisals: "Total appraisals",
+    percentProfilesComplete: "Profiles complete (%)",
+    appraisalsDistribution: "Appraisals by state",
+    expiringCourses: "Courses expiring soon",
+    closingAppraisals: "Appraisals closing soon",
   },
 };
 

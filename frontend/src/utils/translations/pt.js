@@ -545,6 +545,11 @@ const pt = {
     courses: "Cursos ativos",
     appraisals: "Avaliações pendentes",
     cycles: "Ciclos ativos",
+    totalAppraisals: "Total de avaliações",
+    percentProfilesComplete: "Perfis completos (%)",
+    appraisalsDistribution: "Distribuição de avaliações",
+    expiringCourses: "Cursos a expirar em breve",
+    closingAppraisals: "Avaliações a fechar em breve",
   },
 };
 

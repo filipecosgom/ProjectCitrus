@@ -1,10 +1,15 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
-export default function UserRolePieChart({ roles, t }) {
+export default function AppraisalStatePieChart({
+  inProgress,
+  completed,
+  closed,
+  t,
+}) {
   const data = [
-    { name: t("admin"), value: roles.admin },
-    { name: t("manager"), value: roles.manager },
-    { name: t("user"), value: roles.user },
+    { name: t("appraisalStateInProgress"), value: inProgress },
+    { name: t("appraisalStateCompleted"), value: completed },
+    { name: t("appraisalStateClosed"), value: closed },
   ];
   const COLORS = ["#E57373", "#FF8042", "#9C2F31"];
 
@@ -18,7 +23,7 @@ export default function UserRolePieChart({ roles, t }) {
       }}
     >
       <h3 style={{ textAlign: "center", marginBottom: 12 }}>
-        {t("dashboard.users")}
+        {t("dashboard.appraisalsDistribution")}
       </h3>
       <PieChart width={220} height={220}>
         <Pie
