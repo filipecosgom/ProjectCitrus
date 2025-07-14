@@ -1,6 +1,18 @@
-14/07/2025 10:08:57.983 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 963 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 10:11:51.917 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 967 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 10:13:07.797 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 965 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 12:39:27.111 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 946 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 14:26:17.414 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 955 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
-14/07/2025 14:26:43.842 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 958 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
+15/07/2025 00:16:40.979 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:16:41.087 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:16:41.092 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:16:41.093 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:16:41.094 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:16:41.095 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:16:41.251 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:16:41.545 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:16:41.807 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:16:41.831 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 

@@ -156,7 +156,7 @@ public class FinishedCourseDTO {
      * @throws IllegalArgumentException if date is in the future
      */
     public void setCompletionDate(LocalDate completionDate) {
-        if (completionDate.isAfter(LocalDate.now())) {
+        if (completionDate != null && completionDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Completion date cannot be in the future");
         }
         this.completionDate = completionDate;

@@ -17,4 +17,28 @@ https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
             <property name="hibernate.type" value="TRACE"/>
         </properties>
     </persistence-unit>
-</persistence>
+
+        <persistence-unit name="test-unit" transaction-type="RESOURCE_LOCAL">
+            <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+            <class>pt.uc.dei.entities.ActivationTokenEntity</class>
+            <class>pt.uc.dei.entities.PasswordResetTokenEntity</class>
+            <class>pt.uc.dei.entities.TemporaryUserEntity</class>
+            <class>pt.uc.dei.entities.UserEntity</class>
+            <class>pt.uc.dei.entities.ConfigurationEntity</class>
+            <class>pt.uc.dei.entities.CourseEntity</class>
+            <class>pt.uc.dei.entities.CycleEntity</class>
+            <class>pt.uc.dei.entities.FinishedCourseEntity</class>
+            <class>pt.uc.dei.entities.MessageEntity</class>
+            <class>pt.uc.dei.entities.NotificationEntity</class>
+            <!-- Add all other entities here -->
+            <properties>
+                <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+                <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"/>
+                <property name="javax.persistence.jdbc.user" value="sa"/>
+                <property name="javax.persistence.jdbc.password" value=""/>
+                <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+                <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+                <property name="hibernate.show_sql" value="true"/>
+            </properties>
+        </persistence-unit>
+    </persistence>

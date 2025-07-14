@@ -8,8 +8,21 @@ import pt.uc.dei.entities.CourseEntity;
 import java.util.List;
 
 /**
- * Mapper interface for converting CourseEntity objects into CourseDTO objects and vice versa.
- * Uses MapStruct for automatic field mapping.
+ * MapStruct mapper interface for converting between {@link CourseEntity} and its DTO representations.
+ * <p>
+ * <b>Features:</b>
+ * <ul>
+ *   <li>Automatic mapping between {@code CourseEntity}, {@code CourseDTO}, {@code CourseNewDTO}, and {@code CourseUpdateDTO}</li>
+ *   <li>Handles mapping of collections (lists) of courses and DTOs</li>
+ *   <li>Ignores userCompletions and admin fields to avoid persistence and security issues</li>
+ *   <li>Provides update methods for partial entity updates from DTOs</li>
+ * </ul>
+ * <p>
+ * <b>Usage:</b> This interface is implemented automatically by MapStruct at build time.
+ * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
+ *
+ * @author ProjectCitrus Team
+ * @version 1.0
  */
 @Mapper(
         componentModel = "cdi",
@@ -18,34 +31,41 @@ import java.util.List;
 public interface CourseMapper {
 
     /**
-     * Converts a CourseEntity object to a CourseDTO object.
+     * Maps a {@link CourseEntity} to a {@link CourseDTO}.
+     *
      * @param courseEntity the entity to convert
-     * @return the mapped DTO
+     * @return the mapped DTO, or null if input is null
      */
     CourseDTO toDto(CourseEntity courseEntity);
 
     /**
-     * Converts a CourseDTO object to a CourseEntity object.
+     * Maps a {@link CourseDTO} to a {@link CourseEntity}.
+     * Ignores userCompletions and admin fields; set these in the service layer if needed.
+     *
      * @param courseDTO the DTO to convert
-     * @return the mapped entity
+     * @return the mapped entity, or null if input is null
      */
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true) // Set admin in service if needed
     CourseEntity toEntity(CourseDTO courseDTO);
 
     /**
-     * Converts a CourseUpdateDTO object to a CourseEntity object.
+     * Maps a {@link CourseUpdateDTO} to a {@link CourseEntity}.
+     * Ignores userCompletions and admin fields; set these in the service layer if needed.
+     *
      * @param courseUpdateDTO the DTO to convert
-     * @return the mapped entity
+     * @return the mapped entity, or null if input is null
      */
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true)
     CourseEntity toEntity(CourseUpdateDTO courseUpdateDTO);
 
     /**
-     * Converts a CourseNewDTO object to a CourseEntity object.
+     * Maps a {@link CourseNewDTO} to a {@link CourseEntity}.
+     * Ignores userCompletions, admin, and id fields; set these in the service layer if needed.
+     *
      * @param courseNewDTO the DTO to convert
-     * @return the mapped entity
+     * @return the mapped entity, or null if input is null
      */
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true)
@@ -53,34 +73,44 @@ public interface CourseMapper {
     CourseEntity toEntity(CourseNewDTO courseNewDTO);
 
     /**
-     * Converts a list of CourseEntity objects into a list of CourseDTO objects.
+     * Maps a list of {@link CourseEntity} objects to a list of {@link CourseDTO} objects.
+     *
      * @param courses the list of entities to convert
-     * @return the mapped list of DTOs
+     * @return the mapped list of DTOs (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     List<CourseDTO> toDtoList(List<CourseEntity> courses);
 
     /**
-     * Converts a list of CourseDTO objects into a list of CourseEntity objects.
+     * Maps a list of {@link CourseDTO} objects to a list of {@link CourseEntity} objects.
+     *
      * @param courseDTOs the list of DTOs to convert
-     * @return the mapped list of entities
+     * @return the mapped list of entities (empty if input is empty or null)
      */
+    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     List<CourseEntity> toEntityList(List<CourseDTO> courseDTOs);
 
     /**
-     * Updates an existing CourseEntity with values from a CourseDTO.
-     * Useful for partial updates while preserving existing relationships.
+     * Updates an existing {@link CourseEntity} with values from a {@link CourseDTO}.
+     * <p>
+     * Useful for partial updates while preserving existing entity relationships and IDs.
+     * Ignores userCompletions and admin fields to avoid accidental changes.
+     *
      * @param courseDTO the DTO containing the new values
-     * @param courseEntity the existing entity to update
+     * @param courseEntity the existing entity to update (modified in place)
      */
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true)
     void updateEntityFromDto(CourseDTO courseDTO, @MappingTarget CourseEntity courseEntity);
 
     /**
-     * Updates an existing CourseEntity with values from a CourseUpdateDTO.
-     * Useful for partial updates while preserving existing relationships.
+     * Updates an existing {@link CourseEntity} with values from a {@link CourseUpdateDTO}.
+     * <p>
+     * Useful for partial updates while preserving existing entity relationships and IDs.
+     * Ignores userCompletions and admin fields to avoid accidental changes.
+     *
      * @param courseUpdateDTO the DTO containing the new values
-     * @param courseEntity the existing entity to update
+     * @param courseEntity the existing entity to update (modified in place)
      */
     @Mapping(target = "userCompletions", ignore = true)
     @Mapping(target = "admin", ignore = true)

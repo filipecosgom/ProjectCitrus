@@ -114,6 +114,7 @@ const ConfirmModal = ({
     <div
       className={`confirm-modal-backdrop ${isAnimating ? "open" : ""}`}
       onClick={handleBackdropClick}
+      data-testid="confirm-modal-backdrop"
     >
       <div className={`confirm-modal ${isAnimating ? "open" : ""}`}>
         <div className="confirm-modal-header">
