@@ -1,3 +1,34 @@
+/**
+ * @file Cycles.js
+ * @module Cycles
+ * @description React page component for managing performance cycles.
+ * Provides listing, creation, pagination, filtering, and closing of cycles, with advanced UI features.
+ * Synchronizes state with URL parameters for deep-linking and navigation.
+ * Integrates with backend via fetchCycles, closeCycle, and canCloseCycle.
+ * Displays modals for confirmation and appraisal validation.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Cycles Page Component.
+ *
+ * Renders the cycle management interface, including:
+ * - Header with page title and "Create New Cycle" button
+ * - Paginated grid of cycle cards with close and details actions
+ * - Off-canvas for creating new cycles
+ * - Off-canvas for viewing cycle details
+ * - Confirmation modal for closing cycles
+ * - Warning modal for appraisal validation before closing
+ * - Synchronization of selected cycle with URL parameters
+ * - Error and loading states
+ *
+ * @returns {JSX.Element} The rendered cycles management page
+ *
+ * @example
+ * // Basic usage
+ * <Cycles />
+ */
+
 import React, { useState, useEffect } from "react";
 import { IoCalendar, IoAdd } from "react-icons/io5";
 import { useTranslation } from "react-i18next";

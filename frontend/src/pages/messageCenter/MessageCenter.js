@@ -1,3 +1,30 @@
+/**
+ * @file MessageCenter.js
+ * @module MessageCenter
+ * @description React page component for real-time messaging between users.
+ * Provides a user interface for searching, selecting, and chatting with other users.
+ * Integrates with WebSocket for live message delivery, backend APIs for message history, and notification system for status updates.
+ * Supports mobile and desktop layouts, internationalization, and accessibility.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Message Center Page Component.
+ *
+ * Renders the messaging interface, including:
+ * - User search bar and conversation list
+ * - Real-time chat area with message history and status indicators
+ * - Responsive design for mobile and desktop
+ * - Integration with WebSocket for live messaging and backend for message history
+ * - Internationalization of all labels and messages
+ * - Error and status notifications for message delivery
+ *
+ * @returns {JSX.Element} The rendered message center page
+ *
+ * @example
+ * <MessageCenter />
+ */
+
 import React, { useState, useEffect } from "react";
 import useMessageStore from "../../stores/useMessageStore";
 import useAuthStore from "../../stores/useAuthStore";
@@ -333,7 +360,6 @@ export const MessageCenter = () => {
 
   // Desktop/tablet: show both user list and chat area
   return (
-    
     <div className="chat-container">
       <div className="chat-user-list">
         <UserSearchBar

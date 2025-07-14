@@ -1,3 +1,37 @@
+/**
+ * @file Login.js
+ * @module Login
+ * @description React page component for user authentication and login.
+ * Provides a login form with email, password, and two-factor authentication fields.
+ * Integrates with backend authentication, notification system, and supports internationalization.
+ * Includes password visibility toggle, forgot password modal, and two-factor authentication help.
+ * Navigates users to dashboard or profile upon successful login.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Login Page Component.
+ *
+ * Renders the user login interface, including:
+ * - Logo and language selection dropdown
+ * - Login form with email, password, and two-factor authentication fields
+ * - Validation and error handling for all inputs
+ * - Password visibility toggle and forgot password modal
+ * - Two-factor authentication help modal
+ * - Submission to backend for authentication
+ * - Success and error notifications
+ * - Internationalization of all labels and messages
+ * - Navigation to dashboard or profile after login
+ *
+ * @returns {JSX.Element} The rendered login page
+ *
+ * @example
+ *
+ * ```jsx
+ * <Login />
+ * ```
+ */
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";

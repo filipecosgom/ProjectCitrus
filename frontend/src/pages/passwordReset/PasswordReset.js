@@ -1,3 +1,32 @@
+/**
+ * @file PasswordReset.js
+ * @module PasswordReset
+ * @description React page component for handling password reset requests and updating user passwords.
+ * Provides a secure form for entering and confirming a new password, with validation and error handling.
+ * Integrates with backend endpoints for token validation and password change, and displays notifications for success or failure.
+ * Supports internationalization, password visibility toggling, and language selection.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Password Reset Page Component.
+ *
+ * Renders the password reset interface, including:
+ * - Logo and subtitle display
+ * - Form for entering and confirming a new password
+ * - Validation for strong password requirements and matching confirmation
+ * - Password visibility toggle for both fields
+ * - Submission to backend for password update
+ * - Success and error notifications
+ * - Language selection dropdown
+ * - Internationalization of all labels and messages
+ *
+ * @returns {JSX.Element} The rendered password reset page
+ *
+ * @example
+ * <PasswordReset
+ */
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
