@@ -66,6 +66,9 @@ public class ConfigurationEntity implements Serializable {
     @Column(name = "creation_date", nullable = false, unique = false, updatable = false)
     private LocalDateTime creationDate;
 
+    @Column(name = "twoFactorAuthEnabled", nullable = false, unique = false, updatable = true)
+    private Boolean twoFactorAuthEnabled;
+
     /**
      * The administrator responsible for setting this configuration.
      * Many-to-one relationship with `UserEntity`.
