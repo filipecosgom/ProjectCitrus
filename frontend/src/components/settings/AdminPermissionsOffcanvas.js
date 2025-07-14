@@ -1,3 +1,10 @@
+/**
+ * @file AdminPermissionsOffcanvas.js
+ * @module AdminPermissionsOffcanvas
+ * @description Offcanvas panel for managing admin permissions for users.
+ * @author Project Citrus Team
+ */
+
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchAllUsers, updateAdminPermission } from "../../api/userApi";
@@ -5,6 +12,13 @@ import useAuthStore from "../../stores/useAuthStore";
 import UserSearchBar from "../userSearchBar/UserSearchBar";
 import "./AdminPermissionsOffcanvas.css";
 
+/**
+ * AdminPermissionsOffcanvas component for managing admin permissions.
+ * @param {Object} props - Component props
+ * @param {boolean} props.show - Whether the offcanvas is visible
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @returns {JSX.Element}
+ */
 const AdminPermissionsOffcanvas = ({ show, onClose }) => {
   const { t } = useTranslation();
   const [users, setUsers] = useState([]);
@@ -17,6 +31,9 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
   const [success, setSuccess] = useState("");
   const currentUser = useAuthStore((state) => state.user);
 
+  /**
+   * Fetches all users when the offcanvas is shown.
+   */
   useEffect(() => {
     if (show) {
       setLoading(true);
@@ -27,7 +44,10 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
     }
   }, [show, t]);
 
-  // Filtra os users conforme o termo de pesquisa
+  /**
+   * Filters users based on the search term.
+   * @type {Array<Object>}
+   */
   const filteredUsers = users.filter((u) => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.trim().toLowerCase();
@@ -38,13 +58,20 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
     );
   });
 
-  // Handler para atualizar o termo de pesquisa
+  /**
+   * Handles search term change.
+   * @param {string} term - The new search term
+   */
   const handleSearchChange = (term) => {
     setSearchTerm(term);
   };
 
+  /**
+   * Handles toggling admin permission for a user.
+   * Prevents self-removal of admin.
+   * @param {Object} user - The user object
+   */
   const handleToggle = (user) => {
-    // Prevent self-removal of admin
     if (user.id === currentUser.id && user.userIsAdmin) {
       setError(t("cannotRemoveOwnAdmin"));
       return;
@@ -54,6 +81,10 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
     setConfirmOpen(true);
   };
 
+  /**
+   * Handles confirmation of admin permission change.
+   * Updates the user's admin status.
+   */
   const handleConfirm = async () => {
     setLoading(true);
     setError("");
@@ -81,10 +112,12 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
 
   return (
     <>
+      {/* Offcanvas backdrop */}
       <div
         className={`admin-permissions-backdrop${show ? " open" : ""}`}
         onClick={onClose}
       />
+      {/* Offcanvas panel */}
       <aside
         className={`admin-permissions-offcanvas${show ? " open" : ""}`}
         tabIndex="-1"
@@ -114,7 +147,7 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
             <div className="admin-permissions-alert success">{success}</div>
           )}
 
-          {/* Pesquisa de utilizadores */}
+          {/* User search bar */}
           <div style={{ marginBottom: "16px" }}>
             <UserSearchBar
               placeholder={t("searchBarPlaceholder", {
@@ -124,12 +157,13 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
               showUserInfo={true}
               compact={true}
               className="admin-permissions-search"
-              onSearch={handleSearchChange} // filtra os cards
-              onUserSelect={() => {}} // função vazia
-              disableDropdown={true} // oculta dropdown!
+              onSearch={handleSearchChange}
+              onUserSelect={() => {}}
+              disableDropdown={true}
             />
           </div>
 
+          {/* User list */}
           <ul className="admin-permissions-list">
             {filteredUsers.map((user) => (
               <li key={user.id} className="admin-permissions-user">
@@ -179,6 +213,7 @@ const AdminPermissionsOffcanvas = ({ show, onClose }) => {
             {t("close")}
           </button>
         </div>
+        {/* Confirmation modal */}
         {confirmOpen && (
           <div className="admin-permissions-modal-backdrop">
             <div className="admin-permissions-modal">
