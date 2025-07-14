@@ -48,9 +48,9 @@
   --paddingLanding-md: 0px 32px;    /* Tablet */
   --paddingLanding-lg: 0px 78px; /* Desktop */
 
-  --padding-sm: 0px 32px;    /* Mobile */
-  --padding-md: 0px 32px;    /* Tablet */
-  --padding-lg: 0px 78px; /* Desktop */
+  --padding-sm: 16px 32px;    /* Mobile */
+  --padding-md: 16px 32px;    /* Tablet */
+  --padding-lg: 16px 78px; /* Desktop */
 
   /* Global gaps*/
   --gap-vertical-mobile: 0.5rem;

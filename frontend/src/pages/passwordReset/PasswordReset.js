@@ -38,6 +38,7 @@ export default function PasswordReset() {
       try {
         const response = await handleCheckPasswordResetToken(token);
         if (!response) {
+          handleNotification("error", "passwordResetTokenInvalid");
           navigate("/login");
         }
       } catch (error) {

@@ -172,77 +172,93 @@ const SearchBar = ({
           >
             {t("courses.clearFilters")}
           </button>
-        </div>
-        <div className="searchBar-dropdown">
-          <button
-            type="button"
-            className="searchBar-dropdownToggle toggle-limit"
-            onClick={() => setShowResultsMenu((prev) => !prev)}
-            aria-expanded={showResultsMenu}
-            aria-label={t("searchBarLimitToggle")}
-          >
-            {watch("limit")} <FiChevronDown />
-          </button>
-          {showResultsMenu && (
-            <div
-              className="searchBar-dropdownMenu"
-              role="menu"
-              aria-label={t("searchBarLimitMenu")}
+           </div>
+          <div className="searchBar-dropdown">
+            <button
+              type="button"
+              className="searchBar-dropdownToggle toggle-limit"
+              onClick={() => setShowResultsMenu((prev) => !prev)}
+              aria-expanded={showResultsMenu}
+              aria-label={t("searchBarLimitToggle")}
             >
-              {limitOptions.map((num) => (
-                <div
-                  key={num}
-                  className="searchBar-menuItem"
-                  data-active={String(watch("limit")) === String(num)}
-                  role="menuitem"
-                  tabIndex={0}
-                  onClick={() => {
-                    setValue("limit", num);
-                    setShowResultsMenu(false);
-                    handleSubmit(onSubmit)();
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+              {watch("limit")} <FiChevronDown />
+            </button>
+            {showResultsMenu && (
+              <div className="searchBar-dropdownMenu" role="menu" aria-label={t("searchBarLimitMenu")}>
+                {limitOptions.map((num) => (
+                  <div
+                    key={num}
+                    className="searchBar-menuItem"
+                    data-active={String(watch("limit")) === String(num)}
+                    role="menuitem"
+                    tabIndex={0}
+                    onClick={() => {
                       setValue("limit", num);
                       setShowResultsMenu(false);
                       handleSubmit(onSubmit)();
-                    }
-                  }}
-                >
-                  {num}
-                </div>
-              ))}
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setValue("limit", num);
+                        setShowResultsMenu(false);
+                        handleSubmit(onSubmit)();
+                      }
+                    }}
+                  >
+                    {num}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {props.renderYearDropdown && (
+            <div className="searchBar-yearDropdown">
+              {props.renderYearDropdown()}
             </div>
           )}
-        </div>
-        {props.renderYearDropdown && (
-          <div className="searchBar-yearDropdown">
-            {props.renderYearDropdown()}
-          </div>
-        )}
-        {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
-        {onExportXlsx && (
-          <button
-            type="button"
-            className="searchBar-xlsxButton"
-            onClick={onExportXlsx}
-            title={t("exportXlsx")}
-          >
-            <GrDocumentExcel className="searchBar-xlsxIcon" />
-          </button>
-        )}
-        {props.onAddCourseToUser && (
-          <button
-            type="button"
-            className="searchBar-addCourseButton"
-            onClick={props.onAddCourseToUser}
-            user={props.user}
-          >
-            <FaBookBookmark className="searchBar-addCourseIcon" />
-            {t("courses.addCompletedCourse", "Add Completed Course")}
-          </button>
-        )}
-        {actions && <div className="searchBar-actions">{actions}</div>}
+      {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
+      {onExportPdf && (
+            <button
+              type="button"
+              className="searchBar-pdfButton"
+              onClick={onExportPdf}
+              title={t("exportPdf")}
+            >
+              <GrDocumentPdf className="searchBar-pdfIcon" />
+            </button>
+          )}
+          {onExportCsv && (
+            <button
+              type="button"
+              className="searchBar-csvButton"
+              onClick={onExportCsv}
+              title={t("exportCsv")}
+            >
+              <GrDocumentCsv className="searchBar-csvIcon" />
+            </button>
+          )}
+          {onExportXlsx && (
+            <button
+              type="button"
+              className="searchBar-xlsxButton"
+              onClick={onExportXlsx}
+              title={t("exportXlsx")}
+            >
+              <GrDocumentExcel className="searchBar-xlsxIcon" />
+            </button>
+          )}
+          {props.onAddCourseToUser && (
+            <button
+              type="button"
+              className="searchBar-addCourseButton"
+              onClick={props.onAddCourseToUser}
+              user={props.user}
+            >
+              <FaBookBookmark className="searchBar-addCourseIcon" />
+              {t("courses.addCompletedCourse", "Add Completed Course")}
+            </button>
+          )}
+          {actions && <div className="searchBar-actions">{actions}</div>}
       </form>
       {/* AddCompletedCourseOffcanvas is now only controlled by the parent (TrainingTab) */}
     </>

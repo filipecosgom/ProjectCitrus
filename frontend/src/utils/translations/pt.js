@@ -129,6 +129,7 @@ const pt = {
   passwordResetSuccess: "Password redefinida. Pode entrar com a nova password.",
   passwordResetError:
     "Erro ao redefinir a senha. Por favor, tente novamente mais tarde.",
+    passwordResetTokenInvalid: "Token de nova senha inválido ou expirado.",
 
   //ERRORS
   protectedRoute: "Tem de iniciar sessão para aceder a esta página",
@@ -183,6 +184,7 @@ const pt = {
   profileSave: "Guardar",
   profileEdit: "Editar",
   profileCancel: "Cancelar",
+  profileOf: "Perfil de",
 
   // Profile Errors
   profileErrorFirstNameRequired: "O primeiro nome é obrigatório",

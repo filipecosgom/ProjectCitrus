@@ -103,22 +103,13 @@ export default function Profile() {
       );
 
       if (response?.success) {
-        // Update local state
-        const updatedUser = { ...user, ...data };
-        if (response?.success) {
-          if (avatarFile && avatarPreview) {
-            updatedUser.hasAvatar = true;
-            setStoreAvatar(avatarPreview, avatarFile);
-            setAvatarPreview(null);
-            setAvatarFile(null);
-          }
+        // Immediately update form fields to reflect new values
+        if (avatarFile && avatarPreview) {
+          setStoreAvatar(avatarPreview, avatarFile);
+          setAvatarPreview(null);
+          setAvatarFile(null);
         }
-        // setUser is not needed, user is managed by useUserProfile
-        setUserAndExpiration(
-          updatedUser,
-          useAuthStore.getState().tokenExpiration
-        );
-
+        reset(data);
         setEditMode(false);
         setShowAddressFields(false);
       }
@@ -225,7 +216,7 @@ export default function Profile() {
         {/* ✅ ADICIONAR título do perfil */}
         {user && (
           <div className="profile-title">
-            Perfil de {user.name} {user.surname}
+            {t("profileOf")} {user.name} {user.surname}
           </div>
         )}
 
@@ -234,7 +225,8 @@ export default function Profile() {
           {authorized && renderTab("appraisals")}
           {renderTab("training")}
         </div>
-        <div className="profile-actions">
+      </div>
+      <div className="profile-actions">
           {/* Só mostra os botões de edição se a tab ativa for "profile" */}
           {activeTab === "profile" && (
             <>
@@ -316,7 +308,6 @@ export default function Profile() {
             </>
           )}
         </div>
-      </div>
       {activeTab === "profile" && (
         <div className="profile-section">
           <div className="profile-header">
