@@ -1,3 +1,4 @@
+
 package pt.uc.dei.repositories;
 
 import jakarta.ejb.Stateless;
@@ -114,6 +115,32 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         } catch (Exception e) {
             LOGGER.error("Error marking MESSAGE notifications as read for user {}", userId, e);
             return false;
+        }
+    }
+
+        /**
+     * Fetch all MESSAGE notifications where notificationIsRead=false, notificationIsSeen=false, emailSent=false,
+     * and creationDate is at least 24 hours ago, including recipient and sender entities.
+     */
+    public List<NotificationEntity> getUnemailedMessageNotifications() {
+        try {
+            return em.createQuery(
+                "SELECT n FROM NotificationEntity n " +
+                "JOIN FETCH n.user " +
+                "JOIN FETCH n.sender " +
+                "WHERE n.type = :type " +
+                "AND n.notificationIsRead = false " +
+                "AND n.notificationIsSeen = false " +
+                "AND n.emailSent = false " +
+                "AND n.creationDate <= :dateLimit",
+                NotificationEntity.class
+            )
+            .setParameter("type", NotificationType.MESSAGE)
+            .setParameter("dateLimit", java.time.LocalDateTime.now().minusHours(24))
+            .getResultList();
+        } catch (Exception e) {
+            LOGGER.error("Error fetching old unread, unseen, unemailed MESSAGE notifications", e);
+            return Collections.emptyList();
         }
     }
 }

@@ -49,11 +49,15 @@ export default function NotificationDropdown({ isVisible, onClose }) {
     // Navigate based on notification type
     if (notification.type === "APPRAISAL") {
       navigate(`/profile?id=${notification.recipient.id}&tab=appraisals`);
-    } else if (notification.type === "CYCLE") {
+    } else if (notification.type === "CYCLE_OPEN") {
       navigate(`/appraisals?state=IN_PROGRESS`);
+    } else if (notification.type === "CYCLE_CLOSE") {
+      navigate(`/profile?id=${notification.recipient.id}&tab=training`);
     } else if (notification.type === "COURSE") {
       navigate(`/profile?id=${notification.recipient.id}&tab=training`);
-    } else {
+    }else if (notification.type === "USER_UPDATED") {
+      navigate(`/profile?id=${notification.sender.id}`);
+    }else {
       navigate(`/notifications`);
     }
     onClose?.();

@@ -386,7 +386,7 @@ public class NotificationService {
                 notificationEntity.setSender(userUpdated);
                 notificationEntity.setUser(userUpdated.getManager());
                 notificationEntity.setType(NotificationType.USER_UPDATE);
-                notificationEntity.setContent(userUpdated.getId().toString());
+                notificationEntity.setContent(userUpdated.getName() + " " + userUpdated.getSurname());
                 notificationEntity.setCreationDate(LocalDateTime.now());
                 notificationEntity.setNotificationIsRead(false);
                 notificationEntity.setNotificationIsSeen(false);

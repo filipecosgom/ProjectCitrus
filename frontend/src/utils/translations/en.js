@@ -2,14 +2,17 @@
 const en = {
   notifications: {
     appraisal: "You got {content} in a new appraisal",
-    cycle: "New cycle has opened until {content}",
+    cycleOpen: "New cycle has opened until {content}",
+    cycleClose: "Cycle has closed today {content}",
     course: "Registered your course {content}",
     markAllAsSeen: "Mark all as read",
     content: "message",
     noNotificationsFound: "No notifications found",
+    userUpdate: "User {content} has updated their profile",
   },
   login: {
     failed: "Login failed. Please check your credentials and try again.",
+    success: "Login successful. Welcome back!",
   },
   welcomeMessage: "Welcome {name}",
   goodByeMessage: "Goodbye {name}",
@@ -546,6 +549,7 @@ const en = {
     expiringCourses: "Courses expiring soon",
     closingAppraisals: "Appraisals closing soon",
   },
+  chatWsClosedMessageSent: "Chat closed but message sent successfully.",
   twoFactorAuthentication: "2-Factor Authentication",
   disableGoogleAuthenticator: "Disable Google Authenticator",
   disableGoogleAuthenticatorDesc: "Turn off Google Authenticator for all users",

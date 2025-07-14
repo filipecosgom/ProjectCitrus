@@ -70,12 +70,22 @@ export default function NotificationRow({
       message = t("notifications.appraisal", { content: notification.content });
       timestamp = notification.timestamp;
       break;
-    case "CYCLE":
-      icon = <GrCycle className="notif-icon notif-icon-cycle" />;
+    case "CYCLE_OPEN":
+      icon = <GrCycle className="notif-icon notif-icon-cycleOpen" />;
       senderName = notification.sender
         ? `${notification.sender.name} ${notification.sender.surname}`
         : "";
-      message = t("notifications.cycle", { content: notification.content });
+      message = t("notifications.cycleOpen", { content: notification.content });
+      timestamp = notification.timestamp;
+      break;
+    case "CYCLE_CLOSE":
+      icon = <GrCycle className="notif-icon notif-icon-cycleClose" />;
+      senderName = notification.sender
+        ? `${notification.sender.name} ${notification.sender.surname}`
+        : "";
+      message = t("notifications.cycleClose", {
+        content: notification.content,
+      });
       timestamp = notification.timestamp;
       break;
     case "COURSE":
@@ -84,6 +94,21 @@ export default function NotificationRow({
         ? `${notification.sender.name} ${notification.sender.surname}`
         : "";
       message = t("notifications.course", { content: notification.content });
+      timestamp = notification.timestamp;
+      break;
+    case "USER_UPDATE":
+      icon = (
+        <UserIcon
+          user={notification.sender}
+          messageCount={notification.messageCount}
+        />
+      );
+      senderName = notification.sender
+        ? `${notification.sender.name} ${notification.sender.surname}`
+        : "";
+      message = t("notifications.userUpdate", {
+        content: notification.content,
+      });
       timestamp = notification.timestamp;
       break;
     default:

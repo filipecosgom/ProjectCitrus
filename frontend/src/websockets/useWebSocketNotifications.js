@@ -40,7 +40,7 @@ function useWebSocketNotifications() {
           }
           break;
         case "APPRAISAL":
-          console.log("Received cycle notification:", data);
+          console.log("Received appraisal notification:", data);
           addOtherNotification(data.notification);
           break;
         case "COURSE":
@@ -49,8 +49,16 @@ function useWebSocketNotifications() {
             addOtherNotification(data.notification);
           }
           break;
-        case "CYCLE":
+        case "CYCLE_OPEN":
           console.log("Received cycle notification:", data);
+          addOtherNotification(data.notification);
+          break;
+        case "CYCLE_CLOSE":
+          console.log("Received cycle notification:", data);
+          addOtherNotification(data.notification);
+          break;
+        case "USER_UPDATE":
+          console.log("Received user update notification:", data);
           addOtherNotification(data.notification);
           break;
         case "AUTH_FAILED":
