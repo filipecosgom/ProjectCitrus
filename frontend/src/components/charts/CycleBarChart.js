@@ -1,3 +1,9 @@
+/**
+ * CycleBarChart module.
+ * Renders a bar chart showing the distribution of cycles by state (open, closed).
+ * Uses Recharts for visualization and supports internationalization.
+ * @module CycleBarChart
+ */
 import {
   BarChart,
   Bar,
@@ -8,7 +14,19 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+/**
+ * CycleBarChart component for displaying cycle state distribution as a bar chart.
+ * @param {Object} props - Component props
+ * @param {number} props.open - Number of open cycles
+ * @param {number} props.closed - Number of closed cycles
+ * @param {function} props.t - Translation function
+ * @returns {JSX.Element} The rendered bar chart
+ */
 export default function CycleBarChart({ open, closed, t }) {
+  /**
+   * Prepares the data for the bar chart.
+   * @returns {Array} Array of cycle state objects
+   */
   const data = [
     { name: t("cycles.statusOpen"), value: open },
     { name: t("cycles.statusClosed"), value: closed },

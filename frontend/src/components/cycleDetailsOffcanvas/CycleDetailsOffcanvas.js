@@ -1,3 +1,10 @@
+/**
+ * @file CycleDetailsOffcanvas.js
+ * @module CycleDetailsOffcanvas
+ * @description Offcanvas panel for displaying cycle details and appraisals.
+ * @author Project Citrus Team
+ */
+
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
@@ -5,6 +12,14 @@ import { useSearchParams } from "react-router-dom"; // ✅ ADICIONAR
 import useLocaleStore from "../../stores/useLocaleStore";
 import "./CycleDetailsOffcanvas.css";
 
+/**
+ * CycleDetailsOffcanvas component for displaying cycle details and appraisals.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @param {Object} props.cycle - Cycle data object
+ * @returns {JSX.Element|null}
+ */
 const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
   const { t } = useTranslation();
   const locale = useLocaleStore((state) => state.locale);
@@ -12,7 +27,9 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Controlar renderização e animação
+  /**
+   * Handles open/close animation for offcanvas.
+   */
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -29,7 +46,9 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     }
   }, [isOpen]);
 
-  // ✅ NOVO: Atualizar título da página quando cycle mudar
+  /**
+   * Updates the page title when cycle changes and offcanvas is open.
+   */
   useEffect(() => {
     if (cycle && isOpen) {
       const originalTitle = document.title;
@@ -43,7 +62,9 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     }
   }, [cycle, isOpen, t]);
 
-  // Controlar scroll da página
+  /**
+   * Locks body scroll when offcanvas is open.
+   */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -55,7 +76,9 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     };
   }, [isOpen]);
 
-  // Fechar com ESC
+  /**
+   * Handles Escape key to close offcanvas.
+   */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -70,12 +93,21 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     };
   }, [isOpen, onClose]);
 
+  /**
+   * Handles click on backdrop to close offcanvas.
+   * @param {React.MouseEvent} e - Mouse event
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  /**
+   * Formats a date string according to locale.
+   * @param {string} dateString - Date string
+   * @returns {string} Formatted date
+   */
   const formatDate = (dateString) => {
     if (!dateString) return t("cycles.na");
 
@@ -92,6 +124,10 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     });
   };
 
+  /**
+   * Calculates the number of days in the cycle.
+   * @returns {number} Number of days
+   */
   const calculateDays = () => {
     if (!cycle?.startDate || !cycle?.endDate) return 0;
 
@@ -108,15 +144,29 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     return diffDays;
   };
 
+  /**
+   * Returns the CSS class for cycle status.
+   * @param {string} state - Cycle state
+   * @returns {string} Status class
+   */
   const getStatusClass = (state) => {
     return state === "OPEN" ? "open" : "closed";
   };
 
+  /**
+   * Returns the translated status text for cycle.
+   * @param {string} state - Cycle state
+   * @returns {string} Status text
+   */
   const getStatusText = (state) => {
     return state === "OPEN" ? t("cycles.statusOpen") : t("cycles.statusClosed");
   };
 
-  // MUDANÇA: Função para mapear estados das appraisals
+  /**
+   * Maps appraisal state to translated status text.
+   * @param {string} state - Appraisal state
+   * @returns {string} Status text
+   */
   const getAppraisalStatusText = (state) => {
     switch (state) {
       case "COMPLETED":
@@ -130,34 +180,27 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
     }
   };
 
-  // MUDANÇA: Função para obter o nome do usuário da appraisal
+  /**
+   * Gets the display name for the appraised user in an appraisal.
+   * @param {Object} appraisal - Appraisal object
+   * @returns {string} User display name
+   */
   const getAppraisalUserName = (appraisal) => {
-
-    // Agora deve receber o objeto completo do usuário
     if (appraisal.appraisedUser) {
       const user = appraisal.appraisedUser;
-
-      // Tenta nome completo (nome + surname)
       if (user.name && user.surname) {
         return `${user.name} ${user.surname}`;
       }
-
-      // Apenas nome
       if (user.name) {
         return user.name;
       }
-
-      // Fallback para email
       if (user.email) {
         return user.email;
       }
     }
-
-    // Fallback para ID caso o objeto não venha completo
     if (appraisal.appraisedUserId) {
       return `${t("cycles.userId")} ${appraisal.appraisedUserId}`;
     }
-
     return t("cycles.na");
   };
 

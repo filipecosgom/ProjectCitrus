@@ -15,7 +15,26 @@
 }
 
 .course-details-offcanvas-backdrop.open {
-  opacity: 1;
+  /* -------------------------------------------------------------
+   CourseDetailsOffcanvas.css - Course Details Offcanvas Component Styles
+
+   This file contains all styles for the course details offcanvas component,
+   grouped and documented for maintainability.
+
+   Sections:
+   1. Backdrop & Blur Effect
+   2. Offcanvas Panel & Animation
+   3. Inactive State & Overlay
+   4. Close Button
+   5. Content Layout
+   6. Course Image
+   7. Title & Info
+   8. Sections (Description, Objectives, Prerequisites)
+   9. Action Buttons
+   10. Edit/Inactivate/Activate Buttons
+   11. Responsive Design
+   12. Accessibility & Reduced Motion
+------------------------------------------------------------- */
   visibility: visible;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -53,9 +72,15 @@
 
 /* Prevent greyscale on action buttons when inactive */
 .course-details-offcanvas-inactive .course-details-actions button,
-.course-details-offcanvas-inactive .course-details-actions .course-details-edit-btn,
-.course-details-offcanvas-inactive .course-details-actions .course-details-inactivate-btn,
-.course-details-offcanvas-inactive .course-details-actions .course-details-activate-btn {
+.course-details-offcanvas-inactive
+  .course-details-actions
+  .course-details-edit-btn,
+.course-details-offcanvas-inactive
+  .course-details-actions
+  .course-details-inactivate-btn,
+.course-details-offcanvas-inactive
+  .course-details-actions
+  .course-details-activate-btn {
   filter: none !important;
   opacity: 1 !important;
   pointer-events: auto;
@@ -257,8 +282,6 @@
   text-decoration: none;
 }
 
-
-
 .course-details-offcanvas-overlay {
   position: absolute;
   top: 0;
@@ -330,7 +353,7 @@
 }
 
 .course-details-activate-btn {
-  background: var(--tertiary, #FAFAFA) !important;
+  background: var(--tertiary, #fafafa) !important;
   color: #222 !important;
   border: 1.5px solid var(--secondary, #88909f);
   box-shadow: none;
@@ -377,7 +400,6 @@
     align-items: flex-start;
     gap: 4px;
   }
-
 
   .course-details-label {
     min-width: auto;

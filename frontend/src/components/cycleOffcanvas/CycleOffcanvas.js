@@ -1,3 +1,10 @@
+/**
+ * @file CycleOffcanvas.js
+ * @module CycleOffcanvas
+ * @description Offcanvas panel for creating a new cycle.
+ * @author Project Citrus Team
+ */
+
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
@@ -8,6 +15,14 @@ import useLocaleStore from "../../stores/useLocaleStore";
 import "react-calendar/dist/Calendar.css";
 import "./CycleOffcanvas.css";
 
+/**
+ * CycleOffcanvas component for creating a new cycle.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @param {Function} props.onCycleCreated - Callback when cycle is successfully created
+ * @returns {JSX.Element|null}
+ */
 const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   const { t } = useTranslation();
   const locale = useLocaleStore((state) => state.locale);
@@ -18,7 +33,9 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState(null);
 
-  // Controlar renderização e animação
+  /**
+   * Handles open/close animation for offcanvas.
+   */
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -35,14 +52,18 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     }
   }, [isOpen]);
 
-  // Buscar contagem de usuários ativos
+  /**
+   * Loads active users count when offcanvas opens.
+   */
   useEffect(() => {
     if (isOpen) {
       loadActiveUsersCount();
     }
   }, [isOpen]);
 
-  // Controlar scroll da página
+  /**
+   * Locks body scroll when offcanvas is open.
+   */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -54,7 +75,9 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     };
   }, [isOpen]);
 
-  // Fechar com ESC
+  /**
+   * Handles Escape key to close offcanvas.
+   */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -69,6 +92,9 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     };
   }, [isOpen, onClose]);
 
+  /**
+   * Loads the count of active users for the cycle.
+   */
   const loadActiveUsersCount = async () => {
     try {
       const response = await fetchActiveUsersCount();
@@ -80,12 +106,20 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     }
   };
 
+  /**
+   * Handles click on backdrop to close offcanvas.
+   * @param {React.MouseEvent} e - Mouse event
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  /**
+   * Handles change in calendar date selection.
+   * @param {Date|Array<Date>} value - Selected date(s)
+   */
   const handleDateChange = (value) => {
     if (Array.isArray(value)) {
       setSelectedRange(value);
@@ -94,30 +128,31 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     }
   };
 
+  /**
+   * Calculates the number of days in the selected cycle range.
+   * @returns {number} Number of days
+   */
   const calculateDays = () => {
     if (!selectedRange || selectedRange.length !== 2) return 0;
     const [start, end] = selectedRange;
-
-    // Se for a mesma data, retorna 1 dia
     if (start.getTime() === end.getTime()) {
       return 1;
     }
-
-    // Calcula a diferença em milissegundos
     const diffTime = end.getTime() - start.getTime();
-    // Converte para dias e adiciona 1 para incluir o primeiro dia
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
     return diffDays;
   };
 
+  /**
+   * Formats a date according to locale.
+   * @param {Date} date - Date object
+   * @returns {string} Formatted date
+   */
   const formatDate = (date) => {
-    // MUDANÇA: Usar o locale do store em vez de hardcoded "pt-PT"
     const localeMap = {
       pt: "pt-PT",
       en: "en-US",
     };
-
     return date.toLocaleDateString(localeMap[locale] || "pt-PT", {
       day: "2-digit",
       month: "2-digit",
@@ -125,15 +160,16 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     });
   };
 
+  /**
+   * Handles creation of a new cycle.
+   */
   const handleCreateCycle = async () => {
     if (!selectedRange || selectedRange.length !== 2) {
       setError(t("cycles.errorInvalidDateRange"));
       return;
     }
-
     setIsCreating(true);
     setError(null);
-
     try {
       const [startDate, endDate] = selectedRange;
       const cycleData = {
@@ -141,13 +177,9 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
         endDate: endDate.toISOString().split("T")[0],
         state: "OPEN",
       };
-
       const response = await createCycle(cycleData, locale);
-
       if (response.success) {
         onCycleCreated();
-
-        // ✅ CORRIGIR: Usar toast diretamente
         toast.success(t("cycles.cycleCreated"), {
           position: "top-right",
           autoClose: 3000,
@@ -156,8 +188,6 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
           pauseOnHover: true,
           draggable: true,
         });
-
-        // Check if there were email notification issues
         if (response.data && response.data.emailWarning) {
           toast.warning(t("cycles.cycleCreatedEmailWarning"), {
             position: "top-right",
@@ -168,15 +198,11 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
             draggable: true,
           });
         }
-
-        // Fechar o offcanvas após sucesso
         onClose();
       } else {
         const errorMessage =
           response.error?.message || t("cycles.errorCreateCycle");
         setError(errorMessage);
-
-        // ✅ ADICIONAR: Toast de erro
         toast.error(errorMessage, {
           position: "top-right",
           autoClose: 5000,
@@ -189,8 +215,6 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
     } catch (error) {
       const errorMessage = t("cycles.errorCreateCycle");
       setError(errorMessage);
-
-      // ✅ ADICIONAR: Toast de erro para exceptions
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
@@ -199,7 +223,6 @@ const CycleOffcanvas = ({ isOpen, onClose, onCycleCreated }) => {
         pauseOnHover: true,
         draggable: true,
       });
-
       console.error("Error creating cycle:", error);
     } finally {
       setIsCreating(false);

@@ -1,3 +1,10 @@
+/**
+ * @file CourseCard.js
+ * @module CourseCard
+ * @description Card component for displaying course information, image, and actions.
+ * @author Project Citrus Team
+ */
+
 import React, { useEffect, useState } from "react";
 import { FaBuromobelexperte } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
@@ -11,12 +18,22 @@ import handleGetCourseImage from "../../handles/handleGetCourseImage";
 import courseTemplateImage from "../../assets/templates/courseTemplate.png";
 import Spinner from "../spinner/Spinner";
 
+/**
+ * CourseCard component for displaying a course's details and image.
+ * @param {Object} props - Component props
+ * @param {Object} props.course - Course data object
+ * @param {Function} props.onViewDetails - Callback to view course details
+ * @returns {JSX.Element}
+ */
 const CourseCard = ({ course, onViewDetails }) => {
   const { t } = useTranslation();
   const hasImage = course?.courseHasImage ?? false;
   const [courseImageUrl, setCourseImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Loads course image if available, handles fallback and cleanup.
+   */
   useEffect(() => {
     if (!course || !course.id) {
       setCourseImageUrl(null);
@@ -46,13 +63,21 @@ const CourseCard = ({ course, onViewDetails }) => {
     };
   }, [course?.id, hasImage]);
 
+  /**
+   * Handles view course button click.
+   * Calls onViewDetails callback with course data.
+   */
   const handleViewCourse = () => {
-    // MUDANÇA: Chamar callback para abrir offcanvas
     if (onViewDetails) {
       onViewDetails(course);
     }
   };
 
+  /**
+   * Returns the flag image for the given language code.
+   * @param {string} language - Language code
+   * @returns {string} Flag image path
+   */
   const getLanguageFlag = (language) => {
     switch (language) {
       case "pt":
@@ -70,6 +95,11 @@ const CourseCard = ({ course, onViewDetails }) => {
     }
   };
 
+  /**
+   * Converts a string to title case.
+   * @param {string} str - Input string
+   * @returns {string} Title-cased string
+   */
   const toTitleCase = (str) =>
     str.replace(
       /\w\S*/g,

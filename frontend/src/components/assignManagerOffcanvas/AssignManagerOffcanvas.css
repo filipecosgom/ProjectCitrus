@@ -1,3 +1,17 @@
+/*
+ * ===== AssignManagerOffcanvas Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AssignManagerOffcanvas React component.
+ * It includes:
+ *   - Backdrop and offcanvas panel styles
+ *   - Header, title, and close button styling
+ *   - Content sections for selected users, managers, and new manager selection
+ *   - Avatar, feedback, and action button styles
+ *   - Responsive adjustments for mobile and tablet screens
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 /* Backdrop */
 .assign-manager-backdrop {
   position: fixed;

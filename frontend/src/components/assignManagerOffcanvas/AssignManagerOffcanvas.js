@@ -1,12 +1,29 @@
+/**
+ * AssignManagerOffcanvas module.
+ * Renders an offcanvas panel for assigning a manager to selected users.
+ * Includes user selection, search, feedback, and assignment actions with loading and animation states.
+ * @module AssignManagerOffcanvas
+ */
+
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import UserSearchBar from "../userSearchBar/UserSearchBar";
-import Spinner from "../spinner/Spinner"; // ✅ ADICIONAR IMPORT
+import Spinner from "../spinner/Spinner";
 import UserIcon from "../userIcon/UserIcon";
 import "./AssignManagerOffcanvas.css";
 import handleNotification from "../../handles/handleNotification";
 
+/**
+ * AssignManagerOffcanvas component for assigning a manager to selected users.
+ * @param {Object} props - Component props
+ * @param {string[]} props.selectedUserIds - Array of selected user IDs
+ * @param {Object[]} props.selectedUsers - Array of selected user objects
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {function} props.onClose - Function to close the offcanvas
+ * @param {function} props.onAssign - Function to handle assignment
+ * @returns {JSX.Element|null} The rendered offcanvas or null if not open
+ */
 const AssignManagerOffcanvas = ({
   selectedUserIds = [],
   selectedUsers = [],
@@ -18,20 +35,26 @@ const AssignManagerOffcanvas = ({
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNewManager, setSelectedNewManager] = useState(null);
-  const [isAssigning, setIsAssigning] = useState(false); // ✅ ADICIONAR estado de loading
+  const [isAssigning, setIsAssigning] = useState(false);
 
-  // ✅ HANDLER para seleção de user
+  /**
+   * Handles selection of a user to promote as manager.
+   * @param {Object} user - User object to select
+   */
   const handleUserSelect = (user) => {
     setSelectedNewManager(user);
   };
 
-  // ✅ ATUALIZAR handleAssignClick para mostrar loading
+  /**
+   * Handles the assignment action, shows loading, and calls onAssign.
+   * @async
+   */
   const handleAssignClick = async () => {
     if (!selectedNewManager || isAssigning) {
       handleNotification("info", "users.selectUserFirst");
       return;
     }
-    setIsAssigning(true); // ✅ MOSTRAR LOADING
+    setIsAssigning(true);
     const assignments = {
       newManagerId: selectedNewManager.id,
       newManagerName: `${selectedNewManager.name} ${selectedNewManager.surname}`,
@@ -42,23 +65,23 @@ const AssignManagerOffcanvas = ({
     };
 
     try {
-      await onAssign(assignments); // ✅ AGUARDAR conclusão
+      await onAssign(assignments);
     } catch (error) {
       console.error("❌ Error in assignment:", error);
     } finally {
-      setIsAssigning(false); // ✅ REMOVER LOADING
+      setIsAssigning(false);
     }
   };
 
-  // ✅ LIMPAR estados quando fechar
+  // Reset states when closing
   useEffect(() => {
     if (!isOpen) {
       setSelectedNewManager(null);
-      setIsAssigning(false); // ✅ RESETAR loading
+      setIsAssigning(false);
     }
   }, [isOpen]);
 
-  // ✅ CONTROLAR renderização e animação
+  // Control rendering and animation
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -75,44 +98,44 @@ const AssignManagerOffcanvas = ({
     }
   }, [isOpen]);
 
-  // Controlar scroll da página
+  // Control page scroll when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  // Fechar com ESC
+  // Close on ESC key
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
         onClose();
       }
     };
-
     if (isOpen) {
       document.addEventListener("keydown", handleEsc);
     }
-
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [isOpen, onClose]);
 
-  // Fechar ao clicar no backdrop
+  /**
+   * Handles closing the offcanvas when clicking the backdrop.
+   * @param {Object} e - Mouse event
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
-  // ✅ ADICIONAR LOG quando não renderizar
+  // Do not render if not shouldRender
   if (!shouldRender) {
     return null;
   }
@@ -123,7 +146,7 @@ const AssignManagerOffcanvas = ({
       onClick={handleBackdropClick}
     >
       <div className={`assign-manager-offcanvas ${isAnimating ? "open" : ""}`}>
-        {/* ✅ Header com título e botão fechar */}
+        {/* Header with title and close button */}
         <div className="assign-manager-header">
           <h2 className="assign-manager-title">
             {t("users.assignManagerTitle", { count: selectedUsers.length })}
@@ -137,15 +160,15 @@ const AssignManagerOffcanvas = ({
           </button>
         </div>
 
-        {/* ✅ Conteúdo do offcanvas */}
+        {/* Offcanvas content */}
         <div className="assign-manager-content">
-          {/* ✅ Lista de users selecionados */}
+          {/* Selected users list */}
           <div className="selected-users-section">
             <h3 className="section-title">{t("users.selectedUsers")}</h3>
             <div className="selected-users-list">
               {selectedUsers.map((user) => (
                 <div key={user.id} className="selected-user-item">
-                  {/* ✅ AVATAR REAL COM UserIcon */}
+                  {/* Avatar with UserIcon */}
                   <div className="selected-user-avatar">
                     <UserIcon
                       user={{
@@ -168,14 +191,14 @@ const AssignManagerOffcanvas = ({
             </div>
           </div>
 
-          {/* ✅ NOVA: User Search Section */}
+          {/* New manager search section */}
           <div className="new-manager-section">
             <h3 className="section-title">{t("users.selectUserToPromote")}</h3>
             <p className="section-description">
               {t("users.promoteDescription")}
             </p>
 
-            {/* ✅ COMPONENTE REUTILIZÁVEL */}
+            {/* UserSearchBar reusable component */}
             <UserSearchBar
               selectedUser={selectedNewManager}
               onUserSelect={handleUserSelect}
@@ -185,10 +208,10 @@ const AssignManagerOffcanvas = ({
               compact={true}
               excludeUserIds={selectedUserIds}
               className="assign-manager-search"
-              disableDropdown={false} // ou omite, por defeito mostra dropdown
+              disableDropdown={false}
             />
 
-            {/* ✅ FEEDBACK do user selecionado */}
+            {/* Feedback for selected new manager */}
             {selectedNewManager && (
               <div className="selected-new-manager-feedback">
                 <div className="feedback-icon">🎯</div>
@@ -212,7 +235,7 @@ const AssignManagerOffcanvas = ({
           </div>
         </div>
 
-        {/* ✅ Footer com loading state */}
+        {/* Footer with loading state */}
         <div className="assign-manager-footer">
           <button
             className="cancel-btn"

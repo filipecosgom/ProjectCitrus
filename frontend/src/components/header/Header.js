@@ -1,3 +1,11 @@
+/**
+ * Header.jsx
+ *
+ * Main application header component. Displays logo, user info, notification and message icons, and language/menu controls.
+ * Integrates with global stores for user and notification state.
+ *
+ * @module Header
+ */
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { FaBars, FaRegComments, FaRegBell, FaUserCircle } from "react-icons/fa";
 import "./Header.css";
@@ -13,6 +21,14 @@ import UserIcon from "../userIcon/UserIcon";
 import useNotificationStore from "../../stores/useNotificationStore";
 import useWebSocketNotifications from "../../websockets/useWebSocketNotifications";
 
+/**
+ * Header component
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.language - Current language code
+ * @param {Function} props.setLanguage - Function to set the language
+ * @returns {JSX.Element} The rendered header
+ */
 export default function Header({ language, setLanguage }) {
   useWebSocketNotifications();
   // Lê o user do store global
@@ -29,39 +45,72 @@ export default function Header({ language, setLanguage }) {
   const messageRef = useRef();
 
   // Simple Zustand selectors for badge counts (no shallow needed)
-  const unreadMessageCount = useNotificationStore(
-    state => state.messageNotifications.reduce((acc, n) => acc + (!n.notificationIsRead ? 1 : 0), 0)
+  const unreadMessageCount = useNotificationStore((state) =>
+    state.messageNotifications.reduce(
+      (acc, n) => acc + (!n.notificationIsRead ? 1 : 0),
+      0
+    )
   );
-  const unreadOtherCount = useNotificationStore(
-    state => state.otherNotifications.reduce((acc, n) => acc + (!n.notificationIsRead ? 1 : 0), 0)
+  const unreadOtherCount = useNotificationStore((state) =>
+    state.otherNotifications.reduce(
+      (acc, n) => acc + (!n.notificationIsRead ? 1 : 0),
+      0
+    )
   );
   // Selector for notifications array
-  const otherNotifications = useNotificationStore(state => state.otherNotifications);
+  const otherNotifications = useNotificationStore(
+    (state) => state.otherNotifications
+  );
 
   // Selector for messages array
-  const messageNotifications = useNotificationStore(state => state.messageNotifications);
+  const messageNotifications = useNotificationStore(
+    (state) => state.messageNotifications
+  );
 
   // Handler: Mark all messages as read (local + backend)
+  /**
+   * Mark all message notifications as read (local store and backend).
+   * @async
+   * @returns {Promise<void>}
+   */
   const handleMarkAllMessagesAsRead = async () => {
     useNotificationStore.getState().markAllMessagesAsRead();
     // Backend: mark all unread messages as read
-    const unreadMessages = messageNotifications.filter(n => !n.notificationIsRead);
+    const unreadMessages = messageNotifications.filter(
+      (n) => !n.notificationIsRead
+    );
     for (const n of unreadMessages) {
-      await handleUpdateNotification({ notificationId: n.id, notificationIsRead: true });
+      await handleUpdateNotification({
+        notificationId: n.id,
+        notificationIsRead: true,
+      });
     }
   };
 
   // Handler: Mark all notifications as read (local + backend)
+  /**
+   * Mark all other (non-message) notifications as read (local store and backend).
+   * @async
+   * @returns {Promise<void>}
+   */
   const handleMarkAllNotificationsAsRead = async () => {
     useNotificationStore.getState().markAllOthersAsRead();
     // Backend: mark all unread notifications as read
-    const unreadOthers = otherNotifications.filter(n => !n.notificationIsRead);
+    const unreadOthers = otherNotifications.filter(
+      (n) => !n.notificationIsRead
+    );
     for (const n of unreadOthers) {
-      await handleUpdateNotification({ notificationId: n.id, notificationIsRead: true });
+      await handleUpdateNotification({
+        notificationId: n.id,
+        notificationIsRead: true,
+      });
     }
   };
 
   // Fecha o menu se deixares de estar em mobile
+  /**
+   * Effect: Closes the menu if the window is resized above mobile width.
+   */
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 480 && showMenu) setShowMenu(false);
@@ -70,14 +119,25 @@ export default function Header({ language, setLanguage }) {
     return () => window.removeEventListener("resize", handleResize);
   }, [showMenu]);
 
+  /**
+   * Effect: Handles closing dropdowns when clicking outside.
+   */
   useEffect(() => {
     function handleClickOutside(event) {
       // If notifications dropdown is open and click is outside
-      if (showNotifications && notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        showNotifications &&
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setShowNotifications(false);
       }
       // If messages dropdown is open and click is outside
-      if (showMessages && messageRef.current && !messageRef.current.contains(event.target)) {
+      if (
+        showMessages &&
+        messageRef.current &&
+        !messageRef.current.contains(event.target)
+      ) {
         setShowMessages(false);
       }
     }
@@ -88,8 +148,6 @@ export default function Header({ language, setLanguage }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showNotifications, showMessages]);
-
-
 
   return (
     <header className="citrus-header">
@@ -145,9 +203,7 @@ export default function Header({ language, setLanguage }) {
             }}
           />
           {unreadOtherCount > 0 && (
-            <span className="header-badge">
-              {unreadOtherCount}
-            </span>
+            <span className="header-badge">{unreadOtherCount}</span>
           )}
           {showNotifications && (
             <NotificationDropdown notifications={otherNotifications} />

@@ -1,4 +1,8 @@
-/* Backdrop com blur effect */
+.course-newCourse-offcanvas-backdrop {
+/* =============================== */
+/*  BACKDROP (Blur Effect & Fallback)  */
+/* =============================== */
+}
 .course-newCourse-offcanvas-backdrop {
   position: fixed;
   top: 0;
@@ -33,6 +37,10 @@
 
 /* Offcanvas - slide da direita */
 .course-newCourse-offcanvas {
+/* =============================== */
+/*  OFFCANVAS PANEL (Slide-in)  */
+/* =============================== */
+
   position: fixed;
   top: 0;
   right: 0;
@@ -52,6 +60,10 @@
 
 /* Botão X - preto, canto superior direito */
 .course-newCourse-offcanvas-close {
+/* =============================== */
+/*  CLOSE BUTTON (Top Right X)  */
+/* =============================== */
+
   position: absolute;
   top: 16px;
   right: 16px;
@@ -73,6 +85,10 @@
 
 /* Conteúdo do offcanvas */
 .course-newCourse-offcanvas-content {
+/* =============================== */
+/*  OFFCANVAS CONTENT LAYOUT  */
+/* =============================== */
+
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -81,6 +97,10 @@
 
 /* Imagem do curso */
 .course-newCourse-image {
+/* =============================== */
+/*  COURSE IMAGE SECTION  */
+/* =============================== */
+
   width: 100%;
   height: 250px;
   overflow: hidden;
@@ -95,6 +115,10 @@
 }
 
 .course-newCourse-form {
+/* =============================== */
+/*  COURSE FORM SECTION  */
+/* =============================== */
+
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -104,6 +128,10 @@
 
 /* Estilo para o botão flutuante de upload de imagem (label e ícone) na área da imagem do curso */
 .course-newCourse-edit-label {
+/* =============================== */
+/*  IMAGE UPLOAD BUTTON (Floating)  */
+/* =============================== */
+
   position: absolute;
   bottom: 16px;
   left: 16px;
@@ -136,6 +164,10 @@
 
 /* Título do curso */
 .course-newCourse-title {
+/* =============================== */
+/*  COURSE TITLE STYLES  */
+/* =============================== */
+
   font-family: var(--font-family-heading, "Istok Web", sans-serif);
   font-size: var(--font-size-title, 2rem);
   font-weight: var(--font-weight-bold, 700);
@@ -147,6 +179,10 @@
 
 
 .course-newCourse-info-item {
+/* =============================== */
+/*  INFO ITEM ROWS (Form Fields)  */
+/* =============================== */
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -155,6 +191,10 @@
 }
 
 .course-newCourse-icon {
+/* =============================== */
+/*  ICON STYLES  */
+/* =============================== */
+
   color: #b61b23;
   font-size: 18px;
   width: 20px;
@@ -162,6 +202,10 @@
 }
 
 .course-newCourse-flag {
+/* =============================== */
+/*  FLAG ICON STYLES  */
+/* =============================== */
+
   width: 20px;
   height: 14px;
   border-radius: 2px;
@@ -170,18 +214,30 @@
 }
 
 .course-newCourse-label {
+/* =============================== */
+/*  LABEL STYLES  */
+/* =============================== */
+
   color: var(--secondary, #88909f);
   font-weight: var(--font-weight-bold, 700);
   min-width: 56px;
   align-self: flex-start;
 }
 .course-newCourse-duration {
+/* =============================== */
+/*  DURATION FIELD STYLES  */
+/* =============================== */
+
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .course-newCourse-value {
+/* =============================== */
+/*  VALUE FIELD STYLES  */
+/* =============================== */
+
   color: var(--text, #000000);
   font-weight: var(--font-weight-regular, 400);
   flex: 1;
@@ -189,12 +245,20 @@
 
 /* Seções */
 .course-newCourse-section {
+/* =============================== */
+/*  SECTION BLOCKS (Description, etc.)  */
+/* =============================== */
+
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .course-newCourse-section-title {
+/* =============================== */
+/*  SECTION TITLE STYLES  */
+/* =============================== */
+
   color: var(--secondary, #88909f);
   font-weight: var(--font-weight-bold, 700);
   font-family: var(--font-family-secondary, "Catamaran", sans-serif);
@@ -202,6 +266,10 @@
 }
 
 .course-newCourse-description {
+/* =============================== */
+/*  DESCRIPTION FIELD STYLES  */
+/* =============================== */
+
   font-family: var(--font-family-secondary, "Catamaran", sans-serif);
   font-size: var(--font-size-main, 1rem);
   color: var(--text, #000000);
@@ -212,6 +280,10 @@
 }
 
 .course-newCourse-inputAndError {
+/* =============================== */
+/*  INPUT & ERROR CONTAINER  */
+/* =============================== */
+
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -219,6 +291,10 @@
 }
 
 .course-newCourse-input {
+/* =============================== */
+/*  INPUT FIELD STYLES  */
+/* =============================== */
+
   width: 100%;
   min-height: 32px;
   max-height: 96px;
@@ -233,6 +309,10 @@
 }
 
 .course-newCourse-input-duration {
+/* =============================== */
+/*  DURATION INPUT FIELD STYLES  */
+/* =============================== */
+
   width: 128px;
   height: auto;
   padding: 0 16px;
@@ -247,6 +327,10 @@
 
 
 select.course-new-input {
+/* =============================== */
+/*  SELECT DROPDOWN STYLES  */
+/* =============================== */
+
   width: 100%;
   height: 40px;
   border: 2px solid #cbb4b4;
@@ -269,11 +353,19 @@ select.course-new-input:focus {
 
 /* Botão de ação */
 .course-newCourse-actions {
+/* =============================== */
+/*  ACTION BUTTON CONTAINER  */
+/* =============================== */
+
   display: flex;
   justify-content: center;
 }
 
 .course-newCourse-start-btn {
+/* =============================== */
+/*  MAIN ACTION BUTTON STYLES  */
+/* =============================== */
+
   width: auto;
   max-width: 300px;
   height: 48px;
@@ -305,6 +397,10 @@ select.course-new-input:focus {
 }
 
 .course-newCourse-play-icon {
+/* =============================== */
+/*  PLAY ICON STYLES (Button)  */
+/* =============================== */
+
   font-size: 14px;
 }
 
