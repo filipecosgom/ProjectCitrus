@@ -32,6 +32,8 @@ public class DataInitializer {
     private UserInitializer userInitializer;
     @EJB
     private ConfigurationInitializer configurationInitializer;
+    @EJB
+    private NotificationCheck notificationCheck;
 
     /**
      * Triggers initialization chain during application startup.
@@ -47,5 +49,6 @@ public class DataInitializer {
         }
         userInitializer.initializeAdminUser();
         configurationInitializer.initializeConfiguration();
+        notificationCheck.checkAndSendUnemailedNotifications();
     }
 }

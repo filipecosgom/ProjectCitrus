@@ -3,14 +3,17 @@ import { courseSearchFilters } from "../coursesSearchUtils";
 const pt = {
   notifications: {
     appraisal: "Teve {content} numa nova avaliação",
-    cycle: "Novo ciclo iniciado até {content}",
+    cycleOpen: "Novo ciclo iniciado até {content}",
+    cycleClose: "Ciclo encerrado hoje {content}",
     course: "Registou o curso {content}",
     markAllAsSeen: "Marcar todas como lidas",
     content: "mensagem",
     noNotificationsFound: "Nenhuma notificação encontrada",
+    userUpdate: "Utilizador {content} atualizou o seu perfil",
   },
   login: {
     failed: "Falha no login. Verifique as suas credenciais e tente novamente.",
+    success: "Login bem-sucedido. Bem-vindo de volta!",
   },
   welcomeMessage: "Bem-vindo {name}",
   goodByeMessage: "Até à próxima {name}",
@@ -559,6 +562,7 @@ const pt = {
     expiringCourses: "Cursos a expirar em breve",
     closingAppraisals: "Avaliações a fechar em breve",
   },
+  chatWsClosedMessageSent: "A conversa foi encerrada mas a mensagem foi enviada.",
 };
 
 export default pt;

@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -90,6 +91,9 @@ public class UserService implements Serializable {
 
     @EJB
     FinishedCourseRepository finishedCourseRepository;
+
+    @EJB
+    EmailService emailService;
 
     @Inject
     JWTUtil jwtUtil;
@@ -245,6 +249,10 @@ public class UserService implements Serializable {
         // Chama aqui para atualizar o accountState se necessário
         checkAndUpdateAccountState(id);
         notificationService.newUserUpdateNotification(user);
+        String userName = user.getName() + " " + user.getSurname();
+        String date = LocalDate.now().toString();
+        emailService.sendUserUpdateNotificationEmail(user.getManager().getEmail(),
+                user.getManager().getName(), userName, user.getId(), date);
         userRepository.persist(user);
         return true;
     }
@@ -541,6 +549,8 @@ public class UserService implements Serializable {
         finished.setCourse(course);
         finished.setCompletionDate(LocalDate.now());
         finishedCourseRepository.persist(finished);
+        String managerName = user.getManager().getName() + " " + user.getManager().getSurname();
+        emailService.sendNewCourseNotificationEmail(user.getEmail(), user.getName(), managerName, course.getTitle(), user.getId());
         notificationService.newCourseNotification(finished);
         LOGGER.info("Added finished course: userId={}, courseId={}, date={}", userId, courseId, finished.getCompletionDate());
         return finishedCourseMapper.toDto(finished);

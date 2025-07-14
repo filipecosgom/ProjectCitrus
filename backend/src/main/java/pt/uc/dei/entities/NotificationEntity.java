@@ -123,6 +123,13 @@ public class NotificationEntity implements Serializable {
     private Integer messageCount;
 
     /**
+     * The number of associated messages.
+     * Must always be sent and can be updated.
+     */
+    @Column(name = "emailsent", nullable = false, unique = false, updatable = true)
+    private Boolean emailSent = false;
+
+    /**
      * The user associated with the notification.
      * Many-to-one relationship with `UserEntity`.
      */
@@ -311,5 +318,13 @@ public class NotificationEntity implements Serializable {
 
     public void setNotificationIsSeen(Boolean notificationIsSeen) {
         this.notificationIsSeen = notificationIsSeen;
+    }
+
+    public Boolean getEmailSent() {
+        return emailSent;
+    }
+
+    public void setEmailSent(Boolean emailSent) {
+        this.emailSent = emailSent;
     }
 }

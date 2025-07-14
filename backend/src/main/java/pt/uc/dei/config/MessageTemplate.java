@@ -366,7 +366,7 @@ public class MessageTemplate {
           </head>
           <body>
             <div class="email-container">
-              <h2>🎯 New Performance Cycle Started</h2>
+              <h2>New Performance Cycle Started</h2>
               <p>Hello,</p>
               <p>
                 A new performance evaluation cycle has been created and is now active.
@@ -462,7 +462,7 @@ public class MessageTemplate {
           </head>
           <body>
             <div class="email-container">
-              <h2>🎯 Novo Ciclo de Avaliação Iniciado</h2>
+              <h2>Novo Ciclo de Avaliação Iniciado</h2>
               <p>Olá,</p>
               <p>
                 Um novo ciclo de avaliação de desempenho foi criado e está agora ativo.
@@ -558,7 +558,7 @@ public class MessageTemplate {
           </head>
           <body>
             <div class=\"email-container\">
-              <h2>✅ Performance Cycle Ended</h2>
+              <h2>Performance Cycle Ended</h2>
               <p>Hello,</p>
               <p>
                 The performance evaluation cycle below has ended. Please review the results and take any necessary actions.
@@ -647,7 +647,7 @@ public class MessageTemplate {
           </head>
           <body>
             <div class=\"email-container\">
-              <h2>✅ Ciclo de Avaliação Encerrado</h2>
+              <h2>Ciclo de Avaliação Encerrado</h2>
               <p>Olá,</p>
               <p>
                 O ciclo de avaliação de desempenho abaixo foi encerrado. Por favor, reveja os resultados e tome as ações necessárias.
@@ -727,7 +727,7 @@ public class MessageTemplate {
           </head>
           <body>
             <div class=\"email-container\">
-              <h2>🔔 Profile Updated</h2>
+              <h2>Profile Updated</h2>
               <p>Hello %s,</p>
               <p>
                 This is to inform you that your team member <strong>%s</strong> has updated their profile on %s.
@@ -751,76 +751,7 @@ public class MessageTemplate {
         """.formatted(managerName, userName, updateDate, profileLink);
   }
 
-  /**
-   * Email template for notifying managers when a managed user updates their
-   * profile (Portuguese).
-   */
-  public static String PROFILE_UPDATE_NOTIFICATION_TEMPLATE_PT(String managerName, String userName, String updateDate,
-      String profileLink) {
-    return """
-        <!DOCTYPE html>
-        <html lang=\"pt\">
-          <head>
-            <meta charset=\"UTF-8\" />
-            <title>Perfil Atualizado</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                padding: 20px;
-                margin: 0;
-              }
-              .email-container {
-                max-width: 600px;
-                background-color: #ffffff;
-                margin: auto;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-              }
-              .button {
-                display: inline-block;
-                padding: 12px 24px;
-                margin: 20px 0;
-                color: #ffffff !important;
-                background-color: #2F7C9C;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-              }
-              .footer {
-                font-size: 12px;
-                color: #777777;
-                margin-top: 30px;
-                text-align: center;
-              }
-            </style>
-          </head>
-          <body>
-            <div class=\"email-container\">
-              <h2>🔔 Perfil Atualizado</h2>
-              <p>Olá %s,</p>
-              <p>
-                Informamos que o membro da sua equipa <strong>%s</strong> atualizou o seu perfil em %s.
-              </p>
-              <p>
-                Pode consultar o perfil atualizado através do link abaixo:
-              </p>
-              <p style=\"text-align: center;\">
-                <a href=\"%s\" class=\"button\">Ver Perfil</a>
-              </p>
-              <p>
-                Para qualquer questão ou informação adicional, contacte o administrador do sistema.
-              </p>
-              <p>Atenciosamente,<br />A Equipa CITRUS</p>
-              <div class=\"footer\">
-                ©CITRUS. Todos os direitos reservados.
-              </div>
-            </div>
-          </body>
-        </html>
-        """.formatted(managerName, userName, updateDate, profileLink);
-  }
+
 
   /**
    * Email template for notifying a user when their manager assigns a new course (English).
@@ -867,13 +798,13 @@ public class MessageTemplate {
           </head>
           <body>
             <div class=\"email-container\">
-              <h2>📚 New Course Assigned</h2>
+              <h2>New Course Assigned</h2>
               <p>Hello %s,</p>
               <p>
-                Your manager <strong>%s</strong> has assigned you a new course: <strong>%s</strong> on %s.
+                Your manager <strong>%s</strong> has added a new course to you trainings: <strong>%s</strong> on %s.
               </p>
               <p>
-                You can access the course using the link below:
+                You can check it out using the link below:
               </p>
               <p style=\"text-align: center;\">
                 <a href=\"%s\" class=\"button\">View Course</a>
@@ -891,85 +822,16 @@ public class MessageTemplate {
         """.formatted(userName, managerName, courseName, assignDate, courseLink);
   }
 
-  /**
-   * Email template for notifying a user when their manager assigns a new course (Portuguese).
+    /**
+   * Email template for notifying a user that another user is trying to chat with them (English).
    */
-  public static String COURSE_ASSIGNMENT_NOTIFICATION_TEMPLATE_PT(String userName, String managerName, String courseName, String assignDate, String courseLink) {
-    return """
-        <!DOCTYPE html>
-        <html lang=\"pt\">
-          <head>
-            <meta charset=\"UTF-8\" />
-            <title>Novo Curso Atribuído</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                padding: 20px;
-                margin: 0;
-              }
-              .email-container {
-                max-width: 600px;
-                background-color: #ffffff;
-                margin: auto;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-              }
-              .button {
-                display: inline-block;
-                padding: 12px 24px;
-                margin: 20px 0;
-                color: #ffffff !important;
-                background-color: #2F7C9C;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-              }
-              .footer {
-                font-size: 12px;
-                color: #777777;
-                margin-top: 30px;
-                text-align: center;
-              }
-            </style>
-          </head>
-          <body>
-            <div class=\"email-container\">
-              <h2>📚 Novo Curso Atribuído</h2>
-              <p>Olá %s,</p>
-              <p>
-                O seu gestor <strong>%s</strong> atribuiu-lhe um novo curso: <strong>%s</strong> em %s.
-              </p>
-              <p>
-                Pode aceder ao curso através do link abaixo:
-              </p>
-              <p style=\"text-align: center;\">
-                <a href=\"%s\" class=\"button\">Ver Curso</a>
-              </p>
-              <p>
-                Para qualquer questão, contacte o seu gestor ou o administrador do sistema.
-              </p>
-              <p>Atenciosamente,<br />A Equipa CITRUS</p>
-              <div class=\"footer\">
-                ©CITRUS. Todos os direitos reservados.
-              </div>
-            </div>
-          </body>
-        </html>
-        """.formatted(userName, managerName, courseName, assignDate, courseLink);
-  }
-
-  /**
-   * Email template for notifying a user when another user wants to contact them (English).
-   */
-  public static String USER_CONTACT_REQUEST_TEMPLATE_EN(String recipientName, String senderName, String message, String contactLink) {
+  public static String CHAT_REQUEST_NOTIFICATION_TEMPLATE_EN(String recipientName, String senderName, String chatLink) {
     return """
         <!DOCTYPE html>
         <html lang=\"en\">
           <head>
             <meta charset=\"UTF-8\" />
-            <title>Contact Request</title>
+            <title>New Chat Request</title>
             <style>
               body {
                 font-family: Arial, sans-serif;
@@ -1005,17 +867,13 @@ public class MessageTemplate {
           </head>
           <body>
             <div class=\"email-container\">
-              <h2>✉️ New Contact Request</h2>
+              <h2> New Chat Request</h2>
               <p>Hello %s,</p>
               <p>
-                <strong>%s</strong> would like to get in touch with you.
-              </p>
-              <p>
-                <em>Message:</em><br />
-                %s
+                <strong>%s</strong> wants to start a chat with you.
               </p>
               <p style=\"text-align: center;\">
-                <a href=\"%s\" class=\"button\">Reply Now</a>
+                <a href=\"%s\" class=\"button\">Open Chat</a>
               </p>
               <p>
                 If you have any questions or concerns, please contact your system administrator.
@@ -1027,77 +885,7 @@ public class MessageTemplate {
             </div>
           </body>
         </html>
-        """.formatted(recipientName, senderName, message, contactLink);
+        """.formatted(recipientName, senderName, chatLink);
   }
 
-  /**
-   * Email template for notifying a user when another user wants to contact them (Portuguese).
-   */
-  public static String USER_CONTACT_REQUEST_TEMPLATE_PT(String recipientName, String senderName, String message, String contactLink) {
-    return """
-        <!DOCTYPE html>
-        <html lang=\"pt\">
-          <head>
-            <meta charset=\"UTF-8\" />
-            <title>Pedido de Contacto</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                padding: 20px;
-                margin: 0;
-              }
-              .email-container {
-                max-width: 600px;
-                background-color: #ffffff;
-                margin: auto;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-              }
-              .button {
-                display: inline-block;
-                padding: 12px 24px;
-                margin: 20px 0;
-                color: #ffffff !important;
-                background-color: #2F7C9C;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-              }
-              .footer {
-                font-size: 12px;
-                color: #777777;
-                margin-top: 30px;
-                text-align: center;
-              }
-            </style>
-          </head>
-          <body>
-            <div class=\"email-container\">
-              <h2>✉️ Novo Pedido de Contacto</h2>
-              <p>Olá %s,</p>
-              <p>
-                <strong>%s</strong> gostaria de entrar em contacto consigo.
-              </p>
-              <p>
-                <em>Mensagem:</em><br />
-                %s
-              </p>
-              <p style=\"text-align: center;\">
-                <a href=\"%s\" class=\"button\">Responder Agora</a>
-              </p>
-              <p>
-                Para qualquer questão ou dúvida, contacte o administrador do sistema.
-              </p>
-              <p>Atenciosamente,<br />A Equipa CITRUS</p>
-              <div class=\"footer\">
-                ©CITRUS. Todos os direitos reservados.
-              </div>
-            </div>
-          </body>
-        </html>
-        """.formatted(recipientName, senderName, message, contactLink);
   }
-
-}

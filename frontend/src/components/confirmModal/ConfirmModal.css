@@ -27,6 +27,7 @@
   -webkit-backdrop-filter: blur(8px);
   z-index: 2000;
   display: flex;
+  height: 100vh;
   align-items: center;
   justify-content: center;
   opacity: 0;

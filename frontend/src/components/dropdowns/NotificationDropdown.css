@@ -2,7 +2,11 @@
   font-size: 2.1rem;
   color: var(--primary);
 }
-.notif-icon-cycle {
+.notif-icon-cycleOpen {
+  font-size: 2.1rem;
+  color: var(--badge-green-stroke);
+}
+.notif-icon-cycleClose {
   font-size: 2.1rem;
   color: var(--secondary);
 }
