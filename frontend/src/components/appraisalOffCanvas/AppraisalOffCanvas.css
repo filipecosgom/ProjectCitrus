@@ -1,13 +1,23 @@
-/* src/components/userOffcanvas/UserOffcanvas.css */
-
 /*
-  To resize the stars in the star selector, adjust the --star-size CSS variable.
-  Example (inline):
-    <div class="appraisal-offcanvas-star-selector" style="--star-size: 32px;">...</div>
-  Example (class):
-    .star-selector-large { --star-size: 32px; }
-    <div class="appraisal-offcanvas-star-selector star-selector-large">...</div>
-*/
+ * ===== AppraisalOffCanvas Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AppraisalOffCanvas React component.
+ * It includes:
+ *   - Backdrop, offcanvas panel, header, avatar, feedback, buttons, and star selector styles
+ *   - Dropdown styles for state selection
+ *   - Responsive breakpoints for mobile and tablet
+ *   - Utility classes for loading, error, and interaction states
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ *
+ * To resize the stars in the star selector, adjust the --star-size CSS variable.
+ * Example (inline):
+ *   <div class="appraisal-offcanvas-star-selector" style="--star-size: 32px;">...</div>
+ * Example (class):
+ *   .star-selector-large { --star-size: 32px; }
+ *   <div class="appraisal-offcanvas-star-selector star-selector-large">...</div>
+ */
 
 /* Backdrop */
 .appraisal-offcanvas-backdrop {
@@ -152,7 +162,7 @@
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  transition: color 0.s;
+  transition: color 0s;
 }
 
 .appraisal-offcanvas-menu-cell-icon svg {
@@ -186,7 +196,7 @@
 
 .appraisal-offcanvas-feedback-box {
   border-radius: var(--border-radius-default, 10px);
-  border: 1px solid #CBB4B4;
+  border: 1px solid #cbb4b4;
   width: 100%;
   text-align: left;
   margin-bottom: 0;
@@ -194,7 +204,7 @@
 }
 
 .appraisal-offcanvas-feedback-textarea {
-  flex:1;
+  flex: 1;
   min-height: 80px;
   box-sizing: border-box;
   font-size: 1rem;
@@ -250,9 +260,15 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.appraisal-offcanvas-btn-submit { background: var(--primary); }
-.appraisal-offcanvas-btn-save { background: var(--blue); }
-.appraisal-offcanvas-btn-edit { background: var(--primary); }
+.appraisal-offcanvas-btn-submit {
+  background: var(--primary);
+}
+.appraisal-offcanvas-btn-save {
+  background: var(--blue);
+}
+.appraisal-offcanvas-btn-edit {
+  background: var(--primary);
+}
 .appraisal-offcanvas-btn-cancel {
   background: var(--secondary);
   color: #fff;
@@ -291,10 +307,18 @@
 .appraisal-offcanvas-star-selector .star.selected svg {
   /* Color logic for selected stars, similar to AppraisalScoreStarBadge */
 }
-.appraisal-offcanvas-star-selector .star:nth-child(1).selected svg { color: #FFD700; }
-.appraisal-offcanvas-star-selector .star:nth-child(2).selected svg { color: #FFA500; }
-.appraisal-offcanvas-star-selector .star:nth-child(3).selected svg { color: #FF6347; }
-.appraisal-offcanvas-star-selector .star:nth-child(4).selected svg { color: #FF0000; }
+.appraisal-offcanvas-star-selector .star:nth-child(1).selected svg {
+  color: #ffd700;
+}
+.appraisal-offcanvas-star-selector .star:nth-child(2).selected svg {
+  color: #ffa500;
+}
+.appraisal-offcanvas-star-selector .star:nth-child(3).selected svg {
+  color: #ff6347;
+}
+.appraisal-offcanvas-star-selector .star:nth-child(4).selected svg {
+  color: #ff0000;
+}
 .appraisal-offcanvas-star-selector .star svg {
   width: var(--star-size);
   height: var(--star-size);
@@ -303,7 +327,7 @@
 }
 .appraisal-offcanvas-star-selector .star:not(.selected):hover svg,
 .appraisal-offcanvas-star-selector .star:not(.selected):focus svg {
-  color: #FFD700;
+  color: #ffd700;
   outline: none;
 }
 
@@ -328,7 +352,7 @@
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-top: 4px;
   min-width: 160px;
   padding: 8px;

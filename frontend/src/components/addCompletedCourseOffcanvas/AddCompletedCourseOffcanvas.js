@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from "react";
+
+/**
+ * AddCompletedCourseOffcanvas component module.
+ * Provides an offcanvas UI for adding completed courses to a user profile.
+ * Includes course search, selection, and add/cancel actions, with animated transitions and accessibility features.
+ * @module AddCompletedCourseOffcanvas
+ */
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import Spinner from "../spinner/Spinner";
@@ -8,6 +15,19 @@ import "./AddCompletedCourseOffcanvas.css";
 import handleNotification from "../../handles/handleNotification";
 import { handleAddCompletedCourseToUser } from "../../handles/handleAddCompletedCourseToUser";
 
+/**
+ * Offcanvas component for adding completed courses to a user profile.
+ * Handles course selection, addition, and UI transitions.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @param {Function} props.onAdd - Callback after adding courses
+ * @param {Array} [props.availableCourses=[]] - List of available courses
+ * @param {number|string} props.userId - User ID
+ * @param {string} props.userName - User's first name
+ * @param {string} props.userSurname - User's surname
+ * @returns {JSX.Element|null} The rendered offcanvas component
+ */
 const AddCompletedCourseOffcanvas = ({
   isOpen,
   onClose,

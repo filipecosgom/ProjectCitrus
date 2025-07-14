@@ -1,7 +1,19 @@
+// FILE: coursesApi.js
+/**
+ * API module for courses.
+ * Provides functions to fetch, create, update, and upload course images.
+ * @module coursesApi
+ */
 import { api } from "./api"; // No need to import handleApiError here
 
 const courseEndpoint = "/courses";
 
+/**
+ * Fetches courses with optional filters.
+ * @async
+ * @param {Object} params - Filter parameters.
+ * @returns {Promise<Object>} List of courses.
+ */
 export const fetchCourses = async (params = {}) => {
   // Transform {query, searchType, ...} into {[searchType]: query, ...}
   let newParams = { ...params };
@@ -16,7 +28,7 @@ export const fetchCourses = async (params = {}) => {
     Object.entries(newParams).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         // Ensure booleans are sent as strings
-        query.append(key, typeof value === 'boolean' ? String(value) : value);
+        query.append(key, typeof value === "boolean" ? String(value) : value);
       }
     });
     const response = await api.get(`${courseEndpoint}?${query.toString()}`);
@@ -34,6 +46,12 @@ export const fetchCourses = async (params = {}) => {
   }
 };
 
+/**
+ * Fetches the image for a course.
+ * @async
+ * @param {number|string} courseId - Course ID.
+ * @returns {Promise<Object>} Image blob and metadata.
+ */
 export const fetchCourseImage = async (courseId) => {
   try {
     const response = await api.get(`${courseEndpoint}/${courseId}/image`, {
@@ -57,6 +75,13 @@ export const fetchCourseImage = async (courseId) => {
   }
 };
 
+/**
+ * Uploads an image for a course.
+ * @async
+ * @param {number|string} courseId - Course ID.
+ * @param {File} imageFile - Image file.
+ * @returns {Promise<Object>} Upload result.
+ */
 export const uploadCourseImage = async (courseId, imageFile) => {
   const fileExtension = imageFile.name.split(".").pop();
   const fileName = `${courseId}.${fileExtension}`;
@@ -79,18 +104,20 @@ export const uploadCourseImage = async (courseId, imageFile) => {
   }
 };
 
+/**
+ * Creates a new course.
+ * @async
+ * @param {Object} courseData - Course data.
+ * @returns {Promise<Object>} Operation result.
+ */
 export const createCourse = async (courseData) => {
   try {
-    const response = await api.post(
-      courseEndpoint,
-      courseData,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await api.post(courseEndpoint, courseData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return {
       success: true,
       status: response.status,
@@ -105,6 +132,13 @@ export const createCourse = async (courseData) => {
   }
 };
 
+/**
+ * Updates a course.
+ * @async
+ * @param {number|string} courseId - Course ID.
+ * @param {Object} updateData - Updated course data.
+ * @returns {Promise<Object>} Operation result.
+ */
 export const updateCourse = async (courseId, updateData) => {
   try {
     const response = await api.put(
@@ -112,7 +146,7 @@ export const updateCourse = async (courseId, updateData) => {
       updateData,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       }

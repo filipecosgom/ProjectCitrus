@@ -1,12 +1,19 @@
+/**
+ * API module for cycles.
+ * Provides functions to fetch, create, close, and validate cycles.
+ * @module cyclesApi
+ */
+
 import axios from "axios";
 import { apiBaseUrl } from "../config";
 
 const cyclesEndpoint = `${apiBaseUrl}/cycles`;
 
 /**
- * Busca todos os ciclos com filtros opcionais
- * @param {Object} params - Parâmetros de filtro
- * @returns {Promise<Object>} Response com lista de ciclos
+ * Fetches all cycles with optional filters.
+ * @async
+ * @param {Object} [params={}] - Filter parameters.
+ * @returns {Promise<Object>} List of cycles.
  */
 export const fetchCycles = async (params = {}) => {
   try {
@@ -32,9 +39,10 @@ export const fetchCycles = async (params = {}) => {
 };
 
 /**
- * Cria um novo ciclo
- * @param {Object} cycleData - Dados do ciclo
- * @returns {Promise<Object>} Response com resultado da operação
+ * Creates a new cycle.
+ * @async
+ * @param {Object} cycleData - Cycle data.
+ * @returns {Promise<Object>} Operation result.
  */
 export const createCycle = async (cycleData) => {
   try {
@@ -59,9 +67,10 @@ export const createCycle = async (cycleData) => {
 };
 
 /**
- * Fecha um ciclo
- * @param {number} id - ID do ciclo
- * @returns {Promise<Object>} Response com resultado da operação
+ * Closes a cycle.
+ * @async
+ * @param {number} id - Cycle ID.
+ * @returns {Promise<Object>} Operation result.
  */
 export const closeCycle = async (id) => {
   try {
@@ -90,9 +99,10 @@ export const closeCycle = async (id) => {
 };
 
 /**
- * Validates if a cycle can be closed
- * @param {number} cycleId - The cycle ID
- * @returns {Promise<Object>} API response with validation details
+ * Validates if a cycle can be closed.
+ * @async
+ * @param {number} cycleId - The cycle ID.
+ * @returns {Promise<Object>} API response with validation details.
  */
 export const canCloseCycle = async (cycleId) => {
   try {
@@ -118,8 +128,9 @@ export const canCloseCycle = async (cycleId) => {
 };
 
 /**
- * Conta o número de usuários ativos (não admin e não deletados)
- * @returns {Promise<Object>} Response com contagem de usuários
+ * Fetches the count of active users (not admin and not deleted).
+ * @async
+ * @returns {Promise<Object>} Count of active users.
  */
 export const fetchActiveUsersCount = async () => {
   try {

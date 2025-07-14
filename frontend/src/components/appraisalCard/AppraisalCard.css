@@ -1,6 +1,46 @@
-/*----------------------------------------*/
-/*----------------MOBILE------------------*/
-/*----------------------------------------*/
+/*
+ * Stylesheet for AppraisalCard component.
+ * Provides responsive layout, card, user, score, state, and date styles for displaying appraisal information.
+ * Includes mobile, tablet, and desktop breakpoints for adaptive UI.
+ * All classes are prefixed with 'appraisalCard-' for scoping and maintainability.
+ * Author: Project Citrus Team
+ */
+/*
+ * ===== AppraisalCard Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AppraisalCard React component.
+ * It includes:
+ *   - Card container, user info, score, state, and date styles
+ *   - Responsive breakpoints for mobile, tablet, and desktop
+ *   - Utility classes for selection and checkbox support
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
+
+/* === Card Container and Layout === */
+/* .appraisalCard-wrapper: Main card container, with padding, shadow, and background */
+/* .appraisalCard-wrapper.selected: Highlighted background for selected cards */
+/* .appraisalCard-wrapper.with-checkbox: Card with checkbox, adjusted padding */
+/* .appraisalCard-container: Flex row for card content */
+/* .appraisalCard-checkbox: Checkbox area for selection */
+
+/* === User Info and Details === */
+/* .appraisalCard-user: Flex container for user icon and info */
+/* .appraisalCard-userInfo: Column layout for name and email */
+/* .appraisalCard-name: User name styling, ellipsis for overflow */
+/* .appraisalCard-email: User email styling, hidden on tablet/desktop */
+
+/* === Score, State, and Date === */
+/* .appraisalCard-score: Score badge area */
+/* .appraisalCard-state: Appraisal state badge area */
+/* .appraisalCard-endDate: End date display */
+
+/* === Responsive Breakpoints === */
+/* Mobile: max-width 480px */
+/* Tablet: min-width 480px and max-width 1024px */
+/* Desktop: min-width 1024px */
+/* Styles for user icon, score, and state adapt at each breakpoint */
 .appraisalCard-wrapper {
   display: flex;
   padding-left: 0;
@@ -13,7 +53,7 @@
 }
 
 .appraisalCard-wrapper:hover {
-  background-color:  rgb(186, 221, 255);
+  background-color: rgb(186, 221, 255);
 }
 
 .appraisalCard-wrapper.with-checkbox {
@@ -118,8 +158,6 @@
   min-width: 0;
 }
 
-
-
 /*----------------------------------------*/
 /*----------------MOBILE CARDS------------------*/
 /*----------------------------------------*/
@@ -149,11 +187,11 @@
   }
 
   .appraisalCard-appraised {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  order: 2;
-}
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    order: 2;
+  }
   .appraisalCard-state {
     order: 1;
     align-self: self-end;
@@ -284,7 +322,6 @@
     width: 100px !important;
     height: 100px !important;
     border-width: 4px !important;
-    /* If you want to scale everything, you can use transform: scale(2); but it's better to override sizes directly for clarity */
   }
   .appraisalCard-appraised .user-icon img {
     width: 100% !important;
@@ -337,16 +374,14 @@
 }
 
 @media (max-width: 1024px) {
-
   .appraisalCard-email {
     display: none;
   }
 
   .appraisalCard-endDate {
-  display: none;
+    display: none;
+  }
 }
-}
-
 
 @media (min-width: 1024px) {
   .appraisalCard-wrapper {
@@ -365,7 +400,7 @@
 
   .appraisalCard-state {
     flex: 1 1 0;
-  text-align: start;
+    text-align: start;
   }
   .appraisalCard-appraised {
     order: initial;
@@ -373,10 +408,10 @@
   }
 
   .appraisalCard-appraised {
-      display: flex;
-      flex: 1 1 0;
-      min-width: 0;
-      gap: 0.5rem;
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 0.5rem;
   }
   .appraisalCard-score {
     order: initial;
@@ -385,7 +420,7 @@
 
   .appraisalCard-score {
     flex: 1 1 0;
-  text-align: start;
+    text-align: start;
   }
   .appraisalCard-appraising {
     order: initial;
@@ -404,7 +439,7 @@
 
   .appraisalCard-endDate {
     flex: 1 1 0;
-  text-align: start;
+    text-align: start;
   }
 
   .appraisalCard-appraised .user-icon {

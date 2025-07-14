@@ -1,8 +1,17 @@
-import { api } from './api'; // Your configured axios instance
+/**
+ * API module for enums.
+ * Provides functions to fetch roles, offices, appraisal states, and course areas.
+ * @module enumsApi
+ */
+import { api } from "./api"; // Your configured axios instance
 
 const enumsEndpoint = "/enums"; // Keep only the relative endpoint
 
-// Fetch all roles by calling the /enums/roles endpoint
+/**
+ * Fetches all roles.
+ * @async
+ * @returns {Promise<Array<string>>} List of roles.
+ */
 export const getRoles = async () => {
   try {
     const response = await api.get(`${enumsEndpoint}/roles`);
@@ -14,7 +23,11 @@ export const getRoles = async () => {
   }
 };
 
-// Fetch all offices by calling the /enums/offices endpoint
+/**
+ * Fetches all offices.
+ * @async
+ * @returns {Promise<Array<string>>} List of offices.
+ */
 export const getOffices = async () => {
   try {
     const response = await api.get(`${enumsEndpoint}/offices`);
@@ -26,6 +39,11 @@ export const getOffices = async () => {
   }
 };
 
+/**
+ * Fetches all appraisal states.
+ * @async
+ * @returns {Promise<Array<string>>} List of appraisal states.
+ */
 export const getAppraisalStates = async () => {
   try {
     const response = await api.get(`${enumsEndpoint}/appraisalStates`);
@@ -37,6 +55,11 @@ export const getAppraisalStates = async () => {
   }
 };
 
+/**
+ * Fetches all course areas.
+ * @async
+ * @returns {Promise<Array<string>>} List of course areas.
+ */
 export const getCourseAreas = async () => {
   try {
     const response = await api.get(`${enumsEndpoint}/courseAreas`);

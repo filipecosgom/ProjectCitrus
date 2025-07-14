@@ -1,9 +1,19 @@
+/**
+ * API module for messaging.
+ * Provides functions to fetch, send, and update messages and conversations.
+ * @module messagesApi
+ */
 import axios from "axios";
 import { apiBaseUrl } from "../config";
 
 const messagesEndpoint = `${apiBaseUrl}/messages/`;
 
-// Fetch messages between the current user and another user (by userId)
+/**
+ * Fetches messages between the current user and another user.
+ * @async
+ * @param {number|string} otherUserId - Other user's ID.
+ * @returns {Promise<Object>} Messages data.
+ */
 export const fetchMessages = async (otherUserId) => {
   try {
     const response = await axios.get(`${messagesEndpoint}${otherUserId}`, {
@@ -26,7 +36,11 @@ export const fetchMessages = async (otherUserId) => {
   }
 };
 
-// Fetch all conversations for the current user
+/**
+ * Fetches all conversations for the current user.
+ * @async
+ * @returns {Promise<Object>} Conversations data.
+ */
 export const fetchAllConversations = async () => {
   try {
     const response = await axios.get(`${messagesEndpoint}all`, {
@@ -49,7 +63,13 @@ export const fetchAllConversations = async () => {
   }
 };
 
-// Send a message to another user (by userId)
+/**
+ * Sends a message to another user.
+ * @async
+ * @param {number|string} receiverId - Receiver's user ID.
+ * @param {string} content - Message content.
+ * @returns {Promise<Object>} Send result.
+ */
 export const sendMessageApi = async (receiverId, content) => {
   try {
     const payload = {
@@ -76,7 +96,12 @@ export const sendMessageApi = async (receiverId, content) => {
   }
 };
 
-// Mark all messages in a conversation as read (senderId = other user's id)
+/**
+ * Marks all messages in a conversation as read.
+ * @async
+ * @param {number|string} senderId - Sender's user ID.
+ * @returns {Promise<Object>} Operation result.
+ */
 export const readConversationApi = async (senderId) => {
   try {
     const response = await axios.patch(
@@ -104,8 +129,9 @@ export const readConversationApi = async (senderId) => {
 };
 
 /**
- * Busca previews das conversas para o dropdown de mensagens
- * @returns {Promise<Object>} Response com lista de ConversationPreviewDTO
+ * Fetches conversation previews for the message dropdown.
+ * @async
+ * @returns {Promise<Object>} List of conversation previews.
  */
 export const fetchConversationPreviews = async () => {
   try {
