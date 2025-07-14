@@ -6,18 +6,20 @@ import "./404NotFound.css";
 
 export default function NotFound404({ testMode = false }) {
   const { t } = useTranslation();
-  const [seconds, setSeconds] = useState(testMode ? 0 : 10);
+  const [seconds, setSeconds] = useState(10);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (testMode) {
+      navigate("/login");
+      return;
+    }
     if (seconds === 0) {
       navigate("/login");
       return;
     }
-    if (!testMode) {
-      const timer = setTimeout(() => setSeconds((s) => s - 1), 1000);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => setSeconds((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
   }, [seconds, navigate, testMode]);
 
   return (
