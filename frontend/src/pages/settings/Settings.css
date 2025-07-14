@@ -139,7 +139,7 @@
 }
 
 input:checked + .toggle-slider {
-  background-color: #1976d2;
+  background-color: #9c2f31; /* Webapp red */
 }
 
 input:checked + .toggle-slider:before {

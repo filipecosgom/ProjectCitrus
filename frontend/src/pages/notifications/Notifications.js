@@ -1,3 +1,32 @@
+/**
+ * @file Notifications.js
+ * @module Notifications
+ * @description React page component for displaying and managing user notifications.
+ * Provides search, sorting, pagination, and bulk actions for notifications.
+ * Integrates with backend notification API and supports marking notifications as read or seen.
+ * Supports internationalization, accessibility, and navigation to related pages.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Notifications Page Component.
+ *
+ * Renders the notifications management interface, including:
+ * - Search bar for filtering notifications by content
+ * - Sort controls for notification type and date
+ * - Paginated list of notifications with selection and bulk actions
+ * - Mark all as seen functionality
+ * - Integration with backend notification API for updating status
+ * - Navigation to related pages based on notification type
+ * - Internationalization of all labels and messages
+ * - Responsive and accessible design
+ *
+ * @returns {JSX.Element} The rendered notifications page
+ *
+ * @example
+ * <Notifications />
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

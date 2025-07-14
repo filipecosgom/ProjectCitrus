@@ -1,8 +1,21 @@
+/**
+ * @file handleGetUserAvatar.js
+ * @module handleGetUserAvatar
+ * @description Handles fetching a user's avatar image from the backend and returns a blob URL.
+ * Returns success status, avatar URL, and error info if applicable.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Fetches a user's avatar image from the backend and returns a blob URL.
+ * @param {number|string} id - User ID
+ * @returns {Promise<Object>} Object with success, avatar URL, user data, and error info
+ */
+
 import { fetchUserAvatar } from "../api/userApi";
 
 export const handleGetUserAvatar = async (id) => {
   try {
-
     const response = await fetchUserAvatar(id);
 
     if (!response.success) {

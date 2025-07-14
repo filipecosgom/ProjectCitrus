@@ -13,9 +13,8 @@ const Settings = () => {
   const { t } = useTranslation();
   const [settings, setSettings] = useState({
     emailNotifications: true,
-    autoCloseExpiredCycles: false,
-    defaultCycleDuration: 90,
     systemMaintenance: false,
+    disableGoogleAuthenticator: false,
   });
 
   const [showAdminOffcanvas, setShowAdminOffcanvas] = useState(false);
@@ -67,14 +66,38 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* --- 2-Factor Authentication section --- */}
+        <div className="settings-section">
+          <h2>{t("twoFactorAuthentication")}</h2>
+          <div className="setting-item">
+            <div className="setting-label">
+              <h3>{t("disableGoogleAuthenticator")}</h3>
+              <p>{t("disableGoogleAuthenticatorDesc")}</p>
+            </div>
+            <label className="setting-toggle">
+              <input
+                type="checkbox"
+                checked={settings.disableGoogleAuthenticator}
+                onChange={(e) =>
+                  handleSettingChange(
+                    "disableGoogleAuthenticator",
+                    e.target.checked
+                  )
+                }
+              />
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
         {/* --- General Settings section --- */}
         <div className="settings-section">
           <h2>{t("generalSettings")}</h2>
 
           <div className="setting-item">
             <div className="setting-label">
-              <h3>Email Notifications</h3>
-              <p>Send email notifications for important events</p>
+              <h3>{t("emailNotifications")}</h3>
+              <p>{t("emailNotificationsDesc")}</p>
             </div>
             <label className="setting-toggle">
               <input
@@ -86,76 +109,6 @@ const Settings = () => {
               />
               <span className="toggle-slider"></span>
             </label>
-          </div>
-
-          <div className="setting-item">
-            <div className="setting-label">
-              <h3>Auto-close Expired Cycles</h3>
-              <p>Automatically close cycles that have passed their end date</p>
-            </div>
-            <label className="setting-toggle">
-              <input
-                type="checkbox"
-                checked={settings.autoCloseExpiredCycles}
-                onChange={(e) =>
-                  handleSettingChange(
-                    "autoCloseExpiredCycles",
-                    e.target.checked
-                  )
-                }
-              />
-              <span className="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div className="setting-item">
-            <div className="setting-label">
-              <h3>Default Cycle Duration</h3>
-              <p>Default duration in days for new performance cycles</p>
-            </div>
-            <div className="setting-input">
-              <input
-                type="number"
-                value={settings.defaultCycleDuration}
-                onChange={(e) =>
-                  handleSettingChange(
-                    "defaultCycleDuration",
-                    parseInt(e.target.value)
-                  )
-                }
-                min="30"
-                max="365"
-              />
-              <span>days</span>
-            </div>
-          </div>
-        </div>
-
-        {/* --- System Maintenance section --- */}
-        <div className="settings-section">
-          <h2>System Maintenance</h2>
-
-          <div className="setting-item">
-            <div className="setting-label">
-              <h3>Maintenance Mode</h3>
-              <p>Enable maintenance mode to restrict access during updates</p>
-            </div>
-            <label className="setting-toggle">
-              <input
-                type="checkbox"
-                checked={settings.systemMaintenance}
-                onChange={(e) =>
-                  handleSettingChange("systemMaintenance", e.target.checked)
-                }
-              />
-              <span className="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div className="setting-item">
-            <button className="btn-maintenance-action">
-              <IoRefresh /> Clear System Cache
-            </button>
           </div>
         </div>
 

@@ -1,3 +1,26 @@
+/**
+ * @file Dashboard.js
+ * @module Dashboard
+ * @description React page component for displaying system-wide statistics and visualizations.
+ * Provides summary cards for users, courses, appraisals, and cycles, as well as interactive charts.
+ * Integrates with backend statistics endpoints and supports navigation to management pages.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Dashboard Page Component.
+ *
+ * Renders the dashboard interface, including:
+ * - Summary cards for users, courses, appraisals, and cycles
+ * - Pie and bar charts for user profiles, roles, appraisal states, courses, and cycles
+ * - Quick navigation to management pages via card clicks
+ * - Responsive layout for charts and statistics
+ * - Integration with backend statistics endpoints
+ *
+ * @returns {JSX.Element} The rendered dashboard page
+ *
+ */
+
 import React, { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import { FaUsers, FaBook, FaAward, FaCalendarAlt } from "react-icons/fa";

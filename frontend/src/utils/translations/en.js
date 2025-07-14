@@ -447,7 +447,7 @@ const en = {
     searchByArea: "Search by area",
     filterAllAreas: "All areas",
     filterAllLanguages: "All languages",
-    filterMenuArea: "Area", // fallback for any legacy usage
+    filterMenuArea: "Area",
     filterPortuguese: "Portuguese",
     filterEnglish: "English",
     filterSpanish: "Spanish",
@@ -552,6 +552,11 @@ const en = {
     closingAppraisals: "Appraisals closing soon",
   },
   chatWsClosedMessageSent: "Chat closed but message sent successfully.",
+  twoFactorAuthentication: "2-Factor Authentication",
+  disableGoogleAuthenticator: "Disable Google Authenticator",
+  disableGoogleAuthenticatorDesc: "Turn off Google Authenticator for all users",
+  emailNotifications: "Email Notifications",
+  emailNotificationsDesc: "Send email notifications for important events",
 };
 
 export default en;

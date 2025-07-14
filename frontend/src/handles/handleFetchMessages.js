@@ -1,3 +1,17 @@
+/**
+ * @file handleFetchMessages.js
+ * @module handleFetchMessages
+ * @description Handles fetching messages for a conversation with another user.
+ * Returns messages array and success status, or error object with notification flags.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Fetches messages for a conversation with another user.
+ * @param {number|string} otherUserId - ID of the other user in the conversation
+ * @returns {Promise<Object>} Object containing messages array and success status, or error object
+ */
+
 import { fetchMessages } from "../api/messagesApi";
 
 export const handleFetchMessages = async (otherUserId) => {

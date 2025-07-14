@@ -1,3 +1,29 @@
+/**
+ * @file Appraisals.js
+ * @module Appraisals
+ * @description React page component for displaying, searching, sorting, and exporting appraisals.
+ * Provides advanced filtering, pagination, and off-canvas editing of individual appraisals.
+ * Synchronizes state with URL parameters for deep-linking and navigation.
+ * Integrates with backend via handleGetAppraisals and handleGeneratePdfOfAppraisals.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Appraisals Page Component.
+ *
+ * Renders the appraisals management interface, including:
+ * - Search bar with advanced filters and export to PDF
+ * - Sort controls for appraisal fields
+ * - Paginated grid of appraisal cards
+ * - Off-canvas for viewing and editing individual appraisals
+ * - Synchronization of search, sort, and pagination state with URL parameters
+ *
+ * @returns {JSX.Element} The rendered appraisals page
+ *
+ * @example
+ * <Appraisals />
+ */
+
 import "./Appraisals.css";
 import SearchBar from "../../components/searchbar/Searchbar";
 import React, { useState, useEffect, useRef } from "react";

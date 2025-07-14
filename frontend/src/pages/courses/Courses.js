@@ -1,3 +1,30 @@
+/**
+ * @file Courses.js
+ * @module Courses
+ * @description React page component for displaying, searching, sorting, and managing courses.
+ * Provides advanced filtering, sorting, pagination, and off-canvas interfaces for course details and creation.
+ * Synchronizes state with URL parameters for deep-linking and navigation.
+ * Integrates with backend via handleGetCourses and handleGetCourseAreas.
+ * @author Project Citrus Team
+ */
+
+/**
+ * Courses Page Component.
+ *
+ * Renders the course management interface, including:
+ * - Search bar with advanced filters and course creation (admin only)
+ * - Sort controls for course fields
+ * - Paginated grid of course cards
+ * - Off-canvas for viewing and editing individual course details
+ * - Off-canvas for creating new courses (admin only)
+ * - Synchronization of search, sort, and pagination state with URL parameters
+ *
+ * @returns {JSX.Element} The rendered courses page
+ *
+ * @example
+ * <Courses
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
