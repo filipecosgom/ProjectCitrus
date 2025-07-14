@@ -11,8 +11,47 @@ import java.util.List;
  * Entity representing a cycle.
  * Stores details including start and end dates, status, and administrative ownership.
  */
+/**
+ * Entity representing a cycle.
+ * <p>
+ * Indexes are added to optimize queries filtering by state, admin, start and end dates, and for efficient date range and state-based queries.
+ * <ul>
+ *   <li>state: For filtering by cycle state (OPEN, CLOSED, etc.).</li>
+ *   <li>admin_id: For filtering cycles managed by a specific admin.</li>
+ *   <li>start_date: For ordering and filtering by start date.</li>
+ *   <li>end_date: For filtering by end date and expired cycles.</li>
+ *   <li>state, start_date: Composite index for queries filtering by state and ordering by start date.</li>
+ *   <li>start_date, end_date: Composite index for date range overlap queries.</li>
+ * </ul>
+ */
 @Entity
-@Table(name = "cycle")
+@Table(name = "cycle",
+       indexes = {
+           /**
+            * Index for filtering by cycle state (OPEN, CLOSED, etc.).
+            */
+           @Index(name = "idx_cycle_state", columnList = "state"),
+           /**
+            * Index for filtering cycles managed by a specific admin.
+            */
+           @Index(name = "idx_cycle_admin", columnList = "admin_id"),
+           /**
+            * Index for ordering and filtering by start date.
+            */
+           @Index(name = "idx_cycle_start_date", columnList = "start_date"),
+           /**
+            * Index for filtering by end date and expired cycles.
+            */
+           @Index(name = "idx_cycle_end_date", columnList = "end_date"),
+           /**
+            * Composite index for queries filtering by state and ordering by start date.
+            */
+           @Index(name = "idx_cycle_state_start_date", columnList = "state, start_date"),
+           /**
+            * Composite index for date range overlap queries.
+            */
+           @Index(name = "idx_cycle_start_end_date", columnList = "start_date, end_date")
+       })
 public class CycleEntity implements Serializable {
 
     /**
@@ -120,10 +159,18 @@ public class CycleEntity implements Serializable {
      */
     public void setAdmin(UserEntity admin) { this.admin = admin; }
 
+    /**
+     * Retrieves the list of evaluations (appraisals) associated with this cycle.
+     * @return the list of evaluations for this cycle
+     */
     public List<AppraisalEntity> getEvaluations() {
         return evaluations;
     }
 
+    /**
+     * Sets the list of evaluations (appraisals) for this cycle.
+     * @param evaluations the list of evaluations to set
+     */
     public void setEvaluations(List<AppraisalEntity> evaluations) {
         this.evaluations = evaluations;
     }

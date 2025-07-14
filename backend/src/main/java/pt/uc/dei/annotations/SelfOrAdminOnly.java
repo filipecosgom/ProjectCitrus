@@ -5,11 +5,13 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Annotation to indicate that a resource or method requires the user to be either the resource owner (self) or an admin.
+ * <p>
+ * Can be applied to classes or methods to restrict access accordingly.
+ * Used with JAX-RS filters/interceptors for access control.
+ */
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
-/**
- * Annotation to indicate that a resource or method requires the user to be either the resource owner (self) or an admin.
- * Can be applied to classes or methods to restrict access accordingly.
- */
 public @interface SelfOrAdminOnly {}

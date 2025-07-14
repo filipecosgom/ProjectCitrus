@@ -29,13 +29,53 @@ import java.util.Set;
                 query = "SELECT u FROM UserEntity u WHERE u.id = :id"
         )
 })
+/**
+ * Entity representing a system user with personal and account information.
+ * <p>
+ * Indexes are added to optimize queries for user lookup, active status, manager relationships, account state, and role-based filtering.
+ * <ul>
+ *   <li>email: For fast lookup and uniqueness checks by email.</li>
+ *   <li>is_deleted: For filtering active users.</li>
+ *   <li>manager_id: For queries involving manager relationships.</li>
+ *   <li>is_deleted, manager_id: For filtering active users by manager.</li>
+ *   <li>account_state: For filtering by account state.</li>
+ *   <li>role: For filtering by user role.</li>
+ *   <li>is_manager, is_admin, account_state, is_deleted: For filtering managers/admins with complete accounts.</li>
+ * </ul>
+ */
 @Entity
 @Table(
-        name = "useraccount",
-        indexes = {
-                @Index(name = "idx_user_email", columnList = "email", unique = true),
-                @Index(name = "idx_user_id", columnList = "id", unique = true)
-        }
+    name = "useraccount",
+    indexes = {
+        /**
+         * Index for fast lookup and uniqueness checks by email.
+         */
+        @Index(name = "idx_user_email", columnList = "email", unique = true),
+        /**
+         * Index for filtering active users (not deleted).
+         */
+        @Index(name = "idx_user_is_deleted", columnList = "is_deleted"),
+        /**
+         * Index for queries involving manager relationships.
+         */
+        @Index(name = "idx_user_manager_id", columnList = "manager_id"),
+        /**
+         * Composite index for filtering active users by manager.
+         */
+        @Index(name = "idx_user_is_deleted_manager_id", columnList = "is_deleted, manager_id"),
+        /**
+         * Index for filtering by account state.
+         */
+        @Index(name = "idx_user_account_state", columnList = "account_state"),
+        /**
+         * Index for filtering by user role.
+         */
+        @Index(name = "idx_user_role", columnList = "role"),
+        /**
+         * Composite index for filtering managers/admins with complete accounts and not deleted.
+         */
+        @Index(name = "idx_user_manager_admin_state_deleted", columnList = "is_manager, is_admin, account_state, is_deleted")
+    }
 )
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
