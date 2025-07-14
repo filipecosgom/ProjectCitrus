@@ -21,6 +21,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for generating PDF reports for employee appraisals using Apache PDFBox.
+ * <p>
+ * This class provides a method to export a list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects to a PDF file,
+ * with support for language-specific headers, custom fonts, color schemes, and multi-page layouts.
+ * <p>
+ * The generated PDF includes:
+ * <ul>
+ *   <li>Header with logo and report date</li>
+ *   <li>Summary section with total and average scores</li>
+ *   <li>Table of appraisals with feedback and manager info</li>
+ *   <li>Custom fonts and color styling</li>
+ *   <li>Automatic page breaks and footers</li>
+ * </ul>
+ *
+ * <b>Note:</b> Uses Apache PDFBox for PDF generation. Throws a {@link RuntimeException} on failure.
+ */
 public class PdfGenerator {
 
     // Color scheme
@@ -62,6 +79,17 @@ public class PdfGenerator {
         }
     }
 
+    /**
+     * Generates a PDF report from a list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects.
+     * <p>
+     * The output includes a header, summary, table of appraisals, and feedback, with support for Portuguese and English.
+     * Custom fonts and colors are applied for improved readability and branding.
+     *
+     * @param appraisals    the list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects to export
+     * @param outputStream  the {@link OutputStream} to write the PDF to
+     * @param lang          the {@link pt.uc.dei.enums.Language} for translation
+     * @throws IOException  if PDF generation fails
+     */
     public static void generateAppraisalsPdf(List<AppraisalResponseDTO> appraisals,
                                              OutputStream outputStream,
                                              Language lang) throws IOException {

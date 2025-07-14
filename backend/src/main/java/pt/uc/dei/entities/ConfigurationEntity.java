@@ -13,9 +13,19 @@ import java.time.LocalDateTime;
  */
 @NamedQuery(name = "Configuration.getLatestConfiguration", query = "SELECT configuration FROM ConfigurationEntity configuration ORDER BY configuration.id DESC")
 @Entity
+/**
+ * Table definition for configuration settings.
+ *
+ * Indexes:
+ * <ul>
+ *   <li><b>idx_admin_updates</b>: For efficient queries by admin user (keep only if such queries exist).</li>
+ * </ul>
+ */
 @Table(name="config", indexes = {
-        @Index(name = "idx_latest_configuration", columnList = "id DESC"),
-        @Index(name = "idx_admin_updates", columnList = "admin")
+    /**
+     * For efficient queries by admin user (keep only if such queries exist).
+     */
+    @Index(name = "idx_admin_updates", columnList = "admin")
 })
 public class ConfigurationEntity implements Serializable {
 

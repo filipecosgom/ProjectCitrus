@@ -12,12 +12,26 @@ import java.io.Serializable;
         name = "TemporaryUser.findTemporaryUserByEmail",
         query = "SELECT u FROM TemporaryUserEntity u WHERE u.email = :email"
 )
+
+/**
+ * Entity representing a temporary user account during the registration process.
+ * <p>
+ * Indexes:
+ * <ul>
+ *   <li>email: For fast lookup and uniqueness checks during registration and activation.</li>
+ * </ul>
+ * <p>
+ * Stores unverified user credentials until email activation is completed. Automatically cleaned up after successful activation or expiration.
+ */
 @Entity
 @Table(
-        name = "tempuseraccount",
-        indexes = {
-                @Index(name = "idx_tempuser_email", columnList = "email", unique = true)
-        }
+    name = "tempuseraccount",
+    indexes = {
+        /**
+         * Index for fast lookup and uniqueness checks by email.
+         */
+        @Index(name = "idx_tempuser_email", columnList = "email", unique = true)
+    }
 )
 public class TemporaryUserEntity implements Serializable {
 

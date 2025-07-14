@@ -18,11 +18,33 @@ import java.time.LocalDateTime;
                 query = "SELECT t FROM PasswordResetTokenEntity t WHERE t.tokenValue = :tokenValue"
         )
 })
+
+/**
+ * Entity representing a password reset token.
+ * <p>
+ * Indexes are added to optimize queries for token lookup, user-based filtering, and ordering by creation date.
+ * <ul>
+ *   <li>tokenValue: For fast lookup by token value (unique).</li>
+ *   <li>user_id: For queries fetching all tokens for a user.</li>
+ *   <li>user_id, creation_date: For ordering or filtering tokens by creation date for a user.</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "passwordresettoken",
-        indexes = @Index(name = "idx_passwordresettoken_tokenvalue",
-                columnList = "tokenValue",
-                unique = true))
+    indexes = {
+        /**
+         * Index for fast lookup by token value (unique).
+         */
+        @Index(name = "idx_passwordresettoken_tokenvalue", columnList = "tokenValue", unique = true),
+        /**
+         * Index for queries fetching all tokens for a user.
+         */
+        @Index(name = "idx_passwordresettoken_user_id", columnList = "user_id"),
+        /**
+         * Index for ordering or filtering tokens by creation date for a user.
+         */
+        @Index(name = "idx_passwordresettoken_user_creation_date", columnList = "user_id, creation_date")
+    })
 public class PasswordResetTokenEntity implements Serializable {
 
     /**

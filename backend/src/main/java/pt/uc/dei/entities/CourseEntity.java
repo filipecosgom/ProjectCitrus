@@ -11,11 +11,43 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entity representing a course.
- * Stores course details including title, duration, language, area, and administrative information.
+ * Entity representing a course in the system.
+ * <p>
+ * Stores course details including title, duration, language, area, description, link, image, active status, and administrative information.
+ * <p>
+ * <b>Indexes:</b>
+ * <ul>
+ *   <li>area: For area-based listings and filtering.</li>
+ *   <li>admin_id: For filtering courses managed by a specific admin.</li>
+ *   <li>is_active: For filtering by active/inactive status.</li>
+ *   <li>creation_date: For sorting/filtering by creation date.</li>
+ *   <li>area, is_active: Composite index for efficient queries filtering by area and active status together.</li>
+ * </ul>
  */
 @Entity
-@Table(name = "course")
+@Table(name = "course",
+       indexes = {
+           /**
+            * Index for filtering courses by area (e.g., for area-based listings).
+            */
+           @Index(name = "idx_course_area", columnList = "area"),
+           /**
+            * Index for filtering courses by admin (e.g., for admin's managed courses).
+            */
+           @Index(name = "idx_course_admin", columnList = "admin_id"),
+           /**
+            * Index for filtering by active/inactive status.
+            */
+           @Index(name = "idx_course_is_active", columnList = "is_active"),
+           /**
+            * Index for sorting/filtering by creation date (e.g., recent courses).
+            */
+           @Index(name = "idx_course_creation_date", columnList = "creation_date"),
+           /**
+            * Composite index for efficient queries filtering by area and active status together.
+            */
+           @Index(name = "idx_course_area_is_active", columnList = "area, is_active")
+       })
 public class CourseEntity implements Serializable {
 
     /**

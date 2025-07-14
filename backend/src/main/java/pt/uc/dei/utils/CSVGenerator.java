@@ -11,14 +11,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for generating CSV files from user data.
+ * <p>
+ * Provides a method to export a list of {@link pt.uc.dei.dtos.UserDTO} objects to a CSV file,
+ * with support for language-specific headers and admin-specific columns.
+ */
 public class CSVGenerator {
+
     /**
-     * Generates a CSV file from a list of UserDTOs, with translated headers and dynamic columns.
+     * Generates a CSV file from a list of {@link pt.uc.dei.dtos.UserDTO} objects.
+     * <p>
+     * The output includes translated headers (Portuguese or English), and optionally includes the account state column if exported by an admin.
      *
-     * @param users   List of UserDTOs to export
-     * @param lang    Language for header translation
-     * @param isAdmin Whether the export is performed by an admin (affects columns)
-     * @return CSV as byte array
+     * @param users   the list of {@link pt.uc.dei.dtos.UserDTO} objects to export
+     * @param lang    the {@link pt.uc.dei.enums.Language} for header translation
+     * @param isAdmin whether the export is performed by an admin (affects columns)
+     * @return the generated CSV as a byte array
+     * @throws RuntimeException if CSV generation fails
      */
     public static byte[] generateUserCSV(List<UserDTO> users, Language lang, boolean isAdmin) {
         String[] headers;

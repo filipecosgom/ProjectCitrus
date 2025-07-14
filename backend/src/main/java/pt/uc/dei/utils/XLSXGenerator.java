@@ -11,14 +11,35 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for generating XLSX (Excel) files from user data.
+ * <p>
+ * This class provides a method to export a list of {@link pt.uc.dei.dtos.UserDTO} objects to an XLSX file,
+ * with support for language-specific headers, admin-specific columns, and custom styling.
+ * <p>
+ * The generated XLSX includes:
+ * <ul>
+ *   <li>Dynamic headers based on language and admin status</li>
+ *   <li>Custom fonts and colors for headers and data rows</li>
+ *   <li>Alternate row coloring for readability</li>
+ *   <li>Manager name or a fallback string if not present</li>
+ * </ul>
+ *
+ * <b>Note:</b> Uses Apache POI for XLSX generation. Throws a {@link RuntimeException} on failure.
+ */
 public class XLSXGenerator {
+
     /**
-     * Generates an XLSX file from a list of UserDTOs, with translated headers and dynamic columns.
+     * Generates an XLSX file from a list of {@link pt.uc.dei.dtos.UserDTO} objects.
+     * <p>
+     * The output includes translated headers (Portuguese or English), and optionally includes the account state column if exported by an admin.
+     * Custom fonts and colors are applied to headers and data rows for improved readability.
      *
-     * @param users   List of UserDTOs to export
-     * @param lang    Language for header translation
-     * @param isAdmin Whether the export is performed by an admin (affects columns)
-     * @return XLSX as byte array
+     * @param users   the list of {@link pt.uc.dei.dtos.UserDTO} objects to export
+     * @param lang    the {@link pt.uc.dei.enums.Language} for header translation
+     * @param isAdmin whether the export is performed by an admin (affects columns)
+     * @return the generated XLSX as a byte array
+     * @throws RuntimeException if XLSX generation fails
      */
     public static byte[] generateUserXLSX(List<UserDTO> users, Language lang, boolean isAdmin) {
         String[] headers;

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Standard API response wrapper for REST endpoints.
+ * <p>
  * Encapsulates success status, message, error code, and optional data payload.
+ * Used to provide consistent response structure for API clients.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {

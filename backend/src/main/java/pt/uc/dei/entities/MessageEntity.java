@@ -61,12 +61,43 @@ import java.time.LocalDateTime;
             "ORDER BY lastMessageDate DESC"
 )
 
-@Entity
-@Table(name="message", indexes = {
 
-    @Index(name = "idx_recipient_sender_unread", columnList = "receiver_id, sender_id, is_read"),
-    @Index(name = "idx_conversation_pair", columnList = "receiver_id, sender_id, sent_date"),
-})
+/**
+ * Entity representing a message exchanged between users.
+ * <p>
+ * Indexes are added to optimize queries for unread messages, conversations, and message notifications.
+ * <ul>
+ *   <li>receiver_id, sender_id, is_read: For unread message lookups and marking conversations as read.</li>
+ *   <li>receiver_id, sender_id, sent_date: For fetching conversations between two users, ordered by date.</li>
+ *   <li>sender_id, receiver_id, sent_date: For fetching all messages sent by a user to another, ordered by date.</li>
+ *   <li>receiver_id, is_read: For fast lookups of all unread messages for a user.</li>
+ *   <li>sent_date: For global queries ordered by date (recent messages site-wide).</li>
+ * </ul>
+ */
+@Entity
+@Table(name="message",
+    indexes = {
+        /**
+         * Index for unread message lookups and marking conversations as read.
+         */
+        @Index(name = "idx_recipient_sender_unread", columnList = "receiver_id, sender_id, is_read"),
+        /**
+         * Index for fetching conversations between two users, ordered by date.
+         */
+        @Index(name = "idx_conversation_pair", columnList = "receiver_id, sender_id, sent_date"),
+        /**
+         * Index for fetching all messages sent by a user to another, ordered by date.
+         */
+        @Index(name = "idx_sender_receiver_date", columnList = "sender_id, receiver_id, sent_date"),
+        /**
+         * Index for fast lookups of all unread messages for a user.
+         */
+        @Index(name = "idx_receiver_is_read", columnList = "receiver_id, is_read"),
+        /**
+         * Index for global queries ordered by date (recent messages site-wide).
+         */
+        @Index(name = "idx_sent_date", columnList = "sent_date")
+    })
 public class MessageEntity implements Serializable {
 
     /**

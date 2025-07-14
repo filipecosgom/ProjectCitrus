@@ -29,12 +29,43 @@ import java.time.LocalDateTime;
         "AND n.type = NotificationType.MESSAGE " +
         "AND n.notificationIsSeen = false")
 
+
+/**
+ * Entity representing a notification for a user.
+ * <p>
+ * Indexes are added to optimize queries for notification retrieval, unread/seen status, and ordering by creation date.
+ * <ul>
+ *   <li>user_id: For all queries filtering by user (recipient).</li>
+ *   <li>user_id, id: For queries checking notification existence or fetching by user and notification id.</li>
+ *   <li>user_id, type, is_read: For unread message notification queries and marking as read.</li>
+ *   <li>user_id, type, is_seen: For queries involving seen status.</li>
+ *   <li>user_id, creation_date: For ordering notifications by creation date for a user.</li>
+ * </ul>
+ */
 @Entity
-@Table(name = "notification", indexes = {
-        @Index(name = "idx_notifications_recipient", columnList = "user"),
-        @Index(name = "idx_notification_recipient_id", columnList = "user, id"),
-        @Index(name = "idx_unread_messages", columnList = "user, type, isRead")
-})
+@Table(name = "notification",
+    indexes = {
+        /**
+         * Index for all queries filtering by user (recipient).
+         */
+        @Index(name = "idx_notification_user_id", columnList = "user_id"),
+        /**
+         * Index for queries checking notification existence or fetching by user and notification id.
+         */
+        @Index(name = "idx_notification_user_id_id", columnList = "user_id, id"),
+        /**
+         * Index for unread message notification queries and marking as read.
+         */
+        @Index(name = "idx_notification_user_type_is_read", columnList = "user_id, type, is_read"),
+        /**
+         * Index for queries involving seen status.
+         */
+        @Index(name = "idx_notification_user_type_is_seen", columnList = "user_id, type, is_seen"),
+        /**
+         * Index for ordering notifications by creation date for a user.
+         */
+        @Index(name = "idx_notification_user_creation_date", columnList = "user_id, creation_date")
+    })
 public class NotificationEntity implements Serializable {
 
     /**

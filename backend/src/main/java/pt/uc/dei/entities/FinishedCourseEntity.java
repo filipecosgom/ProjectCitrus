@@ -11,11 +11,34 @@ import java.time.LocalDate;
  * - Maintains relationships with `UserEntity` and `CourseEntity`.
  * </p>
  */
+/**
+ * Entity representing the completion of a course by a user.
+ * <p>
+ * Indexes are added to optimize queries filtering by user, course, and completion date.
+ * <ul>
+ *   <li>user_id: For queries like "all courses completed by a user".</li>
+ *   <li>course_id: For queries like "all users who completed a course".</li>
+ *   <li>completion_date: For filtering or sorting by completion date.</li>
+ *   <li>Unique constraint on (user_id, course_id): Ensures a user cannot complete the same course twice and provides a unique index for this pair.</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "user_course_completion",
-        uniqueConstraints = @UniqueConstraint( // Ensures unique records per user-course pair
-                columnNames = {"user_id", "course_id"}
-        ))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "course_id"}),
+        indexes = {
+            /**
+             * Index for queries like "all courses completed by a user".
+             */
+            @Index(name = "idx_completion_user", columnList = "user_id"),
+            /**
+             * Index for queries like "all users who completed a course".
+             */
+            @Index(name = "idx_completion_course", columnList = "course_id"),
+            /**
+             * Index for filtering or sorting by completion date.
+             */
+            @Index(name = "idx_completion_date", columnList = "completion_date")
+        })
 public class FinishedCourseEntity implements Serializable {
 
     /** Unique identifier for each course completion record */

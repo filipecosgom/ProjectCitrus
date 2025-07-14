@@ -17,10 +17,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 /**
- * Utility class for handling JWT authentication.
+ * Utility class for handling JWT (JSON Web Token) authentication and authorization.
  * <p>
- * Generates and validates JWT tokens for user authentication.
+ * Provides methods to generate, validate, and extract claims from JWT tokens for user authentication.
  * Uses a secret key stored in environment variables for signing the tokens.
+ * Supports extracting user information from HTTP and WebSocket requests.
  * </p>
  */
 @ApplicationScoped // Ensures this bean is managed by CDI and can be injected
@@ -30,11 +31,11 @@ public class JWTUtil {
      * Secret key used for signing JWTs.
      * Retrieved from environment variables for security purposes.
      */
-    private static final String SECRET_KEY = System.getenv("SECRET_KEY");
+    public static String SECRET_KEY = System.getenv("SECRET_KEY");
 
     /**
-     * Injecting EJB ConfigurationRepository to fetch configuration settings.
-     * Retrieves authentication expiration time.
+     * Injected EJB ConfigurationRepository to fetch configuration settings.
+     * Used to retrieve authentication expiration time for tokens.
      */
     @EJB
     private ConfigurationRepository configurationRepository;
@@ -67,6 +68,7 @@ public class JWTUtil {
      *
      * @param token The JWT token to validate.
      * @return Extracted claims from the JWT.
+     * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
      */
     public static Claims validateToken(String token) {
         // Decode secret key and verify JWT signature
@@ -77,10 +79,24 @@ public class JWTUtil {
                 .getBody(); // Extract claims
     }
 
+
+    /**
+     * Extracts the expiration date from a JWT token.
+     *
+     * @param token The JWT token.
+     * @return The expiration date of the token.
+     */
     public static Date getExpiration(String token) {
         return validateToken(token).getExpiration();
     }
 
+
+    /**
+     * Extracts the user ID from a JWT token in a ContainerRequestContext (JAX-RS request).
+     *
+     * @param requestContext The ContainerRequestContext containing cookies.
+     * @return The user ID as Long, or null if invalid or missing.
+     */
     public static Long getIdFromContainerRequestContext(ContainerRequestContext requestContext) {
         Cookie cookie = requestContext.getCookies().get("jwt");
         if (cookie == null) {
@@ -136,6 +152,13 @@ public class JWTUtil {
         }
     }
 
+
+    /**
+     * Checks if the user associated with the JWT token has admin privileges.
+     *
+     * @param jwtToken The JWT token.
+     * @return {@code true} if the user is admin, {@code false} otherwise.
+     */
     public static boolean isUserAdmin(String jwtToken) {
         try {
             Claims claims = validateToken(jwtToken);
@@ -145,6 +168,14 @@ public class JWTUtil {
         }
     }
 
+
+    /**
+     * Extracts the user ID from a JWT token or throws an exception if invalid.
+     *
+     * @param jwtToken The JWT token.
+     * @return The user ID as Long.
+     * @throws JwtValidationException if the token is missing or invalid.
+     */
     public static Long extractUserIdOrAbort(String jwtToken) throws JwtValidationException {
         if (jwtToken == null || jwtToken.isEmpty()) {
             throw new JwtValidationException("Unauthorized: missing JWT token");
@@ -158,13 +189,22 @@ public class JWTUtil {
         return userId;
     }
 
+
+    /**
+     * Builds a JAX-RS unauthorized response with a custom message.
+     *
+     * @param message The error message to include in the response.
+     * @return A JAX-RS Response with status 401 and error details.
+     */
     public static Response buildUnauthorizedResponse(String message) {
         return Response.status(Response.Status.UNAUTHORIZED)
                 .entity(new ApiResponse(false, message, "errorUnauthorized", null))
                 .build();
     }
 
-    // Custom exception to handle auth errors
+    /**
+     * Custom exception to handle JWT validation errors.
+     */
     public static class JwtValidationException extends Exception {
         public JwtValidationException(String message) {
             super(message);
