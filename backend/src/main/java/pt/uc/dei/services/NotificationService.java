@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import pt.uc.dei.dtos.MessageDTO;
 import pt.uc.dei.dtos.NotificationDTO;
 import pt.uc.dei.dtos.NotificationUpdateDTO;
+import pt.uc.dei.dtos.UserResponseDTO;
 import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.entities.CycleEntity;
 import pt.uc.dei.entities.FinishedCourseEntity;
@@ -319,6 +320,40 @@ public class NotificationService {
                     logger.info("WebSocket delivery failed, cycle notification persisted for userId {}", recipientId);
                 }
             }
+        } catch (Exception e) {
+            logger.error("Error creating/sending new cycle notifications", e);
+        }
+    }
+
+    /**
+     * Creates and sends a new cycle notification to a list of users.
+     * For each user, creates a CYCLE notification with the cycle end date as
+     * content.
+     */
+    @Transactional
+    public void newUserUpdateNotification(UserEntity userUpdated) {
+        try {
+            if (userUpdated == null) {
+                logger.error("Invalid user for user update notification");
+                return;
+            }
+
+                NotificationEntity notificationEntity = new NotificationEntity();
+                notificationEntity.setSender(userUpdated);
+                notificationEntity.setUser(userUpdated.getManager());
+                notificationEntity.setType(NotificationType.USER_UPDATE);
+                notificationEntity.setContent(userUpdated.getId().toString());
+                notificationEntity.setCreationDate(LocalDateTime.now());
+                notificationEntity.setNotificationIsRead(false);
+                notificationEntity.setNotificationIsSeen(false);
+                notificationEntity.setMessageCount(0);
+                notificationRepository.persist(notificationEntity);
+
+                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
+                boolean delivered = wsNotifications.notifyUser(notificationDTO);
+                if (!delivered) {
+                    logger.info("WebSocket delivery failed, user updated notification persisted for userId {}", userUpdated.getId());
+                }
         } catch (Exception e) {
             logger.error("Error creating/sending new cycle notifications", e);
         }

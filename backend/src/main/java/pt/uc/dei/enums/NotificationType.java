@@ -12,5 +12,6 @@ public enum NotificationType {
     MESSAGE,
     APPRAISAL,
     CYCLE,
-    COURSE;
+    COURSE,
+    USER_UPDATE;
 }

@@ -174,7 +174,6 @@ public class UserService implements Serializable {
             LOGGER.error("Update user - user not found");
             return false;
         }
-        // Update only those fields that are non-null in the DTO.
         if (updateUserDTO.getManagerId() != null) {
             UserEntity previousManager = user.getManagerUser();
             UserEntity newManager = userRepository.findUserById(updateUserDTO.getManagerId());
@@ -241,6 +240,7 @@ public class UserService implements Serializable {
         if (updateUserDTO.getRole() != null) {
             user.setRole(updateUserDTO.getRole());
         }
+
         // Chama aqui para atualizar o accountState se necessário
         checkAndUpdateAccountState(id);
         // Persist the changes
