@@ -36,6 +36,8 @@ public class ConfigurationDTO {
     @NotNull(message = "Password reset time missing")
     private Integer passwordResetTime;
 
+    private Boolean twoFactorAuthEnabled;
+
     /**
      * The date and time when this configuration was created.
      */
@@ -167,5 +169,13 @@ public class ConfigurationDTO {
      */
     public void setAdmin(UserDTO admin) {
         this.admin = admin;
+    }
+
+    public Boolean getTwoFactorAuthEnabled() {
+        return twoFactorAuthEnabled;
+    }
+
+    public void setTwoFactorAuthEnabled(Boolean twoFactorAuthEnabled) {
+        this.twoFactorAuthEnabled = twoFactorAuthEnabled;
     }
 }

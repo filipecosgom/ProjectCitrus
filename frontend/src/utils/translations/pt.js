@@ -9,6 +9,9 @@ const pt = {
     content: "mensagem",
     noNotificationsFound: "Nenhuma notificação encontrada",
   },
+  login: {
+    failed: "Falha no login. Verifique as suas credenciais e tente novamente.",
+  },
   welcomeMessage: "Bem-vindo {name}",
   goodByeMessage: "Até à próxima {name}",
   //Login

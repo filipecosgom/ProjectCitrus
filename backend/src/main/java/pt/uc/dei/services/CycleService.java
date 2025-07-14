@@ -141,13 +141,13 @@ public class CycleService implements Serializable {
             
             // Get recipients
             List<UserEntity> managersAndAdmins = userRepository.findManagersAndAdmins();
-            notificationService.newCycleNotification(cycleEntity, managersAndAdmins);
+            notificationService.newCycleOpenNotification(cycleEntity, managersAndAdmins);
             
             if (!managersAndAdmins.isEmpty()) {
                 LOGGER.info("🔄 Starting ASYNC email notification for {} recipients", managersAndAdmins.size());
                 
                 // ✅ ENVIO ASSÍNCRONO - não bloqueia a criação do ciclo
-                Future<Boolean> emailResult = emailService.sendCycleNotificationEmailsAsync(
+                Future<Boolean> emailResult = emailService.sendCycleOpenNotificationEmailsAsync(
                     cycleEntity.getId().toString(),
                     cycleEntity.getStartDate().toString(),
                     cycleEntity.getEndDate().toString(),
@@ -155,7 +155,7 @@ public class CycleService implements Serializable {
                     appraisalsCount,
                     managersAndAdmins
                 );
-                
+
                 LOGGER.info("🔄 Async email process initiated for cycle {}. Emails will be sent in background.", 
                            cycleEntity.getId());
             } else {
@@ -170,6 +170,80 @@ public class CycleService implements Serializable {
             LOGGER.error("Error creating cycle: {}", e.getMessage());
             throw new RuntimeException("Failed to create cycle: " + e.getMessage(), e);
         }
+    }
+
+
+    /**
+     * Closes a cycle, changing its state to CLOSED and updating all appraisals to CLOSED.
+     * Validates that all appraisals are COMPLETED before allowing closure.
+     *
+     * @param cycleId The cycle ID
+     * @return The updated cycle DTO
+     * @throws IllegalArgumentException If cycle not found
+     * @throws IllegalStateException If cycle is already closed or has pending appraisals
+     */
+    @Transactional
+    public CycleDTO closeCycle(Long cycleId) {
+        LOGGER.info("Attempting to close cycle with ID: {}", cycleId);
+
+        // First validate if cycle can be closed (all appraisals COMPLETED)
+        Map<String, Object> validation = canCloseCycle(cycleId);
+        boolean canClose = (Boolean) validation.get("canClose");
+
+        if (!canClose) {
+            String reason = (String) validation.get("reason");
+            LOGGER.warn("Cannot close cycle {}: {}", cycleId, reason);
+            throw new IllegalStateException(reason);
+        }
+
+        // Get the cycle
+        CycleEntity cycle = cycleRepository.find(cycleId);
+        UserEntity admin = cycle.getAdmin();
+        if (admin == null) {
+            throw new IllegalArgumentException("Admin user not found");
+        }
+        String adminName = admin != null ? (admin.getName() + " " + admin.getSurname()) : "System Administrator";
+        int appraisalsCount = appraisalRepository.countAppraisalsByCycleId(cycle.getId());
+
+        // Close the cycle
+        cycle.setState(CycleState.CLOSED);
+        cycleRepository.merge(cycle);
+
+        // Now update all COMPLETED appraisals to CLOSED
+        List<AppraisalEntity> cycleAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId);
+        long updatedAppraisals = 0;
+
+        for (AppraisalEntity appraisal : cycleAppraisals) {
+            if (appraisal.getState() == AppraisalState.COMPLETED) {
+                appraisal.setState(AppraisalState.CLOSED);
+                notificationService.newAppraisalNotification(appraisal);
+                appraisalRepository.merge(appraisal);
+                updatedAppraisals++;
+            }
+        }
+        List<UserEntity> managersAndAdmins = userRepository.findManagersAndAdmins();
+        notificationService.newCycleCloseNotification(cycle, managersAndAdmins);
+        if (!managersAndAdmins.isEmpty()) {
+            LOGGER.info("🔄 Starting ASYNC email notification for {} recipients", managersAndAdmins.size());
+
+            // ✅ ENVIO ASSÍNCRONO - não bloqueia a criação do ciclo
+            Future<Boolean> emailResult = emailService.sendCycleCloseNotificationEmailsAsync(
+                    cycle.getId().toString(),
+                    cycle.getStartDate().toString(),
+                    cycle.getEndDate().toString(),
+                    adminName,
+                    appraisalsCount,
+                    managersAndAdmins
+            );
+
+            LOGGER.info("🔄 Async email process initiated for cycle {}. Emails will be sent in background.",
+                    cycle.getId());
+        } else {
+            LOGGER.warn("No managers or administrators found to notify about cycle creation");
+        }
+        LOGGER.info("Successfully closed cycle with ID: {} and updated {} appraisals to CLOSED state",
+                cycleId, updatedAppraisals);
+        return cycleMapper.toDto(cycle);
     }
 
     /**
@@ -398,54 +472,7 @@ public class CycleService implements Serializable {
         return result;
     }
 
-    /**
-     * Closes a cycle, changing its state to CLOSED and updating all appraisals to CLOSED.
-     * Validates that all appraisals are COMPLETED before allowing closure.
-     *
-     * @param cycleId The cycle ID
-     * @return The updated cycle DTO
-     * @throws IllegalArgumentException If cycle not found
-     * @throws IllegalStateException If cycle is already closed or has pending appraisals
-     */
-    @Transactional
-    public CycleDTO closeCycle(Long cycleId) {
-        LOGGER.info("Attempting to close cycle with ID: {}", cycleId);
 
-        // First validate if cycle can be closed (all appraisals COMPLETED)
-        Map<String, Object> validation = canCloseCycle(cycleId);
-        boolean canClose = (Boolean) validation.get("canClose");
-        
-        if (!canClose) {
-            String reason = (String) validation.get("reason");
-            LOGGER.warn("Cannot close cycle {}: {}", cycleId, reason);
-            throw new IllegalStateException(reason);
-        }
-
-        // Get the cycle
-        CycleEntity cycle = cycleRepository.find(cycleId);
-        
-        // Close the cycle
-        cycle.setState(CycleState.CLOSED);
-        cycleRepository.merge(cycle);
-        
-        // Now update all COMPLETED appraisals to CLOSED
-        List<AppraisalEntity> cycleAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId);
-        long updatedAppraisals = 0;
-        
-        for (AppraisalEntity appraisal : cycleAppraisals) {
-            if (appraisal.getState() == AppraisalState.COMPLETED) {
-                appraisal.setState(AppraisalState.CLOSED);
-                notificationService.newAppraisalNotification(appraisal);
-                appraisalRepository.merge(appraisal);
-                updatedAppraisals++;
-            }
-        }
-        
-        LOGGER.info("Successfully closed cycle with ID: {} and updated {} appraisals to CLOSED state", 
-                   cycleId, updatedAppraisals);
-
-        return cycleMapper.toDto(cycle);
-    }
 
     /**
      * Reopens a cycle, changing its state to OPEN.

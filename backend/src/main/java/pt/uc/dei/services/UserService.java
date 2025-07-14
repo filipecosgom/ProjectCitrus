@@ -69,6 +69,9 @@ public class UserService implements Serializable {
     @EJB
     AppraisalRepository appraisalRepository;
 
+    @EJB
+    NotificationService notificationService;
+
     /**
      * Injected repository for managing temporary users.
      */
@@ -81,8 +84,6 @@ public class UserService implements Serializable {
     @EJB
     TokenService tokenService;
 
-    @EJB
-    NotificationService notificationService;
 
     @EJB
     CourseRepository courseRepository;
@@ -243,7 +244,7 @@ public class UserService implements Serializable {
 
         // Chama aqui para atualizar o accountState se necessário
         checkAndUpdateAccountState(id);
-        // Persist the changes
+        notificationService.newUserUpdateNotification(user);
         userRepository.persist(user);
         return true;
     }

@@ -39,6 +39,7 @@ public class ConfigurationInitializer {
             newConfiguration.setPasswordResetTime(2880);// 48 hours
             newConfiguration.setAdmin(userRepository.findUserByEmail("citrus.apiteam@gmail.com"));
             newConfiguration.setCreationDate(LocalDateTime.now());
+            newConfiguration.setTwoFactorAuthEnabled(true);
             configurationRepository.persist(newConfiguration);
         }
     }

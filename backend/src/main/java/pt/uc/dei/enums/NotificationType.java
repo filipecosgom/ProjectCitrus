@@ -11,7 +11,8 @@ package pt.uc.dei.enums;
 public enum NotificationType {
     MESSAGE,
     APPRAISAL,
-    CYCLE,
+    CYCLE_OPEN,
+    CYCLE_CLOSE,
     COURSE,
     USER_UPDATE;
 }

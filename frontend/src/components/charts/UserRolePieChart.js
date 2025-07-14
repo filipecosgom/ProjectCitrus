@@ -37,7 +37,7 @@ export default function UserRolePieChart({ roles, t }) {
       <h3 style={{ textAlign: "center", marginBottom: 12 }}>
         {t("dashboard.users")}
       </h3>
-      <PieChart width={264} height={220}>
+      <PieChart width={264} height={230}>
         <Pie
           data={data}
           cx="50%"
