@@ -280,7 +280,7 @@ public class NotificationService {
      * content.
      */
     @Transactional
-    public void newCycleNotification(CycleEntity cycle, List<UserEntity> users) {
+    public void newCycleOpenNotification(CycleEntity cycle, List<UserEntity> users) {
         try {
             if (cycle == null || cycle.getAdmin() == null || users == null) {
                 logger.error("Invalid cycle or user list for cycle notification");
@@ -306,7 +306,52 @@ public class NotificationService {
                 NotificationEntity notificationEntity = new NotificationEntity();
                 notificationEntity.setSender(sender);
                 notificationEntity.setUser(recipientUser);
-                notificationEntity.setType(NotificationType.CYCLE);
+                notificationEntity.setType(NotificationType.CYCLE_OPEN);
+                notificationEntity.setContent(endDateStr);
+                notificationEntity.setCreationDate(LocalDateTime.now());
+                notificationEntity.setNotificationIsRead(false);
+                notificationEntity.setNotificationIsSeen(false);
+                notificationEntity.setMessageCount(0); // Not relevant for cycle
+                notificationRepository.persist(notificationEntity);
+
+                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);
+                boolean delivered = wsNotifications.notifyUser(notificationDTO);
+                if (!delivered) {
+                    logger.info("WebSocket delivery failed, cycle notification persisted for userId {}", recipientId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error creating/sending new cycle notifications", e);
+        }
+    }
+
+    @Transactional
+    public void newCycleCloseNotification(CycleEntity cycle, List<UserEntity> users) {
+        try {
+            if (cycle == null || cycle.getAdmin() == null || users == null) {
+                logger.error("Invalid cycle or user list for cycle notification");
+                return;
+            }
+            Long senderId = cycle.getAdmin().getId();
+            String endDateStr = cycle.getEndDate() != null ? cycle.getEndDate().toString() : "N/A";
+            for (UserEntity user : users) {
+                if (user == null)
+                    continue;
+                Long recipientId = user.getId();
+                UserEntity recipientUser = userRepository.findUserById(recipientId);
+                if (recipientUser == null) {
+                    logger.error("Cycle notification recipient user {} not found", recipientId);
+                    continue;
+                }
+                UserEntity sender = userRepository.findUserById(senderId);
+                if (sender == null) {
+                    logger.error("Cycle notification recipient user {} not found", senderId);
+                    continue;
+                }
+                NotificationEntity notificationEntity = new NotificationEntity();
+                notificationEntity.setSender(sender);
+                notificationEntity.setUser(recipientUser);
+                notificationEntity.setType(NotificationType.CYCLE_CLOSE);
                 notificationEntity.setContent(endDateStr);
                 notificationEntity.setCreationDate(LocalDateTime.now());
                 notificationEntity.setNotificationIsRead(false);
@@ -337,7 +382,6 @@ public class NotificationService {
                 logger.error("Invalid user for user update notification");
                 return;
             }
-
                 NotificationEntity notificationEntity = new NotificationEntity();
                 notificationEntity.setSender(userUpdated);
                 notificationEntity.setUser(userUpdated.getManager());

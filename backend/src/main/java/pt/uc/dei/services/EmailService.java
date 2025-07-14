@@ -19,6 +19,7 @@ import pt.uc.dei.config.EmailConfig;
 import pt.uc.dei.config.MessageTemplate;
 import pt.uc.dei.controllers.UserController;
 import pt.uc.dei.dtos.ConfigurationDTO;
+import pt.uc.dei.entities.UserEntity;
 
 import java.util.Properties;
 
@@ -160,7 +161,7 @@ public class EmailService {
      * @param appraisalsCount The number of appraisals created in the cycle
      * @param language The language code for the email template
      */
-    public void sendCycleNotificationEmail(String recipientEmail, String cycleId, String startDate,
+    public void sendCycleOpenNotificationEmail(String recipientEmail, String cycleId, String startDate,
                                          String endDate, String adminName, int appraisalsCount, String language) {
         try {
             // Retrieve SMTP properties for configuring email session
@@ -178,7 +179,7 @@ public class EmailService {
             message.setFrom(new InternetAddress(emailAccount));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
 
-            String cycleLink = "https://localhost:3000/cycles?cycle=" + cycleId + "&lang=" + language;
+            String cycleLink = "https://localhost:3000/appraisals";
 
             switch (language) {
                 case "en": {
@@ -221,10 +222,10 @@ public class EmailService {
      * Envia emails com rate limiting conservador para evitar bloqueios de firewall
      */
     @Asynchronous
-    public Future<Boolean> sendCycleNotificationEmailsAsync(
+    public Future<Boolean> sendCycleOpenNotificationEmailsAsync(
             String cycleId, String startDate, String endDate,
             String adminName, int appraisalsCount,
-            java.util.List<pt.uc.dei.entities.UserEntity> recipients) {
+            java.util.List<UserEntity> recipients) {
 
         LOGGER.info("🔄 Starting ASYNC email notification process for cycle {}", cycleId);
 
@@ -242,7 +243,7 @@ public class EmailService {
             LOGGER.info("📧 Rate: 1 email every 3 minutes (max 20 emails/hour)");
 
             for (int i = 0; i < recipients.size(); i++) {
-                pt.uc.dei.entities.UserEntity user = recipients.get(i);
+                UserEntity user = recipients.get(i);
 
                 try {
                     // ✅ DELAY progressivo - aumenta com cada email
@@ -250,36 +251,36 @@ public class EmailService {
 
                     if (i > 0) {
                         LOGGER.info("⏳ Waiting {} ms before sending email {}/{}...",
-                                   delayMs, i + 1, recipients.size());
+                                delayMs, i + 1, recipients.size());
                         Thread.sleep(delayMs);
                     }
 
                     // ✅ DELAY extra a cada lote
                     if (i > 0 && i % MAX_EMAILS_PER_BATCH == 0) {
                         LOGGER.info("⏳ Batch delay: waiting {} ms before next batch...",
-                                   DELAY_BETWEEN_BATCHES_MS);
+                                DELAY_BETWEEN_BATCHES_MS);
                         Thread.sleep(DELAY_BETWEEN_BATCHES_MS);
                     }
 
                     String userLanguage = "en"; // Default language
 
                     LOGGER.info("📤 Sending cycle notification to {} ({}/{})",
-                               user.getEmail(), i + 1, recipients.size());
+                            user.getEmail(), i + 1, recipients.size());
 
                     // ✅ Usar o método síncrono existente
-                    sendCycleNotificationEmail(
-                        user.getEmail(),
-                        cycleId,
-                        startDate,
-                        endDate,
-                        adminName,
-                        appraisalsCount,
-                        userLanguage
+                    sendCycleOpenNotificationEmail(
+                            user.getEmail(),
+                            cycleId,
+                            startDate,
+                            endDate,
+                            adminName,
+                            appraisalsCount,
+                            userLanguage
                     );
 
                     emailsSent++;
                     LOGGER.info("✅ Email {}/{} sent successfully to: {}",
-                               i + 1, recipients.size(), user.getEmail());
+                            i + 1, recipients.size(), user.getEmail());
 
                 } catch (InterruptedException e) {
                     LOGGER.error("❌ Email sending process was interrupted");
@@ -290,7 +291,7 @@ public class EmailService {
                     emailsFailed++;
                     allEmailsSent = false;
                     LOGGER.error("❌ Failed to send email {}/{} to {}: {}",
-                                i + 1, recipients.size(), user.getEmail(), e.getMessage());
+                            i + 1, recipients.size(), user.getEmail(), e.getMessage());
 
                     // ✅ Continue com outros emails mesmo se um falhar
                     continue;
@@ -298,7 +299,7 @@ public class EmailService {
             }
 
             LOGGER.info("📧 ASYNC notification completed - Sent: {}, Failed: {}, Total: {}",
-                       emailsSent, emailsFailed, recipients.size());
+                    emailsSent, emailsFailed, recipients.size());
 
             return new AsyncResult<>(allEmailsSent);
 
@@ -307,6 +308,156 @@ public class EmailService {
             return new AsyncResult<>(false);
         }
     }
+
+    public void sendCycleCloseNotificationEmail(String recipientEmail, String cycleId, String startDate,
+                                               String endDate, String adminName, int appraisalsCount, String language) {
+        try {
+            // Retrieve SMTP properties for configuring email session
+            Properties properties = EmailConfig.getSMTPProperties();
+
+            // Create a new email session with authentication
+            Session session = Session.getInstance(properties, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(emailAccount, password);
+                }
+            });
+
+            // Construct the email message
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailAccount));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+
+            String cycleLink = "https://localhost:3000/appraisals";
+
+            switch (language) {
+                case "en": {
+                    message.setSubject("CITRUS - Performance Cycle Ended");
+                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_EN(
+                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+                case "pt": {
+                    message.setSubject("CITRUS - Ciclo de Avaliação Encerrado");
+                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_PT(
+                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+                default: {
+                    message.setSubject("CITRUS - New Performance Cycle Started");
+                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_EN(
+                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink
+                    );
+                    message.setContent(messageBody, "text/html");
+                    break;
+                }
+            }
+
+            // Send the email
+            Transport.send(message);
+            LOGGER.info("Cycle notification sent successfully to: {}", recipientEmail);
+        } catch (MessagingException e) {
+            LOGGER.error("Failed to send cycle notification email to {}: {}", recipientEmail, e.getMessage());
+            throw new RuntimeException("Failed to send cycle notification email", e);
+        }
+    }
+
+    /**
+     * ✅ NOVO: Método assíncrono para envio de notificações de ciclo
+     * Envia emails com rate limiting conservador para evitar bloqueios de firewall
+     */
+    @Asynchronous
+    public Future<Boolean> sendCycleCloseNotificationEmailsAsync(
+            String cycleId, String startDate, String endDate,
+            String adminName, int appraisalsCount,
+            java.util.List<UserEntity> recipients) {
+
+        LOGGER.info("🔄 Starting ASYNC email notification process for cycle {}", cycleId);
+
+        try {
+            boolean allEmailsSent = true;
+            int emailsSent = 0;
+            int emailsFailed = 0;
+
+            // ✅ RATE LIMITING ULTRA-CONSERVADOR para ambiente universitário
+            final int MAX_EMAILS_PER_BATCH = 1;          // 1 email por lote
+            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutos entre lotes
+            final long DELAY_BETWEEN_EMAILS_MS = 10000;   // 10 segundos base
+
+            LOGGER.info("📧 Will send {} emails with ultra-conservative rate limiting", recipients.size());
+            LOGGER.info("📧 Rate: 1 email every 3 minutes (max 20 emails/hour)");
+
+            for (int i = 0; i < recipients.size(); i++) {
+                UserEntity user = recipients.get(i);
+
+                try {
+                    // ✅ DELAY progressivo - aumenta com cada email
+                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000); // +1s por cada email
+
+                    if (i > 0) {
+                        LOGGER.info("⏳ Waiting {} ms before sending email {}/{}...",
+                                delayMs, i + 1, recipients.size());
+                        Thread.sleep(delayMs);
+                    }
+
+                    // ✅ DELAY extra a cada lote
+                    if (i > 0 && i % MAX_EMAILS_PER_BATCH == 0) {
+                        LOGGER.info("⏳ Batch delay: waiting {} ms before next batch...",
+                                DELAY_BETWEEN_BATCHES_MS);
+                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);
+                    }
+
+                    String userLanguage = "en"; // Default language
+
+                    LOGGER.info("📤 Sending cycle notification to {} ({}/{})",
+                            user.getEmail(), i + 1, recipients.size());
+
+                    // ✅ Usar o método síncrono existente
+                    sendCycleCloseNotificationEmail(
+                            user.getEmail(),
+                            cycleId,
+                            startDate,
+                            endDate,
+                            adminName,
+                            appraisalsCount,
+                            userLanguage
+                    );
+
+                    emailsSent++;
+                    LOGGER.info("✅ Email {}/{} sent successfully to: {}",
+                            i + 1, recipients.size(), user.getEmail());
+
+                } catch (InterruptedException e) {
+                    LOGGER.error("❌ Email sending process was interrupted");
+                    Thread.currentThread().interrupt();
+                    allEmailsSent = false;
+                    break;
+                } catch (Exception e) {
+                    emailsFailed++;
+                    allEmailsSent = false;
+                    LOGGER.error("❌ Failed to send email {}/{} to {}: {}",
+                            i + 1, recipients.size(), user.getEmail(), e.getMessage());
+
+                    // ✅ Continue com outros emails mesmo se um falhar
+                    continue;
+                }
+            }
+
+            LOGGER.info("📧 ASYNC notification completed - Sent: {}, Failed: {}, Total: {}",
+                    emailsSent, emailsFailed, recipients.size());
+
+            return new AsyncResult<>(allEmailsSent);
+
+        } catch (Exception e) {
+            LOGGER.error("❌ Critical error in async email sending: {}", e.getMessage(), e);
+            return new AsyncResult<>(false);
+        }
+    }
+
+
 
     /**
      * ✅ NOVO: Properties com timeouts configurados

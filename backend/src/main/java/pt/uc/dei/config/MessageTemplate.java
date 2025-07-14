@@ -960,4 +960,144 @@ public class MessageTemplate {
         """.formatted(userName, managerName, courseName, assignDate, courseLink);
   }
 
+  /**
+   * Email template for notifying a user when another user wants to contact them (English).
+   */
+  public static String USER_CONTACT_REQUEST_TEMPLATE_EN(String recipientName, String senderName, String message, String contactLink) {
+    return """
+        <!DOCTYPE html>
+        <html lang=\"en\">
+          <head>
+            <meta charset=\"UTF-8\" />
+            <title>Contact Request</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+                margin: 0;
+              }
+              .email-container {
+                max-width: 600px;
+                background-color: #ffffff;
+                margin: auto;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+              }
+              .button {
+                display: inline-block;
+                padding: 12px 24px;
+                margin: 20px 0;
+                color: #ffffff !important;
+                background-color: #2F7C9C;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+              }
+              .footer {
+                font-size: 12px;
+                color: #777777;
+                margin-top: 30px;
+                text-align: center;
+              }
+            </style>
+          </head>
+          <body>
+            <div class=\"email-container\">
+              <h2>✉️ New Contact Request</h2>
+              <p>Hello %s,</p>
+              <p>
+                <strong>%s</strong> would like to get in touch with you.
+              </p>
+              <p>
+                <em>Message:</em><br />
+                %s
+              </p>
+              <p style=\"text-align: center;\">
+                <a href=\"%s\" class=\"button\">Reply Now</a>
+              </p>
+              <p>
+                If you have any questions or concerns, please contact your system administrator.
+              </p>
+              <p>Best regards,<br />The CITRUS Team</p>
+              <div class=\"footer\">
+                ©CITRUS. All rights reserved.
+              </div>
+            </div>
+          </body>
+        </html>
+        """.formatted(recipientName, senderName, message, contactLink);
+  }
+
+  /**
+   * Email template for notifying a user when another user wants to contact them (Portuguese).
+   */
+  public static String USER_CONTACT_REQUEST_TEMPLATE_PT(String recipientName, String senderName, String message, String contactLink) {
+    return """
+        <!DOCTYPE html>
+        <html lang=\"pt\">
+          <head>
+            <meta charset=\"UTF-8\" />
+            <title>Pedido de Contacto</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+                margin: 0;
+              }
+              .email-container {
+                max-width: 600px;
+                background-color: #ffffff;
+                margin: auto;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+              }
+              .button {
+                display: inline-block;
+                padding: 12px 24px;
+                margin: 20px 0;
+                color: #ffffff !important;
+                background-color: #2F7C9C;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+              }
+              .footer {
+                font-size: 12px;
+                color: #777777;
+                margin-top: 30px;
+                text-align: center;
+              }
+            </style>
+          </head>
+          <body>
+            <div class=\"email-container\">
+              <h2>✉️ Novo Pedido de Contacto</h2>
+              <p>Olá %s,</p>
+              <p>
+                <strong>%s</strong> gostaria de entrar em contacto consigo.
+              </p>
+              <p>
+                <em>Mensagem:</em><br />
+                %s
+              </p>
+              <p style=\"text-align: center;\">
+                <a href=\"%s\" class=\"button\">Responder Agora</a>
+              </p>
+              <p>
+                Para qualquer questão ou dúvida, contacte o administrador do sistema.
+              </p>
+              <p>Atenciosamente,<br />A Equipa CITRUS</p>
+              <div class=\"footer\">
+                ©CITRUS. Todos os direitos reservados.
+              </div>
+            </div>
+          </body>
+        </html>
+        """.formatted(recipientName, senderName, message, contactLink);
+  }
+
 }

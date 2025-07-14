@@ -69,6 +69,7 @@ public class ConfigurationService {
             configurationDto.setPasswordResetTime(configurationEntity.getPasswordResetTime());
             configurationDto.setLoginTime(configurationEntity.getLoginTime());
             configurationDto.setVerificationTime(configurationEntity.getVerificationTime());
+            configurationDto.setTwoFactorAuthEnabled(configurationEntity.getTwoFactorAuthEnabled());
             return configurationDto;
         } catch (Exception e) {
             LOGGER.error("Error getting latest expiration configuration");
