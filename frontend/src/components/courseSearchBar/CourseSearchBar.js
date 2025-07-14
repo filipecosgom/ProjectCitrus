@@ -1,3 +1,10 @@
+/**
+ * @file CourseSearchBar.js
+ * @module CourseSearchBar
+ * @description Search bar component for searching and selecting courses.
+ * @author Project Citrus Team
+ */
+
 import React, { useState, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
@@ -7,6 +14,12 @@ import courseTemplateImage from "../../assets/templates/courseTemplate.png";
 import CourseRow from "../courseRow/CourseRow";
 import "./CourseSearchBar.css";
 
+/**
+ * Debounce utility to delay function execution.
+ * @param {Function} func - Function to debounce
+ * @param {number} wait - Delay in milliseconds
+ * @returns {Function} Debounced function
+ */
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -19,6 +32,16 @@ function debounce(func, wait) {
   };
 }
 
+/**
+ * CourseSearchBar component for searching and selecting courses.
+ * @param {Object} props - Component props
+ * @param {Function} props.onCourseSelect - Callback when a course is selected
+ * @param {number} [props.maxResults=50] - Maximum number of results to show
+ * @param {Array<string>} [props.excludeCourseIds=[]] - Array of course IDs to exclude
+ * @param {string|null} [props.excludeCompletedByUserId=null] - User ID to exclude completed courses
+ * @param {string} [props.className=""] - Additional class name for styling
+ * @returns {JSX.Element}
+ */
 const CourseSearchBar = ({
   onCourseSelect,
   maxResults = 50,
@@ -32,6 +55,9 @@ const CourseSearchBar = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  /**
+   * Debounced search function for courses.
+   */
   const debouncedSearch = useCallback(
     debounce((query) => {
       searchCourses(query);
@@ -39,6 +65,10 @@ const CourseSearchBar = ({
     [excludeCourseIds, maxResults, excludeCompletedByUserId]
   );
 
+  /**
+   * Fetches courses matching the search query.
+   * @param {string} query - Search query
+   */
   const searchCourses = async (query = "") => {
     setCoursesLoading(true);
     try {
@@ -67,6 +97,10 @@ const CourseSearchBar = ({
     }
   };
 
+  /**
+   * Handles change in search input field.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Change event
+   */
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -78,24 +112,37 @@ const CourseSearchBar = ({
     }
   };
 
+  /**
+   * Handles selection of a course from results.
+   * @param {Object} course - Selected course object
+   */
   const handleCourseSelect = (course) => {
     setSearchQuery("");
     setIsOpen(false);
     onCourseSelect(course);
   };
 
+  /**
+   * Clears the search input and results.
+   */
   const handleClear = () => {
     setSearchQuery("");
     setCourses([]);
     setIsOpen(false);
   };
 
+  /**
+   * Handles focus event on search input.
+   */
   const handleFocus = () => {
     if (searchQuery && courses.length > 0) {
       setIsOpen(true);
     }
   };
 
+  /**
+   * Handles blur event on search input.
+   */
   const handleBlur = () => {
     setTimeout(() => {
       setIsOpen(false);

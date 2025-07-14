@@ -1,8 +1,28 @@
+/**
+ * @file ConfirmModal.js
+ * @module ConfirmModal
+ * @description Modal component for user confirmation actions (danger, warning, info).
+ * @author Project Citrus Team
+ */
+
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "./ConfirmModal.css";
 
+/**
+ * ConfirmModal component for displaying a confirmation dialog.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Callback to close the modal
+ * @param {Function} props.onConfirm - Callback for confirm action
+ * @param {string} [props.title] - Modal title
+ * @param {string} [props.message] - Modal message
+ * @param {string} [props.confirmText] - Confirm button text
+ * @param {string} [props.cancelText] - Cancel button text
+ * @param {"danger"|"warning"|"info"} [props.variant="danger"] - Modal variant
+ * @returns {JSX.Element|null}
+ */
 const ConfirmModal = ({
   isOpen,
   onClose,
@@ -17,7 +37,10 @@ const ConfirmModal = ({
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Controlar renderização e animação
+  /**
+   * Controls rendering and animation of the modal.
+   * Handles open/close transitions for smooth UX.
+   */
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -34,7 +57,9 @@ const ConfirmModal = ({
     }
   }, [isOpen]);
 
-  // Controlar scroll da página
+  /**
+   * Prevents background scrolling when modal is open.
+   */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -46,7 +71,9 @@ const ConfirmModal = ({
     };
   }, [isOpen]);
 
-  // Fechar com ESC
+  /**
+   * Handles closing the modal with ESC key.
+   */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -61,17 +88,26 @@ const ConfirmModal = ({
     };
   }, [isOpen, onClose]);
 
+  /**
+   * Handles click on backdrop to close modal.
+   * @param {React.MouseEvent} e - Mouse event
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  /**
+   * Handles confirm button click.
+   * Calls onConfirm and closes modal.
+   */
   const handleConfirm = () => {
     onConfirm();
     onClose();
   };
 
+  // Only render modal if shouldRender is true (for animation)
   if (!shouldRender) return null;
 
   return (

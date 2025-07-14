@@ -1,3 +1,10 @@
+/**
+ * @file CourseNewOffCanvas.js
+ * @module CourseNewOffCanvas
+ * @description Offcanvas panel for creating a new course.
+ * @author Project Citrus Team
+ */
+
 import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { FaTimes, FaPlus, FaPen } from "react-icons/fa";
@@ -5,8 +12,15 @@ import { useTranslation } from "react-i18next";
 import "./CourseNewOffCanvas.css";
 import handleNotification from "../../handles/handleNotification";
 import { handleGetCourseAreas } from "../../handles/handleGetEnums";
-import { handleCreateNewCourse, handleUploadCourseImage } from "../../handles/handleCreateNewCourse";
+import {
+  handleCreateNewCourse,
+  handleUploadCourseImage,
+} from "../../handles/handleCreateNewCourse";
 
+/**
+ * List of supported languages for course creation.
+ * @type {Array<{code: string, label: string, flag: string}>}
+ */
 const LANGUAGES = [
   {
     code: "pt",
@@ -35,6 +49,14 @@ const LANGUAGES = [
   },
 ];
 
+/**
+ * CourseNewOffCanvas component for creating a new course in an offcanvas panel.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @param {Function} props.onSubmit - Callback when course is successfully created
+ * @returns {JSX.Element|null}
+ */
 const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
   const { t } = useTranslation();
   const [shouldRender, setShouldRender] = useState(false);
@@ -63,10 +85,16 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     },
   });
 
+  /**
+   * Updates form language value when language state changes.
+   */
   useEffect(() => {
     setValue("language", language);
   }, [language, setValue]);
 
+  /**
+   * Handles open/close animation for offcanvas.
+   */
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
@@ -83,6 +111,9 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     }
   }, [isOpen]);
 
+  /**
+   * Resets form and image state when offcanvas opens.
+   */
   useEffect(() => {
     if (isOpen) {
       reset();
@@ -92,6 +123,9 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     }
   }, [isOpen, reset]);
 
+  /**
+   * Locks body scroll when offcanvas is open.
+   */
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -103,6 +137,9 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     };
   }, [isOpen]);
 
+  /**
+   * Handles Escape key to close offcanvas.
+   */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -117,21 +154,30 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     };
   }, [isOpen, onClose]);
 
+  /**
+   * Fetches course area options when offcanvas opens.
+   */
   useEffect(() => {
-    // Fetch course areas
     handleGetCourseAreas().then((areas) => setAreaOptions(areas || []));
   }, [isOpen]);
 
+  /**
+   * Handles click on backdrop to close offcanvas.
+   * @param {React.MouseEvent} e - Mouse event
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  /**
+   * Handles form submission to create a new course.
+   * @param {Object} data - Form data
+   */
   const onFormSubmit = async (data) => {
-    // Remove image from course data for backend
     const { image, ...courseData } = {
-      ...data
+      ...data,
     };
     let createdCourseId = null;
     let courseResult = await handleCreateNewCourse(courseData);
@@ -154,6 +200,10 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
     }
   };
 
+  /**
+   * Handles image file selection and preview.
+   * @param {React.ChangeEvent} e - Change event
+   */
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -274,42 +324,38 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
                 {t("courses.language")}:
               </span>
               <div className="course-newCourse-inputAndError">
-                  <LanguageDropdownForForm
-                    value={language}
-                    onChange={setLanguage}
-                  />
+                <LanguageDropdownForForm
+                  value={language}
+                  onChange={setLanguage}
+                />
                 <span className="error-message">
                   {errors.language ? errors.language.message : "\u00A0"}
                 </span>
-                </div>
+              </div>
             </div>
 
             <div className="course-newCourse-info-item">
               <span className="course-newCourse-label">
                 {t("courses.duration.label")}:
               </span>
-              <div
-                className="course-newCourse-inputAndError"
-              >
+              <div className="course-newCourse-inputAndError">
                 <div className="course-newCourse-duration">
-                <input
-                  className="course-newCourse-input-duration"
-                  type="number"
-                  min="0"
-                  step="1"
-                  {...register("duration", {
-                    required: errorMessages.duration,
-                    min: { value: 1, message: errorMessages.durationInvalid },
-                    valueAsNumber: true,
-                    validate: (v) =>
-                      Number.isInteger(v) && v > 0
-                        ? true
-                        : errorMessages.durationInvalid,
-                  })}
-                />
-                <span>
-                  {t("courses.duration.hoursShort", "h")}
-                </span>
+                  <input
+                    className="course-newCourse-input-duration"
+                    type="number"
+                    min="0"
+                    step="1"
+                    {...register("duration", {
+                      required: errorMessages.duration,
+                      min: { value: 1, message: errorMessages.durationInvalid },
+                      valueAsNumber: true,
+                      validate: (v) =>
+                        Number.isInteger(v) && v > 0
+                          ? true
+                          : errorMessages.durationInvalid,
+                    })}
+                  />
+                  <span>{t("courses.duration.hoursShort", "h")}</span>
                 </div>
                 <span className="error-message" style={{ flexBasis: "100%" }}>
                   {errors.duration ? errors.duration.message : "\u00A0"}
@@ -376,7 +422,13 @@ const CourseNewOffCanvas = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
-// Controlled dropdown for form use
+/**
+ * Dropdown component for selecting course language in the form.
+ * @param {Object} props
+ * @param {string} props.value - Selected language code
+ * @param {Function} props.onChange - Callback when language changes
+ * @returns {JSX.Element}
+ */
 function LanguageDropdownForForm({ value, onChange }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);

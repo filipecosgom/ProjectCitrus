@@ -1,3 +1,11 @@
+/**
+ * Menu.jsx
+ *
+ * Main navigation menu component. Displays menu items, handles navigation, language selection, dark mode toggle, and logout.
+ * Integrates with global stores for user role and authentication.
+ *
+ * @module Menu
+ */
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
@@ -12,6 +20,17 @@ import useAuthStore from "../../stores/useAuthStore";
 import { useTranslation } from "react-i18next";
 import handleLogout from "../../handles/handleLogout";
 
+/**
+ * Menu component
+ *
+ * @param {Object} props - Component props
+ * @param {Function} [props.onLogout] - Callback for logout action
+ * @param {string} [props.language="en"] - Current language code
+ * @param {Function} [props.setLanguage] - Function to set the language
+ * @param {boolean} [props.show=false] - Whether the menu is visible
+ * @param {Function} [props.onClose] - Callback to close the menu
+ * @returns {JSX.Element} The rendered menu
+ */
 export default function Menu({
   onLogout,
   language = "en",
@@ -129,8 +148,13 @@ export default function Menu({
     },
   ];
 
+  /**
+   * Filter menu items based on user role (admin/manager).
+   *
+   * @type {Array<Object>}
+   */
   const filteredItems = menuItems.filter((item) => {
-    if(item.managerOnly && !(isUserManager || isUserAdmin)) {
+    if (item.managerOnly && !(isUserManager || isUserAdmin)) {
       return false;
     }
     if (item.adminOnly && !isUserAdmin) {
@@ -139,24 +163,43 @@ export default function Menu({
     return true;
   });
 
+  /**
+   * Expand menu on mouse enter (desktop only).
+   */
   const handleMouseEnter = () => {
     if (window.innerWidth > 480) setExpanded(true);
   };
+  /**
+   * Collapse menu on mouse leave (desktop only).
+   */
   const handleMouseLeave = () => {
     if (window.innerWidth > 480) setExpanded(false);
   };
 
+  /**
+   * Handle click on a menu item (navigation and close on mobile).
+   *
+   * @param {Object} item - The menu item object
+   */
   const handleItemClick = (item) => {
     if (item.route) navigate(item.route);
     if (window.innerWidth <= 480 && onClose) onClose();
   };
 
+  /**
+   * Handle logout action (calls handleLogout and optional parent callback).
+   * @async
+   * @returns {Promise<void>}
+   */
   const handleMenuLogout = async () => {
     await handleLogout(navigate);
     if (onLogout) onLogout(); // Optionally call parent callback
   };
 
   // Fecha menu ao clicar fora (apenas mobile)
+  /**
+   * Effect: Closes menu when clicking outside (mobile/tablet only).
+   */
   React.useEffect(() => {
     if (window.innerWidth <= 1024 && show) {
       const handleClick = (e) => {

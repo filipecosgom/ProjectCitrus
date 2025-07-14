@@ -1,5 +1,19 @@
 .course-edit-offcanvas-backdrop {
   position: fixed;
+  /* -------------------------------------------------------------
+   CourseEditOffCanvas.css - Course Edit Offcanvas Component Styles
+
+   This file contains all styles for the course edit offcanvas component,
+   grouped and documented for maintainability.
+
+   Sections:
+   1. Backdrop & Blur Effect
+   2. Offcanvas Panel & Animation
+   3. Close Button
+   4. Content Layout
+   5. Course Image
+   6. Responsive Design
+------------------------------------------------------------- */
   top: 0;
   left: 0;
   right: 0;

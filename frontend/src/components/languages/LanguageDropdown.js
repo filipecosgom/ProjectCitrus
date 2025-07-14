@@ -1,22 +1,42 @@
+/**
+ * LanguageDropdown.jsx
+ *
+ * Dropdown component for selecting application language. Displays available languages with flags.
+ * Integrates with locale store for current language and setter.
+ *
+ * @module LanguageDropdown
+ */
 import React, { useState, useRef, useEffect } from "react";
 import flagEn from "../../assets/flags/flag-en.png";
 import flagPt from "../../assets/flags/flag-pt.png";
 import "./LanguageDropdown.css";
 import useLocaleStore from "../../stores/useLocaleStore";
 
+/**
+ * List of supported languages for the dropdown
+ * @type {Array<{code: string, label: string, flag: string}>}
+ */
 const LANGUAGES = [
   { code: "en", label: "English", flag: flagEn },
   { code: "pt", label: "Portuguese", flag: flagPt },
 ];
 
+/**
+ * LanguageDropdown component
+ *
+ * @returns {JSX.Element} The rendered language dropdown
+ */
 export default function LanguageDropdown() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   // Get both locale and setLocale directly from the store
   const locale = useLocaleStore((state) => state.locale);
   const setLocale = useLocaleStore((state) => state.setLocale);
 
+  /**
+   * Effect: Handles closing the dropdown when clicking outside.
+   */
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -28,8 +48,14 @@ export default function LanguageDropdown() {
   }, []);
 
   // Find the selected language based on the store's locale
-  const selectedLang = LANGUAGES.find((lang) => lang.code === locale) || LANGUAGES[0];
+  const selectedLang =
+    LANGUAGES.find((lang) => lang.code === locale) || LANGUAGES[0];
 
+  /**
+   * Change the application language and close the dropdown.
+   *
+   * @param {string} newLocale - The new language code to set
+   */
   const handleChangeLanguage = (newLocale) => {
     setLocale(newLocale); // Update the store directly
     setShowDropdown(false);

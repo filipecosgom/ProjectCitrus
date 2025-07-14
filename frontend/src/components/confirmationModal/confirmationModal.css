@@ -1,4 +1,16 @@
-/*---------------The Modal (background)-----------------------*/
+/*
+ * ===== ConfirmationModal Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the ConfirmationModal React component.
+ * It includes:
+ *   - Modal backdrop and container styles
+ *   - Header, warning icon, and close button styling
+ *   - Body, message, and button styles
+ *   - Responsive adjustments for mobile screens
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 .modal-ConfirmModal {
   position: fixed;
   top: 0;
@@ -15,7 +27,7 @@
 
 .modal-ConfirmModal input[type="text"] {
   font-size: 18px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   border: none;
   border-bottom: 1px solid #000;
   width: 200px;

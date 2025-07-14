@@ -1,6 +1,24 @@
+/**
+ * UserProfilePieChart module.
+ * Renders a pie chart showing the distribution of user profile completion (complete, incomplete).
+ * Uses Recharts for visualization and supports internationalization.
+ * @module UserProfilePieChart
+ */
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
+/**
+ * UserProfilePieChart component for displaying user profile completion as a pie chart.
+ * @param {Object} props - Component props
+ * @param {number} props.complete - Number of complete profiles
+ * @param {number} props.incomplete - Number of incomplete profiles
+ * @param {function} props.t - Translation function
+ * @returns {JSX.Element} The rendered pie chart
+ */
 export default function UserProfilePieChart({ complete, incomplete, t }) {
+  /**
+   * Prepares the data for the pie chart.
+   * @returns {Array} Array of profile completion objects
+   */
   const data = [
     { name: t("users.accountStateComplete"), value: complete },
     { name: t("users.accountStateIncomplete"), value: incomplete },
