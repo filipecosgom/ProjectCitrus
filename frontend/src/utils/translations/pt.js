@@ -507,6 +507,7 @@ const pt = {
     confirm: "Confirmar",
     cancel: "Cancelar",
     confirmMessage: "Tem certeza que deseja prosseguir?",
+    value: "Valor",
   },
 
   // Adicionar estas traduções para o FilterMenu funcionar:
@@ -528,6 +529,7 @@ const pt = {
     "Atribua ou remova permissões de administrador aos utilizadores.",
   admin: "Administrador",
   user: "Utilizador",
+  manager: "Gestor",
   activeAdmins: "Administradores ativos",
   confirmAction: "Confirmar ação",
   confirmGrantAdmin: "Atribuir permissões de administrador a {name}?",

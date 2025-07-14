@@ -27,6 +27,8 @@ export default function Login() {
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
+  const isUserManager = useAuthStore((state) => state.isUserManager());
   const locale = useLocaleStore((state) => state.locale); // Get current locale from store
 
   const onSubmit = async (loginData) => {
@@ -43,37 +45,30 @@ export default function Login() {
     }
   };
 
-
   useEffect(() => {
     if (user) {
       handleNotification("success", "welcomeMessage", { name: user.name });
-      navigate("/profile?id=" + user.id);
+      if (isUserAdmin) {
+        navigate("/dashboard");
+      } else {
+        navigate("/profile?id=" + user.id);
+      }
     }
-  }, [user, navigate]);
+  }, [user, isUserAdmin, navigate]);
 
   return (
     <div className="login-container">
       {/* DIVISÃO DO LOGO */}
       <div className="login-logo-container">
-        <img
-          src={citrusLogo}
-          alt={t("loginLogo")}
-          className="login-logo"
-        />
-        <div className="logo-undertitle">
-          {t("loginSubtitle")}
-        </div>
+        <img src={citrusLogo} alt={t("loginLogo")} className="login-logo" />
+        <div className="logo-undertitle">{t("loginSubtitle")}</div>
       </div>
 
       {/* FORMULÁRIO */}
       <div className="loginform-container">
         <div className="login-title-group">
-          <h1 className="login-title">
-            {t("loginTitle")}
-          </h1>
-          <div className="login-subtitle">
-            {t("loginSubtitle")}
-          </div>
+          <h1 className="login-title">{t("loginTitle")}</h1>
+          <div className="login-subtitle">{t("loginSubtitle")}</div>
         </div>
         <form
           className="login-form"
@@ -127,7 +122,11 @@ export default function Login() {
                   type="button"
                   className="password-toggle-btn"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={t(showPassword ? "registerHidePassword" : "registerShowPassword")}
+                  aria-label={t(
+                    showPassword
+                      ? "registerHidePassword"
+                      : "registerShowPassword"
+                  )}
                 >
                   {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </button>
@@ -200,7 +199,7 @@ export default function Login() {
           </button>
         </form>
         <div className="login-register-row">
-          {t("loginRegisterPrompt")} {" "}
+          {t("loginRegisterPrompt")}{" "}
           <Link className="login-register-link" to="/register">
             {t("loginRegister")}
           </Link>

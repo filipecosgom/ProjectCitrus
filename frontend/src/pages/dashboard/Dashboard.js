@@ -60,9 +60,6 @@ export default function Dashboard() {
         )
       : 0;
 
-  console.log(stats.courses.expiringSoon);
-  console.log(stats.appraisals.closingSoon);
-
   return (
     <div>
       <div className="dashboard-grid">
