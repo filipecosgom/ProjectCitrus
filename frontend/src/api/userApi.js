@@ -1,7 +1,21 @@
+/**
+ * API module for user-related operations.
+ * Provides functions for registration, user information retrieval, updates, avatar management, and exporting user data.
+ * All requests are authenticated and interact with the backend user endpoints.
+ * @module userApi
+ */
 import { api } from "./api"; // No need to import handleApiError here
 
 const userEndpoint = "/users";
 
+/**
+ * Registers a new user.
+ * @async
+ * @function register
+ * @param {Object} newUser - The user data to register.
+ * @param {string} lang - The language for the response.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, and registered user data or error details.
+ */
 export const register = async (newUser, lang) => {
   try {
     const response = await api.post(userEndpoint, newUser, {
@@ -15,6 +29,12 @@ export const register = async (newUser, lang) => {
   }
 };
 
+/**
+ * Fetches information about the currently authenticated user.
+ * @async
+ * @function fetchSelfInformation
+ * @returns {Promise<Object>} An object containing success status, HTTP status, and user data or error details.
+ */
 export const fetchSelfInformation = async () => {
   try {
     const response = await api.get(`${userEndpoint}/me`);
@@ -24,6 +44,13 @@ export const fetchSelfInformation = async () => {
   }
 };
 
+/**
+ * Fetches information for a specific user by ID.
+ * @async
+ * @function fetchUserInformation
+ * @param {number|string} userId - The ID of the user to fetch.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, and user data or error details.
+ */
 export const fetchUserInformation = async (userId) => {
   try {
     const response = await api.get(`${userEndpoint}/${userId}`);
@@ -31,6 +58,14 @@ export const fetchUserInformation = async (userId) => {
   } catch (error) {}
 };
 
+/**
+ * Updates information for a specific user.
+ * @async
+ * @function updateUserInformation
+ * @param {number|string} userId - The ID of the user to update.
+ * @param {Object} userData - The updated user data.
+ * @returns {Promise<Object>} An object containing success status and updated user data or error details.
+ */
 export const updateUserInformation = async (userId, userData) => {
   try {
     const response = await api.patch(`${userEndpoint}/${userId}`, userData, {
@@ -42,6 +77,14 @@ export const updateUserInformation = async (userId, userData) => {
   }
 };
 
+/**
+ * Uploads a new avatar image for a user.
+ * @async
+ * @function uploadUserAvatar
+ * @param {number|string} userId - The ID of the user.
+ * @param {File} avatarFile - The avatar image file to upload.
+ * @returns {Promise<Object>} An object containing success status and updated avatar data or error details.
+ */
 export const uploadUserAvatar = async (userId, avatarFile) => {
   // Extract file extension from original filename
   const fileExtension = avatarFile.name.split(".").pop();
@@ -66,6 +109,13 @@ export const uploadUserAvatar = async (userId, avatarFile) => {
   }
 };
 
+/**
+ * Fetches the avatar image for a specific user.
+ * @async
+ * @function fetchUserAvatar
+ * @param {number|string} userId - The ID of the user.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, content type, and avatar blob data.
+ */
 export const fetchUserAvatar = async (userId) => {
   const response = await api.get(`${userEndpoint}/${userId}/avatar`, {
     responseType: "blob", // Required for binary image responses
@@ -82,6 +132,13 @@ export const fetchUserAvatar = async (userId) => {
   };
 };
 
+/**
+ * Fetches a paginated list of users with optional filters and sorting.
+ * @async
+ * @function fetchPaginatedUsers
+ * @param {Object} [options] - Optional query parameters for filtering and pagination.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, and user list data or error details.
+ */
 export const fetchPaginatedUsers = async ({
   id = null,
   email = null,
@@ -146,6 +203,13 @@ export const fetchPaginatedUsers = async ({
   }
 };
 
+/**
+ * Fetches user data as a CSV file with optional filters and sorting.
+ * @async
+ * @function fetchUsersCSV
+ * @param {Object} [options] - Optional query parameters for filtering and sorting.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, content type, and CSV blob data or error details.
+ */
 export const fetchUsersCSV = async ({
   id = null,
   email = null,
@@ -209,6 +273,13 @@ export const fetchUsersCSV = async ({
   }
 };
 
+/**
+ * Fetches user data as an XLSX file with optional filters and sorting.
+ * @async
+ * @function fetchUsersXLSX
+ * @param {Object} [options] - Optional query parameters for filtering and sorting.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, content type, and XLSX blob data or error details.
+ */
 export const fetchUsersXLSX = async ({
   id = null,
   email = null,
@@ -275,7 +346,14 @@ export const fetchUsersXLSX = async ({
   }
 };
 
-// Add a finished course for a user
+/**
+ * Adds a finished course for a user.
+ * @async
+ * @function addFinishedCourseToUser
+ * @param {number|string} userId - The ID of the user.
+ * @param {number|string} courseId - The ID of the finished course.
+ * @returns {Promise<Object>} An object containing success status, HTTP status, and finished course data or error details.
+ */
 export const addFinishedCourseToUser = async (userId, courseId) => {
   try {
     const response = await api.post(`/users/${userId}/course/${courseId}`);
@@ -293,6 +371,12 @@ export const addFinishedCourseToUser = async (userId, courseId) => {
   }
 };
 
+/**
+ * Fetches all users (up to 1000) from the backend.
+ * @async
+ * @function fetchAllUsers
+ * @returns {Promise<Array>} An array of user objects if successful, otherwise throws an error.
+ */
 export const fetchAllUsers = async () => {
   try {
     const response = await api.get("/users?limit=1000"); // ou sem limite, conforme backend
@@ -306,6 +390,14 @@ export const fetchAllUsers = async () => {
   }
 };
 
+/**
+ * Updates the admin permission for a specific user.
+ * @async
+ * @function updateAdminPermission
+ * @param {number|string} userId - The ID of the user.
+ * @param {boolean} isAdmin - Whether the user should have admin permissions.
+ * @returns {Promise<Object>} The updated user data if successful, otherwise throws an error.
+ */
 export const updateAdminPermission = async (userId, isAdmin) => {
   try {
     const response = await api.put(

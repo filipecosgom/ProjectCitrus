@@ -1,3 +1,15 @@
+/*
+ * ===== AppraisalScoreStarBadge Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the ScoreStarCard React component.
+ * It includes:
+ *   - Container and star icon styles
+ *   - Color logic for each score (0-4 stars)
+ *   - Utility class for no-score display
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 .storeStarCard-container {
   display: flex;
   flex-direction: row;
@@ -14,19 +26,45 @@
 .stars-0 .star {
   color: #e4e5e9;
 }
-.stars-1 .star:nth-child(1) { color: #FFD700; }
-.stars-1 .star:nth-child(n+2) { color: #e4e5e9; }
-.stars-2 .star:nth-child(1) { color: #FFD700; }
-.stars-2 .star:nth-child(2) { color: #FFA500; }
-.stars-2 .star:nth-child(n+3) { color: #e4e5e9; }
-.stars-3 .star:nth-child(1) { color: #FFD700; }
-.stars-3 .star:nth-child(2) { color: #FFA500; }
-.stars-3 .star:nth-child(3) { color: #FF4500; }
-.stars-3 .star:nth-child(n+4) { color: #e4e5e9; }
-.stars-4 .star:nth-child(1) { color: #FFD700; }
-.stars-4 .star:nth-child(2) { color: #FFA500; }
-.stars-4 .star:nth-child(3) { color: #FF6347; }
-.stars-4 .star:nth-child(4) { color: #FF0000; }
+.stars-1 .star:nth-child(1) {
+  color: #ffd700;
+}
+.stars-1 .star:nth-child(n + 2) {
+  color: #e4e5e9;
+}
+.stars-2 .star:nth-child(1) {
+  color: #ffd700;
+}
+.stars-2 .star:nth-child(2) {
+  color: #ffa500;
+}
+.stars-2 .star:nth-child(n + 3) {
+  color: #e4e5e9;
+}
+.stars-3 .star:nth-child(1) {
+  color: #ffd700;
+}
+.stars-3 .star:nth-child(2) {
+  color: #ffa500;
+}
+.stars-3 .star:nth-child(3) {
+  color: #ff4500;
+}
+.stars-3 .star:nth-child(n + 4) {
+  color: #e4e5e9;
+}
+.stars-4 .star:nth-child(1) {
+  color: #ffd700;
+}
+.stars-4 .star:nth-child(2) {
+  color: #ffa500;
+}
+.stars-4 .star:nth-child(3) {
+  color: #ff6347;
+}
+.stars-4 .star:nth-child(4) {
+  color: #ff0000;
+}
 
 .no-score {
   color: #aaa;

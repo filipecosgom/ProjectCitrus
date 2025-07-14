@@ -508,6 +508,7 @@ const pt = {
     confirm: "Confirmar",
     cancel: "Cancelar",
     confirmMessage: "Tem certeza que deseja prosseguir?",
+    value: "Valor",
   },
 
   // Adicionar estas traduções para o FilterMenu funcionar:
@@ -529,6 +530,7 @@ const pt = {
     "Atribua ou remova permissões de administrador aos utilizadores.",
   admin: "Administrador",
   user: "Utilizador",
+  manager: "Gestor",
   activeAdmins: "Administradores ativos",
   confirmAction: "Confirmar ação",
   confirmGrantAdmin: "Atribuir permissões de administrador a {name}?",
@@ -546,6 +548,11 @@ const pt = {
     courses: "Cursos ativos",
     appraisals: "Avaliações pendentes",
     cycles: "Ciclos ativos",
+    totalAppraisals: "Total de avaliações",
+    percentProfilesComplete: "Perfis completos (%)",
+    appraisalsDistribution: "Distribuição de avaliações",
+    expiringCourses: "Cursos a expirar em breve",
+    closingAppraisals: "Avaliações a fechar em breve",
   },
 };
 

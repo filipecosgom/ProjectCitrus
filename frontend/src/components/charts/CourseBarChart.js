@@ -21,7 +21,7 @@ export default function CourseBarChart({ active, inactive, t }) {
         borderRadius: 10,
         padding: 24,
         boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-        minWidth: 260,
+        minWidth: 312, // aumentado 20%
       }}
     >
       <h3 style={{ textAlign: "center", marginBottom: 12 }}>

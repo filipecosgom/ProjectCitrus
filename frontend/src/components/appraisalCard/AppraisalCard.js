@@ -1,3 +1,9 @@
+/**
+ * AppraisalCard component module.
+ * Renders a card displaying appraisal information, including appraised user, score, manager, end date, and state.
+ * Supports selection via checkbox and click handling for interactive use in lists.
+ * @module AppraisalCard
+ */
 import React from "react";
 import PropTypes from "prop-types";
 import UserIcon from "../userIcon/UserIcon";
@@ -7,6 +13,16 @@ import AppraisalStateBadge from "../appraisalStateBadge/AppraisalStateBadge";
 import "./AppraisalCard.css";
 import { formatStringToDate } from "../../utils/utilityFunctions";
 
+/**
+ * Card component for displaying appraisal details.
+ * @param {Object} props - Component props
+ * @param {Object} props.appraisal - Appraisal data object
+ * @param {Function} [props.onClick] - Callback for card click
+ * @param {boolean} [props.showCheckbox=false] - Whether to show selection checkbox
+ * @param {boolean} [props.isSelected=false] - Whether the card is selected
+ * @param {Function} [props.onSelectionChange] - Callback for checkbox change
+ * @returns {JSX.Element} The rendered appraisal card
+ */
 const AppraisalCard = ({
   appraisal,
   onClick,
@@ -32,9 +48,9 @@ const AppraisalCard = ({
 
   return (
     <div
-      className={`appraisalCard-wrapper${
-        showCheckbox ? " with-checkbox" : ""
-      }${showCheckbox && isSelected ? " selected" : ""}`}
+      className={`appraisalCard-wrapper${showCheckbox ? " with-checkbox" : ""}${
+        showCheckbox && isSelected ? " selected" : ""
+      }`}
     >
       <div className="appraisalCard-checkbox">
         {showCheckbox && (

@@ -1,3 +1,9 @@
+/**
+ * AppraisalOffCanvas component module.
+ * Provides a sliding offcanvas UI for viewing and editing appraisal details, including user info, feedback, score, and state.
+ * Includes avatar loading, star selector, state dropdown, and responsive animation.
+ * @module AppraisalOffCanvas
+ */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom"; // ✅ ADICIONAR useSearchParams
 import { FaPhoneAlt, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
@@ -13,6 +19,15 @@ import handleNotification from "../../handles/handleNotification";
 import { handleUpdateAppraisal } from "../../handles/handleUpdateAppraisal";
 import useAuthStore from "../../stores/useAuthStore";
 
+/**
+ * Offcanvas component for displaying and editing appraisal details.
+ * @param {Object} props - Component props
+ * @param {Object} props.appraisal - Appraisal data object
+ * @param {boolean} props.isOpen - Whether the offcanvas is open
+ * @param {Function} props.onClose - Callback to close the offcanvas
+ * @param {Function} props.onSave - Callback after saving appraisal
+ * @returns {JSX.Element|null} The rendered offcanvas component
+ */
 const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams(); // ✅ ADICIONAR para suporte a URLs
@@ -163,6 +178,11 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // FUNÇÃO para formatar role - IGUAL ao UserCard
+  /**
+   * Formats a user role string for display.
+   * @param {string} role - The role string (e.g., "ADMIN_MANAGER")
+   * @returns {string} The formatted role (e.g., "ADMIN MANAGER")
+   */
   const formatRole = (role) => {
     if (!role) return t("users.na");
     return role.replace(/_/g, " ");
@@ -178,6 +198,13 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   }, [appraisal]);
 
   // Validation function for submit only
+  /**
+   * Validates appraisal data for required fields.
+   * @param {Object} data - Appraisal data to validate
+   * @param {string} data.feedback - Feedback text
+   * @param {number} data.score - Appraisal score
+   * @returns {string|null} Validation error message or null if valid
+   */
   const validateAppraisal = (data) => {
     if (!data.feedback || data.feedback.trim().length === 0) {
       return t("appraisal.validation.feedbackRequired");
@@ -189,6 +216,11 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // Helper: is the error a validation error?
+  /**
+   * Determines if an error message is a validation error.
+   * @param {string} err - Error message
+   * @returns {boolean} True if error is a validation error
+   */
   const isValidationError = (err) => {
     if (!err) return false;
     return (
@@ -198,6 +230,11 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // Save as draft: no validation, no validation errors shown
+  /**
+   * Saves appraisal as draft (no validation).
+   * @param {Object} appraisalData - Data to save (feedback, score)
+   * @returns {Promise<void>}
+   */
   const handleSave = async (appraisalData) => {
     setSaving(true);
     setError(null); // Clear error on save
@@ -233,6 +270,11 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // Submit: validate, show validation errors if any
+  /**
+   * Submits appraisal as completed (with validation).
+   * @param {Object} appraisalData - Data to submit (feedback, score)
+   * @returns {Promise<void>}
+   */
   const handleSubmit = async (appraisalData) => {
     const validationError = validateAppraisal(appraisalData);
     if (validationError) {
@@ -274,6 +316,9 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // Cancel: reset error and validation error display
+  /**
+   * Cancels edit mode and resets error/validation state.
+   */
   const handleCancel = () => {
     setEditMode(false);
     setEditedFeedback(appraisal?.feedback || "");
@@ -283,6 +328,11 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   };
 
   // Separate form submit handler for future extensibility
+  /**
+   * Handles form submit for saving appraisal.
+   * @param {React.FormEvent} e - Form event
+   * @returns {Promise<void>}
+   */
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     await handleSave({ feedback: editedFeedback, score: editedScore });
@@ -313,6 +363,15 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
   ];
 
   // Star selector for score (edit mode)
+  /**
+   * StarSelector component for selecting appraisal score.
+   * @param {Object} props - Component props
+   * @param {number} props.value - Current score value
+   * @param {Function} props.onChange - Callback for score change
+   * @param {number} [props.max=4] - Maximum number of stars
+   * @param {boolean} [props.disabled] - Whether selector is disabled
+   * @returns {JSX.Element} The rendered star selector
+   */
   const StarSelector = ({ value, onChange, max = 4, disabled }) => {
     return (
       <div
@@ -400,7 +459,7 @@ const AppraisalOffCanvas = ({ appraisal, isOpen, onClose, onSave }) => {
               <AppraisalStateBadge state={appraisal.state} />
             )}
           </div>
-            <FaTimes className="appraisal-offcanvas-close" onClick={onClose}/>
+          <FaTimes className="appraisal-offcanvas-close" onClick={onClose} />
         </div>
         {/* Conteúdo centrado */}
         <div className="appraisal-offcanvas-content">

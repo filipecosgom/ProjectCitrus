@@ -1,4 +1,41 @@
-/* Remove button for selected course (×) */
+/*
+ * ===== AddCompletedCourseOffcanvas Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AddCompletedCourseOffcanvas React component.
+ * It includes:
+ *   - Remove button, backdrop, offcanvas, header, content, and footer styles
+ *   - Unified button styles for consistent UX
+ *   - Utility classes for dropdowns, feedback, and area display
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
+
+/* === Remove Button === */
+/* .add-completed-course-remove-btn: Button to remove a selected course from the list */
+
+/* === Backdrop and Offcanvas === */
+/* .add-completed-course-backdrop: Overlay backdrop for offcanvas */
+/* .add-completed-course-offcanvas: Sliding panel for course selection UI */
+
+/* === Header, Title, and Close === */
+/* .add-completed-course-header: Header area with title and close button */
+/* .add-completed-course-title: Title text for the offcanvas */
+/* .add-completed-course-close: Close button for the offcanvas */
+
+/* === Content and Sections === */
+/* .add-completed-course-content: Main content area for course selection */
+/* .select-course-section: Section for selecting courses */
+/* .section-title: Title for each section */
+/* .select-course-dropdown: Dropdown for course selection */
+/* .selected-course-feedback: Feedback area for selected courses */
+/* .selected-course-area: Area label for selected course */
+
+/* === Footer and Buttons === */
+/* .add-completed-course-footer: Footer area with action buttons */
+/* .add-completed-course-btn: Unified button style */
+/* .add-completed-course-btn-cancel: Cancel button style */
+/* .add-completed-course-btn-add: Add button style */
 .add-completed-course-remove-btn {
   position: absolute;
   top: 8px;
@@ -31,7 +68,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 1200;
   opacity: 0;
   pointer-events: none;
@@ -49,7 +86,7 @@
   max-width: 100vw;
   height: 100vh;
   background: #fff;
-  box-shadow: -2px 0 16px rgba(0,0,0,0.15);
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.15);
   z-index: 1300;
   display: flex;
   flex-direction: column;
