@@ -1,12 +1,30 @@
+/**
+ * AppraisalWarningModal module.
+ * Renders a modal dialog to warn users about incomplete appraisals when attempting to close a cycle.
+ * Displays summary, breakdown, and actions for pending/completed appraisals.
+ * @module AppraisalWarningModal
+ */
+
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom"; // ✅ ADICIONAR
+import { useNavigate } from "react-router-dom";
 import { IoWarning, IoClose } from "react-icons/io5";
 import "./AppraisalWarningModal.css";
 
+/**
+ * AppraisalWarningModal component for displaying a warning modal about incomplete appraisals.
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {function} props.onClose - Function to close the modal
+ * @param {Object} [props.validationData={}] - Data about appraisals
+ * @param {number} [props.validationData.totalAppraisals=0] - Total number of appraisals
+ * @param {number} [props.validationData.inProgressCount=0] - Number of appraisals in progress
+ * @param {number} [props.validationData.completedCount=0] - Number of completed appraisals
+ * @returns {JSX.Element|null} The rendered modal or null if not open
+ */
 const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate(); // ✅ ADICIONAR
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -16,11 +34,12 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
     completedCount = 0,
   } = validationData;
 
-  // ✅ NOVA função para navegar para appraisals pendentes
+  /**
+   * Navigates to the appraisals page filtered by state=IN_PROGRESS and closes the modal.
+   */
   const handleCheckPendingAppraisals = () => {
-    // Navegar para /appraisals com filtro state=IN_PROGRESS
     navigate("/appraisals?state=IN_PROGRESS");
-    onClose(); // Fechar o modal
+    onClose();
   };
 
   return (
@@ -97,13 +116,14 @@ const AppraisalWarningModal = ({ isOpen, onClose, validationData = {} }) => {
         </div>
 
         <div className="appraisal-warning-modal-footer">
-          {/* ✅ CORRIGIR: Usar chave correta dentro do objeto cycles */}
+          {/* Button to check pending appraisals */}
           <button
             className="appraisal-warning-check-btn"
             onClick={handleCheckPendingAppraisals}
           >
             {t("cycles.checkPendingAppraisals", "Check Pending Appraisals")}
           </button>
+          {/* Button to acknowledge and close modal */}
           <button
             className="appraisal-warning-understand-btn"
             onClick={onClose}

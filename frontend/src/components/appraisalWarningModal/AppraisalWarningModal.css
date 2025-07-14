@@ -1,3 +1,17 @@
+/*
+ * ===== AppraisalWarningModal Component Styles =====
+ *
+ * This stylesheet provides the layout and visual design for the AppraisalWarningModal React component.
+ * It includes:
+ *   - Overlay and modal container styles
+ *   - Header, icon, and close button styling
+ *   - Content, details, summary, stats, and breakdown sections
+ *   - Button styles for actions (check, understand)
+ *   - Responsive adjustments for mobile screens
+ *
+ * Classes are grouped and commented for maintainability.
+ * Author: Project Citrus Team
+ */
 .appraisal-warning-modal-overlay {
   position: fixed;
   top: 0;

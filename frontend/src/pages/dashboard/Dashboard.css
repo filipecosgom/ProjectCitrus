@@ -43,6 +43,24 @@
   text-align: center;
 }
 
+/*
+ * ===== Dashboard Chart Component Custom Styles =====
+ *
+ * These classes are used to style chart components in the dashboard.
+ * - .dashboard-profile-piechart: UserProfilePieChart layout
+ * - .dashboard-role-piechart: UserRolePieChart size
+ */
+.dashboard-profile-piechart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-role-piechart {
+  width: 260px;
+  height: 240px;
+}
+
 .dashboard-charts {
   display: flex;
   gap: 32px;
