@@ -150,4 +150,12 @@ public class ConfigurationEntity implements Serializable {
      * @param admin the admin user entity to set.
      */
     public void setAdmin(UserEntity admin) { this.admin = admin; }
+
+    public Boolean getTwoFactorAuthEnabled() {
+        return twoFactorAuthEnabled;
+    }
+
+    public void setTwoFactorAuthEnabled(Boolean twoFactorAuthEnabled) {
+        this.twoFactorAuthEnabled = twoFactorAuthEnabled;
+    }
 }
