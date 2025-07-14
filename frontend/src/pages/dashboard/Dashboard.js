@@ -9,9 +9,11 @@ import CycleBarChart from "../../components/charts/CycleBarChart";
 import CourseBarChart from "../../components/charts/CourseBarChart";
 import AppraisalStatePieChart from "../../components/charts/AppraisalStatePieChart";
 import "./Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     users: {
       total: 0,
@@ -63,31 +65,51 @@ export default function Dashboard() {
   return (
     <div>
       <div className="dashboard-grid">
-        <div className="dashboard-card">
+        <div
+          className="dashboard-card"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/users")}
+        >
           <FaUsers className="dashboard-card-icon" />
           <div className="dashboard-card-value">{stats.users.total}</div>
           <div className="dashboard-card-label">{t("dashboard.users")}</div>
         </div>
-        <div className="dashboard-card">
+        <div
+          className="dashboard-card"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/courses")}
+        >
           <FaBook className="dashboard-card-icon" />
           <div className="dashboard-card-value">{stats.courses.active}</div>
           <div className="dashboard-card-label">{t("dashboard.courses")}</div>
         </div>
-        <div className="dashboard-card">
+        <div
+          className="dashboard-card"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/appraisals")}
+        >
           <FaAward className="dashboard-card-icon" />
           <div className="dashboard-card-value">{stats.appraisals.total}</div>
           <div className="dashboard-card-label">
             {t("dashboard.totalAppraisals")}
           </div>
         </div>
-        <div className="dashboard-card">
+        <div
+          className="dashboard-card"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/users?accountState=COMPLETE")}
+        >
           <FaUsers className="dashboard-card-icon" />
           <div className="dashboard-card-value">{percentComplete}%</div>
           <div className="dashboard-card-label">
             {t("dashboard.percentProfilesComplete")}
           </div>
         </div>
-        <div className="dashboard-card">
+        <div
+          className="dashboard-card"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/cycles")}
+        >
           <FaCalendarAlt className="dashboard-card-icon" />
           <div className="dashboard-card-value">{stats.cycles.open}</div>
           <div className="dashboard-card-label">{t("dashboard.cycles")}</div>
