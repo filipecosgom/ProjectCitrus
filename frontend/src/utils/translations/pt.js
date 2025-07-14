@@ -239,6 +239,7 @@ const pt = {
     noUsersSelected: "Nenhum utilizador selecionado",
     managerAssignSuccess:
       "{managerName} agora é o gestor de {total} utilizador(es)",
+    noUsersFound: "Nenhum utilizador encontrado",
   },
 
   //Usercard
