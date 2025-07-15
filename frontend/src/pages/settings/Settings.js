@@ -133,11 +133,12 @@ const Settings = () => {
               <input
                 type="checkbox"
                 checked={settings.emailNotifications}
+                disabled // torna o toggle inativo
                 onChange={(e) =>
                   handleSettingChange("emailNotifications", e.target.checked)
                 }
               />
-              <span className="toggle-slider"></span>
+              <span className="toggle-slider toggle-disabled"></span>
             </label>
           </div>
         </div>
