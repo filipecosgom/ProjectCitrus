@@ -1,61 +1,65 @@
-import { render, screen } from "@testing-library/react";
-import Profile from "./Profile";
-import { MemoryRouter } from "react-router-dom";
+// Mocks primeiro!
+jest.mock("../../i18n", () => ({
+  default: {
+    t: function (key) {
+      return key;
+    },
+  },
+}));
 
-// Mock dependências externas
+jest.mock("../../handles/handleNotification", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock("react-hook-form", () => ({
+  useForm: () => ({
+    register: jest.fn(),
+    handleSubmit: jest.fn(),
+    reset: jest.fn(),
+    setValue: jest.fn(),
+    getValues: jest.fn(),
+    formState: { errors: {} },
+    control: {},
+    watch: jest.fn(),
+  }),
+}));
+
+jest.mock("../../api/api", () => ({
+  api: {
+    get: jest.fn(() => Promise.resolve({ data: [] })),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() },
+    },
+  },
+}));
+
+let mockLoading = false;
+
 jest.mock("../../hooks/useUserProfile", () => {
   return () => ({
-    user: {
-      id: "1",
-      name: "João",
-      surname: "Silva",
-      role: "ADMIN",
-      office: "LISBOA",
-      phone: "912345678",
-      street: "Rua Exemplo",
-      postalCode: "1234-567",
-      municipality: "Lisboa",
-      biography: "Exemplo de biografia",
-      status: "active",
-      manager: {
-        id: "2",
-        name: "Maria",
-        surname: "Costa",
-        role: "MANAGER",
-        avatar: "",
-        email: "maria@exemplo.com",
-      },
-      completedCourses: [],
-    },
+    user: mockLoading
+      ? null
+      : {
+          id: "1",
+          name: "João",
+          surname: "Silva",
+          role: "ADMIN",
+          office: "LISBOA",
+          status: "active",
+          manager: null,
+          completedCourses: [],
+        },
     userAvatar: null,
     managerAvatar: null,
-    loading: false,
+    loading: mockLoading,
     refreshUser: jest.fn(),
   });
 });
-
-jest.mock("../../stores/useAuthStore", () => () => ({
-  setUserAndExpiration: jest.fn(),
-  setAvatar: jest.fn(),
-  user: { id: "1", userIsAdmin: true },
-}));
-
-jest.mock("../../handles/handleUpdateUser", () => ({
-  handleUpdateUserInfo: jest.fn(),
-}));
-jest.mock("../../handles/handleNotification", () => jest.fn());
-jest.mock("../../utils/normalizeUserCourses", () => ({
-  normalizeUserCourses: () => [],
-}));
-jest.mock("../../components/userIcon/UserIcon", () => () => (
-  <div>UserIcon</div>
-));
-jest.mock("../../components/spinner/Spinner", () => () => <div>Spinner</div>);
-jest.mock("./AppraisalsTab", () => () => <div>AppraisalsTab</div>);
-jest.mock("./TrainingTab", () => () => <div>TrainingTab</div>);
-jest.mock("../../components/userOffcanvas/UserOffcanvas", () => ({
-  generateInitialsAvatar: () => "avatar-url",
-}));
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -63,40 +67,123 @@ jest.mock("react-i18next", () => ({
   }),
 }));
 
+jest.mock("../../components/userIcon/UserIcon", () => () => (
+  <div>UserIcon</div>
+));
+jest.mock("../../components/spinner/Spinner", () => () => <div>Spinner</div>);
+jest.mock("./AppraisalsTab", () => () => <div>AppraisalsTab</div>);
+jest.mock("./TrainingTab", () => () => <div>TrainingTab</div>);
+jest.mock("../../i18n", () => ({
+  default: {
+    t: (key) => key,
+  },
+}));
+
+// Só depois importas os módulos!
+import { render, screen, cleanup } from "@testing-library/react";
+import Profile from "./Profile";
+import { MemoryRouter } from "react-router-dom";
+
+afterEach(cleanup);
+
 describe("Profile", () => {
-  test("renderiza o título do perfil e os campos principais", () => {
+  test("renderiza o componente Profile sem falhar", () => {
+    mockLoading = false;
     render(
       <MemoryRouter>
         <Profile />
       </MemoryRouter>
     );
     expect(screen.getByText(/profileOf/)).toBeInTheDocument();
-    expect(screen.getByText(/João Silva/)).toBeInTheDocument();
-    expect(screen.getByText(/profileTabProfile/)).toBeInTheDocument();
-    expect(screen.getByText(/profileTabAppraisals/)).toBeInTheDocument();
-    expect(screen.getByText(/profileTabTraining/)).toBeInTheDocument();
+    expect(screen.getAllByText(/João Silva/).length).toBeGreaterThan(0);
     expect(screen.getByText(/UserIcon/)).toBeInTheDocument();
   });
 
   test("mostra spinner quando loading é true", () => {
-    // Mock loading true
-    jest.doMock("../../hooks/useUserProfile", () => {
-      return () => ({
-        user: null,
-        userAvatar: null,
-        managerAvatar: null,
-        loading: true,
-        refreshUser: jest.fn(),
-      });
-    });
-    // Precisas de limpar o cache do módulo para o novo mock ser usado
-    jest.resetModules();
-    const ProfileWithLoading = require("./Profile").default;
+    mockLoading = true;
     render(
       <MemoryRouter>
-        <ProfileWithLoading />
+        <Profile />
       </MemoryRouter>
     );
     expect(screen.getByText(/Spinner/)).toBeInTheDocument();
+  });
+
+  test("o botão de editar aparece", () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/profileEdit/)).toBeInTheDocument();
+  });
+
+  test("o nome do utilizador aparece no modo de edição", async () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    // Simula clicar no botão de editar
+    const editButton = screen.getByText(/profileEdit/);
+    editButton.click();
+
+    // Espera que os inputs fiquem editáveis (disabled=false)
+    const nomeInput = await screen.findByRole("textbox", {
+      name: /profileFirstName/i,
+    });
+    const apelidoInput = await screen.findByRole("textbox", {
+      name: /profileLastName/i,
+    });
+
+    // Verifica se os campos de nome e apelido aparecem
+    expect(nomeInput).toBeInTheDocument();
+    expect(apelidoInput).toBeInTheDocument();
+  });
+
+  test("o campo de role mostra o valor correto", () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    // Verifica se o input do role tem o valor "ADMIN"
+    expect(screen.getByDisplayValue("ADMIN")).toBeInTheDocument();
+  });
+
+  test("o campo workplace mostra o valor correto", () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    // Verifica se o input do workplace tem o valor "LISBOA"
+    expect(screen.getByDisplayValue("LISBOA")).toBeInTheDocument();
+  });
+
+  test('mostra "No manager assigned" quando não há manager', () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/No manager assigned/)).toBeInTheDocument();
+  });
+
+  test("os tabs aparecem", () => {
+    mockLoading = false;
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/profileTabProfile/)).toBeInTheDocument();
+    expect(screen.getByText(/profileTabAppraisals/)).toBeInTheDocument();
+    expect(screen.getByText(/profileTabTraining/)).toBeInTheDocument();
   });
 });
