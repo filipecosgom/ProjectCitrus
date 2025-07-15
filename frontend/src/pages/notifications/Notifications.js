@@ -77,7 +77,6 @@ export default function Notifications() {
   const [sort, setSort] = useState({ sortBy: "date", sortOrder: "DESCENDING" });
   const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef();
-  const [selectedNotification, setNotificationSelection] = useState(null);
   const [selectedNotifications, setSelectedNotifications] = useState(new Set());
 
   // Fetch notifications from API/store on mount and mark all as read

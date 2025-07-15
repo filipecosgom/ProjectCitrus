@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuthenticationFilter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.filters</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthenticationFilter (pt.uc.dei.filters)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthenticationFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78.6%
+  </span>
+  <span class="absValue">
+    (11/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.filters;
+&nbsp;
+&nbsp;import io.jsonwebtoken.Claims;
+&nbsp;import io.jsonwebtoken.JwtException;
+&nbsp;import jakarta.annotation.Priority;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.ws.rs.Priorities;
+&nbsp;import jakarta.ws.rs.container.ContainerRequestContext;
+&nbsp;import jakarta.ws.rs.container.ContainerRequestFilter;
+&nbsp;import jakarta.ws.rs.container.ResourceInfo;
+&nbsp;import jakarta.ws.rs.core.*;
+&nbsp;import jakarta.ws.rs.ext.Provider;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.annotations.AllowAnonymous;
+&nbsp;import pt.uc.dei.dtos.ConfigurationDTO;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.repositories.AppraisalRepository;
+&nbsp;import pt.uc.dei.services.AuthenticationService;
+&nbsp;import pt.uc.dei.services.ConfigurationService;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;
+&nbsp;import java.util.Date;
+&nbsp;
+&nbsp;/**
+&nbsp; * JAX-RS authentication filter for validating JWT tokens and user authentication.
+&nbsp; * Skips authentication for endpoints annotated with @AllowAnonymous.
+&nbsp; */
+&nbsp;@Provider
+&nbsp;@Priority(Priorities.AUTHENTICATION)
+<b class="fc">&nbsp;public class AuthenticationFilter implements ContainerRequestFilter {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(AuthenticationFilter.class);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private JWTUtil jwtUtil;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private AuthenticationService authenticationService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private ConfigurationService configurationService;
+&nbsp;
+&nbsp;    @Context
+&nbsp;    private ResourceInfo resourceInfo;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Filters incoming requests to authenticate users based on JWT cookies.
+&nbsp;     *
+&nbsp;     * @param requestContext the request context
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void filter(ContainerRequestContext requestContext) {
+<b class="pc">&nbsp;        boolean skipAuth = resourceInfo.getResourceMethod().isAnnotationPresent(AllowAnonymous.class)</b>
+<b class="fc">&nbsp;                || resourceInfo.getResourceClass().isAnnotationPresent(AllowAnonymous.class);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (skipAuth) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        Cookie jwtCookie = requestContext.getCookies().get(&quot;jwt&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (jwtCookie == null || jwtCookie.getValue().isEmpty()) {</b>
+<b class="fc">&nbsp;            abort(requestContext, Response.Status.UNAUTHORIZED, &quot;Missing token&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            Claims claims = JWTUtil.validateToken(jwtCookie.getValue());</b>
+&nbsp;
+<b class="fc">&nbsp;            if (claims.getExpiration().before(new Date())) {</b>
+<b class="fc">&nbsp;                abort(requestContext, Response.Status.UNAUTHORIZED, &quot;Token expired&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Long id = Long.parseLong(claims.getSubject());</b>
+<b class="fc">&nbsp;            UserResponseDTO user = authenticationService.getSelfInformation(id);</b>
+<b class="fc">&nbsp;            if (user == null) {</b>
+<b class="fc">&nbsp;                abort(requestContext, Response.Status.UNAUTHORIZED, &quot;User not found&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;
+&nbsp;            // Store user and role info for downstream use (e.g., in endpoints or role filters)
+<b class="fc">&nbsp;            requestContext.setProperty(&quot;user&quot;, user);</b>
+<b class="fc">&nbsp;            requestContext.setProperty(&quot;userIsAdmin&quot;, user.getUserIsAdmin());</b>
+<b class="fc">&nbsp;            requestContext.setProperty(&quot;userIsManager&quot;, user.getUserIsManager());</b>
+&nbsp;
+&nbsp;            // ⏳ Check if the token is about to expire (e.g., less than 5 minutes left)
+<b class="fc">&nbsp;            long timeLeft = claims.getExpiration().getTime() - System.currentTimeMillis();</b>
+<b class="pc">&nbsp;            if (timeLeft &lt; 5 * 60 * 1000) {</b>
+<b class="fc">&nbsp;                ConfigurationDTO configuration = configurationService.getLatestConfiguration();</b>
+<b class="fc">&nbsp;                String newToken = jwtUtil.generateToken(user);</b>
+<b class="fc">&nbsp;                NewCookie newCookie = new NewCookie(&quot;jwt&quot;, newToken, &quot;/&quot;, null, null, (configuration.getLoginTime() * 60), true); // 1 hour</b>
+<b class="fc">&nbsp;                requestContext.setProperty(&quot;newCookie&quot;, newCookie);</b>
+<b class="fc">&nbsp;                requestContext.setProperty(&quot;newExpiration&quot;, JWTUtil.getExpiration(newToken));</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;Storing new jwt cookie (expires in {} ms): {}&quot;, timeLeft, newCookie);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (JwtException e) {
+<b class="fc">&nbsp;            abort(requestContext, Response.Status.FORBIDDEN, &quot;Invalid token&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void abort(ContainerRequestContext context, Response.Status status, String message) {
+<b class="fc">&nbsp;        context.abortWith(Response.status(status)</b>
+<b class="fc">&nbsp;                .entity(new ApiResponse(false, message, &quot;authError&quot;, null))</b>
+<b class="fc">&nbsp;                .type(MediaType.APPLICATION_JSON)</b>
+<b class="fc">&nbsp;                .build());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ActivationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: ActivationController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ActivationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.annotations.AllowAnonymous;
+&nbsp;import pt.uc.dei.dtos.ActivationTokenDTO;
+&nbsp;import pt.uc.dei.dtos.TemporaryUserDTO;
+&nbsp;import pt.uc.dei.repositories.ActivationTokenRepository;
+&nbsp;import pt.uc.dei.services.AuthenticationService;
+&nbsp;import pt.uc.dei.services.TokenService;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * REST controller for handling account activation requests.
+&nbsp; * &lt;p&gt;
+&nbsp; * This endpoint processes activation tokens sent to users via email and manages
+&nbsp; * the account activation workflow including:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Token validation&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Expired token renewal&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Temporary to permanent account conversion&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Cleanup of temporary registration data&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; *
+&nbsp; * @Path(&quot;/activate&quot;) Root path for activation endpoints
+&nbsp; */
+&nbsp;@AllowAnonymous
+&nbsp;@Path(&quot;/activate&quot;)
+<b class="nc">&nbsp;public class ActivationController {</b>
+&nbsp;    /**
+&nbsp;     * Logger instance for tracking activation process events.
+&nbsp;     */
+<b class="nc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(ActivationController.class);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    AuthenticationService authenticationService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected service for token-related operations.
+&nbsp;     */
+&nbsp;    @EJB
+&nbsp;    private TokenService tokenService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected service for user-related operations.
+&nbsp;     */
+&nbsp;    @EJB
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Activates a user account using the provided activation token.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Workflow:
+&nbsp;     * &lt;ol&gt;
+&nbsp;     *   &lt;li&gt;Validates the token exists and is associated with a temporary user&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Checks token expiration (renews if expired)&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Converts temporary account to permanent&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Cleans up temporary data&lt;/li&gt;
+&nbsp;     * &lt;/ol&gt;
+&nbsp;     *
+&nbsp;     * @param token Activation token from email link (in header)
+&nbsp;     * @return HTTP Response with appropriate status:
+&nbsp;     * - 202 (Accepted) for successful activation
+&nbsp;     * - 401 (Unauthorized) for invalid tokens
+&nbsp;     * - 409 (Conflict) with new token if original expired
+&nbsp;     * - 500 (Internal Server Error) for processing failures
+&nbsp;     * @HTTP 401 If no temporary user is associated with the token
+&nbsp;     * @HTTP 409 If token was expired (includes new token in response)
+&nbsp;     * @HTTP 500 If activation or cleanup processes fail
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON) // Ensures JSON response
+&nbsp;    public Response activateAccount(@HeaderParam(&quot;token&quot;) String token) {
+&nbsp;        try {
+&nbsp;            // Step 1: Validate token and get associated user
+<b class="nc">&nbsp;            ActivationTokenDTO activationToken = new ActivationTokenDTO();</b>
+<b class="nc">&nbsp;            activationToken.setTokenValue(token);</b>
+<b class="nc">&nbsp;            TemporaryUserDTO userToActivate = tokenService.getTemporaryUserFromActivationToken(activationToken);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (userToActivate == null) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Activation attempt with invalid token: {}&quot;, token);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Invalid token&quot;, &quot;errorInvalidToken&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Step 2: Check token expiration
+<b class="nc">&nbsp;            activationToken = tokenService.getActivationTokenByValue(activationToken);</b>
+<b class="nc">&nbsp;            if (tokenService.isTokenExpired(activationToken)) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Expired token used for {}&quot;, userToActivate.getEmail());</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Token expired&quot;, &quot;errorTokenExpired&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;            // Step 3: Activate user
+<b class="nc">&nbsp;            if (!authenticationService.activateUser(userToActivate)) {</b>
+<b class="nc">&nbsp;                LOGGER.error(&quot;Account activation failed for {}&quot;, userToActivate.getEmail());</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Account activation failed&quot;, &quot;errorAccountActivationFailed&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Step 4: Cleanup
+<b class="nc">&nbsp;            boolean cleanupSuccess = userService.deleteTemporaryUserInformation(userToActivate);</b>
+<b class="nc">&nbsp;            if (!cleanupSuccess) {</b>
+<b class="nc">&nbsp;                LOGGER.error(&quot;Temporary data cleanup failed for {}&quot;, userToActivate.getEmail());</b>
+&nbsp;                // Still return success as account was activated
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;Account successfully activated for {}&quot;, userToActivate.getEmail());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.ACCEPTED)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(true, &quot;Account activated successfully&quot;, null, Map.of(&quot;email&quot;, userToActivate.getEmail())))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error during account activation&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unexpected error&quot;, &quot;errorServerIssue&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

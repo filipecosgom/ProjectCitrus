@@ -1,0 +1,368 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalMapperImpl (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppraisalMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (9/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45.5%
+  </span>
+  <span class="absValue">
+    (20/44)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (54/126)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import pt.uc.dei.dtos.AppraisalDTO;
+&nbsp;import pt.uc.dei.dtos.AppraisalResponseDTO;
+&nbsp;import pt.uc.dei.dtos.FinishedCourseDTO;
+&nbsp;import pt.uc.dei.dtos.ManagerDTO;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.entities.AppraisalEntity;
+&nbsp;import pt.uc.dei.entities.CycleEntity;
+&nbsp;import pt.uc.dei.entities.FinishedCourseEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2025-07-15T17:25:53+0100&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;public class AppraisalMapperImpl implements AppraisalMapper {</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private UserMapper userMapper;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public AppraisalDTO toDto(AppraisalEntity appraisalEntity) {
+<b class="fc">&nbsp;        if ( appraisalEntity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        AppraisalDTO appraisalDTO = new AppraisalDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        appraisalDTO.setAppraisedUserId( appraisalEntityAppraisedUserId( appraisalEntity ) );</b>
+<b class="fc">&nbsp;        appraisalDTO.setAppraisingUserId( appraisalEntityAppraisingUserId( appraisalEntity ) );</b>
+<b class="fc">&nbsp;        appraisalDTO.setCycleId( appraisalEntityCycleId( appraisalEntity ) );</b>
+<b class="fc">&nbsp;        appraisalDTO.setAppraisedUser( userMapper.toUserResponseDto( appraisalEntity.getAppraisedUser() ) );</b>
+<b class="fc">&nbsp;        appraisalDTO.setAppraisingUser( userMapper.toUserResponseDto( appraisalEntity.getAppraisingUser() ) );</b>
+<b class="fc">&nbsp;        appraisalDTO.setId( appraisalEntity.getId() );</b>
+<b class="fc">&nbsp;        appraisalDTO.setFeedback( appraisalEntity.getFeedback() );</b>
+<b class="fc">&nbsp;        appraisalDTO.setScore( appraisalEntity.getScore() );</b>
+<b class="fc">&nbsp;        appraisalDTO.setState( appraisalEntity.getState() );</b>
+<b class="fc">&nbsp;        appraisalDTO.setCreationDate( appraisalEntity.getCreationDate() );</b>
+<b class="fc">&nbsp;        appraisalDTO.setSubmissionDate( appraisalEntity.getSubmissionDate() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return appraisalDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public AppraisalResponseDTO toResponseDto(AppraisalEntity appraisalEntity) {
+<b class="nc">&nbsp;        if ( appraisalEntity == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        AppraisalResponseDTO appraisalResponseDTO = new AppraisalResponseDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        appraisalResponseDTO.setCycleId( appraisalEntityCycleId( appraisalEntity ) );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setEndDate( appraisalEntityCycleEndDate( appraisalEntity ) );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setAppraisedUser( userEntityToUserResponseDTO( appraisalEntity.getAppraisedUser() ) );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setAppraisingUser( userEntityToUserResponseDTO( appraisalEntity.getAppraisingUser() ) );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setId( appraisalEntity.getId() );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setFeedback( appraisalEntity.getFeedback() );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setScore( appraisalEntity.getScore() );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setState( appraisalEntity.getState() );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setCreationDate( appraisalEntity.getCreationDate() );</b>
+<b class="nc">&nbsp;        appraisalResponseDTO.setSubmissionDate( appraisalEntity.getSubmissionDate() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return appraisalResponseDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public AppraisalEntity toEntity(AppraisalDTO appraisalDTO) {
+<b class="fc">&nbsp;        if ( appraisalDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        AppraisalEntity appraisalEntity = new AppraisalEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        appraisalEntity.setCreationDate( appraisalDTO.getCreationDate() );</b>
+<b class="fc">&nbsp;        appraisalEntity.setScore( appraisalDTO.getScore() );</b>
+<b class="fc">&nbsp;        appraisalEntity.setFeedback( appraisalDTO.getFeedback() );</b>
+<b class="fc">&nbsp;        appraisalEntity.setState( appraisalDTO.getState() );</b>
+<b class="fc">&nbsp;        appraisalEntity.setSubmissionDate( appraisalDTO.getSubmissionDate() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return appraisalEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;AppraisalDTO&gt; toDtoList(List&lt;AppraisalEntity&gt; appraisals) {
+<b class="fc">&nbsp;        if ( appraisals == null ) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;AppraisalDTO&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;AppraisalDTO&gt; list = new ArrayList&lt;AppraisalDTO&gt;( appraisals.size() );</b>
+<b class="fc">&nbsp;        for ( AppraisalEntity appraisalEntity : appraisals ) {</b>
+<b class="fc">&nbsp;            list.add( toDto( appraisalEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;AppraisalEntity&gt; toEntityList(List&lt;AppraisalDTO&gt; appraisalDTOs) {
+<b class="fc">&nbsp;        if ( appraisalDTOs == null ) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;AppraisalEntity&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;AppraisalEntity&gt; list = new ArrayList&lt;AppraisalEntity&gt;( appraisalDTOs.size() );</b>
+<b class="fc">&nbsp;        for ( AppraisalDTO appraisalDTO : appraisalDTOs ) {</b>
+<b class="fc">&nbsp;            list.add( toEntity( appraisalDTO ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateEntityFromDto(AppraisalDTO appraisalDTO, AppraisalEntity appraisalEntity) {
+<b class="pc">&nbsp;        if ( appraisalDTO == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( appraisalDTO.getScore() != null ) {</b>
+<b class="fc">&nbsp;            appraisalEntity.setScore( appraisalDTO.getScore() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( appraisalDTO.getFeedback() != null ) {</b>
+<b class="fc">&nbsp;            appraisalEntity.setFeedback( appraisalDTO.getFeedback() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( appraisalDTO.getState() != null ) {</b>
+<b class="fc">&nbsp;            appraisalEntity.setState( appraisalDTO.getState() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( appraisalDTO.getSubmissionDate() != null ) {</b>
+<b class="nc">&nbsp;            appraisalEntity.setSubmissionDate( appraisalDTO.getSubmissionDate() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long appraisalEntityAppraisedUserId(AppraisalEntity appraisalEntity) {
+<b class="fc">&nbsp;        UserEntity appraisedUser = appraisalEntity.getAppraisedUser();</b>
+<b class="pc">&nbsp;        if ( appraisedUser == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return appraisedUser.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long appraisalEntityAppraisingUserId(AppraisalEntity appraisalEntity) {
+<b class="fc">&nbsp;        UserEntity appraisingUser = appraisalEntity.getAppraisingUser();</b>
+<b class="pc">&nbsp;        if ( appraisingUser == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return appraisingUser.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long appraisalEntityCycleId(AppraisalEntity appraisalEntity) {
+<b class="fc">&nbsp;        CycleEntity cycle = appraisalEntity.getCycle();</b>
+<b class="pc">&nbsp;        if ( cycle == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return cycle.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private LocalDate appraisalEntityCycleEndDate(AppraisalEntity appraisalEntity) {
+<b class="nc">&nbsp;        CycleEntity cycle = appraisalEntity.getCycle();</b>
+<b class="nc">&nbsp;        if ( cycle == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return cycle.getEndDate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected ManagerDTO userEntityToManagerDTO(UserEntity userEntity) {
+<b class="nc">&nbsp;        if ( userEntity == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        ManagerDTO managerDTO = new ManagerDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        managerDTO.setId( userEntity.getId() );</b>
+<b class="nc">&nbsp;        managerDTO.setName( userEntity.getName() );</b>
+<b class="nc">&nbsp;        managerDTO.setSurname( userEntity.getSurname() );</b>
+<b class="nc">&nbsp;        managerDTO.setRole( userEntity.getRole() );</b>
+<b class="nc">&nbsp;        managerDTO.setHasAvatar( userEntity.getHasAvatar() );</b>
+<b class="nc">&nbsp;        managerDTO.setEmail( userEntity.getEmail() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return managerDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected FinishedCourseDTO finishedCourseEntityToFinishedCourseDTO(FinishedCourseEntity finishedCourseEntity) {
+<b class="nc">&nbsp;        if ( finishedCourseEntity == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        FinishedCourseDTO finishedCourseDTO = new FinishedCourseDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        finishedCourseDTO.setId( finishedCourseEntity.getId() );</b>
+<b class="nc">&nbsp;        finishedCourseDTO.setCompletionDate( finishedCourseEntity.getCompletionDate() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return finishedCourseDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected Set&lt;FinishedCourseDTO&gt; finishedCourseEntitySetToFinishedCourseDTOSet(Set&lt;FinishedCourseEntity&gt; set) {
+<b class="nc">&nbsp;        if ( set == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Set&lt;FinishedCourseDTO&gt; set1 = LinkedHashSet.newLinkedHashSet( set.size() );</b>
+<b class="nc">&nbsp;        for ( FinishedCourseEntity finishedCourseEntity : set ) {</b>
+<b class="nc">&nbsp;            set1.add( finishedCourseEntityToFinishedCourseDTO( finishedCourseEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return set1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected UserResponseDTO userEntityToUserResponseDTO(UserEntity userEntity) {
+<b class="nc">&nbsp;        if ( userEntity == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        UserResponseDTO userResponseDTO = new UserResponseDTO();</b>
+&nbsp;
+<b class="nc">&nbsp;        userResponseDTO.setId( userEntity.getId() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setEmail( userEntity.getEmail() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setManager( userEntityToManagerDTO( userEntity.getManager() ) );</b>
+<b class="nc">&nbsp;        userResponseDTO.setPassword( userEntity.getPassword() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setHasAvatar( userEntity.getHasAvatar() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setName( userEntity.getName() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setSurname( userEntity.getSurname() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setUserIsAdmin( userEntity.getUserIsAdmin() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setUserIsDeleted( userEntity.getUserIsDeleted() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setUserIsManager( userEntity.getUserIsManager() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setOffice( userEntity.getOffice() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setPhone( userEntity.getPhone() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setBirthdate( userEntity.getBirthdate() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setStreet( userEntity.getStreet() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setPostalCode( userEntity.getPostalCode() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setMunicipality( userEntity.getMunicipality() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setBiography( userEntity.getBiography() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setAccountState( userEntity.getAccountState() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setRole( userEntity.getRole() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setCreationDate( userEntity.getCreationDate() );</b>
+<b class="nc">&nbsp;        if ( userEntity.getOnlineStatus() != null ) {</b>
+<b class="nc">&nbsp;            userResponseDTO.setOnlineStatus( userEntity.getOnlineStatus() );</b>
+&nbsp;        }
+<b class="nc">&nbsp;        userResponseDTO.setLastSeen( userEntity.getLastSeen() );</b>
+<b class="nc">&nbsp;        userResponseDTO.setCompletedCourses( finishedCourseEntitySetToFinishedCourseDTOSet( userEntity.getCompletedCourses() ) );</b>
+&nbsp;
+<b class="nc">&nbsp;        return userResponseDTO;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

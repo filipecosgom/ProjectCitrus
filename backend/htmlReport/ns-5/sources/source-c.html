@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Role</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.enums</a>
+</div>
+
+<h1>Coverage Summary for Class: Role (pt.uc.dei.enums)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Role</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75.9%
+  </span>
+  <span class="absValue">
+    (22/29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.enums;
+&nbsp;
+&nbsp;/**
+&nbsp; * Enum representing different professional roles in an organization.
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;WITHOUT_ROLE: No role assigned.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;SOFTWARE_ENGINEER: General software engineering role.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;FRONTEND_DEVELOPER: Specializes in client-side/user interface development.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;BACKEND_DEVELOPER: Specializes in server-side/application logic development.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;FULL_STACK_DEVELOPER: Works on both frontend and backend development.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;DATA_SCIENTIST: Works with data analysis, machine learning, and statistics.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;PRODUCT_MANAGER: Oversees product development and strategy.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;UX_UI_DESIGNER: Focuses on user experience and interface design.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;DEVOPS_ENGINEER: Manages infrastructure, deployment, and operations.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;SYSTEM_ADMINISTRATOR: Maintains and configures computer systems.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;SECURITY_ANALYST: Focuses on information security and risk management.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;QA_ENGINEER: Ensures software quality through testing.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;BUSINESS_ANALYST: Bridges business needs with technical solutions.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;TECH_LEAD: Technical leader of a development team.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;CTO: Chief Technology Officer, executive-level technology leader.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;CEO: Chief Executive Officer, highest-ranking executive.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;HR_MANAGER: Manages human resources department.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;HR_SPECIALIST: Specializes in specific HR functions.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;RECRUITER: Focuses on talent acquisition and hiring.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; */
+<b class="fc">&nbsp;public enum Role {</b>
+<b class="fc">&nbsp;    WITHOUT_ROLE(&quot;withoutRole&quot;),</b>
+<b class="fc">&nbsp;    SOFTWARE_ENGINEER(&quot;softwareEngineer&quot;),</b>
+<b class="fc">&nbsp;    FRONTEND_DEVELOPER(&quot;frontendDeveloper&quot;),</b>
+<b class="fc">&nbsp;    BACKEND_DEVELOPER(&quot;backendDeveloper&quot;),</b>
+<b class="fc">&nbsp;    FULL_STACK_DEVELOPER(&quot;fullStackDeveloper&quot;),</b>
+<b class="fc">&nbsp;    DATA_SCIENTIST(&quot;dataScientist&quot;),</b>
+<b class="fc">&nbsp;    PRODUCT_MANAGER(&quot;productManager&quot;),</b>
+<b class="fc">&nbsp;    UX_UI_DESIGNER(&quot;uxUIDesigner&quot;),</b>
+<b class="fc">&nbsp;    DEVOPS_ENGINEER(&quot;devOpsEngineer&quot;),</b>
+<b class="fc">&nbsp;    SYSTEM_ADMINISTRATOR(&quot;systemAdministrator&quot;),</b>
+<b class="fc">&nbsp;    SECURITY_ANALYST(&quot;securityAnalyst&quot;),</b>
+<b class="fc">&nbsp;    QA_ENGINEER(&quot;qaEngineer&quot;),</b>
+<b class="fc">&nbsp;    BUSINESS_ANALYST(&quot;businessAnalyst&quot;),</b>
+<b class="fc">&nbsp;    TECH_LEAD(&quot;techLead&quot;),</b>
+<b class="fc">&nbsp;    CTO(&quot;cto&quot;),</b>
+<b class="fc">&nbsp;    CEO(&quot;ceo&quot;),</b>
+<b class="fc">&nbsp;    HR_MANAGER(&quot;hrManager&quot;),</b>
+<b class="fc">&nbsp;    HR_SPECIALIST(&quot;hrSpecialist&quot;),</b>
+<b class="fc">&nbsp;    RECRUITER(&quot;recruiter&quot;),;</b>
+&nbsp;
+&nbsp;    private final String fieldName;
+&nbsp;
+<b class="fc">&nbsp;    Role(String fieldName) {</b>
+<b class="fc">&nbsp;        this.fieldName = fieldName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getFieldName() {
+<b class="nc">&nbsp;        return fieldName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Role fromFieldName(String input) {
+<b class="nc">&nbsp;        if (input == null || input.trim().isEmpty()) return null;</b>
+<b class="nc">&nbsp;        String trimmed = input.trim();</b>
+<b class="nc">&nbsp;        for (Role r : values()) {</b>
+<b class="nc">&nbsp;            if (r.fieldName.equalsIgnoreCase(trimmed) || (r.toString().equalsIgnoreCase(trimmed))) {</b>
+<b class="nc">&nbsp;                return r;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        throw new IllegalArgumentException(&quot;Unknown parameter field name: &quot; + input);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

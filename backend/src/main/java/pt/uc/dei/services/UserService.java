@@ -243,10 +243,19 @@ public class UserService implements Serializable {
         // Chama aqui para atualizar o accountState se necessário
         checkAndUpdateAccountState(id);
         notificationService.newUserUpdateNotification(user);
-        String userName = user.getName() + " " + user.getSurname();
+
+        String userName = null;
+        if(user.getName() != null && user.getSurname() != null) {
+             userName = user.getName() + " " + user.getSurname();
+        }
         String date = LocalDate.now().toString();
-        emailService.sendUserUpdateNotificationEmail(user.getManager().getEmail(),
-                user.getManager().getName(), userName, user.getId(), date);
+        if( user.getManager() != null && user.getManager().getEmail() != null) {
+            if(userName == null) {
+                userName = user.getEmail();
+            }
+            emailService.sendUserUpdateNotificationEmail(user.getManager().getEmail(),
+                    user.getManager().getName(), userName, user.getId(), date);
+        }
         userRepository.persist(user);
         return true;
     }

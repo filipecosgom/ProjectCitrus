@@ -1,0 +1,805 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53.8%
+  </span>
+  <span class="absValue">
+    (7/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.2%
+  </span>
+  <span class="absValue">
+    (12/98)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23.6%
+  </span>
+  <span class="absValue">
+    (66/280)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;import pt.uc.dei.annotations.ManagerOfUser;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.jsonwebtoken.Claims;
+&nbsp;import io.jsonwebtoken.JwtException;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.*;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+&nbsp;import pt.uc.dei.annotations.AllowAnonymous;
+&nbsp;import pt.uc.dei.annotations.SelfOrAdminOnly;
+&nbsp;import pt.uc.dei.dtos.*;
+&nbsp;import pt.uc.dei.enums.*;
+&nbsp;import pt.uc.dei.services.AppraisalService;
+&nbsp;import pt.uc.dei.services.AuthenticationService;
+&nbsp;import pt.uc.dei.services.AvatarFileService;
+&nbsp;import pt.uc.dei.services.EmailService;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;import pt.uc.dei.utils.SearchUtils;
+&nbsp;
+&nbsp;import java.io.ByteArrayInputStream;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * Handles user registration and management endpoints.
+&nbsp; */
+&nbsp;@Path(&quot;/users&quot;)
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;    @Inject
+&nbsp;    pt.uc.dei.mapper.FinishedCourseMapper finishedCourseMapper;
+&nbsp;    /**
+&nbsp;     * Logger for user registration and management events.
+&nbsp;     */
+<b class="fc">&nbsp;    private final Logger LOGGER = LogManager.getLogger(UserController.class);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    UserService userService;
+&nbsp;
+&nbsp;    @Context
+&nbsp;    Request request;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    AuthenticationService authenticationService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    AppraisalService appraisalService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    EmailService emailService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a new user and sends activation email.
+&nbsp;     *
+&nbsp;     * @param temporaryUserDTO Contains email and password for registration
+&nbsp;     * @return HTTP response:
+&nbsp;     * - 201 (Created) with token if successful
+&nbsp;     * - 400 (Bad Request) for invalid data
+&nbsp;     * - 409 (Conflict) if email exists
+&nbsp;     * - 500 (Error) for server failures
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @POST
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response registerUser(@Valid TemporaryUserDTO temporaryUserDTO, @HeaderParam(&quot;Accept-Language&quot;) String language) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Registration attempt for email: {}&quot;, temporaryUserDTO.getEmail());</b>
+<b class="fc">&nbsp;        if (userService.findIfUserExists(temporaryUserDTO.getEmail())) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Duplicate email attempt: {}&quot;, temporaryUserDTO.getEmail());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Email already registered&quot;, &quot;errorDuplicateEntry&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="fc">&nbsp;            Map&lt;String, String&gt; codes = userService.registerUser(temporaryUserDTO);</b>
+<b class="fc">&nbsp;            if (codes.get(&quot;token&quot;) == null) {</b>
+<b class="fc">&nbsp;                LOGGER.error(&quot;Token generation failed for {}&quot;, temporaryUserDTO.getEmail());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.SERVICE_UNAVAILABLE)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Activation token failed&quot;, &quot;errorActivationFailed&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (codes.get(&quot;secretKey&quot;) == null) {</b>
+<b class="fc">&nbsp;                LOGGER.error(&quot;Invalid authentication code request for {}&quot;, temporaryUserDTO.getEmail());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Operation error&quot;, &quot;errorNoAuthCode&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            emailService.sendActivationEmail(temporaryUserDTO.getEmail(), codes.get(&quot;token&quot;), codes.get(&quot;secretKey&quot;), language);</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Activation email sent to {}&quot;, temporaryUserDTO.getEmail());</b>
+<b class="fc">&nbsp;            ApiResponse response = new ApiResponse(true, &quot;Account created&quot;, null, codes);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Response: &quot; + new ObjectMapper().writeValueAsString(response)); // Debug serialization</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CREATED).entity(response).build();</b>
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Invalid registration data for {}: {}&quot;, temporaryUserDTO.getEmail(), e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorInvalidData&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Registration error for {}: {}&quot;, temporaryUserDTO.getEmail(), e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Registration failed&quot;, &quot;errorServerIssue&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the authenticated user&#39;s data using the JWT cookie.
+&nbsp;     *
+&nbsp;     * @param headers HTTP headers containing cookies.
+&nbsp;     * @return HTTP 200 (OK) with user data, or error response.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/me&quot;)
+&nbsp;    @SelfOrAdminOnly
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response getUserData(@Context HttpHeaders headers) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Request to get current user data&quot;);</b>
+<b class="fc">&nbsp;        Map&lt;String, Cookie&gt; cookies = headers.getCookies();</b>
+<b class="pc">&nbsp;        Cookie jwtCookie = (cookies != null) ? cookies.get(&quot;jwt&quot;) : null;</b>
+<b class="pc">&nbsp;        if (jwtCookie == null || jwtCookie.getValue().isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Missing JWT cookie in user data request&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Missing token&quot;, &quot;errorMissingToken&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            Claims claims = JWTUtil.validateToken(jwtCookie.getValue());</b>
+<b class="nc">&nbsp;            if (claims.getExpiration() != null &amp;&amp; claims.getExpiration().before(new Date())) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Expired JWT token in user data request&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Token expired&quot;, &quot;errorTokenExpired&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            UserResponseDTO user = authenticationService.getSelfInformation(Long.parseLong(claims.getSubject()));</b>
+<b class="nc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;User not found for subject: {}&quot;, claims.getSubject());</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND).entity(new ApiResponse(false,</b>
+&nbsp;                                &quot;User not found&quot;,
+&nbsp;                                &quot;errorUserNotFound&quot;, null))
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            LOGGER.info(&quot;User data retrieved for user id: {}&quot;, claims.getSubject());</b>
+<b class="nc">&nbsp;            return Response.ok(new ApiResponse(true,</b>
+&nbsp;                    &quot;User data retrieved&quot;,
+&nbsp;                    null,
+<b class="nc">&nbsp;                    Map.of(</b>
+&nbsp;                            &quot;user&quot;, user,
+<b class="nc">&nbsp;                            &quot;tokenExpiration&quot;, claims.getExpiration().getTime())</b>
+<b class="nc">&nbsp;            )).build();</b>
+&nbsp;        } catch (JwtException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Invalid JWT token in user data request: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid token&quot;, &quot;errorInvalidToken&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a user by their ID.
+&nbsp;     *
+&nbsp;     * @param id User ID.
+&nbsp;     * @return HTTP 200 (OK) with user data, or error response.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/{id}&quot;)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response getUserById(
+&nbsp;            @PathParam(&quot;id&quot;) long id,
+&nbsp;            @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="nc">&nbsp;        boolean fullResponse = false;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            long requesterId = JWTUtil.extractUserIdOrAbort(jwtToken);</b>
+<b class="nc">&nbsp;            boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);</b>
+<b class="nc">&nbsp;            if (isAdmin) {</b>
+<b class="nc">&nbsp;                fullResponse = true;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                if (id == requesterId) {</b>
+<b class="nc">&nbsp;                    fullResponse = true;</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    if (userService.checkIfManagerOfUser(id, requesterId)) {</b>
+<b class="nc">&nbsp;                        fullResponse = true;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (JWTUtil.JwtValidationException e) {
+<b class="nc">&nbsp;            LOGGER.info(e.getMessage());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unauthorized access&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        LOGGER.info(&quot;Request to get user by id: {}&quot;, id);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            UserDTO user = userService.getUserProfile(id, fullResponse);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;User not found with id: {}&quot;, id);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;User not found with id: &quot; + id, &quot;errorUserNotFound&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;User retrieved successfully for id: {}&quot;, id);</b>
+<b class="nc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;User retrieved successfully&quot;, &quot;successUserRetrieved&quot;, user))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to fetch user by id: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unexpected error fetching user.&quot;, &quot;errorInternal&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates a user&#39;s information.
+&nbsp;     *
+&nbsp;     * @param id             User ID.
+&nbsp;     * @param updatedUserDTO DTO with updated user data.
+&nbsp;     * @return HTTP 200 (OK) if updated, or error response.
+&nbsp;     */
+&nbsp;    @SelfOrAdminOnly
+&nbsp;    @PATCH
+&nbsp;    @Path(&quot;/{id}&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response updateUser(@PathParam(&quot;id&quot;) Long id, UpdateUserDTO updatedUserDTO) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Update request for user id: {}&quot;, id);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            boolean updated = userService.updateUser(id, updatedUserDTO);</b>
+<b class="nc">&nbsp;            if (updated) {</b>
+<b class="nc">&nbsp;                UserDTO updatedUser = userService.getUser(id);</b>
+<b class="nc">&nbsp;                LOGGER.info(&quot;User updated successfully for id: {}&quot;, id);</b>
+<b class="nc">&nbsp;                return Response.ok(</b>
+&nbsp;                        new ApiResponse(true, &quot;User updated successfully&quot;, &quot;successUserUpdated&quot;, updatedUser)
+<b class="nc">&nbsp;                ).build();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                LOGGER.warn(&quot;User not found for update with id: {}&quot;, id);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;User not found with id: &quot; + id, &quot;errorUserNotFound&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Failed to update user with id: {}&quot;, id, e);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unexpected error updating user.&quot;, &quot;errorInternal&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Uploads or updates a user&#39;s avatar.
+&nbsp;     *
+&nbsp;     * @param id   User ID.
+&nbsp;     * @param form Multipart form containing the avatar file.
+&nbsp;     * @return HTTP 200 (OK) if uploaded, or error response.
+&nbsp;     */
+&nbsp;    @SelfOrAdminOnly
+&nbsp;    @PATCH
+&nbsp;    @Path(&quot;/{id}/avatar&quot;)
+&nbsp;    @Consumes(MediaType.MULTIPART_FORM_DATA)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response uploadAvatar(@PathParam(&quot;id&quot;) Long id, @MultipartForm FileUploadDTO form) {
+<b class="nc">&nbsp;        LOGGER.info(&quot;Avatar upload request for user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;        InputStream avatarStream = form.getFileStream();</b>
+<b class="nc">&nbsp;        ByteArrayOutputStream baos = new ByteArrayOutputStream();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            avatarStream.transferTo(baos);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to read avatar file for user id: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unsupported file type&quot;, &quot;errorInvalidType&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        byte[] fileBytes = baos.toByteArray();</b>
+<b class="nc">&nbsp;        InputStream forMimeType = new ByteArrayInputStream(fileBytes);</b>
+<b class="nc">&nbsp;        InputStream forSaving = new ByteArrayInputStream(fileBytes);</b>
+<b class="nc">&nbsp;        String filename = AvatarFileService.getFilename(id, fileBytes);</b>
+<b class="nc">&nbsp;        if (!AvatarFileService.isValidMimeType(forMimeType)) {</b>
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Invalid mime type for avatar upload by user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unsupported file type&quot;, &quot;errorInvalidType&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        AvatarFileService.removeExistingFiles(id);</b>
+<b class="nc">&nbsp;        boolean saved = AvatarFileService.saveFileWithSizeLimit(forSaving, filename);</b>
+<b class="nc">&nbsp;        if (!saved) {</b>
+<b class="nc">&nbsp;            LOGGER.warn(&quot;File too large for avatar upload by user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;File too large&quot;, &quot;errorFileTooLarge&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        UpdateUserDTO user = new UpdateUserDTO();</b>
+<b class="nc">&nbsp;        user.setHasAvatar(true);</b>
+<b class="nc">&nbsp;        userService.updateUser(id, user);</b>
+<b class="nc">&nbsp;        LOGGER.info(&quot;Avatar uploaded successfully for user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;        return Response.status(Response.Status.OK)</b>
+<b class="nc">&nbsp;                .entity(new ApiResponse(true, &quot;File uploaded successfully&quot;, &quot;successFileUploaded&quot;, filename))</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a user&#39;s avatar image.
+&nbsp;     *
+&nbsp;     * @param id      User ID.
+&nbsp;     * @param request HTTP request context.
+&nbsp;     * @param headers HTTP headers.
+&nbsp;     * @return The avatar image or error response.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/{id}/avatar&quot;)
+&nbsp;    @Produces({MediaType.APPLICATION_JSON, &quot;image/jpeg&quot;, &quot;image/png&quot;, &quot;image/webp&quot;})
+&nbsp;    public Response getAvatar(
+&nbsp;            @PathParam(&quot;id&quot;) Long id,
+&nbsp;            @Context Request request,
+&nbsp;            @Context HttpHeaders headers) {
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.info(&quot;Avatar retrieval request for user id: {}&quot;, id);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            java.nio.file.Path avatarPath = AvatarFileService.resolveAvatarPath(id);</b>
+<b class="nc">&nbsp;            if (avatarPath == null) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Avatar not found for user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                        .type(MediaType.APPLICATION_JSON)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Avatar not found&quot;, &quot;avatarNotFound&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            AvatarFileService.CacheData cacheData = AvatarFileService.getCacheData(avatarPath);</b>
+<b class="nc">&nbsp;            EntityTag etag = new EntityTag(cacheData.lastModified + &quot;-&quot; + cacheData.fileSize);</b>
+&nbsp;
+<b class="nc">&nbsp;            Response.ResponseBuilder builder = request.evaluatePreconditions(</b>
+&nbsp;                    new Date(cacheData.lastModified),
+&nbsp;                    etag
+&nbsp;            );
+&nbsp;
+<b class="nc">&nbsp;            if (builder != null) {</b>
+<b class="nc">&nbsp;                LOGGER.info(&quot;Avatar not modified for user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;                return builder.build();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            boolean acceptsJson = headers.getAcceptableMediaTypes().stream()</b>
+<b class="nc">&nbsp;                    .anyMatch(m -&gt; m.isCompatible(MediaType.APPLICATION_JSON_TYPE));</b>
+&nbsp;
+<b class="nc">&nbsp;            StreamingOutput stream = output -&gt; {</b>
+<b class="nc">&nbsp;                try (InputStream in = Files.newInputStream(avatarPath)) {</b>
+<b class="nc">&nbsp;                    in.transferTo(output);</b>
+&nbsp;                } catch (IOException e) {
+<b class="nc">&nbsp;                    LOGGER.error(&quot;Streaming error for avatar of user id: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;                    if (acceptsJson) {</b>
+<b class="nc">&nbsp;                        output.write(new ObjectMapper().writeValueAsBytes(</b>
+&nbsp;                                new ApiResponse(false, &quot;Stream error&quot;, &quot;streamError&quot;, null)
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            };
+<b class="nc">&nbsp;            LOGGER.info(&quot;Avatar returned for user id: {}&quot;, id);</b>
+<b class="nc">&nbsp;            return Response.ok(stream)</b>
+<b class="nc">&nbsp;                    .type(cacheData.mimeType)</b>
+<b class="nc">&nbsp;                    .header(&quot;Cache-Control&quot;, &quot;public, max-age=86400&quot;)</b>
+<b class="nc">&nbsp;                    .header(&quot;ETag&quot;, etag.toString())</b>
+<b class="nc">&nbsp;                    .lastModified(new Date(cacheData.lastModified))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to load avatar for user id: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.serverError()</b>
+<b class="nc">&nbsp;                    .type(MediaType.APPLICATION_JSON)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Failed to load avatar&quot;, &quot;avatarLoadError&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves users with optional filters and pagination.
+&nbsp;     *
+&nbsp;     * @param id              User ID filter.
+&nbsp;     * @param email           Email filter.
+&nbsp;     * @param name            Name filter.
+&nbsp;     * @param phone           Phone filter.
+&nbsp;     * @param accountStateStr Account state filter.
+&nbsp;     * @param roleStr         Role filter.
+&nbsp;     * @param officeStr       Office filter.
+&nbsp;     * @param parameterStr    Sort parameter.
+&nbsp;     * @param orderStr        Sort order.
+&nbsp;     * @param offset          Pagination offset.
+&nbsp;     * @param limit           Pagination limit.
+&nbsp;     * @return HTTP 200 (OK) with users or message if none found.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response getUsers(@QueryParam(&quot;id&quot;) Long id,
+&nbsp;                             @QueryParam(&quot;email&quot;) String email,
+&nbsp;                             @QueryParam(&quot;name&quot;) String name,
+&nbsp;                             @QueryParam(&quot;phone&quot;) String phone,
+&nbsp;                             @QueryParam(&quot;accountState&quot;) String accountStateStr,
+&nbsp;                             @QueryParam(&quot;role&quot;) String roleStr,
+&nbsp;                             @QueryParam(&quot;office&quot;) String officeStr,
+&nbsp;                             @QueryParam(&quot;isManager&quot;) Boolean userIsManager,
+&nbsp;                             @QueryParam(&quot;isAdmin&quot;) Boolean userIsAdmin,
+&nbsp;                             @QueryParam(&quot;isManaged&quot;) Boolean userIsManaged,
+&nbsp;                             @QueryParam(&quot;parameter&quot;) @DefaultValue(&quot;email&quot;) String parameterStr,
+&nbsp;                             @QueryParam(&quot;order&quot;) @DefaultValue(&quot;ASCENDING&quot;) String orderStr,
+&nbsp;                             @QueryParam(&quot;offset&quot;) @DefaultValue(&quot;0&quot;) int offset,
+&nbsp;                             @QueryParam(&quot;limit&quot;) @DefaultValue(&quot;10&quot;) int limit,
+&nbsp;                             @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="nc">&nbsp;        if(accountStateStr != null &amp;&amp; !accountStateStr.isEmpty()) {</b>
+<b class="nc">&nbsp;            if(!JWTUtil.isUserAdmin(jwtToken)){</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Unauthorized access to account state filter without admin privileges&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Forbidden&quot;, &quot;errorForbidden&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;</b>
+<b class="nc">&nbsp;        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;</b>
+<b class="nc">&nbsp;        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));</b>
+<b class="nc">&nbsp;        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; userData = userService.getUsers(id, email, name, phone,</b>
+&nbsp;                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged,
+&nbsp;                parameter, orderBy, offset, limit);
+&nbsp;
+<b class="nc">&nbsp;        if (userData.get(&quot;users&quot;) == null || ((List&lt;?&gt;) userData.get(&quot;users&quot;)).isEmpty()) {</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;No users found for given filters&quot;);</b>
+<b class="nc">&nbsp;            return Response.status(200).entity(new ApiResponse(true, &quot;No users found&quot;, null, null)).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        LOGGER.info(&quot;Returning {} users&quot;, ((List&lt;?&gt;) userData.get(&quot;users&quot;)).size());</b>
+<b class="nc">&nbsp;        return Response.ok(new ApiResponse(true, &quot;Users retrieved successfully&quot;, null, userData)).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Exports users as CSV with all filters and sorting (no pagination).
+&nbsp;     *
+&nbsp;     * @param id              User ID filter.
+&nbsp;     * @param email           Email filter.
+&nbsp;     * @param name            Name filter.
+&nbsp;     * @param phone           Phone filter.
+&nbsp;     * @param accountStateStr Account state filter.
+&nbsp;     * @param roleStr         Role filter.
+&nbsp;     * @param officeStr       Office filter.
+&nbsp;     * @param parameterStr    Sort parameter.
+&nbsp;     * @param orderStr        Sort order.
+&nbsp;     * @param jwtToken        JWT authentication token.
+&nbsp;     * @return CSV file with all matching users.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/export/csv&quot;)
+&nbsp;    @Produces(&quot;text/csv&quot;)
+&nbsp;    public Response exportUsersToCSV(
+&nbsp;            @QueryParam(&quot;id&quot;) Long id,
+&nbsp;            @QueryParam(&quot;email&quot;) String email,
+&nbsp;            @QueryParam(&quot;name&quot;) String name,
+&nbsp;            @QueryParam(&quot;phone&quot;) String phone,
+&nbsp;            @QueryParam(&quot;accountState&quot;) String accountStateStr,
+&nbsp;            @QueryParam(&quot;role&quot;) String roleStr,
+&nbsp;            @QueryParam(&quot;office&quot;) String officeStr,
+&nbsp;            @QueryParam(&quot;isManager&quot;) Boolean userIsManager,
+&nbsp;            @QueryParam(&quot;isAdmin&quot;) Boolean userIsAdmin,
+&nbsp;            @QueryParam(&quot;isManaged&quot;) Boolean userIsManaged,
+&nbsp;            @QueryParam(&quot;parameter&quot;) @DefaultValue(&quot;email&quot;) String parameterStr,
+&nbsp;            @QueryParam(&quot;order&quot;) @DefaultValue(&quot;ASCENDING&quot;) String orderStr,
+&nbsp;            @QueryParam(&quot;language&quot;) @DefaultValue(&quot;EN&quot;) String languageStr,
+&nbsp;            @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;CSV export request for users with filters: id={}, email={}, name={}, phone={}&quot;, id, email, name, phone);</b>
+<b class="fc">&nbsp;        boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);</b>
+<b class="pc">&nbsp;        if (jwtToken == null || jwtToken.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Missing JWT token in user CSV export request&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(&quot;Missing token&quot;)</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if(accountStateStr != null &amp;&amp; !accountStateStr.isEmpty()) {</b>
+<b class="nc">&nbsp;            if(!JWTUtil.isUserAdmin(jwtToken)){</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Unauthorized access to account state filter without admin privileges&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="nc">&nbsp;                        .entity(&quot;Forbidden&quot;)</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;</b>
+<b class="nc">&nbsp;        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;</b>
+<b class="nc">&nbsp;        Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));</b>
+<b class="nc">&nbsp;        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));</b>
+<b class="nc">&nbsp;        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));</b>
+&nbsp;
+&nbsp;        // Call the service to generate CSV (to be implemented)
+<b class="nc">&nbsp;        byte[] csvData = userService.generateUsersCSV(id, email, name, phone,</b>
+&nbsp;                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged, language,
+&nbsp;                parameter, orderBy, isAdmin);
+&nbsp;
+<b class="nc">&nbsp;        return Response.ok(new ByteArrayInputStream(csvData))</b>
+<b class="nc">&nbsp;                .header(&quot;Content-Disposition&quot;, &quot;attachment; filename=users.csv&quot;)</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Exports users as XLSX with all filters and sorting (no pagination).
+&nbsp;     *
+&nbsp;     * @param id              User ID filter.
+&nbsp;     * @param email           Email filter.
+&nbsp;     * @param name            Name filter.
+&nbsp;     * @param phone           Phone filter.
+&nbsp;     * @param accountStateStr Account state filter.
+&nbsp;     * @param roleStr         Role filter.
+&nbsp;     * @param officeStr       Office filter.
+&nbsp;     * @param parameterStr    Sort parameter.
+&nbsp;     * @param orderStr        Sort order.
+&nbsp;     * @param languageStr     Language for header translation.
+&nbsp;     * @param jwtToken        JWT authentication token.
+&nbsp;     * @return XLSX file with all matching users.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/export/xlsx&quot;)
+&nbsp;    @Produces(&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;)
+&nbsp;    public Response exportUsersToXLSX(
+&nbsp;            @QueryParam(&quot;id&quot;) Long id,
+&nbsp;            @QueryParam(&quot;email&quot;) String email,
+&nbsp;            @QueryParam(&quot;name&quot;) String name,
+&nbsp;            @QueryParam(&quot;phone&quot;) String phone,
+&nbsp;            @QueryParam(&quot;accountState&quot;) String accountStateStr,
+&nbsp;            @QueryParam(&quot;role&quot;) String roleStr,
+&nbsp;            @QueryParam(&quot;office&quot;) String officeStr,
+&nbsp;            @QueryParam(&quot;isManager&quot;) Boolean userIsManager,
+&nbsp;            @QueryParam(&quot;isAdmin&quot;) Boolean userIsAdmin,
+&nbsp;            @QueryParam(&quot;isManaged&quot;) Boolean userIsManaged,
+&nbsp;            @QueryParam(&quot;parameter&quot;) @DefaultValue(&quot;name&quot;) String parameterStr,
+&nbsp;            @QueryParam(&quot;order&quot;) @DefaultValue(&quot;ASCENDING&quot;) String orderStr,
+&nbsp;            @QueryParam(&quot;language&quot;) @DefaultValue(&quot;EN&quot;) String languageStr,
+&nbsp;            @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;XLSX export request for users with filters: id={}, email={}, name={}, phone={}&quot;, id, email, name, phone);</b>
+<b class="fc">&nbsp;        boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);</b>
+<b class="pc">&nbsp;        if (jwtToken == null || jwtToken.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Missing JWT token in user XLSX export request&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(&quot;Missing token&quot;)</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if(accountStateStr != null &amp;&amp; !accountStateStr.isEmpty()) {</b>
+<b class="nc">&nbsp;            if(!JWTUtil.isUserAdmin(jwtToken)){</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Unauthorized access to account state filter without admin privileges&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="nc">&nbsp;                        .entity(&quot;Forbidden&quot;)</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        AccountState accountState = accountStateStr != null ? AccountState.valueOf(SearchUtils.normalizeString(accountStateStr)) : null;</b>
+<b class="nc">&nbsp;        Office office = officeStr != null ? Office.fromFieldName(SearchUtils.normalizeString(officeStr)) : null;</b>
+<b class="nc">&nbsp;        Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));</b>
+<b class="nc">&nbsp;        Parameter parameter = Parameter.fromFieldName(SearchUtils.normalizeString(parameterStr));</b>
+<b class="nc">&nbsp;        OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));</b>
+&nbsp;
+<b class="nc">&nbsp;        byte[] xlsxData = userService.generateUsersXLSX(id, email, name, phone,</b>
+&nbsp;                accountState, roleStr, office, userIsManager, userIsAdmin, userIsManaged, language,
+&nbsp;                parameter, orderBy, isAdmin);
+&nbsp;
+<b class="nc">&nbsp;        return Response.ok(new ByteArrayInputStream(xlsxData))</b>
+<b class="nc">&nbsp;                .header(&quot;Content-Disposition&quot;, &quot;attachment; filename=users.xlsx&quot;)</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Adds a finished course for a user (manager only).
+&nbsp;     *
+&nbsp;     * @param id User ID
+&nbsp;     * @param courseId Course ID
+&nbsp;     * @return HTTP 200 if added, 409 if already completed, 404 if not found, 400 for bad input
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/{id}/course/{courseId}&quot;)
+&nbsp;    @ManagerOfUser
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response addFinishedCourseForUser(@PathParam(&quot;id&quot;) Long id, @PathParam(&quot;courseId&quot;) Long courseId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            FinishedCourseDTO finishedDTO = userService.addFinishedCourse(id, courseId);</b>
+<b class="nc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Finished course added&quot;, &quot;successFinishedCourseAdded&quot;, finishedDTO)).build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="nc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorAlreadyCompleted&quot;, null)).build();</b>
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="nc">&nbsp;            String msg = e.getMessage();</b>
+<b class="nc">&nbsp;            if (msg != null &amp;&amp; msg.toLowerCase().contains(&quot;not active&quot;)) {</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, msg, &quot;errorCourseNotActive&quot;, null)).build();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, msg, &quot;errorNotFound&quot;, null)).build();</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Failed to add finished course&quot;, &quot;errorAddFinishedCourse&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates admin permissions for a user.
+&nbsp;     * Only administrators can access this endpoint.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user to update
+&nbsp;     * @param requestData JSON containing isAdmin boolean
+&nbsp;     * @param jwtToken JWT authentication token
+&nbsp;     * @return HTTP response with success/error status
+&nbsp;     */
+&nbsp;    @PUT
+&nbsp;    @Path(&quot;/{id}/admin-permissions&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response updateAdminPermissions(
+&nbsp;            @PathParam(&quot;id&quot;) Long userId,
+&nbsp;            Map&lt;String, Object&gt; requestData,
+&nbsp;            @CookieParam(&quot;jwt&quot;) String jwtToken) {
+&nbsp;        
+<b class="fc">&nbsp;        LOGGER.info(&quot;Admin permissions update request for user: {}&quot;, userId);</b>
+&nbsp;        
+&nbsp;        try {
+&nbsp;            // Extract and validate JWT
+<b class="fc">&nbsp;            Long requesterId = JWTUtil.extractUserIdOrAbort(jwtToken);</b>
+&nbsp;            
+&nbsp;            // Verify requester is admin
+<b class="nc">&nbsp;            if (!JWTUtil.isUserAdmin(jwtToken)) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Non-admin user {} attempted to access admin permissions endpoint&quot;, requesterId);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Only administrators can manage permissions&quot;, &quot;errorForbidden&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Validate request data
+<b class="nc">&nbsp;            if (requestData == null || !requestData.containsKey(&quot;isAdmin&quot;)) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Invalid request data for admin permissions update&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Missing isAdmin field&quot;, &quot;errorMissingField&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            }
+&nbsp;            
+<b class="nc">&nbsp;            Boolean isAdmin = (Boolean) requestData.get(&quot;isAdmin&quot;);</b>
+<b class="nc">&nbsp;            if (isAdmin == null) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Invalid isAdmin value in request&quot;);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid isAdmin value&quot;, &quot;errorInvalidValue&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Prevent self-removal of admin permissions
+<b class="nc">&nbsp;            if (userId.equals(requesterId) &amp;&amp; !isAdmin) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;User {} attempted to remove their own admin permissions&quot;, requesterId);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Cannot remove your own admin permissions&quot;, &quot;errorSelfRemoval&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Update permissions
+<b class="nc">&nbsp;            Boolean success = userService.updateAdminPermissions(userId, isAdmin, requesterId);</b>
+&nbsp;            
+<b class="nc">&nbsp;            if (success) {</b>
+<b class="nc">&nbsp;                UserDTO updatedUser = userService.getUser(userId);</b>
+<b class="nc">&nbsp;                LOGGER.info(&quot;Admin permissions updated successfully for user: {}&quot;, userId);</b>
+<b class="nc">&nbsp;                return Response.ok(</b>
+&nbsp;                    new ApiResponse(true, &quot;Admin permissions updated successfully&quot;, &quot;successPermissionsUpdated&quot;, updatedUser)
+<b class="nc">&nbsp;                ).build();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                LOGGER.error(&quot;Failed to update admin permissions for user: {}&quot;, userId);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;User not found&quot;, &quot;errorUserNotFound&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;        } catch (JWTUtil.JwtValidationException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Invalid JWT token in admin permissions request: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                .entity(new ApiResponse(false, &quot;Invalid or expired token&quot;, &quot;errorInvalidToken&quot;, null))</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error updating admin permissions for user {}: {}&quot;, userId, e.getMessage());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorServerIssue&quot;, null))</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

@@ -214,6 +214,8 @@ const pt = {
   profileErrorAddressStreetInvalid: "A rua contém caracteres inválidos",
   profileErrorAddressMunicipalityInvalid:
     "A cidade contém caracteres inválidos",
+    profileErrorFirstNameTooLong: "O primeiro nome deve ter no máximo 50 caracteres",
+    profileErrorLastNameTooLong: "O último nome deve ter no máximo 50 caracteres",
 
   // Profile Tabs
   profileTabProfile: "Perfil",

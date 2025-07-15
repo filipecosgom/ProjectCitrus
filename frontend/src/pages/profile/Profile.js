@@ -422,6 +422,7 @@ export default function Profile() {
                     {...register("name", {
                       required: true,
                       minLength: 2,
+                      maxLength: 50,
                       pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
@@ -435,6 +436,11 @@ export default function Profile() {
                   {errors.name?.type === "minLength" && (
                     <span className="error-message">
                       {t("profileErrorFirstNameRequired")}
+                    </span>
+                  )}
+                  {errors.name?.type === "maxLength" && (
+                    <span className="error-message">
+                      {t("profileErrorFirstNameTooLong")}
                     </span>
                   )}
                   {errors.name?.type === "pattern" && (
@@ -451,6 +457,7 @@ export default function Profile() {
                     {...register("surname", {
                       required: true,
                       minLength: 2,
+                      maxLength: 50,
                       pattern: /^[A-Za-zÀ-ÿ\s'-]+$/,
                     })}
                     disabled={!editMode}
@@ -464,6 +471,11 @@ export default function Profile() {
                   {errors.surname?.type === "minLength" && (
                     <span className="error-message">
                       {t("profileErrorLastNameRequired")}
+                    </span>
+                  )}
+                  {errors.surname?.type === "maxLength" && (
+                    <span className="error-message">
+                      {t("profileErrorLastNameTooLong")}
                     </span>
                   )}
                   {errors.surname?.type === "pattern" && (
@@ -749,10 +761,15 @@ export default function Profile() {
                   {t("profileBiography")}
                   <textarea
                     className="profile-input"
-                    {...register("biography")}
+                    {...register("biography", { maxLength: 500 })}
                     disabled={!editMode}
                     placeholder={t("profileBiography")}
                   />
+                  {errors.biography?.type === "maxLength" && (
+                    <span className="error-message">
+                      {t("profileErrorBiographyTooLong")}
+                    </span>
+                  )}
                 </label>
               </div>
             </form>

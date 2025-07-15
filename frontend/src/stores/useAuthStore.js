@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { api } from "../api/api"; // Import the global API instance
-import { fetchSelfInformation, fetchUserAvatar } from "../api/userApi"; // Import the function to fetch user information
+import { fetchSelfInformation, fetchUserAvatar } from "../api/userApi";
 import handleNotification from "../handles/handleNotification";
 
 const useAuthStore = create((set, get) => {

@@ -1,0 +1,715 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppraisalRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.1%
+  </span>
+  <span class="absValue">
+    (8/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3.1%
+  </span>
+  <span class="absValue">
+    (3/97)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.7%
+  </span>
+  <span class="absValue">
+    (26/223)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AppraisalRepository$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (8/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3.1%
+  </span>
+  <span class="absValue">
+    (3/97)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.6%
+  </span>
+  <span class="absValue">
+    (26/224)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.persistence.Query;
+&nbsp;import jakarta.persistence.TypedQuery;
+&nbsp;import jakarta.persistence.criteria.*;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.entities.AppraisalEntity;
+&nbsp;import pt.uc.dei.entities.CycleEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.enums.*;
+&nbsp;import pt.uc.dei.utils.SearchUtils;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository class for managing {@link AppraisalEntity} persistence operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides data access methods specific to appraisal entities, extending the basic
+&nbsp; * CRUD operations from {@link AbstractRepository}. This class handles all
+&nbsp; * database interactions related to appraisal management.
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for
+&nbsp; * dependency injection and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+&nbsp;public class AppraisalRepository extends AbstractRepository&lt;AppraisalEntity&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this class.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(AppraisalRepository.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for serialization support.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new AppraisalRepository instance.
+&nbsp;     * Initializes the repository for {@link AppraisalEntity} operations.
+&nbsp;     */
+&nbsp;    public AppraisalRepository() {
+<b class="fc">&nbsp;        super(AppraisalEntity.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all appraisals for a specific appraised user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user being appraised
+&nbsp;     * @return List of appraisals for the specified user
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsByAppraisedUser(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId ORDER BY a.creationDate DESC&quot;,
+&nbsp;                    AppraisalEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;userId&quot;, userId);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisals by appraised user ID: {}&quot;, userId, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all appraisals created by a specific appraising user (manager).
+&nbsp;     *
+&nbsp;     * @param managerId The ID of the user performing the appraisals
+&nbsp;     * @return List of appraisals created by the specified manager
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsByAppraisingUser(Long managerId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT a FROM AppraisalEntity a WHERE a.appraisingUser.id = :managerId ORDER BY a.creationDate DESC&quot;,
+&nbsp;                    AppraisalEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;managerId&quot;, managerId);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisals by appraising user ID: {}&quot;, managerId, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all appraisals within a specific cycle.
+&nbsp;     *
+&nbsp;     * @param cycleId The ID of the cycle
+&nbsp;     * @return List of appraisals within the specified cycle
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsByCycle(Long cycleId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId ORDER BY a.creationDate DESC&quot;,
+&nbsp;                    AppraisalEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;cycleId&quot;, cycleId);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisals by cycle ID: {}&quot;, cycleId, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all appraisals with a specific state.
+&nbsp;     *
+&nbsp;     * @param state The appraisal state to filter by
+&nbsp;     * @return List of appraisals with the specified state
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsByState(AppraisalState state) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT a FROM AppraisalEntity a WHERE a.state = :state ORDER BY a.creationDate DESC&quot;,
+&nbsp;                    AppraisalEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;state&quot;, state);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisals by state: {}&quot;, state, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds an appraisal by appraised user, appraising user and cycle.
+&nbsp;     * Used to check for duplicates before creating new appraisals.
+&nbsp;     *
+&nbsp;     * @param appraisedUserId  The appraised user ID
+&nbsp;     * @param appraisingUserId The appraising user ID
+&nbsp;     * @param cycleId          The cycle ID
+&nbsp;     * @return AppraisalEntity if found, null otherwise
+&nbsp;     */
+&nbsp;    public AppraisalEntity findAppraisalByUsersAndCycle(Long appraisedUserId, Long appraisingUserId, Long cycleId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :appraisedUserId &quot; +
+&nbsp;                            &quot;AND a.appraisingUser.id = :appraisingUserId AND a.cycle.id = :cycleId&quot;,
+&nbsp;                    AppraisalEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;appraisedUserId&quot;, appraisedUserId);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;appraisingUserId&quot;, appraisingUserId);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;cycleId&quot;, cycleId);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;AppraisalEntity&gt; results = query.getResultList();</b>
+<b class="pc">&nbsp;            return results.isEmpty() ? null : results.get(0);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisal by users and cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds appraisals with advanced filtering options.
+&nbsp;     *
+&nbsp;     * @param appraisedUserId  Optional filter by appraised user ID
+&nbsp;     * @param appraisingUserId Optional filter by appraising user ID
+&nbsp;     * @param cycleId          Optional filter by cycle ID
+&nbsp;     * @param state            Optional filter by appraisal state
+&nbsp;     * @param limit            Maximum number of results (optional)
+&nbsp;     * @param offset           Starting position for pagination (optional)
+&nbsp;     * @return List of filtered appraisals
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
+&nbsp;                                                           Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
+&nbsp;                                                           Long cycleId, AppraisalState state, AppraisalParameter parameter, OrderBy order,
+&nbsp;                                                           Integer limit, Integer offset) {
+&nbsp;        try {
+<b class="nc">&nbsp;            CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="nc">&nbsp;            CriteriaQuery&lt;AppraisalEntity&gt; cq = cb.createQuery(AppraisalEntity.class);</b>
+<b class="nc">&nbsp;            Root&lt;AppraisalEntity&gt; appraisal = cq.from(AppraisalEntity.class);</b>
+<b class="nc">&nbsp;            Join&lt;AppraisalEntity, UserEntity&gt; appraisedUserJoin = appraisal.join(&quot;appraisedUser&quot;, JoinType.LEFT);</b>
+<b class="nc">&nbsp;            Join&lt;AppraisalEntity, UserEntity&gt; appraisingUserJoin = appraisal.join(&quot;appraisingUser&quot;, JoinType.LEFT);</b>
+<b class="nc">&nbsp;            Join&lt;AppraisalEntity, CycleEntity&gt; cycleJoin = appraisal.join(&quot;cycle&quot;, JoinType.LEFT);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (appraisedUserId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;appraisedUser&quot;).get(&quot;id&quot;), appraisedUserId));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisedUserName)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisedUserName)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisedUserName);</b>
+<b class="nc">&nbsp;                    Predicate nameMatch = cb.like(appraisedUserJoin.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    Predicate surnameMatch = cb.like(appraisedUserJoin.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    appraisedUserName = SearchUtils.normalizeString(appraisedUserName);</b>
+<b class="nc">&nbsp;                    String[] terms = appraisedUserName.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                    for (String term : terms) {</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; unaccentedName = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; unaccentedSurname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                        predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                                cb.like(unaccentedName, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                                cb.like(unaccentedSurname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisedUserEmail)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisedUserEmail)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisedUserEmail);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(cb.lower(appraisedUserJoin.get(&quot;email&quot;)), &quot;%&quot; + exact.toLowerCase() + &quot;%&quot;));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String normalized = SearchUtils.normalizeString(appraisedUserEmail.toLowerCase());</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedEmail = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(unaccentedEmail, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (appraisingUserId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;appraisingUser&quot;).get(&quot;id&quot;), appraisingUserId));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisingUserName)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisingUserName)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisingUserName);</b>
+<b class="nc">&nbsp;                    Predicate nameMatch = cb.like(appraisingUserJoin.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    Predicate surnameMatch = cb.like(appraisingUserJoin.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    appraisingUserName = SearchUtils.normalizeString(appraisingUserName);</b>
+<b class="nc">&nbsp;                    String[] terms = appraisingUserName.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                    for (String term : terms) {</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; unaccentedName = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; unaccentedSurname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                        predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                                cb.like(unaccentedName, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                                cb.like(unaccentedSurname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisingUserEmail)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisingUserEmail)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisingUserEmail);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(cb.lower(appraisingUserJoin.get(&quot;email&quot;)), &quot;%&quot; + exact.toLowerCase() + &quot;%&quot;));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String normalized = SearchUtils.normalizeString(appraisingUserEmail.toLowerCase());</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedEmail = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(unaccentedEmail, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (cycleId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;cycle&quot;).get(&quot;id&quot;), cycleId));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (state != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;state&quot;), state));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (parameter != null) {</b>
+&nbsp;                Path&lt;?&gt; sortingField;
+&nbsp;
+<b class="nc">&nbsp;                switch (parameter) {</b>
+&nbsp;                    case MANAGER_NAME:
+<b class="nc">&nbsp;                        sortingField = appraisingUserJoin.get(&quot;name&quot;);</b>
+&nbsp;                        break;
+&nbsp;                    case MANAGER_EMAIL:
+<b class="nc">&nbsp;                        sortingField = appraisingUserJoin.get(&quot;email&quot;);</b>
+&nbsp;                        break;
+&nbsp;                    case APPRAISED_NAME:
+<b class="nc">&nbsp;                        sortingField = appraisedUserJoin.get(&quot;name&quot;);</b>
+&nbsp;                        break;
+&nbsp;                    case APPRAISED_EMAIL:
+<b class="nc">&nbsp;                        sortingField = appraisedUserJoin.get(&quot;email&quot;);</b>
+&nbsp;                        break;
+&nbsp;                    case END_DATE:
+<b class="nc">&nbsp;                        sortingField = cycleJoin.get(&quot;endDate&quot;);</b>
+&nbsp;                        break;
+&nbsp;                    default:
+<b class="nc">&nbsp;                        sortingField = appraisal.get(parameter.getFieldName());</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (&quot;score&quot;.equals(parameter.getFieldName())) {</b>
+<b class="nc">&nbsp;                    Path&lt;Integer&gt; scoreExpr = appraisal.get(&quot;score&quot;);</b>
+&nbsp;
+&nbsp;                    // For ascending: nulls first (nullRank = 0 for nulls, 1 for not null)
+&nbsp;                    // For descending: nulls last (nullRank = 1 for nulls, 0 for not null)
+<b class="nc">&nbsp;                    Expression&lt;Integer&gt; nullRank = cb.&lt;Integer&gt;selectCase()</b>
+<b class="nc">&nbsp;                            .when(cb.isNull(scoreExpr), order == OrderBy.ASCENDING ? 0 : 1)</b>
+<b class="nc">&nbsp;                            .otherwise(order == OrderBy.ASCENDING ? 1 : 0);</b>
+&nbsp;
+<b class="nc">&nbsp;                    Order scoreOrder = order == OrderBy.ASCENDING</b>
+<b class="nc">&nbsp;                            ? cb.asc(scoreExpr)</b>
+<b class="nc">&nbsp;                            : cb.desc(scoreExpr);</b>
+&nbsp;
+<b class="nc">&nbsp;                    cq.orderBy(cb.asc(nullRank), scoreOrder);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    cq.orderBy(order == OrderBy.DESCENDING</b>
+<b class="nc">&nbsp;                            ? cb.desc(sortingField)</b>
+<b class="nc">&nbsp;                            : cb.asc(sortingField));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (!predicates.isEmpty()) {</b>
+<b class="nc">&nbsp;                cq.where(cb.and(predicates.toArray(new Predicate[0])));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(cq);</b>
+<b class="nc">&nbsp;            if (offset != null &amp;&amp; offset &gt; 0) {</b>
+<b class="nc">&nbsp;                query.setFirstResult(offset);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (limit != null &amp;&amp; limit &gt; 0) {</b>
+<b class="nc">&nbsp;                query.setMaxResults(limit);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding appraisals with filters&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getTotalAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
+&nbsp;                                              Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
+&nbsp;                                              Long cycleId, AppraisalState state) {
+&nbsp;        try {
+<b class="nc">&nbsp;            CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="nc">&nbsp;            CriteriaQuery&lt;Long&gt; cq = cb.createQuery(Long.class);</b>
+<b class="nc">&nbsp;            Root&lt;AppraisalEntity&gt; appraisal = cq.from(AppraisalEntity.class);</b>
+<b class="nc">&nbsp;            Join&lt;AppraisalEntity, UserEntity&gt; appraisedUserJoin = appraisal.join(&quot;appraisedUser&quot;, JoinType.LEFT);</b>
+<b class="nc">&nbsp;            Join&lt;AppraisalEntity, UserEntity&gt; appraisingUserJoin = appraisal.join(&quot;appraisingUser&quot;, JoinType.LEFT);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (appraisedUserId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;appraisedUser&quot;).get(&quot;id&quot;), appraisedUserId));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisedUserName)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisedUserName)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisedUserName);</b>
+<b class="nc">&nbsp;                    Predicate nameMatch = cb.like(appraisedUserJoin.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    Predicate surnameMatch = cb.like(appraisedUserJoin.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String[] terms = SearchUtils.normalizeString(appraisedUserName).toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                    for (String term : terms) {</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; name = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; surname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                        predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                                cb.like(name, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                                cb.like(surname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisedUserEmail)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisedUserEmail)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisedUserEmail);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(cb.lower(appraisedUserJoin.get(&quot;email&quot;)), &quot;%&quot; + exact.toLowerCase() + &quot;%&quot;));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String normalized = SearchUtils.normalizeString(appraisedUserEmail.toLowerCase());</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; email = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisedUserJoin.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(email, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (appraisingUserId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;appraisingUser&quot;).get(&quot;id&quot;), appraisingUserId));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisingUserName)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisingUserName)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisingUserName);</b>
+<b class="nc">&nbsp;                    Predicate nameMatch = cb.like(appraisingUserJoin.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    Predicate surnameMatch = cb.like(appraisingUserJoin.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String[] terms = SearchUtils.normalizeString(appraisingUserName).toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                    for (String term : terms) {</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; name = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                        Expression&lt;String&gt; surname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                        predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                                cb.like(name, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                                cb.like(surname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (SearchUtils.isNotBlank(appraisingUserEmail)) {</b>
+<b class="nc">&nbsp;                if (SearchUtils.isQuoted(appraisingUserEmail)) {</b>
+<b class="nc">&nbsp;                    String exact = SearchUtils.stripQuotes(appraisingUserEmail);</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(cb.lower(appraisingUserJoin.get(&quot;email&quot;)), &quot;%&quot; + exact.toLowerCase() + &quot;%&quot;));</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    String normalized = SearchUtils.normalizeString(appraisingUserEmail.toLowerCase());</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; email = cb.function(&quot;unaccent&quot;, String.class, cb.lower(appraisingUserJoin.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.like(email, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (cycleId != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;cycle&quot;).get(&quot;id&quot;), cycleId));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (state != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(appraisal.get(&quot;state&quot;), state));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (!predicates.isEmpty()) {</b>
+<b class="nc">&nbsp;                cq.where(cb.and(predicates.toArray(new Predicate[0])));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            cq.select(cb.countDistinct(appraisal));</b>
+&nbsp;
+<b class="nc">&nbsp;            return em.createQuery(cq).getSingleResult();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error counting appraisals with filters&quot;, e);</b>
+<b class="nc">&nbsp;            return 0L;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts total appraisals for a specific user (either as appraised or appraising).
+&nbsp;     *
+&nbsp;     * @param userId      The user ID
+&nbsp;     * @param asAppraised Whether to count as appraised user (true) or appraising user (false)
+&nbsp;     * @return Total count of appraisals
+&nbsp;     */
+&nbsp;    public Long countAppraisalsByUser(Long userId, boolean asAppraised) {
+&nbsp;        try {
+<b class="fc">&nbsp;            String jpql = asAppraised ?</b>
+<b class="fc">&nbsp;                    &quot;SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId&quot; :</b>
+<b class="fc">&nbsp;                    &quot;SELECT COUNT(a) FROM AppraisalEntity a WHERE a.appraisingUser.id = :userId&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;            TypedQuery&lt;Long&gt; query = em.createQuery(jpql, Long.class);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;userId&quot;, userId);</b>
+<b class="fc">&nbsp;            return query.getSingleResult();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error counting appraisals for user ID: {}&quot;, userId, e);</b>
+<b class="nc">&nbsp;            return 0L;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds appraisals by specific IDs.
+&nbsp;     *
+&nbsp;     * @param appraisalIds List of appraisal IDs
+&nbsp;     * @return List of appraisal entities
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAppraisalsByIds(List&lt;Long&gt; appraisalIds) {
+<b class="nc">&nbsp;        if (appraisalIds == null || appraisalIds.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT a FROM AppraisalEntity a WHERE a.id IN :ids&quot;,
+&nbsp;                AppraisalEntity.class
+&nbsp;        );
+<b class="nc">&nbsp;        query.setParameter(&quot;ids&quot;, appraisalIds);</b>
+<b class="nc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all COMPLETED appraisals in an OPEN cycle.
+&nbsp;     *
+&nbsp;     * @param cycleId The cycle ID
+&nbsp;     * @return List of completed appraisal entities
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findCompletedAppraisalsByCycleId(Long cycleId) {
+<b class="nc">&nbsp;        TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT a FROM AppraisalEntity a WHERE a.cycle.id = :cycleId &quot; +
+&nbsp;                        &quot;AND a.state = :state AND a.cycle.state = :cycleState&quot;,
+&nbsp;                AppraisalEntity.class
+&nbsp;        );
+<b class="nc">&nbsp;        query.setParameter(&quot;cycleId&quot;, cycleId);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;state&quot;, AppraisalState.COMPLETED);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;cycleState&quot;, CycleState.OPEN);</b>
+<b class="nc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all COMPLETED appraisals for a specific user in OPEN cycles.
+&nbsp;     *
+&nbsp;     * @param userId The user ID (appraised user)
+&nbsp;     * @return List of completed appraisal entities
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findCompletedAppraisalsByUserId(Long userId) {
+<b class="nc">&nbsp;        TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT a FROM AppraisalEntity a WHERE a.appraisedUser.id = :userId &quot; +
+&nbsp;                        &quot;AND a.state = :state AND a.cycle.state = :cycleState&quot;,
+&nbsp;                AppraisalEntity.class
+&nbsp;        );
+<b class="nc">&nbsp;        query.setParameter(&quot;userId&quot;, userId);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;state&quot;, AppraisalState.COMPLETED);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;cycleState&quot;, CycleState.OPEN);</b>
+<b class="nc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all COMPLETED appraisals in all OPEN cycles.
+&nbsp;     *
+&nbsp;     * @return List of completed appraisal entities
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findAllCompletedAppraisalsInOpenCycles() {
+<b class="nc">&nbsp;        TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT a FROM AppraisalEntity a WHERE a.state = :state &quot; +
+&nbsp;                        &quot;AND a.cycle.state = :cycleState&quot;,
+&nbsp;                AppraisalEntity.class
+&nbsp;        );
+<b class="nc">&nbsp;        query.setParameter(&quot;state&quot;, AppraisalState.COMPLETED);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;cycleState&quot;, CycleState.OPEN);</b>
+<b class="nc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates that all specified appraisals are COMPLETED and in OPEN cycles.
+&nbsp;     *
+&nbsp;     * @param appraisalIds List of appraisal IDs to validate
+&nbsp;     * @return List of valid appraisal entities
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; findValidAppraisalsForClosing(List&lt;Long&gt; appraisalIds) {
+<b class="nc">&nbsp;        if (appraisalIds == null || appraisalIds.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        TypedQuery&lt;AppraisalEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT a FROM AppraisalEntity a WHERE a.id IN :ids &quot; +
+&nbsp;                        &quot;AND a.state = :state AND a.cycle.state = :cycleState&quot;,
+&nbsp;                AppraisalEntity.class
+&nbsp;        );
+<b class="nc">&nbsp;        query.setParameter(&quot;ids&quot;, appraisalIds);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;state&quot;, AppraisalState.COMPLETED);</b>
+<b class="nc">&nbsp;        query.setParameter(&quot;cycleState&quot;, CycleState.OPEN);</b>
+<b class="nc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean setAppraisalsToNewManager(Long userId, Long newManagerId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Query query = em.createQuery(</b>
+&nbsp;                    &quot;UPDATE AppraisalEntity a SET a.appraisingUser.id = :newManagerId &quot; +
+&nbsp;                            &quot;WHERE a.appraisedUser.id = :userId&quot;
+&nbsp;            );
+<b class="nc">&nbsp;            query.setParameter(&quot;newManagerId&quot;, newManagerId);</b>
+<b class="nc">&nbsp;            query.setParameter(&quot;userId&quot;, userId);</b>
+<b class="nc">&nbsp;            query.executeUpdate();</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error setting new manager for appraisals of user ID: {}&quot;, userId, e);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts the number of appraisals for a specific cycle.
+&nbsp;     *
+&nbsp;     * @param cycleId The ID of the cycle
+&nbsp;     * @return The number of appraisals in the cycle
+&nbsp;     */
+&nbsp;    public int countAppraisalsByCycleId(Long cycleId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            TypedQuery&lt;Long&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT COUNT(a) FROM AppraisalEntity a WHERE a.cycle.id = :cycleId&quot;, 
+&nbsp;                Long.class
+&nbsp;            );
+<b class="nc">&nbsp;            query.setParameter(&quot;cycleId&quot;, cycleId);</b>
+<b class="nc">&nbsp;            return query.getSingleResult().intValue();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error counting appraisals for cycle {}: {}&quot;, cycleId, e.getMessage());</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

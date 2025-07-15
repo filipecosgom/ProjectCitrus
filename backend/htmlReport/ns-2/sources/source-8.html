@@ -1,0 +1,256 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (16/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (64/64)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.NotificationDTO;
+&nbsp;import pt.uc.dei.dtos.NotificationUpdateDTO;
+&nbsp;import pt.uc.dei.services.NotificationService;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Stateless
+&nbsp;@Path(&quot;/notifications&quot;)
+<b class="fc">&nbsp;public class NotificationController {</b>
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(NotificationController.class);</b>
+&nbsp;    
+&nbsp;    @Inject
+&nbsp;    private NotificationService notificationService;
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response getNotifications(@CookieParam(&quot;jwt&quot;) String jwtToken) {
+&nbsp;        // Validate JWT
+<b class="fc">&nbsp;        Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="fc">&nbsp;        if (userId == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Unauthorized getNotifications request: missing or invalid JWT&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unauthorized&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;NotificationDTO&gt; notificationDtos = notificationService.getNotifications(userId);</b>
+<b class="pc">&nbsp;            if (notificationDtos == null || notificationDtos.isEmpty()) {</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;No notifications found for userId {}&quot;, userId);</b>
+<b class="fc">&nbsp;                return Response.ok()</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(true, &quot;Notifications fetched&quot;, &quot;notificationsFetched&quot;, notificationDtos))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;User {} got notifications&quot;, userId);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Notifications retrieved&quot;, &quot;successNotificationsRetrieved&quot;, notificationDtos))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Exception in getNotifications&quot;, e);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternal&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PATCH
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response updateNotificationStatus(
+&nbsp;            @CookieParam(&quot;jwt&quot;) String jwtToken,
+&nbsp;            @Valid NotificationUpdateDTO updateDTO) {
+&nbsp;
+&nbsp;        // Validate JWT
+<b class="fc">&nbsp;        Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="fc">&nbsp;        if (userId == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Unauthorized updateNotificationStatus request: missing or invalid JWT&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Unauthorized&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (updateDTO == null || updateDTO.getNotificationId() == null) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Invalid NotificationUpdateDTO or notificationId&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid notification update data&quot;, &quot;errorInvalidNotificationUpdate&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            boolean updated = notificationService.updateNotificationStatus(updateDTO, userId);</b>
+<b class="fc">&nbsp;            if (!updated) {</b>
+<b class="fc">&nbsp;                LOGGER.error(&quot;Notification {} could not be updated for userId {}&quot;, updateDTO.getNotificationId(), userId);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Notification could not be updated&quot;,</b>
+&nbsp;                                &quot;errorNotificationNotFoundOrUnupdatable&quot;, null))
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;User {} updated notification {} (isRead={}, isSeen={})&quot;, userId, updateDTO.getNotificationId(), updateDTO.getNotificationIsRead(), updateDTO.getNotificationIsSeen());</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Notification updated&quot;, &quot;successNotificationUpdated&quot;, updateDTO.getNotificationId()))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Exception in updateNotificationStatus&quot;, e);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternal&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PUT
+&nbsp;    @Path(&quot;/mark-messages-read&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response markMessageNotificationsAsRead(@CookieParam(&quot;jwt&quot;) String jwtToken) {
+&nbsp;        try {
+&nbsp;            // ✅ USAR MESMO PADRÃO DOS OUTROS MÉTODOS
+<b class="fc">&nbsp;            Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="fc">&nbsp;            if (userId == null) {</b>
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Unauthorized markMessageNotificationsAsRead request: missing or invalid JWT&quot;);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Unauthorized&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // ✅ MARCAR TODAS AS NOTIFICAÇÕES MESSAGE COMO LIDAS
+<b class="fc">&nbsp;            boolean success = notificationService.markMessageNotificationsAsRead(userId);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (success) {</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;User {} marked all MESSAGE notifications as read&quot;, userId);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Message notifications marked as read&quot;, &quot;successNotificationsMarkedRead&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Failed to mark MESSAGE notifications as read for user {}&quot;, userId);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Failed to mark notifications as read&quot;, &quot;errorMarkingNotifications&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Error marking message notifications as read&quot;, e);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternal&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

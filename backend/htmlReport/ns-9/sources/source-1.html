@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AbstractRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: AbstractRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (2/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    21.4%
+  </span>
+  <span class="absValue">
+    (3/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.TransactionAttribute;
+&nbsp;import jakarta.ejb.TransactionAttributeType;
+&nbsp;import jakarta.persistence.EntityManager;
+&nbsp;import jakarta.persistence.PersistenceContext;
+&nbsp;import jakarta.persistence.criteria.CriteriaDelete;
+&nbsp;import jakarta.persistence.criteria.CriteriaQuery;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Abstract base repository class providing common CRUD operations for JPA entities.
+&nbsp; * &lt;p&gt;
+&nbsp; * This class serves as a foundation for entity-specific repositories, implementing
+&nbsp; * standard data access patterns with transaction management.
+&nbsp; *
+&nbsp; * @param &lt;T&gt; The entity type this repository manages, must implement Serializable
+&nbsp; */
+&nbsp;@TransactionAttribute(TransactionAttributeType.REQUIRED)
+&nbsp;public abstract class AbstractRepository&lt;T extends Serializable&gt; implements Serializable {
+<b class="fc">&nbsp;    private static final Logger logger = LogManager.getLogger(AbstractRepository.class);</b>
+&nbsp;
+&nbsp;    /** Serial version UID for serialization */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /** The entity class this repository manages */
+&nbsp;    private final Class&lt;T&gt; clazz;
+&nbsp;
+&nbsp;    /** JPA EntityManager instance, injected by the container */
+&nbsp;    @PersistenceContext(unitName = &quot;projectcitrus&quot;)
+&nbsp;    protected EntityManager em;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new repository for the specified entity class.
+&nbsp;     *
+&nbsp;     * @param clazz The entity class this repository will manage
+&nbsp;     */
+<b class="fc">&nbsp;    public AbstractRepository(Class&lt;T&gt; clazz) {</b>
+<b class="fc">&nbsp;        this.clazz = clazz;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds an entity by its primary key.
+&nbsp;     *
+&nbsp;     * @param id The primary key of the entity to find
+&nbsp;     * @return The found entity instance or null if the entity does not exist
+&nbsp;     */
+&nbsp;    public T find(Object id) {
+<b class="nc">&nbsp;        return em.find(clazz, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Persists a new entity in the database.
+&nbsp;     *
+&nbsp;     * @param entity The entity instance to persist
+&nbsp;     * @throws jakarta.persistence.PersistenceException If a persistence error occurs
+&nbsp;     */
+&nbsp;    public void persist(final T entity) {
+<b class="nc">&nbsp;        em.persist(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Merges the state of the given entity into the current persistence context.
+&nbsp;     *
+&nbsp;     * @param entity The entity to merge
+&nbsp;     * @return The managed instance that the state was merged to
+&nbsp;     */
+&nbsp;    public void merge(final T entity) {
+<b class="nc">&nbsp;        em.merge(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes an entity from the database.
+&nbsp;     *
+&nbsp;     * @param entity The entity to remove
+&nbsp;     */
+&nbsp;    public void remove(final T entity) {
+<b class="nc">&nbsp;        em.remove(em.contains(entity) ? entity : em.merge(entity));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all entities of the managed type.
+&nbsp;     *
+&nbsp;     * @return A list of all entities
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; findAll() {
+<b class="nc">&nbsp;        final CriteriaQuery&lt;T&gt; criteriaQuery = em.getCriteriaBuilder().createQuery(clazz);</b>
+<b class="nc">&nbsp;        criteriaQuery.select(criteriaQuery.from(clazz));</b>
+<b class="nc">&nbsp;        return em.createQuery(criteriaQuery).getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes all entities of the managed type.
+&nbsp;     *
+&nbsp;     * @return The number of entities deleted
+&nbsp;     */
+&nbsp;    public void deleteAll() {
+<b class="nc">&nbsp;        final CriteriaDelete&lt;T&gt; criteriaDelete = em.getCriteriaBuilder().createCriteriaDelete(clazz);</b>
+<b class="nc">&nbsp;        criteriaDelete.from(clazz);</b>
+<b class="nc">&nbsp;        em.createQuery(criteriaDelete).executeUpdate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Synchronizes the persistence context to the underlying database.
+&nbsp;     */
+&nbsp;    public void flush() {
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

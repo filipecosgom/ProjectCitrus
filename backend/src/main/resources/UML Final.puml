@@ -1,0 +1,150 @@
+@startuml
+' Entities
+entity UserEntity {
+  + id [PK]
+  --
+  email: String (unique)
+  password: String
+  name: String
+  surname: String
+  userIsAdmin: Boolean
+  userIsManager: Boolean
+  office: Office
+  accountState: AccountState
+  role: Role
+  creationDate: LocalDateTime
+}
+
+entity AppraisalEntity {
+  + id [PK]
+  --
+  creationDate: LocalDate
+  editedDate: LocalDate
+  submissionDate: LocalDate
+  score: Integer
+  feedback: String
+  state: AppraisalState
+}
+
+entity CycleEntity {
+  + id [PK]
+  --
+  startDate: LocalDate
+  endDate: LocalDate
+  state: CycleState
+}
+
+entity CourseEntity {
+  + id [PK]
+  --
+  title: String (unique)
+  duration: Integer
+  language: Language
+  area: CourseArea
+  description: String
+  link: String (unique)
+  courseIsActive: Boolean
+}
+
+entity FinishedCourseEntity {
+  + id [PK]
+  --
+  completionDate: LocalDate
+}
+
+entity MessageEntity {
+  + id [PK]
+  --
+  sentDate: LocalDateTime
+  messageContent: String
+  messageIsRead: Boolean
+}
+
+entity NotificationEntity {
+  + id [PK]
+  --
+  type: NotificationType
+  content: String
+  creationDate: LocalDateTime
+  notificationIsRead: Boolean
+  notificationIsSeen: Boolean
+}
+
+entity ConfigurationEntity {
+  + id [PK]
+  --
+  loginTime: Integer
+  verificationTime: Integer
+  passwordResetTime: Integer
+  creationDate: LocalDateTime
+  twoFactorAuthEnabled: Boolean
+}
+
+entity TemporaryUserEntity {
+  + id [PK]
+  --
+  email: String (unique)
+  password: String
+  secretKey: String
+}
+
+entity ActivationTokenEntity {
+  + id [PK]
+  --
+  tokenValue: String (unique)
+  creationDate: LocalDateTime
+}
+
+entity PasswordResetTokenEntity {
+  + id [PK]
+  --
+  tokenValue: String (unique)
+  creationDate: LocalDateTime
+}
+
+' Relationships
+UserEntity ||--o{ AppraisalEntity : "appraisedUser"
+UserEntity ||--o{ AppraisalEntity : "appraisingUser"
+UserEntity ||--o{ MessageEntity : "sender"
+UserEntity ||--o{ MessageEntity : "receiver"
+UserEntity ||--o{ NotificationEntity : "user"
+UserEntity ||--o{ NotificationEntity : "sender"
+UserEntity ||--o{ PasswordResetTokenEntity : "user"
+UserEntity ||--o{ FinishedCourseEntity : "user"
+UserEntity ||--o{ ConfigurationEntity : "admin"
+UserEntity ||--o{ CourseEntity : "admin"
+UserEntity ||--o{ CycleEntity : "admin"
+UserEntity }|--|| UserEntity : "managerUser"
+
+CycleEntity ||--o{ AppraisalEntity : "cycle"
+CourseEntity ||--o{ FinishedCourseEntity : "course"
+
+TemporaryUserEntity }|--|| ActivationTokenEntity : "activationToken"
+
+' Indexes (simplified representation)
+note top of UserEntity
+  Indexes:
+  - email (unique)
+  - is_deleted
+  - manager_id
+  - account_state
+  - role
+end note
+
+note top of AppraisalEntity
+  Indexes:
+  - appraised_user_id
+  - appraising_user_id
+  - cycle_id
+  - state
+  - Composite: (appraised_user_id, appraising_user_id, cycle_id)
+end note
+
+note top of MessageEntity
+  Indexes:
+  - receiver_id, sender_id, is_read
+  - receiver_id, sender_id, sent_date
+  - sent_date
+end note
+
+@enduml

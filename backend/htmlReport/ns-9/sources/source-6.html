@@ -1,0 +1,449 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CycleRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: CycleRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CycleRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (18/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    74.5%
+  </span>
+  <span class="absValue">
+    (76/102)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.persistence.TypedQuery;
+&nbsp;import jakarta.persistence.criteria.*;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.entities.CycleEntity;
+&nbsp;import pt.uc.dei.enums.CycleState;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository class for managing {@link CycleEntity} persistence operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides data access methods specific to cycle entities, extending the basic
+&nbsp; * CRUD operations from {@link AbstractRepository}. This class handles all
+&nbsp; * database interactions related to cycle management.
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for
+&nbsp; * dependency injection and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+&nbsp;public class CycleRepository extends AbstractRepository&lt;CycleEntity&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this class.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(CycleRepository.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for serialization support.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new CycleRepository instance.
+&nbsp;     * Initializes the repository for {@link CycleEntity} operations.
+&nbsp;     */
+&nbsp;    public CycleRepository() {
+<b class="fc">&nbsp;        super(CycleEntity.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;CycleEntity&gt; getAllCycles() {
+<b class="fc">&nbsp;        TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT DISTINCT c FROM CycleEntity c &quot; +
+&nbsp;                &quot;LEFT JOIN FETCH c.evaluations &quot; +
+&nbsp;                &quot;LEFT JOIN FETCH c.evaluations.appraisedUser &quot; +
+&nbsp;                &quot;ORDER BY c.startDate DESC&quot;,
+&nbsp;                CycleEntity.class
+&nbsp;        );
+<b class="fc">&nbsp;        return query.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public long getTotalCycles() {
+<b class="fc">&nbsp;        CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="fc">&nbsp;        CriteriaQuery&lt;Long&gt; query = cb.createQuery(Long.class);</b>
+<b class="fc">&nbsp;        Root&lt;CycleEntity&gt; root = query.from(CycleEntity.class);</b>
+<b class="fc">&nbsp;        query.select(cb.count(root));</b>
+<b class="fc">&nbsp;        return em.createQuery(query).getSingleResult();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all cycles with a specific state.
+&nbsp;     *
+&nbsp;     * @param state The cycle state to filter by
+&nbsp;     * @return List of cycles with the specified state
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findCyclesByState(CycleState state) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE c.state = :state ORDER BY c.startDate DESC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;state&quot;, state);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding cycles by state: {}&quot;, state, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds the current active cycle (OPEN state and current date within range).
+&nbsp;     *
+&nbsp;     * @return The current active cycle, or null if none exists
+&nbsp;     */
+&nbsp;    public CycleEntity findCurrentActiveCycle() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LocalDate now = LocalDate.now();</b>
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE c.state = :state &quot; +
+&nbsp;                &quot;AND c.startDate &lt;= :now AND c.endDate &gt;= :now &quot; +
+&nbsp;                &quot;ORDER BY c.startDate DESC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;state&quot;, CycleState.OPEN);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;now&quot;, now);</b>
+<b class="fc">&nbsp;            query.setMaxResults(1);</b>
+&nbsp;            
+<b class="fc">&nbsp;            List&lt;CycleEntity&gt; results = query.getResultList();</b>
+<b class="fc">&nbsp;            return results.isEmpty() ? null : results.get(0);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding current active cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds cycles managed by a specific administrator.
+&nbsp;     *
+&nbsp;     * @param adminId The ID of the administrator
+&nbsp;     * @return List of cycles managed by the specified admin
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findCyclesByAdmin(Long adminId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE c.admin.id = :adminId ORDER BY c.startDate DESC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;adminId&quot;, adminId);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding cycles by admin ID: {}&quot;, adminId, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds cycles within a specific date range.
+&nbsp;     *
+&nbsp;     * @param startDate The start date of the range
+&nbsp;     * @param endDate The end date of the range
+&nbsp;     * @return List of cycles that overlap with the specified date range
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findCyclesByDateRange(LocalDate startDate, LocalDate endDate) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE &quot; +
+&nbsp;                &quot;(c.startDate &lt;= :endDate AND c.endDate &gt;= :startDate) &quot; +
+&nbsp;                &quot;ORDER BY c.startDate DESC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;startDate&quot;, startDate);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;endDate&quot;, endDate);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding cycles by date range: {} to {}&quot;, startDate, endDate, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds upcoming cycles (start date in the future).
+&nbsp;     *
+&nbsp;     * @return List of upcoming cycles
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findUpcomingCycles() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LocalDate now = LocalDate.now();</b>
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE c.startDate &gt; :now ORDER BY c.startDate ASC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;now&quot;, now);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding upcoming cycles&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds expired cycles (end date in the past) that are still marked as OPEN.
+&nbsp;     *
+&nbsp;     * @return List of expired cycles that should be closed
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findExpiredOpenCycles() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LocalDate now = LocalDate.now();</b>
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(</b>
+&nbsp;                &quot;SELECT c FROM CycleEntity c WHERE c.state = :state AND c.endDate &lt; :now &quot; +
+&nbsp;                &quot;ORDER BY c.endDate DESC&quot;, 
+&nbsp;                CycleEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            query.setParameter(&quot;state&quot;, CycleState.OPEN);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;now&quot;, now);</b>
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding expired open cycles&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if there are any overlapping cycles with the given date range.
+&nbsp;     *
+&nbsp;     * @param startDate The start date to check
+&nbsp;     * @param endDate The end date to check
+&nbsp;     * @param excludeCycleId Optional cycle ID to exclude from the check (for updates)
+&nbsp;     * @return True if there are overlapping cycles, false otherwise
+&nbsp;     */
+&nbsp;    public boolean hasOverlappingCycles(LocalDate startDate, LocalDate endDate, Long excludeCycleId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            String jpql = &quot;SELECT COUNT(c) FROM CycleEntity c WHERE &quot; +</b>
+&nbsp;                         &quot;(c.startDate &lt;= :endDate AND c.endDate &gt;= :startDate)&quot;;
+&nbsp;            
+<b class="pc">&nbsp;            if (excludeCycleId != null) {</b>
+<b class="nc">&nbsp;                jpql += &quot; AND c.id != :excludeCycleId&quot;;</b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            TypedQuery&lt;Long&gt; query = em.createQuery(jpql, Long.class);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;startDate&quot;, startDate);</b>
+<b class="fc">&nbsp;            query.setParameter(&quot;endDate&quot;, endDate);</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (excludeCycleId != null) {</b>
+<b class="nc">&nbsp;                query.setParameter(&quot;excludeCycleId&quot;, excludeCycleId);</b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            return query.getSingleResult() &gt; 0;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error checking for overlapping cycles&quot;, e);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds cycles with advanced filtering options.
+&nbsp;     *
+&nbsp;     * @param state Optional filter by cycle state
+&nbsp;     * @param adminId Optional filter by administrator ID
+&nbsp;     * @param startDateFrom Optional filter for cycles starting after this date
+&nbsp;     * @param startDateTo Optional filter for cycles starting before this date
+&nbsp;     * @param limit Maximum number of results (optional)
+&nbsp;     * @param offset Starting position for pagination (optional)
+&nbsp;     * @return List of filtered cycles
+&nbsp;     */
+&nbsp;    public List&lt;CycleEntity&gt; findCyclesWithFilters(CycleState state, Long adminId, 
+&nbsp;                                                  LocalDate startDateFrom, LocalDate startDateTo,
+&nbsp;                                                  Integer limit, Integer offset) {
+&nbsp;        try {
+<b class="fc">&nbsp;            CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="fc">&nbsp;            CriteriaQuery&lt;CycleEntity&gt; cq = cb.createQuery(CycleEntity.class);</b>
+<b class="fc">&nbsp;            Root&lt;CycleEntity&gt; cycle = cq.from(CycleEntity.class);</b>
+&nbsp;            
+&nbsp;            // CORREÇÃO: Usar Fetch sem aliases
+<b class="fc">&nbsp;            cycle.fetch(&quot;evaluations&quot;, JoinType.LEFT)</b>
+<b class="fc">&nbsp;                 .fetch(&quot;appraisedUser&quot;, JoinType.LEFT);</b>
+&nbsp;            
+<b class="fc">&nbsp;            cq.select(cycle).distinct(true);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (state != null) {</b>
+<b class="fc">&nbsp;                predicates.add(cb.equal(cycle.get(&quot;state&quot;), state));</b>
+&nbsp;            }
+&nbsp;            
+<b class="pc">&nbsp;            if (adminId != null) {</b>
+<b class="fc">&nbsp;                predicates.add(cb.equal(cycle.get(&quot;admin&quot;).get(&quot;id&quot;), adminId));</b>
+&nbsp;            }
+&nbsp;            
+<b class="pc">&nbsp;            if (startDateFrom != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.greaterThanOrEqualTo(cycle.get(&quot;startDate&quot;), startDateFrom));</b>
+&nbsp;            }
+&nbsp;            
+<b class="pc">&nbsp;            if (startDateTo != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.lessThanOrEqualTo(cycle.get(&quot;startDate&quot;), startDateTo));</b>
+&nbsp;            }
+&nbsp;            
+<b class="pc">&nbsp;            if (!predicates.isEmpty()) {</b>
+<b class="fc">&nbsp;                cq.where(cb.and(predicates.toArray(new Predicate[0])));</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Ordenar por startDate descendente (mais recente primeiro)
+<b class="fc">&nbsp;            cq.orderBy(cb.desc(cycle.get(&quot;startDate&quot;)));</b>
+&nbsp;            
+<b class="fc">&nbsp;            TypedQuery&lt;CycleEntity&gt; query = em.createQuery(cq);</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (offset != null &amp;&amp; offset &gt; 0) {</b>
+<b class="nc">&nbsp;                query.setFirstResult(offset);</b>
+&nbsp;            }
+&nbsp;            
+<b class="pc">&nbsp;            if (limit != null &amp;&amp; limit &gt; 0) {</b>
+<b class="nc">&nbsp;                query.setMaxResults(limit);</b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding cycles with filters&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public long countCyclesWithFilters(CycleState state, Long adminId,
+&nbsp;                                       LocalDate startDateFrom, LocalDate startDateTo) {
+&nbsp;        try {
+<b class="fc">&nbsp;            CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="fc">&nbsp;            CriteriaQuery&lt;Long&gt; cq = cb.createQuery(Long.class);</b>
+<b class="fc">&nbsp;            Root&lt;CycleEntity&gt; cycle = cq.from(CycleEntity.class);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="pc">&nbsp;            if (state != null) {</b>
+<b class="fc">&nbsp;                predicates.add(cb.equal(cycle.get(&quot;state&quot;), state));</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (adminId != null) {</b>
+<b class="fc">&nbsp;                predicates.add(cb.equal(cycle.get(&quot;admin&quot;).get(&quot;id&quot;), adminId));</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (startDateFrom != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.greaterThanOrEqualTo(cycle.get(&quot;startDate&quot;), startDateFrom));</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (startDateTo != null) {</b>
+<b class="nc">&nbsp;                predicates.add(cb.lessThanOrEqualTo(cycle.get(&quot;startDate&quot;), startDateTo));</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (!predicates.isEmpty()) {</b>
+<b class="fc">&nbsp;                cq.where(cb.and(predicates.toArray(new Predicate[0])));</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            cq.select(cb.countDistinct(cycle)); // countDistinct avoids overcounting if joins are added later</b>
+&nbsp;
+<b class="fc">&nbsp;            return em.createQuery(cq).getSingleResult();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error counting cycles with filters&quot;, e);</b>
+<b class="nc">&nbsp;            return 0L;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

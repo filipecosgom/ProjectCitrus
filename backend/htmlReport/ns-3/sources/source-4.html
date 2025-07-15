@@ -1,0 +1,174 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalStatsDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.dtos</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalStatsDTO (pt.uc.dei.dtos)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppraisalStatsDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.dtos;
+&nbsp;
+&nbsp;/**
+&nbsp; * Data Transfer Object (DTO) for appraisal statistics.
+&nbsp; * Stores the number of appraisals received and given by a user.
+&nbsp; */
+<b class="fc">&nbsp;public class AppraisalStatsDTO {</b>
+&nbsp;    /**
+&nbsp;     * The unique identifier of the user.
+&nbsp;     */
+&nbsp;    private Long userId;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The number of appraisals received by the user.
+&nbsp;     */
+&nbsp;    private Long receivedAppraisalsCount;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The number of appraisals given by the user.
+&nbsp;     */
+&nbsp;    private Long givenAppraisalsCount;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the user ID.
+&nbsp;     * @return the user ID.
+&nbsp;     */
+&nbsp;    public Long getUserId() {
+<b class="fc">&nbsp;        return userId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user ID.
+&nbsp;     * @param userId the user ID to set.
+&nbsp;     */
+&nbsp;    public void setUserId(Long userId) {
+<b class="fc">&nbsp;        this.userId = userId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the number of received appraisals.
+&nbsp;     * @return the number of received appraisals.
+&nbsp;     */
+&nbsp;    public Long getReceivedAppraisalsCount() {
+<b class="fc">&nbsp;        return receivedAppraisalsCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the number of received appraisals.
+&nbsp;     * @param receivedAppraisalsCount the number to set.
+&nbsp;     */
+&nbsp;    public void setReceivedAppraisalsCount(Long receivedAppraisalsCount) {
+<b class="fc">&nbsp;        this.receivedAppraisalsCount = receivedAppraisalsCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the number of given appraisals.
+&nbsp;     * @return the number of given appraisals.
+&nbsp;     */
+&nbsp;    public Long getGivenAppraisalsCount() {
+<b class="fc">&nbsp;        return givenAppraisalsCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the number of given appraisals.
+&nbsp;     * @param givenAppraisalsCount the number to set.
+&nbsp;     */
+&nbsp;    public void setGivenAppraisalsCount(Long givenAppraisalsCount) {
+<b class="fc">&nbsp;        this.givenAppraisalsCount = givenAppraisalsCount;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

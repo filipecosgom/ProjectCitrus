@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LoginDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.dtos</a>
+</div>
+
+<h1>Coverage Summary for Class: LoginDTO (pt.uc.dei.dtos)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoginDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.dtos;
+&nbsp;
+&nbsp;import jakarta.validation.constraints.NotBlank;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;
+&nbsp;/**
+&nbsp; * Data Transfer Object (DTO) for user login requests.
+&nbsp; * Stores the credentials required for authentication.
+&nbsp; */
+&nbsp;public class LoginDTO {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The email address of the user.
+&nbsp;     * Must not be blank.
+&nbsp;     */
+&nbsp;    @NotNull(message = &quot;Email is required!!&quot;)
+&nbsp;    @NotBlank(message = &quot;Email missing&quot;)
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The password of the user.
+&nbsp;     * Must not be blank.
+&nbsp;     */
+&nbsp;    @NotNull(message = &quot;Password is required&quot;)
+&nbsp;    @NotBlank(message = &quot;Password missing&quot;)
+&nbsp;    private String password;
+&nbsp;
+&nbsp;    @NotNull(message = &quot;Authentication Code is required&quot;)
+&nbsp;    private String authenticationCode;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor for `LoginDTO`.
+&nbsp;     */
+<b class="fc">&nbsp;    public LoginDTO() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the user&#39;s email.
+&nbsp;     *
+&nbsp;     * @return The email address.
+&nbsp;     */
+&nbsp;    public String getEmail() {
+<b class="fc">&nbsp;        return email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s email address.
+&nbsp;     *
+&nbsp;     * @param email The email address to be set.
+&nbsp;     */
+&nbsp;    public void setEmail(String email) {
+<b class="fc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the user&#39;s password.
+&nbsp;     *
+&nbsp;     * @return The password.
+&nbsp;     */
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s password.
+&nbsp;     *
+&nbsp;     * @param password The password to be set.
+&nbsp;     */
+&nbsp;    public void setPassword(String password) {
+<b class="fc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the authentication code for the user.
+&nbsp;     *
+&nbsp;     * @return The authentication code.
+&nbsp;     */
+&nbsp;    public String getAuthenticationCode() {
+<b class="fc">&nbsp;        return authenticationCode;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the authentication code for the user.
+&nbsp;     *
+&nbsp;     * @param authenticationCode The authentication code to be set.
+&nbsp;     */
+&nbsp;    public void setAuthenticationCode(String authenticationCode) {
+<b class="fc">&nbsp;        this.authenticationCode = authenticationCode;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

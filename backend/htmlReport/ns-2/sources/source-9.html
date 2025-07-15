@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StatsController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: StatsController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StatsController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (38/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import pt.uc.dei.services.AppraisalService;
+&nbsp;import pt.uc.dei.services.CourseService;
+&nbsp;import pt.uc.dei.services.CycleService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.enums.AppraisalState;
+&nbsp;import pt.uc.dei.enums.CycleState;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Path(&quot;/stats&quot;)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+<b class="fc">&nbsp;public class StatsController {</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    UserService userService;
+&nbsp;    @Inject
+&nbsp;    AppraisalService appraisalService;
+&nbsp;    @Inject
+&nbsp;    CourseService courseService;
+&nbsp;    @Inject
+&nbsp;    CycleService cycleService;
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/users&quot;)
+&nbsp;    public Response getUserStats() {
+&nbsp;        // Total de utilizadores
+<b class="fc">&nbsp;        long total = ((Number) userService.getUsers(null, null, null, null, null, null, null, null, null, null, null, null, 0, 1).get(&quot;totalUsers&quot;)).longValue();</b>
+&nbsp;        // Perfis completos
+<b class="fc">&nbsp;        long complete = ((Number) userService.getUsers(null, null, null, null, pt.uc.dei.enums.AccountState.COMPLETE, null, null, null, null, null, null, null, 0, 1).get(&quot;totalUsers&quot;)).longValue();</b>
+&nbsp;        // Perfis incompletos
+<b class="fc">&nbsp;        long incomplete = ((Number) userService.getUsers(null, null, null, null, pt.uc.dei.enums.AccountState.INCOMPLETE, null, null, null, null, null, null, null, 0, 1).get(&quot;totalUsers&quot;)).longValue();</b>
+&nbsp;        // Admins
+<b class="fc">&nbsp;        long admins = ((Number) userService.getUsers(null, null, null, null, null, null, null, null, true, null, null, null, 0, 1).get(&quot;totalUsers&quot;)).longValue();</b>
+&nbsp;        // Managers
+<b class="fc">&nbsp;        long managers = ((Number) userService.getUsers(null, null, null, null, null, null, null, true, null, null, null, null, 0, 1).get(&quot;totalUsers&quot;)).longValue();</b>
+&nbsp;        // Users normais
+<b class="fc">&nbsp;        long users = total - admins - managers;</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        stats.put(&quot;total&quot;, total);</b>
+<b class="fc">&nbsp;        stats.put(&quot;profileCompletion&quot;, Map.of(&quot;complete&quot;, complete, &quot;incomplete&quot;, incomplete));</b>
+<b class="fc">&nbsp;        stats.put(&quot;roles&quot;, Map.of(&quot;admin&quot;, admins, &quot;manager&quot;, managers, &quot;user&quot;, users));</b>
+&nbsp;
+<b class="fc">&nbsp;        return Response.ok(new ApiResponse(true, &quot;User stats&quot;, null, stats)).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/appraisals&quot;)
+&nbsp;    public Response getAppraisalStats() {
+<b class="fc">&nbsp;        long total = appraisalService.countAllAppraisals();</b>
+<b class="fc">&nbsp;        long inProgress = appraisalService.countAppraisalsByState(AppraisalState.IN_PROGRESS);</b>
+<b class="fc">&nbsp;        long completed = appraisalService.countAppraisalsByState(AppraisalState.COMPLETED);</b>
+<b class="fc">&nbsp;        long closed = appraisalService.countAppraisalsByState(AppraisalState.CLOSED);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        stats.put(&quot;total&quot;, total);</b>
+<b class="fc">&nbsp;        stats.put(&quot;inProgress&quot;, inProgress);</b>
+<b class="fc">&nbsp;        stats.put(&quot;completed&quot;, completed);</b>
+<b class="fc">&nbsp;        stats.put(&quot;closed&quot;, closed);</b>
+&nbsp;
+<b class="fc">&nbsp;        return Response.ok(new ApiResponse(true, &quot;Appraisal stats&quot;, null, stats)).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/courses&quot;)
+&nbsp;    public Response getCourseStats() {
+<b class="fc">&nbsp;        long total = courseService.countAllCourses();</b>
+<b class="fc">&nbsp;        long active = courseService.countCoursesByActive(true);</b>
+<b class="fc">&nbsp;        long inactive = courseService.countCoursesByActive(false);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        stats.put(&quot;total&quot;, total);</b>
+<b class="fc">&nbsp;        stats.put(&quot;active&quot;, active);</b>
+<b class="fc">&nbsp;        stats.put(&quot;inactive&quot;, inactive);</b>
+&nbsp;
+<b class="fc">&nbsp;        return Response.ok(new ApiResponse(true, &quot;Course stats&quot;, null, stats)).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/cycles&quot;)
+&nbsp;    public Response getCycleStats() {
+<b class="fc">&nbsp;        long total = cycleService.countAllCycles();</b>
+<b class="fc">&nbsp;        long open = cycleService.countCyclesByState(CycleState.OPEN);</b>
+<b class="fc">&nbsp;        long closed = cycleService.countCyclesByState(CycleState.CLOSED);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        stats.put(&quot;total&quot;, total);</b>
+<b class="fc">&nbsp;        stats.put(&quot;open&quot;, open);</b>
+<b class="fc">&nbsp;        stats.put(&quot;closed&quot;, closed);</b>
+&nbsp;
+<b class="fc">&nbsp;        return Response.ok(new ApiResponse(true, &quot;Cycle stats&quot;, null, stats)).build();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

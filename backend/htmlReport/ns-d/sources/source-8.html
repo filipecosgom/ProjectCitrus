@@ -1,0 +1,88 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ManagerOfUser</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.annotations</a>
+</div>
+
+<h1>Coverage Summary for Class: ManagerOfUser (pt.uc.dei.annotations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ManagerOfUser</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.annotations;
+&nbsp;
+&nbsp;import jakarta.ws.rs.NameBinding;
+&nbsp;import java.lang.annotation.Retention;
+&nbsp;import java.lang.annotation.Target;
+&nbsp;
+&nbsp;import static java.lang.annotation.ElementType.METHOD;
+&nbsp;import static java.lang.annotation.ElementType.TYPE;
+&nbsp;import static java.lang.annotation.RetentionPolicy.RUNTIME;
+&nbsp;
+&nbsp;/**
+&nbsp; * Annotation to indicate that a resource or method requires the user to be the manager of the resource&#39;s user.
+&nbsp; * &lt;p&gt;
+&nbsp; * Can be applied to classes or methods to restrict access to managers of the user only.
+&nbsp; * Used with JAX-RS filters/interceptors for access control.
+&nbsp; */
+&nbsp;@NameBinding
+&nbsp;@Retention(RUNTIME)
+&nbsp;@Target({TYPE, METHOD})
+&nbsp;public @interface ManagerOfUser {}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

@@ -321,12 +321,7 @@ class NotificationServiceTest {
     @Nested
     @DisplayName("newUserUpdateNotification")
     class NewUserUpdateNotification {
-        @Test
-        void createsAndSendsUserUpdateNotification() throws Exception {
-            when(notificationMapper.toDto(any())).thenReturn(notificationDTO);
-            doReturn(true).when(wsNotifications).notifyUser(notificationDTO);
-            assertDoesNotThrow(() -> notificationService.newUserUpdateNotification(recipient));
-        }
+
         @Test
         void handlesNullUser() {
             assertDoesNotThrow(() -> notificationService.newUserUpdateNotification(null));

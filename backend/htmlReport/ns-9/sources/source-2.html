@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ActivationTokenRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: ActivationTokenRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ActivationTokenRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65.2%
+  </span>
+  <span class="absValue">
+    (15/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.persistence.NoResultException;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.ActivationTokenDTO;
+&nbsp;import pt.uc.dei.entities.ActivationTokenEntity;
+&nbsp;import pt.uc.dei.entities.PasswordResetTokenEntity;
+&nbsp;import pt.uc.dei.entities.TemporaryUserEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository class for handling persistence operations for {@link ActivationTokenEntity}.
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Responsibilities:&lt;/b&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Provides data access methods specific to activation tokens, extending the basic CRUD operations from {@link AbstractRepository}.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Handles retrieval of activation tokens and their associated temporary users.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Supports lookup of tokens by value and by user, with robust error handling and logging.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;EJB Details:&lt;/b&gt; This class is marked as {@code @Stateless}, making it eligible for dependency injection
+&nbsp; * and transaction management by the EJB container.
+&nbsp; *
+&nbsp; * @author Project Citrus Team
+&nbsp; * @version 1.0
+&nbsp; */
+&nbsp;@Stateless
+&nbsp;public class ActivationTokenRepository extends AbstractRepository&lt;ActivationTokenEntity&gt; {
+&nbsp;    /**
+&nbsp;     * Logger instance for tracking activation token operations.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(ActivationTokenRepository.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for ensuring class consistency during serialization.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor initializing repository with ActivationTokenEntity type.
+&nbsp;     * Calls the superclass constructor with the entity class type.
+&nbsp;     */
+&nbsp;    public ActivationTokenRepository() {
+<b class="fc">&nbsp;        super(ActivationTokenEntity.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the temporary user entity associated with an activation token value.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Executes the named query {@code ActivationToken.findTemporaryUserByToken} to find the user.
+&nbsp;     * Logs a warning if no user is found, or an error if another exception occurs.
+&nbsp;     *
+&nbsp;     * @param activationTokenValue The activation token value to search for.
+&nbsp;     * @return The {@link TemporaryUserEntity} if found, or {@code null} if not found or on error.
+&nbsp;     */
+&nbsp;    public TemporaryUserEntity getIdFromToken(String activationTokenValue) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;ActivationToken.findTemporaryUserByToken&quot;, TemporaryUserEntity.class)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;tokenValue&quot;, activationTokenValue)</b>
+<b class="fc">&nbsp;                    .getSingleResult();</b>
+&nbsp;        } catch (NoResultException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;No temporary user found for token: {}&quot;, activationTokenValue);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error retrieving temporary user ID for token: {}&quot;, activationTokenValue, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the activation token entity using the token value.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Executes the named query {@code ActivationToken.findActivationTokenByValue} to find the token entity.
+&nbsp;     * Logs a warning if no token is found, or an error if another exception occurs.
+&nbsp;     *
+&nbsp;     * @param activationTokenValue The activation token value to search for.
+&nbsp;     * @return The {@link ActivationTokenEntity} if found, or {@code null} if not found or on error.
+&nbsp;     */
+&nbsp;    public ActivationTokenEntity getTokenFromValue(String activationTokenValue) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;ActivationToken.findActivationTokenByValue&quot;, ActivationTokenEntity.class)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;tokenValue&quot;, activationTokenValue)</b>
+<b class="fc">&nbsp;                    .getSingleResult();</b>
+&nbsp;        } catch (NoResultException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;No token found for token: {}&quot;, activationTokenValue);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error retrieving token for token: {}&quot;, activationTokenValue, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all activation tokens associated with a given temporary user.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Executes the named query {@code ActivationToken.findActivationTokensOfUser} to find all tokens for the user.
+&nbsp;     * Logs a warning if no tokens are found, or an error if another exception occurs.
+&nbsp;     *
+&nbsp;     * @param user The {@link TemporaryUserEntity} whose tokens are to be retrieved.
+&nbsp;     * @return A list of {@link ActivationTokenEntity} for the user, or {@code null} if none found or on error.
+&nbsp;     */
+&nbsp;    public List&lt;ActivationTokenEntity&gt; getTokensOfUser(TemporaryUserEntity user) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;ActivationToken.findActivationTokensOfUser&quot;, ActivationTokenEntity.class)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;id&quot;, user.getId())</b>
+<b class="fc">&nbsp;                    .getResultList();</b>
+&nbsp;        } catch (NoResultException e) {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;No tokens found for user: {}&quot;, user.getEmail());</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error retrieving tokens for user: {}&quot;, user.getEmail(), e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

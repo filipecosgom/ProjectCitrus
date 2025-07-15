@@ -434,6 +434,10 @@ public class NotificationService {
                 logger.error("Invalid user for user update notification");
                 return;
             }
+            if( userUpdated.getManager() == null) {
+                logger.error("User {} has no manager for user update notification", userUpdated.getId());
+                return;
+            }
                 NotificationEntity notificationEntity = new NotificationEntity();
                 notificationEntity.setSender(userUpdated);
                 notificationEntity.setUser(userUpdated.getManager());

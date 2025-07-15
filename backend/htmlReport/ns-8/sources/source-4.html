@@ -1,0 +1,256 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FinishedCourseMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: FinishedCourseMapper (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FinishedCourseMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FinishedCourseMapper$MockitoMock$4JR323nk</td>
+  </tr>
+  <tr>
+    <td class="name">FinishedCourseMapper$MockitoMock$4JR323nk$auxiliary$hsyH4WTb</td>
+  </tr>
+  <tr>
+    <td class="name">FinishedCourseMapper$MockitoMock$4JR323nk$auxiliary$yWXFE4de</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.factory.Mappers;
+&nbsp;import pt.uc.dei.dtos.FinishedCourseDTO;
+&nbsp;import pt.uc.dei.entities.CourseEntity;
+&nbsp;import pt.uc.dei.entities.FinishedCourseEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import org.mapstruct.*;
+&nbsp;
+&nbsp;import javax.swing.plaf.IconUIResource;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;/**
+&nbsp; * MapStruct mapper interface for converting between {@link FinishedCourseEntity} and {@link FinishedCourseDTO}.
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Features:&lt;/b&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Automatic mapping between entity and DTO, including nested user and course fields&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Handles mapping of collections (List and Set) of finished courses and DTOs&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Ignores null values for PATCH updates (partial updates)&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Prevents circular references by ignoring user field in inverse mapping&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Usage:&lt;/b&gt; This interface is implemented automatically by MapStruct at build time.
+&nbsp; * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
+&nbsp; *
+&nbsp; * @author ProjectCitrus Team
+&nbsp; * @version 1.1
+&nbsp; */
+&nbsp;@Mapper(
+&nbsp;        componentModel = &quot;cdi&quot;,
+&nbsp;        uses = {CourseMapper.class},
+&nbsp;        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+&nbsp;)
+&nbsp;public interface FinishedCourseMapper {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link FinishedCourseEntity} to a {@link FinishedCourseDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Maps nested user and course fields to flat DTO fields for API use.
+&nbsp;     *
+&nbsp;     * @param finishedCourseEntity the entity to convert
+&nbsp;     * @return the mapped DTO, or null if input is null
+&nbsp;     */
+&nbsp;    @Mappings({
+&nbsp;        @Mapping(source = &quot;user.id&quot;, target = &quot;userId&quot;),
+&nbsp;        @Mapping(source = &quot;user.email&quot;, target = &quot;userEmail&quot;),
+&nbsp;        @Mapping(source = &quot;course.id&quot;, target = &quot;courseId&quot;),
+&nbsp;        @Mapping(source = &quot;course.title&quot;, target = &quot;courseTitle&quot;),
+&nbsp;        @Mapping(source = &quot;course.description&quot;, target = &quot;courseDescription&quot;),
+&nbsp;        @Mapping(target = &quot;courseArea&quot;, expression = &quot;java(courseAreaToString(finishedCourseEntity.getCourse() != null ? finishedCourseEntity.getCourse().getArea() : null))&quot;),
+&nbsp;        @Mapping(source = &quot;course.creationDate&quot;, target = &quot;courseCreationDate&quot;),
+&nbsp;        @Mapping(source = &quot;course.duration&quot;, target = &quot;courseDuration&quot;),
+&nbsp;        @Mapping(target = &quot;courseLanguage&quot;, expression = &quot;java(finishedCourseEntity.getCourse() != null &amp;&amp; finishedCourseEntity.getCourse().getLanguage() != null ? finishedCourseEntity.getCourse().getLanguage().getFieldName() : null)&quot;),
+&nbsp;        @Mapping(source = &quot;course.link&quot;, target = &quot;courseLink&quot;),
+&nbsp;        @Mapping(source = &quot;course.courseHasImage&quot;, target = &quot;courseHasImage&quot;),
+&nbsp;        @Mapping(source = &quot;course.courseIsActive&quot;, target = &quot;courseIsActive&quot;)
+&nbsp;    })
+&nbsp;    FinishedCourseDTO toDto(FinishedCourseEntity finishedCourseEntity);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Helper to map CourseArea enum to its fieldName (lowercase string) for DTO.
+&nbsp;     */
+&nbsp;    default String courseAreaToString(pt.uc.dei.enums.CourseArea area) {
+<b class="fc">&nbsp;        return area == null ? null : area.getFieldName();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a list of {@link FinishedCourseEntity} objects to a list of {@link FinishedCourseDTO} objects.
+&nbsp;     *
+&nbsp;     * @param finishedCourses the list of entities to convert
+&nbsp;     * @return the mapped list of DTOs (empty if input is empty or null)
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    List&lt;FinishedCourseDTO&gt; toDtoList(List&lt;FinishedCourseEntity&gt; finishedCourses);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a set of {@link FinishedCourseEntity} objects to a set of {@link FinishedCourseDTO} objects.
+&nbsp;     *
+&nbsp;     * @param finishedCourses the set of entities to convert
+&nbsp;     * @return the mapped set of DTOs (empty if input is empty or null)
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    Set&lt;FinishedCourseDTO&gt; toDtoSet(Set&lt;FinishedCourseEntity&gt; finishedCourses);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link FinishedCourseDTO} back to a {@link FinishedCourseEntity}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Ignores mapping of the user field to prevent infinite recursion; set user in the service layer if needed.
+&nbsp;     *
+&nbsp;     * @param finishedCourseDTO the DTO to convert
+&nbsp;     * @return the mapped entity, or null if input is null
+&nbsp;     */
+&nbsp;    @InheritInverseConfiguration(name = &quot;toDto&quot;)
+&nbsp;    @Mapping(target = &quot;user&quot;, ignore = true) // Avoid infinite recursion
+&nbsp;    FinishedCourseEntity toEntity(FinishedCourseDTO finishedCourseDTO);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing {@link FinishedCourseEntity} with non-null values from a {@link FinishedCourseDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Useful for PATCH updates where only specific fields should be modified.
+&nbsp;     * Ignores the ID field to prevent accidental changes.
+&nbsp;     *
+&nbsp;     * @param dto    the DTO containing updated fields
+&nbsp;     * @param entity the entity to update (modified in place)
+&nbsp;     */
+&nbsp;    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true) // ID should never be updated in PATCH requests
+&nbsp;    void updateFinishedCourseFromDto(FinishedCourseDTO dto, @MappingTarget FinishedCourseEntity entity);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

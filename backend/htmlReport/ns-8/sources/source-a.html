@@ -1,0 +1,445 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapperImpl (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (48/80)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.5%
+  </span>
+  <span class="absValue">
+    (196/199)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import pt.uc.dei.dtos.ManagerDTO;
+&nbsp;import pt.uc.dei.dtos.UserDTO;
+&nbsp;import pt.uc.dei.dtos.UserFullDTO;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2025-07-15T17:25:53+0100&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;public class UserMapperImpl implements UserMapper {</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private AppraisalMapper appraisalMapper;
+&nbsp;    @Inject
+&nbsp;    private FinishedCourseMapper finishedCourseMapper;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserDTO toDto(UserEntity userEntity) {
+<b class="fc">&nbsp;        if ( userEntity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserDTO userDTO = new UserDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        userDTO.setManager( toManagerDto( userEntity.getManagerUser() ) );</b>
+<b class="fc">&nbsp;        userDTO.setId( userEntity.getId() );</b>
+<b class="fc">&nbsp;        userDTO.setEmail( userEntity.getEmail() );</b>
+<b class="fc">&nbsp;        userDTO.setHasAvatar( userEntity.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userDTO.setName( userEntity.getName() );</b>
+<b class="fc">&nbsp;        userDTO.setSurname( userEntity.getSurname() );</b>
+<b class="fc">&nbsp;        userDTO.setUserIsAdmin( userEntity.getUserIsAdmin() );</b>
+<b class="fc">&nbsp;        userDTO.setUserIsDeleted( userEntity.getUserIsDeleted() );</b>
+<b class="fc">&nbsp;        userDTO.setUserIsManager( userEntity.getUserIsManager() );</b>
+<b class="fc">&nbsp;        userDTO.setOffice( userEntity.getOffice() );</b>
+<b class="fc">&nbsp;        userDTO.setPhone( userEntity.getPhone() );</b>
+<b class="fc">&nbsp;        userDTO.setBirthdate( userEntity.getBirthdate() );</b>
+<b class="fc">&nbsp;        userDTO.setStreet( userEntity.getStreet() );</b>
+<b class="fc">&nbsp;        userDTO.setPostalCode( userEntity.getPostalCode() );</b>
+<b class="fc">&nbsp;        userDTO.setMunicipality( userEntity.getMunicipality() );</b>
+<b class="fc">&nbsp;        userDTO.setBiography( userEntity.getBiography() );</b>
+<b class="fc">&nbsp;        userDTO.setAccountState( userEntity.getAccountState() );</b>
+<b class="fc">&nbsp;        userDTO.setRole( userEntity.getRole() );</b>
+<b class="fc">&nbsp;        userDTO.setCreationDate( userEntity.getCreationDate() );</b>
+<b class="pc">&nbsp;        if ( userEntity.getOnlineStatus() != null ) {</b>
+<b class="fc">&nbsp;            userDTO.setOnlineStatus( userEntity.getOnlineStatus() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        userDTO.setLastSeen( userEntity.getLastSeen() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UserDTO&gt; toDtoList(List&lt;UserEntity&gt; users) {
+<b class="pc">&nbsp;        if ( users == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;UserDTO&gt; list = new ArrayList&lt;UserDTO&gt;( users.size() );</b>
+<b class="fc">&nbsp;        for ( UserEntity userEntity : users ) {</b>
+<b class="fc">&nbsp;            list.add( toDto( userEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserEntity toEntity(UserDTO userDTO) {
+<b class="fc">&nbsp;        if ( userDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserEntity userEntity = new UserEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        userEntity.setManagerUser( toManagerEntity( userDTO.getManager() ) );</b>
+<b class="fc">&nbsp;        userEntity.setId( userDTO.getId() );</b>
+<b class="fc">&nbsp;        userEntity.setEmail( userDTO.getEmail() );</b>
+<b class="fc">&nbsp;        userEntity.setHasAvatar( userDTO.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userEntity.setName( userDTO.getName() );</b>
+<b class="fc">&nbsp;        userEntity.setSurname( userDTO.getSurname() );</b>
+<b class="fc">&nbsp;        userEntity.setUserIsAdmin( userDTO.getUserIsAdmin() );</b>
+<b class="fc">&nbsp;        userEntity.setUserIsManager( userDTO.getUserIsManager() );</b>
+<b class="fc">&nbsp;        userEntity.setOffice( userDTO.getOffice() );</b>
+<b class="fc">&nbsp;        userEntity.setPhone( userDTO.getPhone() );</b>
+<b class="fc">&nbsp;        userEntity.setBirthdate( userDTO.getBirthdate() );</b>
+<b class="fc">&nbsp;        userEntity.setStreet( userDTO.getStreet() );</b>
+<b class="fc">&nbsp;        userEntity.setPostalCode( userDTO.getPostalCode() );</b>
+<b class="fc">&nbsp;        userEntity.setMunicipality( userDTO.getMunicipality() );</b>
+<b class="fc">&nbsp;        userEntity.setBiography( userDTO.getBiography() );</b>
+<b class="fc">&nbsp;        userEntity.setAccountState( userDTO.getAccountState() );</b>
+<b class="fc">&nbsp;        userEntity.setRole( userDTO.getRole() );</b>
+<b class="fc">&nbsp;        userEntity.setCreationDate( userDTO.getCreationDate() );</b>
+<b class="fc">&nbsp;        userEntity.setLastSeen( userDTO.getLastSeen() );</b>
+<b class="fc">&nbsp;        userEntity.setOnlineStatus( userDTO.isOnlineStatus() );</b>
+<b class="fc">&nbsp;        userEntity.setManager( managerDTOToUserEntity( userDTO.getManager() ) );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateUserFromDto(UserDTO dto, UserEntity entity) {
+<b class="pc">&nbsp;        if ( dto == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( dto.getEmail() != null ) {</b>
+<b class="fc">&nbsp;            entity.setEmail( dto.getEmail() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getPassword() != null ) {</b>
+<b class="fc">&nbsp;            entity.setPassword( dto.getPassword() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getHasAvatar() != null ) {</b>
+<b class="fc">&nbsp;            entity.setHasAvatar( dto.getHasAvatar() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getName() != null ) {</b>
+<b class="fc">&nbsp;            entity.setName( dto.getName() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getSurname() != null ) {</b>
+<b class="fc">&nbsp;            entity.setSurname( dto.getSurname() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getUserIsAdmin() != null ) {</b>
+<b class="fc">&nbsp;            entity.setUserIsAdmin( dto.getUserIsAdmin() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getUserIsDeleted() != null ) {</b>
+<b class="fc">&nbsp;            entity.setUserIsDeleted( dto.getUserIsDeleted() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getUserIsManager() != null ) {</b>
+<b class="fc">&nbsp;            entity.setUserIsManager( dto.getUserIsManager() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getOffice() != null ) {</b>
+<b class="fc">&nbsp;            entity.setOffice( dto.getOffice() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getPhone() != null ) {</b>
+<b class="fc">&nbsp;            entity.setPhone( dto.getPhone() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getBirthdate() != null ) {</b>
+<b class="fc">&nbsp;            entity.setBirthdate( dto.getBirthdate() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getStreet() != null ) {</b>
+<b class="fc">&nbsp;            entity.setStreet( dto.getStreet() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getPostalCode() != null ) {</b>
+<b class="fc">&nbsp;            entity.setPostalCode( dto.getPostalCode() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getMunicipality() != null ) {</b>
+<b class="fc">&nbsp;            entity.setMunicipality( dto.getMunicipality() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getBiography() != null ) {</b>
+<b class="fc">&nbsp;            entity.setBiography( dto.getBiography() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getAccountState() != null ) {</b>
+<b class="fc">&nbsp;            entity.setAccountState( dto.getAccountState() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getRole() != null ) {</b>
+<b class="fc">&nbsp;            entity.setRole( dto.getRole() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( dto.getLastSeen() != null ) {</b>
+<b class="nc">&nbsp;            entity.setLastSeen( dto.getLastSeen() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        entity.setOnlineStatus( dto.isOnlineStatus() );</b>
+<b class="pc">&nbsp;        if ( dto.getManager() != null ) {</b>
+<b class="pc">&nbsp;            if ( entity.getManager() == null ) {</b>
+<b class="nc">&nbsp;                entity.setManager( new UserEntity() );</b>
+&nbsp;            }
+<b class="fc">&nbsp;            managerDTOToUserEntity1( dto.getManager(), entity.getManager() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserFullDTO toFullDto(UserEntity entity) {
+<b class="fc">&nbsp;        if ( entity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserFullDTO userFullDTO = new UserFullDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        userFullDTO.setManager( toManagerDto( entity.getManagerUser() ) );</b>
+<b class="fc">&nbsp;        userFullDTO.setEvaluationsReceived( appraisalMapper.toDtoList( entity.getEvaluationsReceived() ) );</b>
+<b class="fc">&nbsp;        userFullDTO.setEvaluationsGiven( appraisalMapper.toDtoList( entity.getEvaluationsGiven() ) );</b>
+<b class="fc">&nbsp;        userFullDTO.setCompletedCourses( finishedCourseMapper.toDtoSet( entity.getCompletedCourses() ) );</b>
+<b class="fc">&nbsp;        userFullDTO.setId( entity.getId() );</b>
+<b class="fc">&nbsp;        userFullDTO.setEmail( entity.getEmail() );</b>
+<b class="fc">&nbsp;        userFullDTO.setHasAvatar( entity.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userFullDTO.setName( entity.getName() );</b>
+<b class="fc">&nbsp;        userFullDTO.setSurname( entity.getSurname() );</b>
+<b class="fc">&nbsp;        userFullDTO.setUserIsAdmin( entity.getUserIsAdmin() );</b>
+<b class="fc">&nbsp;        userFullDTO.setUserIsDeleted( entity.getUserIsDeleted() );</b>
+<b class="fc">&nbsp;        userFullDTO.setUserIsManager( entity.getUserIsManager() );</b>
+<b class="fc">&nbsp;        userFullDTO.setOffice( entity.getOffice() );</b>
+<b class="fc">&nbsp;        userFullDTO.setPhone( entity.getPhone() );</b>
+<b class="fc">&nbsp;        userFullDTO.setBirthdate( entity.getBirthdate() );</b>
+<b class="fc">&nbsp;        userFullDTO.setStreet( entity.getStreet() );</b>
+<b class="fc">&nbsp;        userFullDTO.setPostalCode( entity.getPostalCode() );</b>
+<b class="fc">&nbsp;        userFullDTO.setMunicipality( entity.getMunicipality() );</b>
+<b class="fc">&nbsp;        userFullDTO.setBiography( entity.getBiography() );</b>
+<b class="fc">&nbsp;        userFullDTO.setAccountState( entity.getAccountState() );</b>
+<b class="fc">&nbsp;        userFullDTO.setRole( entity.getRole() );</b>
+<b class="fc">&nbsp;        userFullDTO.setCreationDate( entity.getCreationDate() );</b>
+<b class="pc">&nbsp;        if ( entity.getOnlineStatus() != null ) {</b>
+<b class="fc">&nbsp;            userFullDTO.setOnlineStatus( entity.getOnlineStatus() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        userFullDTO.setLastSeen( entity.getLastSeen() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userFullDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponseDTO toUserResponseDto(UserEntity entity) {
+<b class="fc">&nbsp;        if ( entity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserResponseDTO userResponseDTO = new UserResponseDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        userResponseDTO.setId( entity.getId() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setEmail( entity.getEmail() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setUserIsAdmin( entity.getUserIsAdmin() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setUserIsManager( entity.getUserIsManager() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setAccountState( entity.getAccountState() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setRole( entity.getRole() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setName( entity.getName() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setSurname( entity.getSurname() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setHasAvatar( entity.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setLastSeen( entity.getLastSeen() );</b>
+<b class="pc">&nbsp;        if ( entity.getOnlineStatus() != null ) {</b>
+<b class="fc">&nbsp;            userResponseDTO.setOnlineStatus( entity.getOnlineStatus() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        userResponseDTO.setManager( toManagerDto( entity.getManagerUser() ) );</b>
+<b class="fc">&nbsp;        userResponseDTO.setUserIsDeleted( entity.getUserIsDeleted() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setOffice( entity.getOffice() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setPhone( entity.getPhone() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setBirthdate( entity.getBirthdate() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setStreet( entity.getStreet() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setPostalCode( entity.getPostalCode() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setMunicipality( entity.getMunicipality() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setBiography( entity.getBiography() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setCreationDate( entity.getCreationDate() );</b>
+<b class="fc">&nbsp;        userResponseDTO.setCompletedCourses( finishedCourseMapper.toDtoSet( entity.getCompletedCourses() ) );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userResponseDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ManagerDTO toManagerDto(UserEntity managerUser) {
+<b class="fc">&nbsp;        if ( managerUser == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        ManagerDTO managerDTO = new ManagerDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        managerDTO.setId( managerUser.getId() );</b>
+<b class="fc">&nbsp;        managerDTO.setName( managerUser.getName() );</b>
+<b class="fc">&nbsp;        managerDTO.setSurname( managerUser.getSurname() );</b>
+<b class="fc">&nbsp;        managerDTO.setRole( managerUser.getRole() );</b>
+<b class="fc">&nbsp;        managerDTO.setHasAvatar( managerUser.getHasAvatar() );</b>
+<b class="fc">&nbsp;        managerDTO.setEmail( managerUser.getEmail() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return managerDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserEntity toManagerEntity(ManagerDTO dto) {
+<b class="fc">&nbsp;        if ( dto == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserEntity userEntity = new UserEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        userEntity.setId( dto.getId() );</b>
+<b class="fc">&nbsp;        userEntity.setEmail( dto.getEmail() );</b>
+<b class="fc">&nbsp;        userEntity.setHasAvatar( dto.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userEntity.setName( dto.getName() );</b>
+<b class="fc">&nbsp;        userEntity.setSurname( dto.getSurname() );</b>
+<b class="fc">&nbsp;        userEntity.setRole( dto.getRole() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected UserEntity managerDTOToUserEntity(ManagerDTO managerDTO) {
+<b class="fc">&nbsp;        if ( managerDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserEntity userEntity = new UserEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        userEntity.setId( managerDTO.getId() );</b>
+<b class="fc">&nbsp;        userEntity.setEmail( managerDTO.getEmail() );</b>
+<b class="fc">&nbsp;        userEntity.setHasAvatar( managerDTO.getHasAvatar() );</b>
+<b class="fc">&nbsp;        userEntity.setName( managerDTO.getName() );</b>
+<b class="fc">&nbsp;        userEntity.setSurname( managerDTO.getSurname() );</b>
+<b class="fc">&nbsp;        userEntity.setRole( managerDTO.getRole() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void managerDTOToUserEntity1(ManagerDTO managerDTO, UserEntity mappingTarget) {
+<b class="pc">&nbsp;        if ( managerDTO == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( managerDTO.getId() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setId( managerDTO.getId() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( managerDTO.getEmail() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setEmail( managerDTO.getEmail() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( managerDTO.getHasAvatar() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setHasAvatar( managerDTO.getHasAvatar() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( managerDTO.getName() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setName( managerDTO.getName() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( managerDTO.getSurname() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setSurname( managerDTO.getSurname() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( managerDTO.getRole() != null ) {</b>
+<b class="fc">&nbsp;            mappingTarget.setRole( managerDTO.getRole() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

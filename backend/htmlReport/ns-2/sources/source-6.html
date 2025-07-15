@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EnumController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: EnumController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EnumController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import pt.uc.dei.enums.AppraisalState;
+&nbsp;import pt.uc.dei.enums.CourseArea;
+&nbsp;import pt.uc.dei.enums.Role;
+&nbsp;import pt.uc.dei.enums.Office;
+&nbsp;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;
+&nbsp;@Path(&quot;/enums&quot;)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+<b class="fc">&nbsp;public class EnumController {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger for tracking enum requests.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(EnumController.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all available user roles.
+&nbsp;     *
+&nbsp;     * @return HTTP 200 (OK) with a list of role names.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/roles&quot;)
+&nbsp;    public Response getRoles() {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Request received for all roles&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; roles = Arrays.stream(Role.values())</b>
+<b class="fc">&nbsp;            .map(Enum::name)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Returning {} roles&quot;, roles.size());</b>
+<b class="fc">&nbsp;        return Response.ok(roles).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all available offices.
+&nbsp;     *
+&nbsp;     * @return HTTP 200 (OK) with a list of office names.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/offices&quot;)
+&nbsp;    public Response getOffices() {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Request received for all offices&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; offices = Arrays.stream(Office.values())</b>
+<b class="fc">&nbsp;            .map(Enum::name)</b>
+<b class="fc">&nbsp;            .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Returning {} offices&quot;, offices.size());</b>
+<b class="fc">&nbsp;        return Response.ok(offices).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/appraisalStates&quot;)
+&nbsp;    public Response getAppraisalStates() {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Request received for all appraisal states&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; appraisals = Arrays.stream(AppraisalState.values())</b>
+<b class="fc">&nbsp;                .map(Enum::name)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Returning {} appraisal states&quot;, appraisals.size());</b>
+<b class="fc">&nbsp;        return Response.ok(appraisals).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/courseAreas&quot;)
+&nbsp;    public Response getCourseAreas() {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Request received for all course areas&quot;);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; areas = Arrays.stream(CourseArea.values())</b>
+<b class="fc">&nbsp;                .map(Enum::name)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Returning {} course areas&quot;, areas.size());</b>
+<b class="fc">&nbsp;        return Response.ok(areas).build();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

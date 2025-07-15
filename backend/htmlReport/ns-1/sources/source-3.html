@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmailConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.config</a>
+</div>
+
+<h1>Coverage Summary for Class: EmailConfig (pt.uc.dei.config)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmailConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.config;
+&nbsp;
+&nbsp;import java.util.Properties;
+&nbsp;
+&nbsp;/**
+&nbsp; * Configuration class for SMTP email settings.
+&nbsp; * Provides the necessary properties for authenticating and sending emails via Gmail&#39;s SMTP server.
+&nbsp; */
+<b class="nc">&nbsp;public class EmailConfig {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the SMTP properties required for sending emails.
+&nbsp;     *
+&nbsp;     * @return A {@link Properties} object containing SMTP configuration settings.
+&nbsp;     */
+&nbsp;    public static Properties getSMTPProperties() {
+<b class="nc">&nbsp;        Properties properties = new Properties();</b>
+&nbsp;
+&nbsp;        // Enables authentication for the SMTP server
+<b class="nc">&nbsp;        properties.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</b>
+&nbsp;
+&nbsp;        // Enables STARTTLS encryption for secure communication
+<b class="nc">&nbsp;        properties.put(&quot;mail.smtp.starttls.enable&quot;, &quot;true&quot;);</b>
+&nbsp;
+&nbsp;        // Specifies the SMTP server host
+<b class="nc">&nbsp;        properties.put(&quot;mail.smtp.host&quot;, &quot;smtp.gmail.com&quot;);</b>
+&nbsp;
+&nbsp;        // Defines the SMTP server port
+<b class="nc">&nbsp;        properties.put(&quot;mail.smtp.port&quot;, &quot;587&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        return properties;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

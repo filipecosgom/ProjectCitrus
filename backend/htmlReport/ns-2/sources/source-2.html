@@ -1,0 +1,806 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppraisalController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30%
+  </span>
+  <span class="absValue">
+    (30/100)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.1%
+  </span>
+  <span class="absValue">
+    (247/287)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import jakarta.ws.rs.core.StreamingOutput;
+&nbsp;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.AppraisalDTO;
+&nbsp;import pt.uc.dei.dtos.AppraisalResponseDTO;
+&nbsp;import pt.uc.dei.dtos.AppraisalStatsDTO;
+&nbsp;import pt.uc.dei.dtos.CreateAppraisalDTO;
+&nbsp;import pt.uc.dei.dtos.UpdateAppraisalDTO;
+&nbsp;import pt.uc.dei.enums.*;
+&nbsp;import pt.uc.dei.services.AppraisalService;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.annotations.AdminOnly;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;import pt.uc.dei.utils.SearchUtils;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * REST Controller for managing appraisal-related operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides endpoints for CRUD operations on appraisals, including
+&nbsp; * creation, retrieval, updating, and filtering functionality.
+&nbsp; */
+&nbsp;
+&nbsp;@Path(&quot;/appraisals&quot;)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+&nbsp;@Consumes(MediaType.APPLICATION_JSON)
+<b class="fc">&nbsp;public class AppraisalController {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this controller.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(AppraisalController.class);</b>
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private AppraisalService appraisalService;
+&nbsp;    @EJB
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing appraisal.
+&nbsp;     *
+&nbsp;     * @param updateAppraisalDTO The appraisal update data
+&nbsp;     * @return Response with the updated appraisal DTO
+&nbsp;     */
+&nbsp;
+&nbsp;    @PATCH
+&nbsp;    public Response updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO, @CookieParam(&quot;jwt&quot;) String jwtToken) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Long managerId = JWTUtil.extractUserIdOrAbort(jwtToken);</b>
+<b class="fc">&nbsp;            Boolean isAdmin = JWTUtil.isUserAdmin(jwtToken);</b>
+<b class="fc">&nbsp;            Response validationResponse = validateUpdateAppraisalDTO(updateAppraisalDTO);</b>
+<b class="pc">&nbsp;            if (validationResponse != null &amp;&amp; !isAdmin) {</b>
+<b class="fc">&nbsp;                return validationResponse;</b>
+&nbsp;            }
+<b class="fc">&nbsp;                if (!isAdmin) {</b>
+<b class="fc">&nbsp;                    if (appraisalService.checkIfManagerOfUser(updateAppraisalDTO.getId(), managerId)) {</b>
+<b class="fc">&nbsp;                        LOGGER.info(&quot;Manager with ID {} is authorized to update appraisal with ID: {}&quot;, managerId,</b>
+<b class="fc">&nbsp;                                updateAppraisalDTO.getId());</b>
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        LOGGER.warn(&quot;Manager with ID {} is not authorized to update appraisal with ID: {}&quot;, managerId,</b>
+<b class="fc">&nbsp;                                updateAppraisalDTO.getId());</b>
+<b class="fc">&nbsp;                        return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="fc">&nbsp;                                .entity(new ApiResponse(false, &quot;You are not authorized to update this appraisal&quot;,</b>
+&nbsp;                                        &quot;errorUnauthorized&quot;, null))
+<b class="fc">&nbsp;                                .build();</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="pc">&nbsp;                if (updateAppraisalDTO.getState() == AppraisalState.COMPLETED) {</b>
+<b class="nc">&nbsp;                    if ((updateAppraisalDTO.getFeedback().trim() == null || updateAppraisalDTO.getFeedback().trim().isEmpty())</b>
+<b class="nc">&nbsp;                            || updateAppraisalDTO.getScore() == null || updateAppraisalDTO.getScore() &lt; 1 || updateAppraisalDTO.getScore() &gt; 4) {</b>
+<b class="nc">&nbsp;                        if (!isAdmin) {</b>
+<b class="nc">&nbsp;                            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                                    .entity(new ApiResponse(false, &quot;Feedback or score must not be blank for completed appraisal&quot;,</b>
+&nbsp;                                            &quot;errorFeedbackBlank&quot;, null))
+<b class="nc">&nbsp;                                    .build();</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                try {
+<b class="fc">&nbsp;                    LOGGER.info(&quot;Updating appraisal with ID: {}&quot;, updateAppraisalDTO.getId());</b>
+<b class="fc">&nbsp;                    AppraisalDTO updatedAppraisal = appraisalService.updateAppraisal(updateAppraisalDTO, isAdmin);</b>
+<b class="fc">&nbsp;                    return Response.ok(new ApiResponse(true, &quot;Appraisal updated successfully&quot;, &quot;success&quot;, updatedAppraisal))</b>
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;
+&nbsp;                } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                    LOGGER.warn(&quot;Invalid request for appraisal update: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;                    String errorCode = getValidationErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                            .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;                } catch (IllegalStateException e) {
+<b class="fc">&nbsp;                    LOGGER.warn(&quot;Business rule violation for appraisal update: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;                    String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;                    return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                            .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;                } catch (Exception e) {
+<b class="fc">&nbsp;                    LOGGER.error(&quot;Unexpected error updating appraisal&quot;, e);</b>
+<b class="fc">&nbsp;                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                            .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;        }
+&nbsp;        catch (JWTUtil.JwtValidationException ex) {
+<b class="fc">&nbsp;                return JWTUtil.buildUnauthorizedResponse(ex.getMessage());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Retrieves an appraisal by its ID.
+&nbsp;         *
+&nbsp;         * @param id The appraisal ID
+&nbsp;         * @return Response with the appraisal DTO
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/{id}&quot;)
+&nbsp;        public Response getAppraisalById (@PathParam(&quot;id&quot;) Long id){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Retrieving appraisal with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                AppraisalDTO appraisal = appraisalService.getAppraisalById(id);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisal retrieved successfully&quot;, &quot;success&quot;, appraisal))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Appraisal not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorAppraisalNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error retrieving appraisal with ID: {}&quot;, id, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Retrieves appraisals with filtering options.
+&nbsp;         *
+&nbsp;         * @param appraisedUserId   Optional filter by appraised user ID
+&nbsp;         * @param appraisingUserId  Optional filter by appraising user ID (manager)
+&nbsp;         * @param cycleId           Optional filter by cycle ID
+&nbsp;         * @param appraisalStateStr Optional filter by appraisal state
+&nbsp;         * @param limit             Maximum number of results
+&nbsp;         * @param offset            Starting position for pagination
+&nbsp;         * @return Response with list of filtered appraisal DTOs
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        public Response getAppraisalsWithFilters (
+&nbsp;                @QueryParam(&quot;appraisedUserId&quot;) Long appraisedUserId,
+&nbsp;                @QueryParam(&quot;appraisedUserName&quot;) String appraisedUserName,
+&nbsp;                @QueryParam(&quot;appraisedUserEmail&quot;) String appraisedUserEmail,
+&nbsp;                @QueryParam(&quot;appraisingUserId&quot;) Long appraisingUserId,
+&nbsp;                @QueryParam(&quot;appraisingUserName&quot;) String appraisingUserName,
+&nbsp;                @QueryParam(&quot;appraisingUserEmail&quot;) String appraisingUserEmail,
+&nbsp;                @QueryParam(&quot;cycleId&quot;) Long cycleId,
+&nbsp;                @QueryParam(&quot;state&quot;) String appraisalStateStr,
+&nbsp;                @QueryParam(&quot;parameter&quot;) @DefaultValue(&quot;creationDate&quot;) String parameterStr,
+&nbsp;                @QueryParam(&quot;order&quot;) @DefaultValue(&quot;DESCENDING&quot;) String orderStr,
+&nbsp;                @QueryParam(&quot;limit&quot;) @DefaultValue(&quot;10&quot;) Integer limit,
+&nbsp;                @QueryParam(&quot;offset&quot;) @DefaultValue(&quot;0&quot;) Integer offset,
+&nbsp;                @CookieParam(&quot;jwt&quot;) String jwtToken){
+<b class="fc">&nbsp;            if(!JWTUtil.isUserAdmin(jwtToken)){</b>
+<b class="fc">&nbsp;                Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="pc">&nbsp;                if ((appraisedUserId != null &amp;&amp; !appraisedUserId.equals(userId)) ||</b>
+<b class="nc">&nbsp;                        (appraisingUserId != null &amp;&amp; !appraisingUserId.equals(userId))) {</b>
+<b class="fc">&nbsp;                    LOGGER.warn(&quot;User ID {} tried to access appraisals of appraisedUser {} or appraisingUser {}&quot;, userId, appraisedUserId, appraisingUserId);</b>
+<b class="fc">&nbsp;                    return Response.status(Response.Status.FORBIDDEN)</b>
+<b class="fc">&nbsp;                            .entity(new ApiResponse(false, &quot;You are not authorized to access these appraisals&quot;,</b>
+&nbsp;                                    &quot;errorUnauthorized&quot;, null))
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;            }
+<b class="pc">&nbsp;            AppraisalState state = appraisalStateStr != null</b>
+<b class="nc">&nbsp;                    ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr))</b>
+<b class="fc">&nbsp;                    : null;</b>
+<b class="fc">&nbsp;            AppraisalParameter parameter = AppraisalParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));</b>
+<b class="fc">&nbsp;            OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Retrieving appraisals with filters&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                Map&lt;String, Object&gt; appraisalData = appraisalService.getAppraisalsWithFilters(</b>
+&nbsp;                        appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
+&nbsp;                        appraisingUserEmail, cycleId, state, parameter, orderBy, limit, offset);
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisals retrieved successfully&quot;, &quot;success&quot;, appraisalData))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error retrieving appraisals with filters&quot;, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Retrieves all appraisals for a specific user (as appraised).
+&nbsp;         *
+&nbsp;         * @param userId The user ID
+&nbsp;         * @return Response with list of appraisal DTOs
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/user/{userId}&quot;)
+&nbsp;        public Response getAppraisalsByUser (@PathParam(&quot;userId&quot;) Long userId){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Retrieving appraisals for user ID: {}&quot;, userId);</b>
+&nbsp;
+<b class="fc">&nbsp;                List&lt;AppraisalDTO&gt; appraisals = appraisalService.getAppraisalsByAppraisedUser(userId);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;User appraisals retrieved successfully&quot;, &quot;success&quot;, appraisals))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error retrieving appraisals for user ID: {}&quot;, userId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Retrieves all appraisals created by a specific manager.
+&nbsp;         *
+&nbsp;         * @param managerId The manager user ID
+&nbsp;         * @return Response with list of appraisal DTOs
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/manager/{managerId}&quot;)
+&nbsp;        public Response getAppraisalsByManager (@PathParam(&quot;managerId&quot;) Long managerId){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Retrieving appraisals created by manager ID: {}&quot;, managerId);</b>
+&nbsp;
+<b class="fc">&nbsp;                List&lt;AppraisalDTO&gt; appraisals = appraisalService.getAppraisalsByManager(managerId);</b>
+<b class="fc">&nbsp;                return Response</b>
+<b class="fc">&nbsp;                        .ok(new ApiResponse(true, &quot;Manager appraisals retrieved successfully&quot;, &quot;success&quot;, appraisals))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error retrieving appraisals for manager ID: {}&quot;, managerId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Retrieves all appraisals within a specific cycle.
+&nbsp;         *
+&nbsp;         * @param cycleId The cycle ID
+&nbsp;         * @return Response with list of appraisal DTOs
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/cycle/{cycleId}&quot;)
+&nbsp;        public Response getAppraisalsByCycle (@PathParam(&quot;cycleId&quot;) Long cycleId){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Retrieving appraisals for cycle ID: {}&quot;, cycleId);</b>
+&nbsp;
+<b class="fc">&nbsp;                List&lt;AppraisalDTO&gt; appraisals = appraisalService.getAppraisalsByCycle(cycleId);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Cycle appraisals retrieved successfully&quot;, &quot;success&quot;, appraisals))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error retrieving appraisals for cycle ID: {}&quot;, cycleId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Completes an appraisal.
+&nbsp;         *
+&nbsp;         * @param id The appraisal ID
+&nbsp;         * @return Response with the updated appraisal DTO
+&nbsp;         */
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/{id}/complete&quot;)
+&nbsp;        public Response completeAppraisal (@PathParam(&quot;id&quot;) Long id){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.info(&quot;Completing appraisal with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;                AppraisalDTO completedAppraisal = appraisalService.completeAppraisal(id);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisal completed successfully&quot;, &quot;success&quot;, completedAppraisal))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Appraisal not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorAppraisalNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (IllegalStateException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Cannot complete appraisal with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;                String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error completing appraisal with ID: {}&quot;, id, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Closes an appraisal.
+&nbsp;         *
+&nbsp;         * @param id The appraisal ID
+&nbsp;         * @return Response with the updated appraisal DTO
+&nbsp;         */
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/{id}/close&quot;)
+&nbsp;        public Response closeAppraisal (@PathParam(&quot;id&quot;) Long id){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.info(&quot;Closing appraisal with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;                AppraisalDTO closedAppraisal = appraisalService.closeAppraisal(id);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisal closed successfully&quot;, &quot;success&quot;, closedAppraisal))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Appraisal not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorAppraisalNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (IllegalStateException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Cannot close appraisal with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;                String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error closing appraisal with ID: {}&quot;, id, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Deletes an appraisal.
+&nbsp;         *
+&nbsp;         * @param id The appraisal ID
+&nbsp;         * @return Response indicating success or failure
+&nbsp;         */
+&nbsp;        @DELETE
+&nbsp;        @Path(&quot;/{id}&quot;)
+&nbsp;        public Response deleteAppraisal (@PathParam(&quot;id&quot;) Long id){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.info(&quot;Deleting appraisal with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;                appraisalService.deleteAppraisal(id);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisal deleted successfully&quot;, &quot;success&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Appraisal not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorAppraisalNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (IllegalStateException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Cannot delete appraisal with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;                String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error deleting appraisal with ID: {}&quot;, id, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Gets appraisal statistics for a user.
+&nbsp;         *
+&nbsp;         * @param userId The user ID
+&nbsp;         * @return Response with appraisal statistics
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/stats/{userId}&quot;)
+&nbsp;        public Response getAppraisalStats (@PathParam(&quot;userId&quot;) Long userId){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.debug(&quot;Getting appraisal statistics for user ID: {}&quot;, userId);</b>
+&nbsp;
+<b class="fc">&nbsp;                AppraisalStatsDTO stats = appraisalService.getAppraisalStats(userId);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Appraisal statistics retrieved successfully&quot;, &quot;success&quot;, stats))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error getting appraisal statistics for user ID: {}&quot;, userId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Closes specific appraisals by their IDs.
+&nbsp;         * Only COMPLETED appraisals in OPEN cycles can be closed.
+&nbsp;         * Requires Admin authorization.
+&nbsp;         *
+&nbsp;         * @param appraisalIds Comma-separated list of appraisal IDs
+&nbsp;         * @return Response with count of closed appraisals
+&nbsp;         */
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/close-by-ids&quot;)
+&nbsp;        public Response closeAppraisalsByIds (@QueryParam(&quot;ids&quot;) String appraisalIds){
+&nbsp;            try {
+&nbsp;                // TODO: Add JWT Admin validation here
+&nbsp;                // if (!isUserAdmin(jwtToken)) {
+&nbsp;                // return Response.status(Response.Status.FORBIDDEN)
+&nbsp;                // .entity(new ApiResponse(false, &quot;Admin access required&quot;, &quot;errorUnauthorized&quot;,
+&nbsp;                // null))
+&nbsp;                // .build();
+&nbsp;                // }
+&nbsp;
+<b class="pc">&nbsp;                if (appraisalIds == null || appraisalIds.trim().isEmpty()) {</b>
+<b class="fc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                            .entity(new ApiResponse(false, &quot;Appraisal IDs parameter is required&quot;, &quot;errorMissingIds&quot;, null))</b>
+<b class="fc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                List&lt;Long&gt; ids = Arrays.stream(appraisalIds.split(&quot;,&quot;))</b>
+<b class="fc">&nbsp;                        .map(String::trim)</b>
+<b class="fc">&nbsp;                        .map(Long::parseLong)</b>
+<b class="fc">&nbsp;                        .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;                LOGGER.info(&quot;Admin requesting to close appraisals by IDs: {}&quot;, ids);</b>
+&nbsp;
+<b class="fc">&nbsp;                int closedCount = appraisalService.closeAppraisalsByIds(ids);</b>
+&nbsp;
+<b class="fc">&nbsp;                String message = String.format(&quot;Successfully closed %d appraisal(s)&quot;, closedCount);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, message, &quot;success&quot;, closedCount))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (NumberFormatException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Invalid appraisal ID format: {}&quot;, appraisalIds);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Invalid appraisal ID format&quot;, &quot;errorInvalidIdFormat&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Invalid request for closing appraisals by IDs: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorInvalidData&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error closing appraisals by IDs&quot;, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Closes all COMPLETED appraisals in a specific cycle.
+&nbsp;         * Only works if the cycle is OPEN.
+&nbsp;         * Requires Admin authorization.
+&nbsp;         *
+&nbsp;         * @param cycleId The cycle ID
+&nbsp;         * @return Response with count of closed appraisals
+&nbsp;         */
+&nbsp;        @AdminOnly
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/cycle/{cycleId}/close-completed&quot;)
+&nbsp;        public Response closeCompletedAppraisalsByCycle (@PathParam(&quot;cycleId&quot;) Long cycleId){
+&nbsp;            try {
+<b class="fc">&nbsp;                LOGGER.info(&quot;Admin requesting to close COMPLETED appraisals in cycle ID: {}&quot;, cycleId);</b>
+&nbsp;
+<b class="fc">&nbsp;                int closedCount = appraisalService.closeCompletedAppraisalsByCycleId(cycleId);</b>
+&nbsp;
+<b class="fc">&nbsp;                String message = String.format(&quot;Successfully closed %d COMPLETED appraisal(s) in cycle %d&quot;, closedCount,</b>
+&nbsp;                        cycleId);
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, message, &quot;success&quot;, closedCount))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, cycleId);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (IllegalStateException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Cannot close appraisals in cycle ID {}: {}&quot;, cycleId, e.getMessage());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleAlreadyClosed&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error closing appraisals in cycle ID: {}&quot;, cycleId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Closes all COMPLETED appraisals for a specific user.
+&nbsp;         * Only works for appraisals in OPEN cycles.
+&nbsp;         * Requires Admin authorization.
+&nbsp;         *
+&nbsp;         * @param userId The user ID
+&nbsp;         * @return Response with count of closed appraisals
+&nbsp;         */
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/user/{userId}/close-completed&quot;)
+&nbsp;        public Response closeCompletedAppraisalsByUser (@PathParam(&quot;userId&quot;) Long userId){
+&nbsp;            try {
+&nbsp;                // TODO: Add JWT Admin validation here
+&nbsp;
+<b class="fc">&nbsp;                LOGGER.info(&quot;Admin requesting to close COMPLETED appraisals for user ID: {}&quot;, userId);</b>
+&nbsp;
+<b class="fc">&nbsp;                int closedCount = appraisalService.closeCompletedAppraisalsByUserId(userId);</b>
+&nbsp;
+<b class="fc">&nbsp;                String message = String.format(&quot;Successfully closed %d COMPLETED appraisal(s) for user %d&quot;, closedCount,</b>
+&nbsp;                        userId);
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, message, &quot;success&quot;, closedCount))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;                LOGGER.warn(&quot;User not found with ID: {}&quot;, userId);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, e.getMessage(), &quot;errorUserNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error closing appraisals for user ID: {}&quot;, userId, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Closes all COMPLETED appraisals in all OPEN cycles.
+&nbsp;         * Administrative bulk operation.
+&nbsp;         * Requires Admin authorization.
+&nbsp;         *
+&nbsp;         * @return Response with count of closed appraisals
+&nbsp;         */
+&nbsp;        @POST
+&nbsp;        @Path(&quot;/close-all-completed&quot;)
+&nbsp;        public Response closeAllCompletedAppraisals () {
+&nbsp;            try {
+&nbsp;                // TODO: Add JWT Admin validation here
+&nbsp;
+<b class="fc">&nbsp;                LOGGER.info(&quot;Admin requesting to close ALL COMPLETED appraisals&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                int closedCount = appraisalService.closeAllCompletedAppraisals();</b>
+&nbsp;
+<b class="fc">&nbsp;                String message = String.format(&quot;Successfully closed %d COMPLETED appraisal(s) across all OPEN cycles&quot;,</b>
+<b class="fc">&nbsp;                        closedCount);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, message, &quot;success&quot;, closedCount))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Unexpected error closing all COMPLETED appraisals&quot;, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Exports filtered appraisals as a PDF file.
+&nbsp;         *
+&nbsp;         * @return PDF file with filtered appraisals
+&nbsp;         */
+&nbsp;        @GET
+&nbsp;        @Path(&quot;/pdf&quot;)
+&nbsp;        @Produces(&quot;application/pdf&quot;)
+&nbsp;        public Response exportAppraisalsPdf (
+&nbsp;                @QueryParam(&quot;appraisedUserId&quot;) Long appraisedUserId,
+&nbsp;                @QueryParam(&quot;appraisedUserName&quot;) String appraisedUserName,
+&nbsp;                @QueryParam(&quot;appraisedUserEmail&quot;) String appraisedUserEmail,
+&nbsp;                @QueryParam(&quot;appraisingUserId&quot;) Long appraisingUserId,
+&nbsp;                @QueryParam(&quot;appraisingUserName&quot;) String appraisingUserName,
+&nbsp;                @QueryParam(&quot;appraisingUserEmail&quot;) String appraisingUserEmail,
+&nbsp;                @QueryParam(&quot;language&quot;) @DefaultValue(&quot;ENGLISH&quot;) String languageStr,
+&nbsp;                @QueryParam(&quot;cycleId&quot;) Long cycleId,
+&nbsp;                @QueryParam(&quot;state&quot;) String appraisalStateStr,
+&nbsp;                @QueryParam(&quot;parameter&quot;) @DefaultValue(&quot;creationDate&quot;) String parameterStr,
+&nbsp;                @QueryParam(&quot;order&quot;) @DefaultValue(&quot;DESCENDING&quot;) String orderStr
+&nbsp;    ){
+&nbsp;            try {
+<b class="pc">&nbsp;                AppraisalState state = appraisalStateStr != null</b>
+<b class="nc">&nbsp;                        ? AppraisalState.valueOf(SearchUtils.normalizeString(appraisalStateStr))</b>
+<b class="fc">&nbsp;                        : null;</b>
+<b class="fc">&nbsp;                Language language = Language.fromFieldName(SearchUtils.normalizeString(languageStr));</b>
+<b class="fc">&nbsp;                AppraisalParameter parameter = AppraisalParameter.fromFieldName(SearchUtils.normalizeString(parameterStr));</b>
+<b class="fc">&nbsp;                OrderBy orderBy = OrderBy.fromFieldName(SearchUtils.normalizeString(orderStr));</b>
+&nbsp;
+<b class="fc">&nbsp;                StreamingOutput stream = appraisalService.getPDFOfAppraisals(</b>
+&nbsp;                        appraisedUserId, appraisedUserName, appraisedUserEmail, appraisingUserId, appraisingUserName,
+&nbsp;                        appraisingUserEmail, cycleId, state, parameter, orderBy, language);
+<b class="fc">&nbsp;                return Response.ok(stream)</b>
+<b class="fc">&nbsp;                        .header(&quot;Content-Disposition&quot;, &quot;attachment; filename=appraisals.pdf&quot;)</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } catch (Exception e) {
+<b class="fc">&nbsp;                LOGGER.error(&quot;Error generating appraisals PDF&quot;, e);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Failed to generate PDF&quot;, &quot;errorPdfExport&quot;, null))</b>
+<b class="fc">&nbsp;                        .type(MediaType.APPLICATION_JSON)</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        private Response validateUpdateAppraisalDTO (UpdateAppraisalDTO dto) {
+<b class="fc">&nbsp;            if (dto.getId() == null) {</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Appraisal ID is required&quot;, &quot;errorMissingId&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (dto.getState() == AppraisalState.IN_PROGRESS) {</b>
+<b class="fc">&nbsp;                return null;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (dto.getFeedback() != null &amp;&amp; dto.getFeedback().isBlank()) {</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Feedback must not be blank if provided&quot;, &quot;errorFeedbackBlank&quot;,</b>
+&nbsp;                                null))
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (dto.getScore() != null) {</b>
+<b class="nc">&nbsp;                int score = dto.getScore();</b>
+<b class="nc">&nbsp;                if (score &lt; 1 || score &gt; 4) {</b>
+<b class="nc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                            .entity(new ApiResponse(false, &quot;Score must be between 1 and 4 if provided&quot;,</b>
+&nbsp;                                    &quot;errorScoreOutOfBounds&quot;, null))
+<b class="nc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (dto.getState() == AppraisalState.COMPLETED) {</b>
+<b class="nc">&nbsp;                String feedback = dto.getFeedback();</b>
+<b class="nc">&nbsp;                if (feedback == null || feedback.trim().isBlank()) {</b>
+<b class="nc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                            .entity(new ApiResponse(false, &quot;Completed appraisal must have feedback&quot;, &quot;errorFeedbackBlank&quot;,</b>
+&nbsp;                                    null))
+<b class="nc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                Integer score = dto.getScore();</b>
+<b class="nc">&nbsp;                if (score == null || score &lt; 1 || score &gt; 4) {</b>
+<b class="nc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                            .entity(new ApiResponse(false, &quot;Completed appraisal must have a valid score between 1 and 4&quot;,</b>
+&nbsp;                                    &quot;errorScoreOutOfBounds&quot;, null))
+<b class="nc">&nbsp;                            .build();</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            return null; // No validation issues</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Métodos helper para determinar códigos de erro
+&nbsp;        private String getValidationErrorCode (String message){
+<b class="pc">&nbsp;            if (message.contains(&quot;not found&quot;) &amp;&amp; message.contains(&quot;User&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorUserNotFound&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;Cycle&quot;) &amp;&amp; message.contains(&quot;not found&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorCycleNotFound&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;score&quot;) &amp;&amp; (message.contains(&quot;between&quot;) || message.contains(&quot;invalid&quot;))) {</b>
+<b class="nc">&nbsp;                return &quot;errorInvalidScore&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;feedback&quot;) &amp;&amp; message.contains(&quot;required&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorMissingFeedback&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;Appraisal&quot;) &amp;&amp; message.contains(&quot;not found&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorAppraisalNotFound&quot;;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return &quot;errorInvalidData&quot;;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        private String getConflictErrorCode (String message){
+<b class="pc">&nbsp;            if (message.contains(&quot;already exists&quot;) || message.contains(&quot;duplicate&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorAppraisalExists&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;already completed&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorAppraisalCompleted&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;already closed&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorAppraisalClosed&quot;;</b>
+<b class="pc">&nbsp;            } else if (message.contains(&quot;cycle&quot;) &amp;&amp; message.contains(&quot;closed&quot;)) {</b>
+<b class="nc">&nbsp;                return &quot;errorCycleAlreadyClosed&quot;;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return &quot;errorConflict&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

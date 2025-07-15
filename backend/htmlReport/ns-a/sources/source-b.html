@@ -1,0 +1,385 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TokenService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: TokenService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TokenService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (12/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.1%
+  </span>
+  <span class="absValue">
+    (58/63)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.ActivationTokenDTO;
+&nbsp;import pt.uc.dei.dtos.PasswordResetTokenDTO;
+&nbsp;import pt.uc.dei.dtos.TemporaryUserDTO;
+&nbsp;import pt.uc.dei.dtos.UserDTO;
+&nbsp;import pt.uc.dei.entities.*;
+&nbsp;import pt.uc.dei.repositories.*;
+&nbsp;
+&nbsp;import java.security.SecureRandom;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.Base64;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class for handling activation token generation and management.
+&nbsp; * &lt;p&gt;
+&nbsp; * This stateless EJB provides functionality for creating secure activation tokens
+&nbsp; * used for user account verification processes.
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for
+&nbsp; * dependency injection and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+<b class="fc">&nbsp;public class TokenService {</b>
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this class.
+&nbsp;     * Note: The logger is initialized with UserService.class which might be a typo.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(UserService.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for serialization support.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected repository for activation token persistence operations.
+&nbsp;     */
+&nbsp;    @EJB
+&nbsp;    ActivationTokenRepository activationTokenRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected repository for temporary user persistence operations.
+&nbsp;     */
+&nbsp;    @EJB
+&nbsp;    TemporaryUserRepository temporaryUserRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    ConfigurationRepository configurationRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    UserService userService;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    PasswordResetTokenRepository passwordResetTokenRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and persists a new activation token for a temporary user.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method:
+&nbsp;     * &lt;ol&gt;
+&nbsp;     *   &lt;li&gt;Finds the temporary user by email&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Generates a secure random token&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Sets creation timestamp&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Associates the token with the user&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Persists the token&lt;/li&gt;
+&nbsp;     * &lt;/ol&gt;
+&nbsp;     *
+&nbsp;     * @param newUser The DTO containing temporary user information
+&nbsp;     * @return The generated token value as a Base64-encoded string
+&nbsp;     * @throws jakarta.persistence.PersistenceException If an error occurs during persistence
+&nbsp;     * @throws IllegalArgumentException                 If the temporary user cannot be found
+&nbsp;     * @see TemporaryUserDTO
+&nbsp;     * @see ActivationTokenEntity
+&nbsp;     */
+&nbsp;    public String createNewActivationToken(TemporaryUserDTO newUser) {
+<b class="fc">&nbsp;        TemporaryUserEntity temporaryUser = temporaryUserRepository.findTemporaryUserByEmail(newUser.getEmail());</b>
+<b class="fc">&nbsp;        ActivationTokenEntity activationToken = new ActivationTokenEntity();</b>
+<b class="fc">&nbsp;        activationToken.setTokenValue(generateNewToken());</b>
+<b class="fc">&nbsp;        activationToken.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;        activationToken.setTemporaryUser(temporaryUser);</b>
+<b class="fc">&nbsp;        activationTokenRepository.persist(activationToken);</b>
+<b class="fc">&nbsp;        return activationToken.getTokenValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and persists a new password reset token for a user by email.
+&nbsp;     * Deletes any existing tokens for the user before creating a new one.
+&nbsp;     *
+&nbsp;     * @param email The email address of the user
+&nbsp;     * @return The generated password reset token value, or null if user not found
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public String createNewPasswordResetToken(String email) {
+<b class="fc">&nbsp;        UserEntity user = userRepository.findUserByEmail(email);</b>
+<b class="fc">&nbsp;        if(user != null) {</b>
+<b class="fc">&nbsp;            List&lt;PasswordResetTokenEntity&gt; passwordResetTokens =  passwordResetTokenRepository.getTokensOfUser(user);</b>
+<b class="fc">&nbsp;            for(PasswordResetTokenEntity passwordResetToken : passwordResetTokens) {</b>
+<b class="fc">&nbsp;                passwordResetTokenRepository.remove(passwordResetToken);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            PasswordResetTokenEntity passwordResetToken = new PasswordResetTokenEntity();</b>
+<b class="fc">&nbsp;            passwordResetToken.setTokenValue(generateNewToken());</b>
+<b class="fc">&nbsp;            passwordResetToken.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;            passwordResetToken.setUser(user);</b>
+<b class="fc">&nbsp;            passwordResetTokenRepository.persist(passwordResetToken);</b>
+<b class="fc">&nbsp;            return passwordResetToken.getTokenValue();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Renews an existing token by deleting the old one and generating a new activation token.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Currently supports activation tokens, with future extensions planned for password reset tokens.
+&nbsp;     *
+&nbsp;     * @param user  The user associated with the token renewal.
+&nbsp;     * @param token The token to be renewed.
+&nbsp;     * @return A new activation token if renewal is successful, {@code null} otherwise.
+&nbsp;     */
+&nbsp;    public String renewToken(Object user, Object token) {
+<b class="fc">&nbsp;        if (token instanceof ActivationTokenDTO) {</b>
+<b class="fc">&nbsp;            ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(((ActivationTokenDTO) token).getTokenValue());</b>
+<b class="fc">&nbsp;            activationTokenRepository.remove(activationToken);</b>
+<b class="fc">&nbsp;            return createNewActivationToken((TemporaryUserDTO) user);</b>
+&nbsp;        }
+&nbsp;        // Future implementation for renewing password reset tokens.
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the temporary user associated with a given activation token.
+&nbsp;     *
+&nbsp;     * @param activationTokenDTO The activation token data transfer object.
+&nbsp;     * @return The corresponding {@link TemporaryUserDTO} if found, {@code null} otherwise.
+&nbsp;     */
+&nbsp;    public TemporaryUserDTO getTemporaryUserFromActivationToken(ActivationTokenDTO activationTokenDTO) {
+<b class="fc">&nbsp;        if (activationTokenDTO.getTokenValue() == null) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(activationTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            if (activationToken == null) {</b>
+<b class="fc">&nbsp;                return null;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            TemporaryUserEntity userToActivate = temporaryUserRepository.findTemporaryUserByEmail(activationToken.getTemporaryUser().getEmail());</b>
+<b class="fc">&nbsp;            return userService.temporaryUserEntityToTemporaryUserDTO(userToActivate);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;    public UserDTO getUserFromPasswordResetToken(PasswordResetTokenDTO passwordResetTokenDTO) {
+&nbsp;        if (passwordResetTokenDTO.getTokenValue() == null) {
+&nbsp;            return null;
+&nbsp;        } else {
+&nbsp;            Pass
+&nbsp;        }
+&nbsp;    }*/
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves an activation token entity based on the provided activation token value.
+&nbsp;     *
+&nbsp;     * @param activationTokenDTO The activation token data transfer object.
+&nbsp;     * @return A corresponding {@link ActivationTokenDTO} if found, {@code null} otherwise.
+&nbsp;     */
+&nbsp;    public ActivationTokenDTO getActivationTokenByValue(ActivationTokenDTO activationTokenDTO) {
+<b class="fc">&nbsp;        ActivationTokenEntity activationToken = activationTokenRepository.getTokenFromValue(activationTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;        return activationTokenEntityToActivationTokenDTO(activationToken);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a password reset token entity by its value and maps to a DTO.
+&nbsp;     *
+&nbsp;     * @param passwordResetTokenDTO The DTO containing the token value
+&nbsp;     * @return The mapped PasswordResetTokenDTO, or null if not found
+&nbsp;     */
+&nbsp;    public PasswordResetTokenDTO getPasswordResetTokenByValue(PasswordResetTokenDTO passwordResetTokenDTO) {
+<b class="fc">&nbsp;        PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.getTokenFromValue(passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;        return passwordResetTokenEntityToPasswordResetTokenDTO(passwordResetToken);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks whether a given token has expired.
+&nbsp;     *
+&nbsp;     * @param token The token to verify.
+&nbsp;     * @return {@code true} if the token is expired, {@code false} otherwise.
+&nbsp;     */
+&nbsp;    public boolean isTokenExpired(Object token) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LocalDateTime expirationDate = getExpirationDate(token);</b>
+<b class="pc">&nbsp;            if (expirationDate == null) {</b>
+<b class="nc">&nbsp;                LOGGER.error(&quot;Expiration date is null for token type: &quot; + token.getClass().getName());</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return LocalDateTime.now().isAfter(expirationDate);</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Error checking token expiration: &quot;, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Determines the expiration date of a given token based on the latest system configuration.
+&nbsp;     *
+&nbsp;     * @param token The token for which the expiration date is being determined.
+&nbsp;     * @return The expiration {@link LocalDateTime}, or {@code null} if unable to determine.
+&nbsp;     */
+&nbsp;    private LocalDateTime getExpirationDate(Object token) {
+<b class="fc">&nbsp;        ConfigurationEntity latestConfiguration = configurationRepository.getLatestConfiguration();</b>
+<b class="pc">&nbsp;        if (token instanceof ActivationTokenDTO) {</b>
+<b class="fc">&nbsp;            return ((ActivationTokenDTO) token).getCreationDate().plusMinutes(latestConfiguration.getVerificationTime());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (token instanceof PasswordResetTokenDTO) {</b>
+<b class="nc">&nbsp;            return ((PasswordResetTokenDTO) token).getCreationDate().plusMinutes(latestConfiguration.getVerificationTime());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts an {@link ActivationTokenEntity} to an {@link ActivationTokenDTO}.
+&nbsp;     *
+&nbsp;     * @param activationTokenEntity The activation token entity.
+&nbsp;     * @return A data transfer object representation of the activation token.
+&nbsp;     */
+&nbsp;    private ActivationTokenDTO activationTokenEntityToActivationTokenDTO(ActivationTokenEntity activationTokenEntity) {
+<b class="fc">&nbsp;        ActivationTokenDTO activationTokenDTO = new ActivationTokenDTO();</b>
+<b class="fc">&nbsp;        activationTokenDTO.setTokenValue(activationTokenEntity.getTokenValue());</b>
+<b class="fc">&nbsp;        activationTokenDTO.setCreationDate(activationTokenEntity.getCreationDate());</b>
+<b class="fc">&nbsp;        return activationTokenDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private PasswordResetTokenDTO passwordResetTokenEntityToPasswordResetTokenDTO(PasswordResetTokenEntity passwordResetTokenEntity) {
+<b class="fc">&nbsp;        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO();</b>
+<b class="fc">&nbsp;        passwordResetTokenDTO.setTokenValue(passwordResetTokenEntity.getTokenValue());</b>
+<b class="fc">&nbsp;        passwordResetTokenDTO.setCreationDate(passwordResetTokenEntity.getCreationDate());</b>
+<b class="fc">&nbsp;        return passwordResetTokenDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a new secure random token.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Creates a cryptographically strong random token using:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     *   &lt;li&gt;SecureRandom for random number generation&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;24 bytes of random data&lt;/li&gt;
+&nbsp;     *   &lt;li&gt;Base64 URL-safe encoding&lt;/li&gt;
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     *
+&nbsp;     * @return A URL-safe Base64-encoded random token string
+&nbsp;     * @implNote This implementation is thread-safe as both SecureRandom
+&nbsp;     * and Base64.Encoder instances used are thread-safe.
+&nbsp;     */
+&nbsp;    public String generateNewToken() {
+<b class="fc">&nbsp;        SecureRandom secureRandom = new SecureRandom(); //threadsafe</b>
+<b class="fc">&nbsp;        Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe</b>
+<b class="fc">&nbsp;        byte[] randomBytes = new byte[24];</b>
+<b class="fc">&nbsp;        secureRandom.nextBytes(randomBytes);</b>
+<b class="fc">&nbsp;        return base64Encoder.encodeToString(randomBytes);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

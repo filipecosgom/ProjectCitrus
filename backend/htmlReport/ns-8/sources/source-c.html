@@ -1,0 +1,195 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CourseMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: CourseMapper (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">CourseMapper$MockitoMock$QC6ZhvgQ</td>
+  </tr>
+  <tr>
+    <td class="name">CourseMapper$MockitoMock$QC6ZhvgQ$auxiliary$GLB9jPCh</td>
+  </tr>
+  <tr>
+    <td class="name">CourseMapper$MockitoMock$QC6ZhvgQ$auxiliary$Sz0BnGor</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import org.mapstruct.*;
+&nbsp;import pt.uc.dei.dtos.CourseDTO;
+&nbsp;import pt.uc.dei.dtos.CourseNewDTO;
+&nbsp;import pt.uc.dei.dtos.CourseUpdateDTO;
+&nbsp;import pt.uc.dei.entities.CourseEntity;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * MapStruct mapper interface for converting between {@link CourseEntity} and its DTO representations.
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Features:&lt;/b&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Automatic mapping between {@code CourseEntity}, {@code CourseDTO}, {@code CourseNewDTO}, and {@code CourseUpdateDTO}&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Handles mapping of collections (lists) of courses and DTOs&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Ignores userCompletions and admin fields to avoid persistence and security issues&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Provides update methods for partial entity updates from DTOs&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Usage:&lt;/b&gt; This interface is implemented automatically by MapStruct at build time.
+&nbsp; * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
+&nbsp; *
+&nbsp; * @author ProjectCitrus Team
+&nbsp; * @version 1.0
+&nbsp; */
+&nbsp;@Mapper(
+&nbsp;        componentModel = &quot;cdi&quot;,
+&nbsp;        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+&nbsp;)
+&nbsp;public interface CourseMapper {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link CourseEntity} to a {@link CourseDTO}.
+&nbsp;     *
+&nbsp;     * @param courseEntity the entity to convert
+&nbsp;     * @return the mapped DTO, or null if input is null
+&nbsp;     */
+&nbsp;    CourseDTO toDto(CourseEntity courseEntity);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link CourseDTO} to a {@link CourseEntity}.
+&nbsp;     * Ignores userCompletions and admin fields; set these in the service layer if needed.
+&nbsp;     *
+&nbsp;     * @param courseDTO the DTO to convert
+&nbsp;     * @return the mapped entity, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;userCompletions&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;admin&quot;, ignore = true) // Set admin in service if needed
+&nbsp;    CourseEntity toEntity(CourseDTO courseDTO);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link CourseUpdateDTO} to a {@link CourseEntity}.
+&nbsp;     * Ignores userCompletions and admin fields; set these in the service layer if needed.
+&nbsp;     *
+&nbsp;     * @param courseUpdateDTO the DTO to convert
+&nbsp;     * @return the mapped entity, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;userCompletions&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;admin&quot;, ignore = true)
+&nbsp;    CourseEntity toEntity(CourseUpdateDTO courseUpdateDTO);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link CourseNewDTO} to a {@link CourseEntity}.
+&nbsp;     * Ignores userCompletions, admin, and id fields; set these in the service layer if needed.
+&nbsp;     *
+&nbsp;     * @param courseNewDTO the DTO to convert
+&nbsp;     * @return the mapped entity, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;userCompletions&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;admin&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true)
+&nbsp;    CourseEntity toEntity(CourseNewDTO courseNewDTO);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a list of {@link CourseEntity} objects to a list of {@link CourseDTO} objects.
+&nbsp;     *
+&nbsp;     * @param courses the list of entities to convert
+&nbsp;     * @return the mapped list of DTOs (empty if input is empty or null)
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    List&lt;CourseDTO&gt; toDtoList(List&lt;CourseEntity&gt; courses);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a list of {@link CourseDTO} objects to a list of {@link CourseEntity} objects.
+&nbsp;     *
+&nbsp;     * @param courseDTOs the list of DTOs to convert
+&nbsp;     * @return the mapped list of entities (empty if input is empty or null)
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    List&lt;CourseEntity&gt; toEntityList(List&lt;CourseDTO&gt; courseDTOs);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing {@link CourseEntity} with values from a {@link CourseDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Useful for partial updates while preserving existing entity relationships and IDs.
+&nbsp;     * Ignores userCompletions and admin fields to avoid accidental changes.
+&nbsp;     *
+&nbsp;     * @param courseDTO the DTO containing the new values
+&nbsp;     * @param courseEntity the existing entity to update (modified in place)
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;userCompletions&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;admin&quot;, ignore = true)
+&nbsp;    void updateEntityFromDto(CourseDTO courseDTO, @MappingTarget CourseEntity courseEntity);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing {@link CourseEntity} with values from a {@link CourseUpdateDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Useful for partial updates while preserving existing entity relationships and IDs.
+&nbsp;     * Ignores userCompletions and admin fields to avoid accidental changes.
+&nbsp;     *
+&nbsp;     * @param courseUpdateDTO the DTO containing the new values
+&nbsp;     * @param courseEntity the existing entity to update (modified in place)
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;userCompletions&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;admin&quot;, ignore = true)
+&nbsp;    void updateEntityFromUpdateDto(CourseUpdateDTO courseUpdateDTO, @MappingTarget CourseEntity courseEntity);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

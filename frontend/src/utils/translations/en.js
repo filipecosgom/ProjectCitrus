@@ -205,6 +205,8 @@ const en = {
   profileErrorAddressStreetInvalid: "Street contains invalid characters",
   profileErrorAddressMunicipalityInvalid:
     "Municipality contains invalid characters",
+    profileErrorFirstNameTooLong: "First name must be at most 50 characters long",
+  profileErrorLastNameTooLong: "Last name must be at most 50 characters long",
 
   // Profile Tabs
   profileTabProfile: "Profile",
@@ -427,8 +429,6 @@ const en = {
     cycleCreated: "Cycle created successfully!",
     cycleCreatedEmailWarning:
       "Cycle created, but some email notifications failed to send.",
-    errorCreateCycle: "Failed to create cycle. Please try again.",
-    errorInvalidDateRange: "Please select a valid date range.",
   },
 
   courses: {

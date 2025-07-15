@@ -1,0 +1,408 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalEntity</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.entities</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalEntity (pt.uc.dei.entities)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppraisalEntity</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AppraisalEntity$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">AppraisalEntity$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.entities;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import pt.uc.dei.enums.AppraisalState;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;
+&nbsp;/**
+&nbsp; * JPA entity representing an appraisal record.
+&nbsp; * &lt;p&gt;
+&nbsp; * Stores details related to user feedback, scoring, and cycle participation.
+&nbsp; * Each appraisal is associated with an appraised user, an appraising user (manager), and a cycle.
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;id&lt;/b&gt;: Unique identifier, auto-generated.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;creationDate&lt;/b&gt;: Date when the appraisal was created (immutable).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;editedDate&lt;/b&gt;: Date when the appraisal was last edited.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;submissionDate&lt;/b&gt;: Date when the appraisal was submitted (optional).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;score&lt;/b&gt;: Score assigned in the appraisal (optional).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;feedback&lt;/b&gt;: Feedback provided during the appraisal (optional).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;appraisedUser&lt;/b&gt;: The user being appraised.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;appraisingUser&lt;/b&gt;: The user performing the appraisal (manager).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;cycle&lt;/b&gt;: The cycle in which this appraisal occurs.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;state&lt;/b&gt;: The current state of the appraisal (e.g., IN_PROGRESS, COMPLETED).&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;b&gt;Indexes:&lt;/b&gt; See class-level Javadoc for index recommendations and usage.
+&nbsp; */
+&nbsp;/**
+&nbsp; * JPA entity representing an appraisal record.
+&nbsp; * &lt;p&gt;
+&nbsp; * Index recommendations:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;idx_appraisal_appraised_user_id&lt;/b&gt;: For fast lookup of appraisals by the appraised user.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;idx_appraisal_appraising_user_id&lt;/b&gt;: For fast lookup of appraisals by the appraising user (manager).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;idx_appraisal_cycle_id&lt;/b&gt;: For efficient retrieval of appraisals within a cycle.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;idx_appraisal_state&lt;/b&gt;: For filtering appraisals by their state (e.g., COMPLETED, IN_PROGRESS).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;&lt;b&gt;idx_appraisal_appraised_appraising_cycle&lt;/b&gt;: Composite index for efficient duplicate checks and advanced multi-field filtering.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; */
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;appraisal&quot;,
+&nbsp;    indexes = {
+&nbsp;        /**
+&nbsp;         * For fast lookup of appraisals by the appraised user.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_appraisal_appraised_user_id&quot;, columnList = &quot;appraised_user_id&quot;),
+&nbsp;        /**
+&nbsp;         * For fast lookup of appraisals by the appraising user (manager).
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_appraisal_appraising_user_id&quot;, columnList = &quot;appraising_user_id&quot;),
+&nbsp;        /**
+&nbsp;         * For efficient retrieval of appraisals within a cycle.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_appraisal_cycle_id&quot;, columnList = &quot;cycle_id&quot;),
+&nbsp;        /**
+&nbsp;         * For filtering appraisals by their state (e.g., COMPLETED, IN_PROGRESS).
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_appraisal_state&quot;, columnList = &quot;state&quot;),
+&nbsp;        /**
+&nbsp;         * Composite index for efficient duplicate checks and advanced multi-field filtering.
+&nbsp;         * Covers (appraised_user_id, appraising_user_id, cycle_id).
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_appraisal_appraised_appraising_cycle&quot;, columnList = &quot;appraised_user_id,appraising_user_id,cycle_id&quot;)
+&nbsp;    }
+&nbsp;)
+&nbsp;public class AppraisalEntity implements Serializable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The unique identifier for the appraisal.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Generated automatically by the database.
+&nbsp;     */
+&nbsp;    @Id
+&nbsp;    @Column(name = &quot;id&quot;, nullable = false, unique = true, updatable = false)
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The date when the appraisal was created.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Cannot be updated once set. Used for sorting and filtering.
+&nbsp;     */
+&nbsp;    @Column(name = &quot;creation_date&quot;, nullable = false, unique = false, updatable = false)
+&nbsp;    private LocalDate creationDate;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The date when the appraisal was last edited.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Can be updated to reflect the latest modification.
+&nbsp;     */
+&nbsp;    @Column(name = &quot;edited_date&quot;, nullable = false, unique = false, updatable = true)
+&nbsp;    private LocalDate editedDate;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The date when the appraisal was submitted.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Optional. Used to track when the appraisal was finalized.
+&nbsp;     */
+&nbsp;    @Column(name = &quot;submission_date&quot;)
+&nbsp;    private LocalDate submissionDate;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The score assigned in the appraisal.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Optional and can be updated. Used for performance evaluation.
+&nbsp;     */
+&nbsp;    @Column(name = &quot;score&quot;, nullable = true, unique = false, updatable = true)
+&nbsp;    private Integer score;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The feedback provided during the appraisal.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Optional and can be updated. Used for qualitative assessment.
+&nbsp;     */
+&nbsp;    @Column(name = &quot;feedback&quot;, nullable = true, unique = false, updatable = true)
+&nbsp;    private String feedback;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The user being appraised.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Many-to-one relationship with UserEntity. Indexed for fast lookup.
+&nbsp;     */
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;appraised_user_id&quot;, nullable = false)
+&nbsp;    private UserEntity appraisedUser;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The user performing the appraisal (manager).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Many-to-one relationship with UserEntity. Indexed for fast lookup.
+&nbsp;     */
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;appraising_user_id&quot;, nullable = false)
+&nbsp;    private UserEntity appraisingUser;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The cycle in which this appraisal occurs.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Many-to-one relationship with CycleEntity. Indexed for efficient retrieval.
+&nbsp;     */
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;cycle_id&quot;, nullable = false)
+&nbsp;    private CycleEntity cycle;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The current state of the appraisal (e.g., IN_PROGRESS, COMPLETED).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Used for filtering and workflow management. Indexed for fast filtering.
+&nbsp;     */
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(name = &quot;state&quot;, nullable = false)
+&nbsp;    private AppraisalState state;
+&nbsp;
+&nbsp;    // Default constructor
+<b class="fc">&nbsp;    public AppraisalEntity() {</b>
+<b class="fc">&nbsp;        this.creationDate = LocalDate.now();</b>
+<b class="fc">&nbsp;        this.editedDate = LocalDate.now();</b>
+<b class="fc">&nbsp;        this.state = AppraisalState.IN_PROGRESS;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the unique identifier for the appraisal.
+&nbsp;     *
+&nbsp;     * @return the appraisal ID.
+&nbsp;     */
+<b class="fc">&nbsp;    public Long getId() { return id; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the unique identifier for the appraisal.
+&nbsp;     *
+&nbsp;     * @param id the appraisal ID to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setId(Long id) { this.id = id; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the creation date of the appraisal.
+&nbsp;     *
+&nbsp;     * @return the creation date.
+&nbsp;     */
+<b class="fc">&nbsp;    public LocalDate getCreationDate() { return creationDate; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the creation date of the appraisal.
+&nbsp;     *
+&nbsp;     * @param creationDate the creation date to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the last edited date of the appraisal.
+&nbsp;     *
+&nbsp;     * @return the last edited date.
+&nbsp;     */
+<b class="fc">&nbsp;    public LocalDate getEditedDate() { return editedDate; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the last edited date of the appraisal.
+&nbsp;     *
+&nbsp;     * @param editedDate the last edited date to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setEditedDate(LocalDate editedDate) { this.editedDate = editedDate; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the score assigned in the appraisal.
+&nbsp;     * @return the appraisal score.
+&nbsp;     */
+<b class="fc">&nbsp;    public Integer getScore() { return score; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the score assigned in the appraisal.
+&nbsp;     * @param score the appraisal score to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setScore(Integer score) { this.score = score; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the feedback provided during the appraisal.
+&nbsp;     * @return the feedback string.
+&nbsp;     */
+<b class="fc">&nbsp;    public String getFeedback() { return feedback; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the feedback provided during the appraisal.
+&nbsp;     * @param feedback the feedback string to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setFeedback(String feedback) { this.feedback = feedback; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current state of the appraisal.
+&nbsp;     * @return the appraisal state.
+&nbsp;     */
+<b class="fc">&nbsp;    public AppraisalState getState() { return state; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the current state of the appraisal.
+&nbsp;     * @param state the appraisal state to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setState(AppraisalState state) { this.state = state; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the user being appraised.
+&nbsp;     * @return the appraised user entity.
+&nbsp;     */
+<b class="fc">&nbsp;    public UserEntity getAppraisedUser() { return appraisedUser; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user being appraised.
+&nbsp;     * @param appraisedUser the appraised user entity to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setAppraisedUser(UserEntity appraisedUser) { this.appraisedUser = appraisedUser; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the user performing the appraisal.
+&nbsp;     * @return the appraising user entity.
+&nbsp;     */
+<b class="fc">&nbsp;    public UserEntity getAppraisingUser() { return appraisingUser; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user performing the appraisal.
+&nbsp;     * @param appraisingUser the appraising user entity to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setAppraisingUser(UserEntity appraisingUser) { this.appraisingUser = appraisingUser; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the cycle in which this appraisal occurs.
+&nbsp;     * @return the cycle entity.
+&nbsp;     */
+<b class="fc">&nbsp;    public CycleEntity getCycle() { return cycle; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the cycle in which this appraisal occurs.
+&nbsp;     * @param cycle the cycle entity to set.
+&nbsp;     */
+<b class="fc">&nbsp;    public void setCycle(CycleEntity cycle) { this.cycle = cycle; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the submission date of the appraisal.
+&nbsp;     *
+&nbsp;     * @return the submission date, or null if not submitted.
+&nbsp;     */
+&nbsp;    public LocalDate getSubmissionDate() {
+<b class="fc">&nbsp;        return submissionDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the submission date of the appraisal.
+&nbsp;     *
+&nbsp;     * @param submissionDate the submission date to set.
+&nbsp;     */
+&nbsp;    public void setSubmissionDate(LocalDate submissionDate) {
+<b class="fc">&nbsp;        this.submissionDate = submissionDate;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>
