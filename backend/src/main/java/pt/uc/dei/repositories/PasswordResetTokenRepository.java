@@ -12,6 +12,12 @@ import pt.uc.dei.entities.UserEntity;
 import java.util.List;
 
 
+
+/**
+ * Repository class for managing PasswordResetTokenEntity persistence operations.
+ * Provides methods to retrieve password reset tokens by user or by token value.
+ * Extends the generic AbstractRepository for common CRUD operations.
+ */
 @Stateless
 public class PasswordResetTokenRepository extends AbstractRepository<PasswordResetTokenEntity> {
 
@@ -22,10 +28,21 @@ public class PasswordResetTokenRepository extends AbstractRepository<PasswordRes
      */
     private static final long serialVersionUID = 1L;
 
+
+    /**
+     * Constructs a new PasswordResetTokenRepository and sets the entity class to PasswordResetTokenEntity.
+     */
     public PasswordResetTokenRepository() {
         super(PasswordResetTokenEntity.class);
     }
 
+
+    /**
+     * Retrieves all password reset tokens associated with a given user.
+     *
+     * @param user The user whose password reset tokens are to be retrieved.
+     * @return A list of PasswordResetTokenEntity objects for the user, or null if none found or an error occurs.
+     */
     public List<PasswordResetTokenEntity> getTokensOfUser(UserEntity user) {
         try {
             return em.createNamedQuery("PasswordResetToken.findPasswordResetTokensOfUser", PasswordResetTokenEntity.class)
@@ -40,6 +57,13 @@ public class PasswordResetTokenRepository extends AbstractRepository<PasswordRes
         }
     }
 
+
+    /**
+     * Retrieves a password reset token entity by its token value.
+     *
+     * @param passwordResetTokenValue The value of the password reset token.
+     * @return The PasswordResetTokenEntity if found, or null if not found or an error occurs.
+     */
     public PasswordResetTokenEntity getTokenFromValue(String passwordResetTokenValue) {
         try {
             return em.createNamedQuery("PasswordResetToken.findPasswordResetTokenByValue", PasswordResetTokenEntity.class)

@@ -20,6 +20,13 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
         super(MessageEntity.class);
     }
 
+    /**
+     * Retrieves the list of messages exchanged between two users.
+     *
+     * @param userId      The ID of the first user
+     * @param otherUserId The ID of the second user
+     * @return List of MessageEntity representing the conversation, or empty if none
+     */
     public List<MessageEntity> getListOfMessagesBetween(Long userId, Long otherUserId) {
         try {
             List<MessageEntity> messageEntities = em.createNamedQuery("MessageEntity.getConversation", MessageEntity.class)
@@ -33,12 +40,25 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
         }
     }
 
+    /**
+     * Retrieves all conversations for a user.
+     *
+     * @param userId The ID of the user
+     * @return List of Object[] representing all conversations (custom structure)
+     */
     public List<Object[]> getAllConversations(Long userId) {
         return em.createNamedQuery("MessageEntity.getAllChats", Object[].class)
                 .setParameter("user_id", userId)
                 .getResultList();
     }
 
+    /**
+     * Gets the count of unread messages for a recipient from a specific sender.
+     *
+     * @param recipientId The ID of the recipient user
+     * @param senderId    The ID of the sender user
+     * @return The number of unread messages, or -1 if an error occurs
+     */
     public int getUnreadMessageCount(Long recipientId, Long senderId) {
         try {
             return ((Long) em.createNamedQuery("MessageEntity.getUnreadMessages")
@@ -51,6 +71,13 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
         }
     }
 
+    /**
+     * Marks all messages in a conversation as read for a recipient from a sender.
+     *
+     * @param recipientId The ID of the recipient user
+     * @param senderId    The ID of the sender user
+     * @return true if the operation succeeded, false otherwise
+     */
     public boolean readConversation(Long recipientId, Long senderId) {
         try {
             em.createNamedQuery("MessageEntity.readConversation")
@@ -65,12 +92,12 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
     }
 
     /**
-     * Obtém previews das conversas para o dropdown de mensagens
-     * Retorna as últimas conversas do utilizador ordenadas por data
+     * Retrieves conversation previews for the message dropdown.
+     * Returns the latest conversations for the user, ordered by date.
      *
-     * @param userId ID do utilizador logado
-     * @param limit  Número máximo de conversas a retornar
-     * @return Lista de Object[] contendo [UserEntity otherUser, LocalDateTime lastMessageDate]
+     * @param userId The ID of the logged-in user
+     * @param limit  The maximum number of conversations to return
+     * @return List of Object[] containing [UserEntity otherUser, LocalDateTime lastMessageDate]
      */
     public List<Object[]> getConversationPreviews(Long userId, int limit) {
         try {
@@ -104,11 +131,11 @@ public class MessageRepository extends AbstractRepository<MessageEntity> {
     }
 
     /**
-     * Obtém a última mensagem entre dois utilizadores
+     * Retrieves the last message exchanged between two users.
      *
-     * @param userId     ID do utilizador logado
-     * @param otherUserId ID do outro utilizador
-     * @return MessageEntity da última mensagem ou null se não houver
+     * @param userId      The ID of the logged-in user
+     * @param otherUserId The ID of the other user
+     * @return The last MessageEntity exchanged, or null if none exists
      */
     public MessageEntity getLastMessageBetween(Long userId, Long otherUserId) {
         try {

@@ -5,9 +5,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pt.uc.dei.entities.AppraisalEntity;
 import pt.uc.dei.entities.CycleEntity;
-import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.enums.CycleState;
 
 import java.time.LocalDate;

@@ -12,7 +12,10 @@ import pt.uc.dei.enums.NotificationType;
 @Stateless
 public class NotificationRepository extends AbstractRepository<NotificationEntity> {
     /**
-     * Fetch a NotificationEntity by its id.
+     * Fetches a NotificationEntity by its unique identifier.
+     *
+     * @param id The notification ID
+     * @return The NotificationEntity if found, or null otherwise
      */
     public NotificationEntity findById(Long id) {
         try {
@@ -29,6 +32,12 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         super(NotificationEntity.class);
     }
 
+    /**
+     * Retrieves all notifications for a given user.
+     *
+     * @param userId The ID of the user
+     * @return List of NotificationEntity for the user, or empty if none found
+     */
     public List<NotificationEntity> getNotifications(Long userId) {
         try {
             List<NotificationEntity> notificationEntities = em.createNamedQuery("NotificationEntity.getNotifications", NotificationEntity.class)
@@ -44,6 +53,10 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
 
     /**
      * Returns the existing unread MESSAGE notification between recipient and sender, or null if none exists.
+     *
+     * @param recipientId The ID of the recipient user
+     * @param senderId    The ID of the sender user
+     * @return The NotificationEntity if found, or null otherwise
      */
     public NotificationEntity getMessageNotificationBetween(Long recipientId, Long senderId) {
         try {
@@ -59,6 +72,12 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
+    /**
+     * Gets the total number of notifications for a user.
+     *
+     * @param userId The ID of the user
+     * @return The total number of notifications, or 0 if an error occurs
+     */
     public int getTotalNotifications(Long userId) {
         try {
             Long totalNotifications = em.createNamedQuery("NotificationEntity.getTotalNotifications", Long.class)
@@ -71,6 +90,13 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
+    /**
+     * Marks a notification as read for a given recipient.
+     *
+     * @param notificationId The ID of the notification
+     * @param recipientId    The ID of the recipient user
+     * @return true if the notification was marked as read, false otherwise
+     */
     public boolean readNotification(Long notificationId, Long recipientId) {
         try {
             int updated = em.createNamedQuery("NotificationEntity.readNotification")
@@ -84,6 +110,13 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
+    /**
+     * Checks if a notification exists for a given recipient and notification ID.
+     *
+     * @param notificationId The ID of the notification
+     * @param recipientId    The ID of the recipient user
+     * @return true if the notification exists, false otherwise
+     */
     public boolean isNotificationIdValid(Long notificationId, Long recipientId) {
         try {
             boolean exists = !em.createNamedQuery("NotificationEntity.checkIfNotificationExist", NotificationEntity.class)
@@ -97,6 +130,12 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
+    /**
+     * Marks all unread MESSAGE notifications as read for a given user.
+     *
+     * @param userId The ID of the user
+     * @return true if the operation succeeded, false otherwise
+     */
     public boolean markMessageNotificationsAsRead(Long userId) {
         try {
             int updatedCount = em.createQuery(
@@ -118,9 +157,11 @@ public class NotificationRepository extends AbstractRepository<NotificationEntit
         }
     }
 
-        /**
-     * Fetch all MESSAGE notifications where notificationIsRead=false, notificationIsSeen=false, emailSent=false,
-     * and creationDate is at least 24 hours ago, including recipient and sender entities.
+    /**
+     * Fetches all MESSAGE notifications that are unread, unseen, and unemailed, and were created at least 24 hours ago.
+     * Includes recipient and sender entities in the result.
+     *
+     * @return List of NotificationEntity matching the criteria, or empty if none found
      */
     public List<NotificationEntity> getUnemailedMessageNotifications() {
         try {
