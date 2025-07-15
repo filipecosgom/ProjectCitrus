@@ -12,8 +12,6 @@ import pt.uc.dei.enums.CourseParameter;
 import pt.uc.dei.enums.Language;
 import pt.uc.dei.enums.OrderBy;
 import pt.uc.dei.utils.SearchUtils;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

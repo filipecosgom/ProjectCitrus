@@ -21,15 +21,17 @@ https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
         <persistence-unit name="test-unit" transaction-type="RESOURCE_LOCAL">
             <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             <class>pt.uc.dei.entities.ActivationTokenEntity</class>
-            <class>pt.uc.dei.entities.PasswordResetTokenEntity</class>
-            <class>pt.uc.dei.entities.TemporaryUserEntity</class>
-            <class>pt.uc.dei.entities.UserEntity</class>
+            <class>pt.uc.dei.entities.AppraisalEntity</class>
             <class>pt.uc.dei.entities.ConfigurationEntity</class>
             <class>pt.uc.dei.entities.CourseEntity</class>
             <class>pt.uc.dei.entities.CycleEntity</class>
             <class>pt.uc.dei.entities.FinishedCourseEntity</class>
             <class>pt.uc.dei.entities.MessageEntity</class>
             <class>pt.uc.dei.entities.NotificationEntity</class>
+            <class>pt.uc.dei.entities.ActivationTokenEntity</class>
+            <class>pt.uc.dei.entities.PasswordResetTokenEntity</class>
+            <class>pt.uc.dei.entities.TemporaryUserEntity</class>
+            <class>pt.uc.dei.entities.UserEntity</class>
             <!-- Add all other entities here -->
             <properties>
                 <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

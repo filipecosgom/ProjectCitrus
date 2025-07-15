@@ -16,3 +16,298 @@
 	Pool: DriverManagerConnectionProviderImpl
 	Minimum pool size: 1
 	Maximum pool size: 20 
+15/07/2025 00:18:34.310 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:18:34.381 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:18:34.385 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:18:34.386 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:18:34.387 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:18:34.388 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:18:34.529 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:18:34.842 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:18:35.073 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:18:35.100 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:21:02.865 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:21:02.937 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:21:02.942 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:21:02.943 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:21:02.943 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:21:02.944 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:21:03.092 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:21:03.404 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:21:03.647 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:21:03.673 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:28:24.785 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 960 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
+15/07/2025 00:28:25.481 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:28:25.575 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:28:25.580 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:28:25.581 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:28:25.582 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:28:25.584 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:28:25.737 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:28:26.060 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:28:26.372 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:28:26.405 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:28:27.952 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:28:29.382 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@6f49a5f8] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:28:29.392 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@e08853d] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:28:29.778 [WARN] error.logExceptions:143 - [IP: ] - HHH000247: ErrorCode: 23505, SQLState: 23505 
+15/07/2025 00:28:29.779 [WARN] error.logExceptions:144 - [IP: ] - Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.ACTIVATIONTOKEN(TEMPORARY_USER_ID NULLS FIRST) VALUES ( /* 3 */ CAST(3 AS BIGINT) )"; SQL statement:
+insert into activationtoken (creation_date,temporary_user_id,tokenValue,id) values (?,?,?,default) [23505-232] 
+15/07/2025 00:28:29.801 [WARN] ActivationTokenRepository.getTokenFromValue:89 - [IP: ] - No token found for token: notfound 
+15/07/2025 00:28:29.804 [WARN] ActivationTokenRepository.getIdFromToken:66 - [IP: ] - No temporary user found for token: notfound 
+15/07/2025 00:28:29.807 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@66403e2c] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:31:17.857 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:31:17.936 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:31:17.943 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:31:17.945 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:31:17.946 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:31:17.948 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:31:18.101 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:31:18.427 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:31:18.686 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:31:18.712 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:31:20.631 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:31:22.099 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@8cc5602] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:31:22.110 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@6f2a13c7] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:31:22.456 [WARN] error.logExceptions:143 - [IP: ] - HHH000247: ErrorCode: 23505, SQLState: 23505 
+15/07/2025 00:31:22.457 [WARN] error.logExceptions:144 - [IP: ] - Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.ACTIVATIONTOKEN(TEMPORARY_USER_ID NULLS FIRST) VALUES ( /* 3 */ CAST(3 AS BIGINT) )"; SQL statement:
+insert into activationtoken (creation_date,temporary_user_id,tokenValue,id) values (?,?,?,default) [23505-232] 
+15/07/2025 00:31:22.485 [WARN] ActivationTokenRepository.getTokenFromValue:89 - [IP: ] - No token found for token: notfound 
+15/07/2025 00:31:22.491 [WARN] ActivationTokenRepository.getIdFromToken:66 - [IP: ] - No temporary user found for token: notfound 
+15/07/2025 00:31:22.496 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@4eb2a0c2] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:34:08.797 [INFO] AuthenticationFilter.filter:97 - [IP: ] - Storing new jwt cookie (expires in 955 ms): jwt=newToken;Version=1;Path=/;Max-Age=3600;Secure 
+15/07/2025 00:34:09.484 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:34:09.561 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:34:09.566 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:34:09.567 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:34:09.568 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:34:09.569 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:34:09.722 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:34:10.011 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:34:10.304 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:34:10.330 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:34:11.711 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:34:13.038 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@112e72ea] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:34:13.048 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@4a596fc1] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:34:13.366 [WARN] error.logExceptions:143 - [IP: ] - HHH000247: ErrorCode: 23505, SQLState: 23505 
+15/07/2025 00:34:13.367 [WARN] error.logExceptions:144 - [IP: ] - Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.ACTIVATIONTOKEN(TEMPORARY_USER_ID NULLS FIRST) VALUES ( /* 3 */ CAST(3 AS BIGINT) )"; SQL statement:
+insert into activationtoken (creation_date,temporary_user_id,tokenValue,id) values (?,?,?,default) [23505-232] 
+15/07/2025 00:34:13.388 [WARN] ActivationTokenRepository.getTokenFromValue:89 - [IP: ] - No token found for token: notfound 
+15/07/2025 00:34:13.391 [WARN] ActivationTokenRepository.getIdFromToken:66 - [IP: ] - No temporary user found for token: notfound 
+15/07/2025 00:34:13.395 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@1343eae6] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:38:08.067 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:38:08.149 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:38:08.160 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:38:08.161 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:38:08.162 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:38:08.163 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:38:08.302 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:38:08.619 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:38:08.852 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:38:08.876 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:38:10.732 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:38:12.057 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@456c6754] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:38:12.066 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@76e56b17] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:38:12.408 [WARN] ActivationTokenRepository.getTokenFromValue:89 - [IP: ] - No token found for token: notfound 
+15/07/2025 00:38:12.412 [WARN] ActivationTokenRepository.getIdFromToken:66 - [IP: ] - No temporary user found for token: notfound 
+15/07/2025 00:38:12.415 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@5125558b] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:43:43.591 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:43:43.679 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:43:43.685 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:43:43.687 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:43:43.688 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:43:43.689 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:43:43.859 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:43:44.217 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:43:44.471 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:43:44.494 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:43:46.399 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:43:47.790 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@6089c1e3] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:43:47.800 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@14fed48e] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:43:48.008 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@339b9869] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:45:21.933 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:45:22.023 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:45:22.028 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:45:22.029 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:45:22.030 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:45:22.031 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:45:22.182 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:45:22.526 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:45:22.798 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:45:22.821 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:45:24.949 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:45:26.560 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@284e68ae] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:45:26.571 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@20c1cb0c] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:45:27.004 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@1dc47df3] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:47:55.441 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:47:55.624 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:47:55.644 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:47:55.647 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:47:55.648 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:47:55.651 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:47:55.817 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:47:56.134 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:47:56.451 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:47:56.478 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:47:58.559 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:47:59.927 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@7441eed3] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:47:59.938 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@46244e65] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:48:00.220 [WARN] ConfigurationRepository.getLatestConfiguration:52 - [IP: ] - No configuration found. 
+15/07/2025 00:48:00.305 [INFO] ConfigurationRepository.getLatestConfiguration:49 - [IP: ] - Current configuration: pt.uc.dei.entities.ConfigurationEntity@13088030 
+15/07/2025 00:48:00.311 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@1eaf95d2] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:54:20.062 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:54:20.157 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:54:20.163 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:54:20.164 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:54:20.165 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:54:20.167 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:54:20.338 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:54:20.657 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:54:20.950 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:54:20.981 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:54:23.064 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:54:24.416 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@432e242d] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:54:24.424 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@77fa509a] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:58:08.337 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:58:08.474 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:58:08.478 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:58:08.480 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:58:08.480 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:58:08.482 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:58:08.622 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:58:08.924 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:58:09.182 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:58:09.208 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:58:11.103 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:58:12.662 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@70f5f6c7] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:58:12.673 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@1abacff3] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:59:31.381 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 00:59:31.480 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 00:59:31.486 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 00:59:31.487 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 00:59:31.488 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 00:59:31.490 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 00:59:31.653 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 00:59:32.042 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 00:59:32.322 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 00:59:32.349 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 00:59:34.827 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 00:59:36.679 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@814b60b] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 00:59:36.691 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@116f823c] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 01:00:05.319 [INFO] LogHelper.logPersistenceUnitInformation:30 - [IP: ] - HHH000204: Processing PersistenceUnitInfo [name: test-unit] 
+15/07/2025 01:00:05.399 [INFO] Version.logVersion:45 - [IP: ] - HHH000412: Hibernate ORM core version 7.0.0.Final 
+15/07/2025 01:00:05.404 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$7:742 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead 
+15/07/2025 01:00:05.407 [WARN] deprecation.lambda$normalizeConnectionAccessUserAndPass$13:764 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead 
+15/07/2025 01:00:05.407 [WARN] deprecation.normalizeDataAccess:1060 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead 
+15/07/2025 01:00:05.408 [WARN] deprecation.normalizeDataAccess:1066 - [IP: ] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead 
+15/07/2025 01:00:05.567 [INFO] beans.interpretImplicitCdiBeanContainer:85 - [IP: ] - HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate class loader 
+15/07/2025 01:00:05.921 [WARN] pooling.configure:84 - [IP: ] - HHH10001002: Using built-in connection pool (not intended for production use) 
+15/07/2025 01:00:06.169 [WARN] deprecation.constructDialect:152 - [IP: ] - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default) 
+15/07/2025 01:00:06.198 [INFO] pooling.logConnectionInfo:182 - [IP: ] - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:test;DB_CLOSE_DELAY=-1]
+	Database driver: org.h2.Driver
+	Database version: 2.3.232
+	Autocommit mode: false
+	Isolation level: undefined/unknown
+	Pool: DriverManagerConnectionProviderImpl
+	Minimum pool size: 1
+	Maximum pool size: 20 
+15/07/2025 01:00:08.179 [INFO] JtaPlatformInitiator.initiateService:58 - [IP: ] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration) 
+15/07/2025 01:00:09.747 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@2810d9] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 
+15/07/2025 01:00:09.757 [INFO] access.getIsolatedConnection:50 - [IP: ] - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@2a7b4b19] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode. 

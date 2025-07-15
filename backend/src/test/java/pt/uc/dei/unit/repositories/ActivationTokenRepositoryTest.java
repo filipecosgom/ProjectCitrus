@@ -3,10 +3,8 @@ package pt.uc.dei.unit.repositories;
 import org.junit.jupiter.api.*;
 import pt.uc.dei.entities.ActivationTokenEntity;
 import pt.uc.dei.entities.TemporaryUserEntity;
-
-import jakarta.persistence.*;
 import pt.uc.dei.repositories.ActivationTokenRepository;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
