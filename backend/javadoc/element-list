@@ -1,0 +1,13 @@
+pt.uc.dei.annotations
+pt.uc.dei.config
+pt.uc.dei.controllers
+pt.uc.dei.dtos
+pt.uc.dei.entities
+pt.uc.dei.enums
+pt.uc.dei.filters
+pt.uc.dei.initializer
+pt.uc.dei.mapper
+pt.uc.dei.repositories
+pt.uc.dei.services
+pt.uc.dei.utils
+pt.uc.dei.websocket
