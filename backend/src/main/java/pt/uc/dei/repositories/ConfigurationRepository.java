@@ -53,4 +53,28 @@ public class ConfigurationRepository extends AbstractRepository<ConfigurationEnt
             return null;
         }
     }
+
+    /**
+     * Updates the two-factor authentication enabled status in the latest configuration.
+     *
+     * @param enabled The new status for two-factor authentication.
+     * @return true if the update was successful, false otherwise.
+     */
+    public boolean updateTwoFactorAuthEnabled(boolean enabled) {
+        ConfigurationEntity config = getLatestConfiguration();
+        if (config == null) return false;
+        config.setTwoFactorAuthEnabled(enabled);
+        em.merge(config);
+        return true;
+    }
+
+    /**
+     * Retrieves the two-factor authentication enabled status from the latest configuration.
+     *
+     * @return The enabled status of two-factor authentication, or null if no configuration is found.
+     */
+    public Boolean getLatestTwoFactorAuthEnabled() {
+        ConfigurationEntity config = getLatestConfiguration();
+        return config != null ? config.getTwoFactorAuthEnabled() : null;
+    }
 }

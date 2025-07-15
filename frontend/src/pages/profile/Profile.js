@@ -100,19 +100,25 @@ export default function Profile() {
         userId,
         user,
         data,
-        avatarFile // Pass the avatar file separately
+        avatarFile
       );
 
       if (response?.success) {
+        // Atualiza o avatar no store global
         if (avatarFile && avatarPreview) {
           setStoreAvatar(avatarPreview, avatarFile);
           setAvatarPreview(null);
           setAvatarFile(null);
         }
+        // Atualiza o utilizador no store global
+        const { tokenExpiration } = useAuthStore.getState();
+
+        setUserAndExpiration({ ...user, ...data }, tokenExpiration);
+
         reset(data);
         setEditMode(false);
         setShowAddressFields(false);
-        await refreshUser(); // <-- Atualiza os dados do utilizador após guardar
+        await refreshUser();
       }
     } catch (error) {
       console.error("Update error:", error);

@@ -66,6 +66,7 @@ const AppraisalCard = ({
         className={`appraisalCard-container`}
         onClick={handleCardClick}
         style={{ cursor: onClick ? "pointer" : "default" }}
+        data-testid="appraisal-card" // <-- Adiciona isto
       >
         {/* ✅ COLUNA 1: Appraised User */}
         <div

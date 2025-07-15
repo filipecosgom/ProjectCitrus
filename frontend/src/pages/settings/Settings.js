@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IoSettings,
   IoSave,
@@ -8,6 +8,14 @@ import {
 import "./Settings.css";
 import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
 import { useTranslation } from "react-i18next";
+import {
+  getTwoFactorAuthStatus,
+  updateTwoFactorAuth,
+} from "../../api/settingsApi";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../utils/toastConfig/toastConfig";
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -19,6 +27,21 @@ const Settings = () => {
 
   const [showAdminOffcanvas, setShowAdminOffcanvas] = useState(false);
 
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const enabled = await getTwoFactorAuthStatus();
+        setSettings((prev) => ({
+          ...prev,
+          disableGoogleAuthenticator: !enabled, // Mantém se o toggle for "Desativar"
+        }));
+      } catch (error) {
+        showErrorToast("Erro ao carregar estado da autenticação 2 fatores.");
+      }
+    }
+    fetchSettings();
+  }, []);
+
   const handleSettingChange = (key, value) => {
     setSettings((prev) => ({
       ...prev,
@@ -26,8 +49,15 @@ const Settings = () => {
     }));
   };
 
-  const handleSave = () => {
-    // TODO: Save to API
+  const handleSave = async () => {
+    try {
+      await updateTwoFactorAuth(!settings.disableGoogleAuthenticator);
+      showSuccessToast(
+        "Configuração de autenticação 2 fatores atualizada com sucesso!"
+      );
+    } catch (error) {
+      showErrorToast("Erro ao atualizar autenticação 2 fatores.");
+    }
   };
 
   return (
@@ -103,11 +133,12 @@ const Settings = () => {
               <input
                 type="checkbox"
                 checked={settings.emailNotifications}
+                disabled // torna o toggle inativo
                 onChange={(e) =>
                   handleSettingChange("emailNotifications", e.target.checked)
                 }
               />
-              <span className="toggle-slider"></span>
+              <span className="toggle-slider toggle-disabled"></span>
             </label>
           </div>
         </div>
