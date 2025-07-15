@@ -1,0 +1,318 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FinishedCourseMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: FinishedCourseMapperImpl (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FinishedCourseMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (40/44)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.9%
+  </span>
+  <span class="absValue">
+    (92/93)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import pt.uc.dei.dtos.FinishedCourseDTO;
+&nbsp;import pt.uc.dei.entities.CourseEntity;
+&nbsp;import pt.uc.dei.entities.FinishedCourseEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2025-07-15T17:25:52+0100&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;public class FinishedCourseMapperImpl implements FinishedCourseMapper {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public FinishedCourseDTO toDto(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        if ( finishedCourseEntity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        FinishedCourseDTO finishedCourseDTO = new FinishedCourseDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        finishedCourseDTO.setUserId( finishedCourseEntityUserId( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setUserEmail( finishedCourseEntityUserEmail( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseId( finishedCourseEntityCourseId( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseTitle( finishedCourseEntityCourseTitle( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseDescription( finishedCourseEntityCourseDescription( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseCreationDate( finishedCourseEntityCourseCreationDate( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseDuration( finishedCourseEntityCourseDuration( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseLink( finishedCourseEntityCourseLink( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseHasImage( finishedCourseEntityCourseCourseHasImage( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseIsActive( finishedCourseEntityCourseCourseIsActive( finishedCourseEntity ) );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setId( finishedCourseEntity.getId() );</b>
+<b class="fc">&nbsp;        finishedCourseDTO.setCompletionDate( finishedCourseEntity.getCompletionDate() );</b>
+&nbsp;
+<b class="fc">&nbsp;        finishedCourseDTO.setCourseArea( courseAreaToString(finishedCourseEntity.getCourse() != null ? finishedCourseEntity.getCourse().getArea() : null) );</b>
+<b class="pc">&nbsp;        finishedCourseDTO.setCourseLanguage( finishedCourseEntity.getCourse() != null &amp;&amp; finishedCourseEntity.getCourse().getLanguage() != null ? finishedCourseEntity.getCourse().getLanguage().getFieldName() : null );</b>
+&nbsp;
+<b class="fc">&nbsp;        return finishedCourseDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;FinishedCourseDTO&gt; toDtoList(List&lt;FinishedCourseEntity&gt; finishedCourses) {
+<b class="fc">&nbsp;        if ( finishedCourses == null ) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;FinishedCourseDTO&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;FinishedCourseDTO&gt; list = new ArrayList&lt;FinishedCourseDTO&gt;( finishedCourses.size() );</b>
+<b class="fc">&nbsp;        for ( FinishedCourseEntity finishedCourseEntity : finishedCourses ) {</b>
+<b class="fc">&nbsp;            list.add( toDto( finishedCourseEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Set&lt;FinishedCourseDTO&gt; toDtoSet(Set&lt;FinishedCourseEntity&gt; finishedCourses) {
+<b class="fc">&nbsp;        if ( finishedCourses == null ) {</b>
+<b class="fc">&nbsp;            return new LinkedHashSet&lt;FinishedCourseDTO&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Set&lt;FinishedCourseDTO&gt; set = LinkedHashSet.newLinkedHashSet( finishedCourses.size() );</b>
+<b class="fc">&nbsp;        for ( FinishedCourseEntity finishedCourseEntity : finishedCourses ) {</b>
+<b class="fc">&nbsp;            set.add( toDto( finishedCourseEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return set;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public FinishedCourseEntity toEntity(FinishedCourseDTO finishedCourseDTO) {
+<b class="fc">&nbsp;        if ( finishedCourseDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        FinishedCourseEntity finishedCourseEntity = new FinishedCourseEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        finishedCourseEntity.setCourse( finishedCourseDTOToCourseEntity( finishedCourseDTO ) );</b>
+<b class="fc">&nbsp;        finishedCourseEntity.setId( finishedCourseDTO.getId() );</b>
+<b class="fc">&nbsp;        finishedCourseEntity.setCompletionDate( finishedCourseDTO.getCompletionDate() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return finishedCourseEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateFinishedCourseFromDto(FinishedCourseDTO dto, FinishedCourseEntity entity) {
+<b class="pc">&nbsp;        if ( dto == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( dto.getCompletionDate() != null ) {</b>
+<b class="fc">&nbsp;            entity.setCompletionDate( dto.getCompletionDate() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long finishedCourseEntityUserId(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        UserEntity user = finishedCourseEntity.getUser();</b>
+<b class="fc">&nbsp;        if ( user == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return user.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String finishedCourseEntityUserEmail(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        UserEntity user = finishedCourseEntity.getUser();</b>
+<b class="fc">&nbsp;        if ( user == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return user.getEmail();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long finishedCourseEntityCourseId(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String finishedCourseEntityCourseTitle(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getTitle();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String finishedCourseEntityCourseDescription(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getDescription();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private LocalDate finishedCourseEntityCourseCreationDate(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getCreationDate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Integer finishedCourseEntityCourseDuration(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getDuration();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String finishedCourseEntityCourseLink(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getLink();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Boolean finishedCourseEntityCourseCourseHasImage(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getCourseHasImage();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Boolean finishedCourseEntityCourseCourseIsActive(FinishedCourseEntity finishedCourseEntity) {
+<b class="fc">&nbsp;        CourseEntity course = finishedCourseEntity.getCourse();</b>
+<b class="fc">&nbsp;        if ( course == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return course.getCourseIsActive();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected CourseEntity finishedCourseDTOToCourseEntity(FinishedCourseDTO finishedCourseDTO) {
+<b class="pc">&nbsp;        if ( finishedCourseDTO == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CourseEntity courseEntity = new CourseEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        courseEntity.setId( finishedCourseDTO.getCourseId() );</b>
+<b class="fc">&nbsp;        courseEntity.setTitle( finishedCourseDTO.getCourseTitle() );</b>
+<b class="fc">&nbsp;        courseEntity.setDescription( finishedCourseDTO.getCourseDescription() );</b>
+<b class="fc">&nbsp;        courseEntity.setCreationDate( finishedCourseDTO.getCourseCreationDate() );</b>
+<b class="fc">&nbsp;        courseEntity.setDuration( finishedCourseDTO.getCourseDuration() );</b>
+<b class="fc">&nbsp;        courseEntity.setLink( finishedCourseDTO.getCourseLink() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseHasImage( finishedCourseDTO.getCourseHasImage() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseIsActive( finishedCourseDTO.getCourseIsActive() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return courseEntity;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

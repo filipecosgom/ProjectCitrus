@@ -1,0 +1,612 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CycleController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: CycleController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CycleController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.8%
+  </span>
+  <span class="absValue">
+    (15/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (24/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.5%
+  </span>
+  <span class="absValue">
+    (117/200)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.ejb.EJBException;
+&nbsp;import jakarta.resource.spi.AdministeredObject;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.annotations.AdminOnly;
+&nbsp;import pt.uc.dei.dtos.CycleDTO;
+&nbsp;import pt.uc.dei.dtos.CycleUpdateDTO;
+&nbsp;import pt.uc.dei.enums.CycleState;
+&nbsp;import pt.uc.dei.services.CycleService;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.time.format.DateTimeParseException;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * REST Controller for managing cycle-related operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides endpoints for CRUD operations on cycles, including
+&nbsp; * creation, retrieval, updating, and filtering functionality.
+&nbsp; */
+&nbsp;@AdminOnly
+&nbsp;@Path(&quot;/cycles&quot;)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+&nbsp;@Consumes(MediaType.APPLICATION_JSON)
+<b class="fc">&nbsp;public class CycleController {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this controller.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(CycleController.class);</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;</b>
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private CycleService cycleService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new cycle.
+&nbsp;     *
+&nbsp;     * @param cycleDTO The cycle creation data
+&nbsp;     * @return Response with the created cycle DTO
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    public Response createCycle(@Valid CycleDTO cycleDTO, @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="fc">&nbsp;        Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="fc">&nbsp;                cycleDTO.setAdminId(userId);</b>
+&nbsp;                try {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Creating new cycle from {} to {} with admin {}&quot;, </b>
+<b class="fc">&nbsp;                       cycleDTO.getStartDate(), </b>
+<b class="fc">&nbsp;                       cycleDTO.getEndDate(),</b>
+<b class="fc">&nbsp;                       cycleDTO.getAdminId());</b>
+&nbsp;
+<b class="fc">&nbsp;            CycleDTO createdCycle = cycleService.createCycle(cycleDTO);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CREATED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Cycle created successfully&quot;, &quot;success&quot;, createdCycle))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Invalid request for cycle creation: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;            String errorCode = getValidationErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalStateException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Business rule violation for cycle creation: {}&quot;, e.getMessage());</b>
+<b class="fc">&nbsp;            String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (EJBException e) {
+<b class="nc">&nbsp;            Throwable cause = e.getCause();</b>
+&nbsp;            
+<b class="nc">&nbsp;            if (cause instanceof IllegalStateException) {</b>
+<b class="nc">&nbsp;                String errorCode = getConflictErrorCode(cause.getMessage());</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.CONFLICT)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, cause.getMessage(), errorCode, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;                        
+<b class="nc">&nbsp;            } else if (cause instanceof IllegalArgumentException) {</b>
+<b class="nc">&nbsp;                String errorCode = getValidationErrorCode(cause.getMessage());</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, cause.getMessage(), errorCode, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;                        
+&nbsp;            } else {
+<b class="nc">&nbsp;                LOGGER.error(&quot;EJB error in operation&quot;, e);</b>
+<b class="nc">&nbsp;                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                        .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error creating cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing cycle.
+&nbsp;     *
+&nbsp;     * @param cycleUpdateDTO The cycle update data
+&nbsp;     * @return Response with the updated cycle DTO
+&nbsp;     */
+&nbsp;    @PATCH
+&nbsp;    public Response updateCycle(@Valid CycleUpdateDTO cycleUpdateDTO) {
+&nbsp;        try {
+<b class="nc">&nbsp;            LOGGER.info(&quot;Updating cycle with ID: {}&quot;, cycleUpdateDTO.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;            CycleDTO updatedCycle = cycleService.updateCycle(cycleUpdateDTO);</b>
+<b class="nc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle updated successfully&quot;, &quot;success&quot;, updatedCycle))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Invalid request for cycle update: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            String errorCode = getValidationErrorCode(e.getMessage());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Business rule violation for cycle update: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            String errorCode = getConflictErrorCode(e.getMessage());</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), errorCode, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error updating cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a cycle by its ID.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return Response with the cycle DTO
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/{id}&quot;)
+&nbsp;    public Response getCycleById(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Retrieving cycle with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;            CycleDTO cycle = cycleService.getCycleById(id);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle retrieved successfully&quot;, &quot;success&quot;, cycle))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error retrieving cycle with ID: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all cycles or cycles with filtering options.
+&nbsp;     *
+&nbsp;     * @param state Optional filter by cycle state
+&nbsp;     * @param adminId Optional filter by administrator ID
+&nbsp;     * @param startDateFrom Optional filter for cycles starting after this date (ISO format)
+&nbsp;     * @param startDateTo Optional filter for cycles starting before this date (ISO format)
+&nbsp;     * @param limit Maximum number of results
+&nbsp;     * @param offset Starting position for pagination
+&nbsp;     * @return Response with list of filtered cycle DTOs
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    public Response getCyclesWithFilters(@QueryParam(&quot;state&quot;) CycleState state,
+&nbsp;                                        @QueryParam(&quot;adminId&quot;) Long adminId,
+&nbsp;                                        @QueryParam(&quot;startDateFrom&quot;) String startDateFrom,
+&nbsp;                                        @QueryParam(&quot;startDateTo&quot;) String startDateTo,
+&nbsp;                                        @QueryParam(&quot;limit&quot;) @DefaultValue(&quot;50&quot;) Integer limit,
+&nbsp;                                        @QueryParam(&quot;offset&quot;) @DefaultValue(&quot;0&quot;) Integer offset) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Retrieving cycles with filters&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            LocalDate startDateFromParsed = null;</b>
+<b class="fc">&nbsp;            LocalDate startDateToParsed = null;</b>
+&nbsp;
+&nbsp;            // Parse date strings if provided
+<b class="pc">&nbsp;            if (startDateFrom != null &amp;&amp; !startDateFrom.isEmpty()) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    startDateFromParsed = LocalDate.parse(startDateFrom, DATE_FORMATTER);</b>
+&nbsp;                } catch (DateTimeParseException e) {
+<b class="fc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                                  .entity(new ApiResponse(false, &quot;Invalid startDateFrom format. Use ISO format (yyyy-MM-dd)&quot;, &quot;errorInvalidDateFormat&quot;, null)).build();</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (startDateTo != null &amp;&amp; !startDateTo.isEmpty()) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    startDateToParsed = LocalDate.parse(startDateTo, DATE_FORMATTER);</b>
+&nbsp;                } catch (DateTimeParseException e) {
+<b class="nc">&nbsp;                    return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                                  .entity(new ApiResponse(false, &quot;Invalid startDateTo format. Use ISO format (yyyy-MM-dd)&quot;, &quot;errorInvalidDateFormat&quot;, null)).build();</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            List&lt;CycleDTO&gt; cycles;
+<b class="fc">&nbsp;            Map&lt;String, Object&gt; cycleData = new HashMap&lt;&gt;();</b>
+&nbsp;            
+&nbsp;            // If no filters are provided, return all cycles
+<b class="pc">&nbsp;            if (state == null &amp;&amp; adminId == null &amp;&amp; startDateFromParsed == null &amp;&amp; startDateToParsed == null) {</b>
+<b class="fc">&nbsp;                cycleData = cycleService.getAllCycles(offset, limit);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                cycleData = cycleService.getCyclesWithFilters(</b>
+&nbsp;                    state, adminId, startDateFromParsed, startDateToParsed, limit, offset
+&nbsp;                );
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycles retrieved successfully&quot;, &quot;success&quot;, cycleData)).build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error retrieving cycles with filters&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current active cycle.
+&nbsp;     *
+&nbsp;     * @return Response with the current active cycle DTO or 404 if none exists
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/current&quot;)
+&nbsp;    public Response getCurrentActiveCycle() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Retrieving current active cycle&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            CycleDTO currentCycle = cycleService.getCurrentActiveCycle();</b>
+<b class="fc">&nbsp;            if (currentCycle == null) {</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;No active cycle found&quot;, &quot;errorNoActiveCycle&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Current cycle retrieved successfully&quot;, &quot;success&quot;, currentCycle))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error retrieving current active cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves upcoming cycles.
+&nbsp;     *
+&nbsp;     * @return Response with list of upcoming cycle DTOs
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/upcoming&quot;)
+&nbsp;    public Response getUpcomingCycles() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Retrieving upcoming cycles&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;CycleDTO&gt; upcomingCycles = cycleService.getUpcomingCycles();</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Upcoming cycles retrieved successfully&quot;, &quot;success&quot;, upcomingCycles)).build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error retrieving upcoming cycles&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves cycles managed by a specific administrator.
+&nbsp;     *
+&nbsp;     * @param adminId The administrator ID
+&nbsp;     * @return Response with list of cycle DTOs
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/admin/{adminId}&quot;)
+&nbsp;    public Response getCyclesByAdmin(@PathParam(&quot;adminId&quot;) Long adminId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Retrieving cycles for admin ID: {}&quot;, adminId);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;CycleDTO&gt; cycles = cycleService.getCyclesByAdmin(adminId);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Admin cycles retrieved successfully&quot;, &quot;success&quot;, cycles)).build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error retrieving cycles for admin ID: {}&quot;, adminId, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Closes a cycle.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return Response with the updated cycle DTO
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/{id}/close&quot;)
+&nbsp;    public Response closeCycle(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Closing cycle with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;            CycleDTO closedCycle = cycleService.closeCycle(id);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle closed successfully&quot;, &quot;success&quot;, closedCycle))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cannot close cycle with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleAlreadyClosed&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error closing cycle with ID: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Reopens a cycle.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return Response with the updated cycle DTO
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/{id}/reopen&quot;)
+&nbsp;    public Response reopenCycle(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Reopening cycle with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;            CycleDTO reopenedCycle = cycleService.reopenCycle(id);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle reopened successfully&quot;, &quot;success&quot;, reopenedCycle)).build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                          .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null)).build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cannot reopen cycle with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                          .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleAlreadyOpen&quot;, null)).build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error reopening cycle with ID: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a cycle.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return Response indicating success or failure
+&nbsp;     */
+&nbsp;    @DELETE
+&nbsp;    @Path(&quot;/{id}&quot;)
+&nbsp;    public Response deleteCycle(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Deleting cycle with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;            cycleService.deleteCycle(id);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle deleted successfully&quot;, &quot;success&quot;, null)).build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                          .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null)).build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cannot delete cycle with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                          .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleAlreadyClosed&quot;, null))</b>
+<b class="fc">&nbsp;                          .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error deleting cycle with ID: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Automatically closes expired cycles.
+&nbsp;     * This endpoint can be called by a scheduled job or admin to automatically close
+&nbsp;     * cycles that have passed their end date.
+&nbsp;     *
+&nbsp;     * @return Response with the number of cycles that were closed
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/close-expired&quot;)
+&nbsp;    public Response closeExpiredCycles() {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Closing expired cycles&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            int closedCount = cycleService.closeExpiredCycles();</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Expired cycles closed successfully&quot;, &quot;success&quot;, closedCount)).build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error closing expired cycles&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                          .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null)).build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates if a cycle can be closed.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return Response with validation result and details
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/{id}/can-close&quot;)
+&nbsp;    public Response canCloseCycle(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Validating if cycle {} can be closed&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;            Map&lt;String, Object&gt; validation = cycleService.canCloseCycle(id);</b>
+<b class="fc">&nbsp;            return Response.ok(new ApiResponse(true, &quot;Cycle validation completed&quot;, &quot;success&quot;, validation))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle not found with ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleNotFound&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (IllegalStateException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cannot validate cycle with ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.CONFLICT)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, e.getMessage(), &quot;errorCycleAlreadyClosed&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Unexpected error validating cycle with ID: {}&quot;, id, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Internal server error&quot;, &quot;errorInternalServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Métodos helper para determinar códigos de erro
+&nbsp;    private String getValidationErrorCode(String message) {
+<b class="pc">&nbsp;        if (message.contains(&quot;Start date&quot;) &amp;&amp; message.contains(&quot;past&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorStartDatePast&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;Start date&quot;) &amp;&amp; message.contains(&quot;before end date&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorDateValidation&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;Admin user not found&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorMissingAdmin&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;format&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorInvalidDateFormat&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return &quot;errorInvalidData&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String getConflictErrorCode(String message) {
+&nbsp;        // Caso específico para users sem manager
+<b class="pc">&nbsp;        if (message.contains(&quot;without manager&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorUsersWithoutManager&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;overlapping&quot;) || message.contains(&quot;already exists&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorCycleOverlap&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;already closed&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorCycleAlreadyClosed&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;already open&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorCycleAlreadyOpen&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;already started&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorCycleAlreadyStarted&quot;;</b>
+<b class="pc">&nbsp;        } else if (message.contains(&quot;would overlap&quot;)) {</b>
+<b class="nc">&nbsp;            return &quot;errorReopenOverlap&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return &quot;errorConflict&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

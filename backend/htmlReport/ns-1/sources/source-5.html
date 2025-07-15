@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LoggingFilter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.config</a>
+</div>
+
+<h1>Coverage Summary for Class: LoggingFilter (pt.uc.dei.config)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoggingFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.config;
+&nbsp;
+&nbsp;import jakarta.ws.rs.container.ContainerRequestContext;
+&nbsp;import jakarta.ws.rs.container.ContainerRequestFilter;
+&nbsp;import jakarta.ws.rs.container.ContainerResponseContext;
+&nbsp;import jakarta.ws.rs.container.ContainerResponseFilter;
+&nbsp;import jakarta.ws.rs.core.Context;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.ws.rs.ext.Provider;
+&nbsp;import org.apache.logging.log4j.ThreadContext;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implements a request filter for logging incoming HTTP requests.
+&nbsp; */
+&nbsp;@Provider
+<b class="nc">&nbsp;public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for recording request details.
+&nbsp;     */
+<b class="nc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(LoggingFilter.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides access to the HTTP servlet request.
+&nbsp;     */
+&nbsp;    @Context
+&nbsp;    private HttpServletRequest request;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Filters incoming HTTP requests and logs relevant request details.
+&nbsp;     *
+&nbsp;     * @param requestContext The request context containing request details.
+&nbsp;     * @throws IOException If an error occurs while processing the request.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void filter(ContainerRequestContext requestContext) throws IOException {
+<b class="nc">&nbsp;        String clientIP = getClientIP();</b>
+<b class="nc">&nbsp;        String method = requestContext.getMethod();</b>
+<b class="nc">&nbsp;        String endpoint = requestContext.getUriInfo().getPath();</b>
+<b class="nc">&nbsp;        String userAgent = request.getHeader(&quot;User-Agent&quot;);</b>
+&nbsp;
+&nbsp;        // Store client IP in Log4j2 MDC for tracking purposes
+<b class="nc">&nbsp;        ThreadContext.put(&quot;clientIP&quot;, clientIP);</b>
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.info(&quot;IP: {} | {} {} | Agent: {}&quot;, clientIP, method, endpoint, userAgent);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the ThreadContext after the response is sent.
+&nbsp;     *
+&nbsp;     * @param requestContext  The request context containing request details.
+&nbsp;     * @param responseContext The response context containing response details.
+&nbsp;     * @throws IOException If an error occurs while processing the response.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+&nbsp;        // Clear ThreadContext after request processing
+<b class="nc">&nbsp;        ThreadContext.clearMap();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the client IP address from HTTP headers.
+&nbsp;     * Checks various headers commonly used by proxies and load balancers.
+&nbsp;     *
+&nbsp;     * @return The client&#39;s IP address.
+&nbsp;     */
+&nbsp;    public String getClientIP() {
+<b class="nc">&nbsp;        String[] headersToCheck = {</b>
+&nbsp;                &quot;X-Forwarded-For&quot;, &quot;Proxy-Client-IP&quot;, &quot;WL-Proxy-Client-IP&quot;,
+&nbsp;                &quot;HTTP_X_FORWARDED_FOR&quot;, &quot;HTTP_X_FORWARDED&quot;, &quot;HTTP_X_CLUSTER_CLIENT_IP&quot;,
+&nbsp;                &quot;HTTP_CLIENT_IP&quot;, &quot;HTTP_FORWARDED_FOR&quot;, &quot;HTTP_FORWARDED&quot;, &quot;HTTP_VIA&quot;,
+&nbsp;                &quot;REMOTE_ADDR&quot;
+&nbsp;        };
+&nbsp;
+<b class="nc">&nbsp;        for (String header : headersToCheck) {</b>
+<b class="nc">&nbsp;            String ip = request.getHeader(header);</b>
+<b class="nc">&nbsp;            if (ip != null &amp;&amp; !ip.isEmpty() &amp;&amp; !&quot;unknown&quot;.equalsIgnoreCase(ip)) {</b>
+<b class="nc">&nbsp;                return ip.split(&quot;,&quot;)[0].trim();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return request.getRemoteAddr();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

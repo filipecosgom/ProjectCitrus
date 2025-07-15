@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CSVGenerator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: CSVGenerator (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CSVGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import org.apache.commons.csv.CSVFormat;
+&nbsp;import org.apache.commons.csv.CSVPrinter;
+&nbsp;import pt.uc.dei.dtos.UserDTO;
+&nbsp;import pt.uc.dei.enums.Language;
+&nbsp;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.io.OutputStreamWriter;
+&nbsp;import java.nio.charset.StandardCharsets;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for generating CSV files from user data.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides a method to export a list of {@link pt.uc.dei.dtos.UserDTO} objects to a CSV file,
+&nbsp; * with support for language-specific headers and admin-specific columns.
+&nbsp; */
+<b class="nc">&nbsp;public class CSVGenerator {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a CSV file from a list of {@link pt.uc.dei.dtos.UserDTO} objects.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The output includes translated headers (Portuguese or English), and optionally includes the account state column if exported by an admin.
+&nbsp;     *
+&nbsp;     * @param users   the list of {@link pt.uc.dei.dtos.UserDTO} objects to export
+&nbsp;     * @param lang    the {@link pt.uc.dei.enums.Language} for header translation
+&nbsp;     * @param isAdmin whether the export is performed by an admin (affects columns)
+&nbsp;     * @return the generated CSV as a byte array
+&nbsp;     * @throws RuntimeException if CSV generation fails
+&nbsp;     */
+&nbsp;    public static byte[] generateUserCSV(List&lt;UserDTO&gt; users, Language lang, boolean isAdmin) {
+&nbsp;        String[] headers;
+<b class="nc">&nbsp;        boolean includeAccountState = isAdmin;</b>
+<b class="nc">&nbsp;        boolean isPortuguese = lang == Language.PORTUGUESE;</b>
+<b class="nc">&nbsp;        String noManager = isPortuguese ? &quot;Sem gestor&quot; : &quot;No manager&quot;;</b>
+<b class="nc">&nbsp;        if (isPortuguese) {</b>
+<b class="nc">&nbsp;            headers = includeAccountState</b>
+<b class="nc">&nbsp;                    ? new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Nome&quot;, &quot;Apelido&quot;, &quot;Contacto telefónico&quot;, &quot;Escritório&quot;, &quot;Cargo&quot;, &quot;Estado de conta&quot;, &quot;Gestor&quot;}</b>
+<b class="nc">&nbsp;                    : new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Nome&quot;, &quot;Apelido&quot;, &quot;Contacto telefónico&quot;, &quot;Escritório&quot;, &quot;Cargo&quot;, &quot;Gestor&quot;};</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            headers = includeAccountState</b>
+<b class="nc">&nbsp;                    ? new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Name&quot;, &quot;Surname&quot;, &quot;Phone&quot;, &quot;Office&quot;, &quot;Role&quot;, &quot;Account state&quot;, &quot;Manager&quot;}</b>
+<b class="nc">&nbsp;                    : new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Name&quot;, &quot;Surname&quot;, &quot;Phone&quot;, &quot;Office&quot;, &quot;Role&quot;, &quot;Manager&quot;};</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            ByteArrayOutputStream baos = new ByteArrayOutputStream();</b>
+<b class="nc">&nbsp;             baos.write(0xEF);</b>
+<b class="nc">&nbsp;             baos.write(0xBB);</b>
+<b class="nc">&nbsp;             baos.write(0xBF);</b>
+<b class="nc">&nbsp;             CSVPrinter csvPrinter = new CSVPrinter(</b>
+&nbsp;                     new OutputStreamWriter(baos, StandardCharsets.UTF_8),
+<b class="nc">&nbsp;                     CSVFormat.DEFAULT.withHeader(headers));</b>
+<b class="nc">&nbsp;            for (UserDTO user : users) {</b>
+&nbsp;                // Build row according to language and admin
+<b class="nc">&nbsp;                List&lt;Object&gt; row = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                row.add(user.getId());</b>
+<b class="nc">&nbsp;                row.add(user.getEmail());</b>
+<b class="nc">&nbsp;                row.add(user.getName());</b>
+<b class="nc">&nbsp;                row.add(user.getSurname());</b>
+<b class="nc">&nbsp;                row.add(user.getPhone());</b>
+<b class="nc">&nbsp;                row.add(user.getOffice() != null ? user.getOffice().name() : &quot;&quot;);</b>
+<b class="nc">&nbsp;                row.add(user.getRole() != null ? user.getRole().name() : &quot;&quot;);</b>
+<b class="nc">&nbsp;                if (includeAccountState) {</b>
+<b class="nc">&nbsp;                    row.add(user.getAccountState() != null ? user.getAccountState().name() : &quot;&quot;);</b>
+&nbsp;                }
+&nbsp;                // Manager column: show manager&#39;s name if available, else blank
+<b class="nc">&nbsp;                String managerName = (user.getManager() != null &amp;&amp; (user.getManager().getName() != null || user.getManager().getSurname() != null))</b>
+<b class="nc">&nbsp;                        ? (user.getManager().getName() + &quot; &quot; + user.getManager().getSurname()) : noManager;</b>
+<b class="nc">&nbsp;                row.add(managerName);</b>
+<b class="nc">&nbsp;                csvPrinter.printRecord(row);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            csvPrinter.flush();</b>
+<b class="nc">&nbsp;            return baos.toByteArray();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to generate user CSV&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

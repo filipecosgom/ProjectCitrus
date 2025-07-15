@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66%
+  </span>
+  <span class="absValue">
+    (35/53)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;
+&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.entities.NotificationEntity;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;import pt.uc.dei.enums.NotificationType;
+&nbsp;
+&nbsp;@Stateless
+&nbsp;public class NotificationRepository extends AbstractRepository&lt;NotificationEntity&gt; {
+&nbsp;    /**
+&nbsp;     * Fetches a NotificationEntity by its unique identifier.
+&nbsp;     *
+&nbsp;     * @param id The notification ID
+&nbsp;     * @return The NotificationEntity if found, or null otherwise
+&nbsp;     */
+&nbsp;    public NotificationEntity findById(Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.find(NotificationEntity.class, id);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error fetching notification by id&quot;, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(NotificationRepository.class);</b>
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    public NotificationRepository() {
+<b class="fc">&nbsp;        super(NotificationEntity.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all notifications for a given user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @return List of NotificationEntity for the user, or empty if none found
+&nbsp;     */
+&nbsp;    public List&lt;NotificationEntity&gt; getNotifications(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;NotificationEntity&gt; notificationEntities = em.createNamedQuery(&quot;NotificationEntity.getNotifications&quot;, NotificationEntity.class)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;id&quot;, userId)</b>
+<b class="fc">&nbsp;                    .getResultList();</b>
+<b class="fc">&nbsp;            return notificationEntities;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error fetching notifications: &quot;, e);</b>
+<b class="nc">&nbsp;            return Collections.emptyList();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the existing unread MESSAGE notification between recipient and sender, or null if none exists.
+&nbsp;     *
+&nbsp;     * @param recipientId The ID of the recipient user
+&nbsp;     * @param senderId    The ID of the sender user
+&nbsp;     * @return The NotificationEntity if found, or null otherwise
+&nbsp;     */
+&nbsp;    public NotificationEntity getMessageNotificationBetween(Long recipientId, Long senderId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;NotificationEntity.getMessageNotification&quot;, NotificationEntity.class)</b>
+<b class="fc">&nbsp;                .setParameter(&quot;recipientId&quot;, recipientId)</b>
+<b class="fc">&nbsp;                .setParameter(&quot;senderId&quot;, senderId)</b>
+<b class="fc">&nbsp;                .getResultStream()</b>
+<b class="fc">&nbsp;                .findFirst()</b>
+<b class="fc">&nbsp;                .orElse(null);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error fetching message notification between users&quot;, e);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the total number of notifications for a user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @return The total number of notifications, or 0 if an error occurs
+&nbsp;     */
+&nbsp;    public int getTotalNotifications(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Long totalNotifications = em.createNamedQuery(&quot;NotificationEntity.getTotalNotifications&quot;, Long.class)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;id&quot;, userId)</b>
+<b class="fc">&nbsp;                    .getSingleResult();</b>
+<b class="fc">&nbsp;            return totalNotifications.intValue();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error fetching notifications: &quot;, e);</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Marks a notification as read for a given recipient.
+&nbsp;     *
+&nbsp;     * @param notificationId The ID of the notification
+&nbsp;     * @param recipientId    The ID of the recipient user
+&nbsp;     * @return true if the notification was marked as read, false otherwise
+&nbsp;     */
+&nbsp;    public boolean readNotification(Long notificationId, Long recipientId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            int updated = em.createNamedQuery(&quot;NotificationEntity.readNotification&quot;)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;notificationId&quot;, notificationId)</b>
+<b class="fc">&nbsp;                    .setParameter(&quot;userId&quot;, recipientId)</b>
+<b class="fc">&nbsp;                    .executeUpdate();</b>
+<b class="fc">&nbsp;            return updated &gt; 0;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error reading notification&quot;, e);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if a notification exists for a given recipient and notification ID.
+&nbsp;     *
+&nbsp;     * @param notificationId The ID of the notification
+&nbsp;     * @param recipientId    The ID of the recipient user
+&nbsp;     * @return true if the notification exists, false otherwise
+&nbsp;     */
+&nbsp;    public boolean isNotificationIdValid(Long notificationId, Long recipientId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            boolean exists = !em.createNamedQuery(&quot;NotificationEntity.checkIfNotificationExist&quot;, NotificationEntity.class)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;notificationId&quot;, notificationId)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;userId&quot;, recipientId)</b>
+<b class="nc">&nbsp;                    .getResultList().isEmpty();</b>
+<b class="nc">&nbsp;            return exists;</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Error reading notification&quot;, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Marks all unread MESSAGE notifications as read for a given user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @return true if the operation succeeded, false otherwise
+&nbsp;     */
+&nbsp;    public boolean markMessageNotificationsAsRead(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            int updatedCount = em.createQuery(</b>
+&nbsp;                &quot;UPDATE NotificationEntity n &quot; +
+&nbsp;                &quot;SET n.notificationIsRead = true &quot; +
+&nbsp;                &quot;WHERE n.user.id = :userId &quot; +
+&nbsp;                &quot;AND n.type = :messageType &quot; +
+&nbsp;                &quot;AND n.notificationIsRead = false&quot;
+&nbsp;            )
+<b class="fc">&nbsp;            .setParameter(&quot;userId&quot;, userId)</b>
+<b class="fc">&nbsp;            .setParameter(&quot;messageType&quot;, NotificationType.MESSAGE)</b>
+<b class="fc">&nbsp;            .executeUpdate();</b>
+&nbsp;            
+<b class="fc">&nbsp;            LOGGER.info(&quot;Marked {} MESSAGE notifications as read for user {}&quot;, updatedCount, userId);</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error marking MESSAGE notifications as read for user {}&quot;, userId, e);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetches all MESSAGE notifications that are unread, unseen, and unemailed, and were created at least 24 hours ago.
+&nbsp;     * Includes recipient and sender entities in the result.
+&nbsp;     *
+&nbsp;     * @return List of NotificationEntity matching the criteria, or empty if none found
+&nbsp;     */
+&nbsp;    public List&lt;NotificationEntity&gt; getUnemailedMessageNotifications() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createQuery(</b>
+&nbsp;                &quot;SELECT n FROM NotificationEntity n &quot; +
+&nbsp;                &quot;JOIN FETCH n.user &quot; +
+&nbsp;                &quot;JOIN FETCH n.sender &quot; +
+&nbsp;                &quot;WHERE n.type = :type &quot; +
+&nbsp;                &quot;AND n.notificationIsRead = false &quot; +
+&nbsp;                &quot;AND n.notificationIsSeen = false &quot; +
+&nbsp;                &quot;AND n.emailSent = false &quot; +
+&nbsp;                &quot;AND n.creationDate &lt;= :dateLimit&quot;,
+&nbsp;                NotificationEntity.class
+&nbsp;            )
+<b class="fc">&nbsp;            .setParameter(&quot;type&quot;, NotificationType.MESSAGE)</b>
+<b class="fc">&nbsp;            .setParameter(&quot;dateLimit&quot;, java.time.LocalDateTime.now().minusHours(24))</b>
+<b class="fc">&nbsp;            .getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error fetching old unread, unseen, unemailed MESSAGE notifications&quot;, e);</b>
+<b class="nc">&nbsp;            return Collections.emptyList();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

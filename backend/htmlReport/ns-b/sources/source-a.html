@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > XLSXGenerator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: XLSXGenerator (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XLSXGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (30/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.3%
+  </span>
+  <span class="absValue">
+    (83/88)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import org.apache.poi.ss.usermodel.*;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFColor;
+&nbsp;
+&nbsp;import pt.uc.dei.dtos.UserDTO;
+&nbsp;import pt.uc.dei.enums.Language;
+&nbsp;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for generating XLSX (Excel) files from user data.
+&nbsp; * &lt;p&gt;
+&nbsp; * This class provides a method to export a list of {@link pt.uc.dei.dtos.UserDTO} objects to an XLSX file,
+&nbsp; * with support for language-specific headers, admin-specific columns, and custom styling.
+&nbsp; * &lt;p&gt;
+&nbsp; * The generated XLSX includes:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Dynamic headers based on language and admin status&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Custom fonts and colors for headers and data rows&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Alternate row coloring for readability&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Manager name or a fallback string if not present&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; *
+&nbsp; * &lt;b&gt;Note:&lt;/b&gt; Uses Apache POI for XLSX generation. Throws a {@link RuntimeException} on failure.
+&nbsp; */
+<b class="nc">&nbsp;public class XLSXGenerator {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates an XLSX file from a list of {@link pt.uc.dei.dtos.UserDTO} objects.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The output includes translated headers (Portuguese or English), and optionally includes the account state column if exported by an admin.
+&nbsp;     * Custom fonts and colors are applied to headers and data rows for improved readability.
+&nbsp;     *
+&nbsp;     * @param users   the list of {@link pt.uc.dei.dtos.UserDTO} objects to export
+&nbsp;     * @param lang    the {@link pt.uc.dei.enums.Language} for header translation
+&nbsp;     * @param isAdmin whether the export is performed by an admin (affects columns)
+&nbsp;     * @return the generated XLSX as a byte array
+&nbsp;     * @throws RuntimeException if XLSX generation fails
+&nbsp;     */
+&nbsp;    public static byte[] generateUserXLSX(List&lt;UserDTO&gt; users, Language lang, boolean isAdmin) {
+&nbsp;        String[] headers;
+<b class="fc">&nbsp;        boolean includeAccountState = isAdmin;</b>
+<b class="fc">&nbsp;        boolean isPortuguese = lang == Language.PORTUGUESE;</b>
+<b class="fc">&nbsp;        String noManager = isPortuguese ? &quot;Sem gestor&quot; : &quot;No manager&quot;;</b>
+<b class="fc">&nbsp;        if (isPortuguese) {</b>
+<b class="fc">&nbsp;            headers = includeAccountState</b>
+<b class="fc">&nbsp;                    ? new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Nome&quot;, &quot;Apelido&quot;, &quot;Contacto telefónico&quot;, &quot;Escritório&quot;, &quot;Cargo&quot;, &quot;Estado de conta&quot;, &quot;Gestor&quot;}</b>
+<b class="fc">&nbsp;                    : new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Nome&quot;, &quot;Apelido&quot;, &quot;Contacto telefónico&quot;, &quot;Escritório&quot;, &quot;Cargo&quot;, &quot;Gestor&quot;};</b>
+&nbsp;        } else {
+<b class="pc">&nbsp;            headers = includeAccountState</b>
+<b class="nc">&nbsp;                    ? new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Name&quot;, &quot;Surname&quot;, &quot;Phone&quot;, &quot;Office&quot;, &quot;Role&quot;, &quot;Account state&quot;, &quot;Manager&quot;}</b>
+<b class="fc">&nbsp;                    : new String[]{&quot;ID&quot;, &quot;Email&quot;, &quot;Name&quot;, &quot;Surname&quot;, &quot;Phone&quot;, &quot;Office&quot;, &quot;Role&quot;, &quot;Manager&quot;};</b>
+&nbsp;        }
+<b class="fc">&nbsp;        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {</b>
+<b class="fc">&nbsp;            Sheet sheet = workbook.createSheet(&quot;Users&quot;);</b>
+&nbsp;
+&nbsp;            // Try to use Istok Web and Catamaran fonts if available, else fallback
+<b class="fc">&nbsp;            String headerFontName = &quot;Istok Web&quot;;</b>
+<b class="fc">&nbsp;            String dataFontName = &quot;Catamaran&quot;;</b>
+&nbsp;
+&nbsp;            // PDF color scheme
+<b class="fc">&nbsp;            short headerBgColor = IndexedColors.RED.getIndex(); // fallback if custom not available</b>
+<b class="fc">&nbsp;            short altRowBgColor = IndexedColors.GREY_25_PERCENT.getIndex(); // fallback</b>
+&nbsp;            // Custom colors (as close as possible)
+<b class="fc">&nbsp;            XSSFColor titleColor = new XSSFColor(new java.awt.Color(156, 47, 49), null); // #9C2F31</b>
+<b class="fc">&nbsp;            XSSFColor subtitleColor = new XSSFColor(new java.awt.Color(66, 67, 89), null); // #424359</b>
+<b class="fc">&nbsp;            XSSFColor accentColor = new XSSFColor(new java.awt.Color(136, 144, 159), null); // #88909F</b>
+&nbsp;
+&nbsp;            // Create header style
+<b class="fc">&nbsp;            CellStyle headerStyle = workbook.createCellStyle();</b>
+<b class="fc">&nbsp;            Font headerFont = workbook.createFont();</b>
+<b class="fc">&nbsp;            headerFont.setBold(true);</b>
+<b class="fc">&nbsp;            headerFont.setColor(IndexedColors.WHITE.getIndex());</b>
+<b class="fc">&nbsp;            headerFont.setFontHeightInPoints((short) 11);</b>
+<b class="fc">&nbsp;            headerFont.setFontName(headerFontName);</b>
+<b class="fc">&nbsp;            headerStyle.setFont(headerFont);</b>
+<b class="pc">&nbsp;            if (headerStyle instanceof org.apache.poi.xssf.usermodel.XSSFCellStyle) {</b>
+<b class="fc">&nbsp;                ((org.apache.poi.xssf.usermodel.XSSFCellStyle) headerStyle).setFillForegroundColor(titleColor);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                headerStyle.setFillForegroundColor(headerBgColor);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);</b>
+<b class="fc">&nbsp;            headerStyle.setAlignment(HorizontalAlignment.CENTER);</b>
+<b class="fc">&nbsp;            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);</b>
+<b class="fc">&nbsp;            headerStyle.setBorderTop(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            headerStyle.setBorderBottom(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            headerStyle.setBorderLeft(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            headerStyle.setBorderRight(BorderStyle.THIN);</b>
+&nbsp;
+&nbsp;            // Create data style
+<b class="fc">&nbsp;            CellStyle dataStyle = workbook.createCellStyle();</b>
+<b class="fc">&nbsp;            Font dataFont = workbook.createFont();</b>
+<b class="fc">&nbsp;            dataFont.setFontHeightInPoints((short) 12);</b>
+<b class="fc">&nbsp;            dataFont.setFontName(dataFontName);</b>
+<b class="fc">&nbsp;            dataStyle.setFont(dataFont);</b>
+<b class="fc">&nbsp;            dataStyle.setBorderTop(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            dataStyle.setBorderBottom(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            dataStyle.setBorderLeft(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            dataStyle.setBorderRight(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;            dataStyle.setVerticalAlignment(VerticalAlignment.CENTER);</b>
+&nbsp;
+&nbsp;            // Create alternate row style (use subtitle color as background)
+<b class="fc">&nbsp;            CellStyle altDataStyle = workbook.createCellStyle();</b>
+<b class="fc">&nbsp;            altDataStyle.cloneStyleFrom(dataStyle);</b>
+<b class="pc">&nbsp;            if (altDataStyle instanceof org.apache.poi.xssf.usermodel.XSSFCellStyle) {</b>
+<b class="fc">&nbsp;                ((org.apache.poi.xssf.usermodel.XSSFCellStyle) altDataStyle).setFillForegroundColor(accentColor);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                altDataStyle.setFillForegroundColor(altRowBgColor);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            altDataStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);</b>
+&nbsp;
+&nbsp;            // Header row
+<b class="fc">&nbsp;            Row headerRow = sheet.createRow(0);</b>
+<b class="fc">&nbsp;            for (int i = 0; i &lt; headers.length; i++) {</b>
+<b class="fc">&nbsp;                Cell cell = headerRow.createCell(i);</b>
+<b class="fc">&nbsp;                cell.setCellValue(headers[i]);</b>
+<b class="fc">&nbsp;                cell.setCellStyle(headerStyle);</b>
+&nbsp;            }
+&nbsp;            // Data rows
+<b class="fc">&nbsp;            int rowIdx = 1;</b>
+<b class="fc">&nbsp;            for (UserDTO user : users) {</b>
+<b class="fc">&nbsp;                List&lt;Object&gt; row = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;                row.add(user.getId());</b>
+<b class="fc">&nbsp;                row.add(user.getEmail());</b>
+<b class="fc">&nbsp;                row.add(user.getName());</b>
+<b class="fc">&nbsp;                row.add(user.getSurname());</b>
+<b class="fc">&nbsp;                row.add(user.getPhone());</b>
+<b class="pc">&nbsp;                row.add(user.getOffice() != null ? user.getOffice().name() : &quot;&quot;);</b>
+<b class="pc">&nbsp;                row.add(user.getRole() != null ? user.getRole().name() : &quot;&quot;);</b>
+<b class="fc">&nbsp;                if (includeAccountState) {</b>
+<b class="pc">&nbsp;                    row.add(user.getAccountState() != null ? user.getAccountState().name() : &quot;&quot;);</b>
+&nbsp;                }
+<b class="pc">&nbsp;                String managerName = (user.getManager() != null &amp;&amp; (user.getManager().getName() != null || user.getManager().getSurname() != null))</b>
+<b class="fc">&nbsp;                        ? (user.getManager().getName() + &quot; &quot; + user.getManager().getSurname()) : noManager;</b>
+<b class="fc">&nbsp;                row.add(managerName);</b>
+<b class="fc">&nbsp;                Row dataRow = sheet.createRow(rowIdx);</b>
+<b class="pc">&nbsp;                CellStyle rowStyle = (rowIdx % 2 == 0) ? altDataStyle : dataStyle;</b>
+<b class="fc">&nbsp;                for (int i = 0; i &lt; row.size(); i++) {</b>
+<b class="fc">&nbsp;                    Cell cell = dataRow.createCell(i);</b>
+<b class="fc">&nbsp;                    Object value = row.get(i);</b>
+<b class="fc">&nbsp;                    if (value instanceof Number) {</b>
+<b class="fc">&nbsp;                        cell.setCellValue(((Number) value).doubleValue());</b>
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        cell.setCellValue(value != null ? value.toString() : &quot;&quot;);</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    cell.setCellStyle(rowStyle);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                rowIdx++;</b>
+&nbsp;            }
+&nbsp;            // Autosize columns
+<b class="fc">&nbsp;            for (int i = 0; i &lt; headers.length; i++) {</b>
+<b class="fc">&nbsp;                sheet.autoSizeColumn(i);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            workbook.write(baos);</b>
+<b class="fc">&nbsp;            return baos.toByteArray();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to generate user XLSX&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

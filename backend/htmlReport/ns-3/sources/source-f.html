@@ -1,0 +1,309 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FinishedCourseDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.dtos</a>
+</div>
+
+<h1>Coverage Summary for Class: FinishedCourseDTO (pt.uc.dei.dtos)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FinishedCourseDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.7%
+  </span>
+  <span class="absValue">
+    (29/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (30/45)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.dtos;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;
+&nbsp;/**
+&nbsp; * Data Transfer Object (DTO) representing a completed course by a user.
+&nbsp; * &lt;p&gt;
+&nbsp; * Used to transfer completion records between layers without exposing entity details.
+&nbsp; */
+&nbsp;public class FinishedCourseDTO {
+&nbsp;    /** Unique identifier of the completion record */
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    /** ID of the user who completed the course */
+&nbsp;    private Long userId;
+&nbsp;
+&nbsp;    /** Email of the user (for display purposes) */
+&nbsp;    private String userEmail;
+&nbsp;
+&nbsp;    /** Title of the completed course */
+&nbsp;    private String courseTitle;
+&nbsp;
+&nbsp;    /** Description of the course (from CourseEntity) */
+&nbsp;    private String courseDescription;
+&nbsp;
+&nbsp;    /** Date when the course was completed */
+&nbsp;    private LocalDate completionDate;
+&nbsp;
+&nbsp;    /** ID of the course (from CourseEntity) */
+&nbsp;    private Long courseId;
+&nbsp;
+&nbsp;    /** Area of the course */
+&nbsp;    private String courseArea;
+&nbsp;
+&nbsp;    /** Duration of the course (in hours) */
+&nbsp;    private Integer courseDuration;
+&nbsp;
+&nbsp;    /** Language of the course */
+&nbsp;    private String courseLanguage;
+&nbsp;
+&nbsp;    /** Link to the course */
+&nbsp;    private String courseLink;
+&nbsp;
+&nbsp;    /** Whether the course has an image */
+&nbsp;    private Boolean courseHasImage;
+&nbsp;
+&nbsp;    /** Whether the course is active */
+&nbsp;    private Boolean courseIsActive;
+&nbsp;
+&nbsp;    private LocalDate courseCreationDate;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor.
+&nbsp;     */
+<b class="fc">&nbsp;    public FinishedCourseDTO() {}</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * All-arguments constructor.
+&nbsp;     *
+&nbsp;     * @param id Unique identifier of the record
+&nbsp;     * @param userId ID of the user who completed the course
+&nbsp;     * @param userEmail Email address of the user
+&nbsp;     * @param courseTitle Title of the completed course
+&nbsp;     * @param courseDescription Description of the course
+&nbsp;     * @param completionDate Date of completion (ISO format, e.g. 2023-12-31)
+&nbsp;     * @param courseId ID of the course
+&nbsp;     * @param courseArea Area of the course
+&nbsp;     * @param courseDuration Duration of the course
+&nbsp;     * @param courseLanguage Language of the course
+&nbsp;     * @param courseLink Link to the course
+&nbsp;     * @param courseHasImage Whether the course has an image
+&nbsp;     * @param courseIsActive Whether the course is active
+&nbsp;     */
+&nbsp;    public FinishedCourseDTO(Long id, Long userId, String userEmail,
+&nbsp;                             String courseTitle, String courseDescription,
+&nbsp;                             LocalDate completionDate, Long courseId,
+&nbsp;                             String courseArea, Integer courseDuration,
+&nbsp;                             String courseLanguage, String courseLink,
+<b class="nc">&nbsp;                             Boolean courseHasImage, Boolean courseIsActive) {</b>
+<b class="nc">&nbsp;        this.id = id;</b>
+<b class="nc">&nbsp;        this.userId = userId;</b>
+<b class="nc">&nbsp;        this.userEmail = userEmail;</b>
+<b class="nc">&nbsp;        this.courseTitle = courseTitle;</b>
+<b class="nc">&nbsp;        this.courseDescription = courseDescription;</b>
+<b class="nc">&nbsp;        this.completionDate = completionDate;</b>
+<b class="nc">&nbsp;        this.courseId = courseId;</b>
+<b class="nc">&nbsp;        this.courseArea = courseArea;</b>
+<b class="nc">&nbsp;        this.courseDuration = courseDuration;</b>
+<b class="nc">&nbsp;        this.courseLanguage = courseLanguage;</b>
+<b class="nc">&nbsp;        this.courseLink = courseLink;</b>
+<b class="nc">&nbsp;        this.courseHasImage = courseHasImage;</b>
+<b class="nc">&nbsp;        this.courseIsActive = courseIsActive;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ============== GETTERS AND SETTERS ==============
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The unique database identifier of this completion record
+&nbsp;     */
+<b class="fc">&nbsp;    public Long getId() { return id; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param id The unique identifier to set
+&nbsp;     */
+<b class="fc">&nbsp;    public void setId(Long id) { this.id = id; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The ID of the user who completed the course
+&nbsp;     */
+<b class="fc">&nbsp;    public Long getUserId() { return userId; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param userId The user ID to set
+&nbsp;     */
+<b class="fc">&nbsp;    public void setUserId(Long userId) { this.userId = userId; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The email address of the user who completed the course
+&nbsp;     */
+<b class="fc">&nbsp;    public String getUserEmail() { return userEmail; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param userEmail The email address to set
+&nbsp;     */
+<b class="fc">&nbsp;    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The title of the completed course
+&nbsp;     */
+<b class="fc">&nbsp;    public String getCourseTitle() { return courseTitle; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param courseTitle The course title to set
+&nbsp;     */
+<b class="fc">&nbsp;    public void setCourseTitle(String courseTitle) { this.courseTitle = courseTitle; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The description of the completed course
+&nbsp;     */
+<b class="fc">&nbsp;    public String getCourseDescription() { return courseDescription; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param courseDescription The course description to set
+&nbsp;     */
+&nbsp;    public void setCourseDescription(String courseDescription) {
+<b class="fc">&nbsp;        this.courseDescription = courseDescription;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return The date when the course was completed (ISO-8601 format)
+&nbsp;     */
+<b class="fc">&nbsp;    public LocalDate getCompletionDate() { return completionDate; }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param completionDate The completion date to set
+&nbsp;     * @throws IllegalArgumentException if date is in the future
+&nbsp;     */
+&nbsp;    public void setCompletionDate(LocalDate completionDate) {
+<b class="pc">&nbsp;        if (completionDate != null &amp;&amp; completionDate.isAfter(LocalDate.now())) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Completion date cannot be in the future&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.completionDate = completionDate;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Long getCourseId() { return courseId; }</b>
+<b class="fc">&nbsp;    public void setCourseId(Long courseId) { this.courseId = courseId; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getCourseArea() { return courseArea; }</b>
+<b class="fc">&nbsp;    public void setCourseArea(String courseArea) { this.courseArea = courseArea; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public Integer getCourseDuration() { return courseDuration; }</b>
+<b class="fc">&nbsp;    public void setCourseDuration(Integer courseDuration) { this.courseDuration = courseDuration; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getCourseLanguage() { return courseLanguage; }</b>
+<b class="fc">&nbsp;    public void setCourseLanguage(String courseLanguage) { this.courseLanguage = courseLanguage; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getCourseLink() { return courseLink; }</b>
+<b class="fc">&nbsp;    public void setCourseLink(String courseLink) { this.courseLink = courseLink; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public Boolean getCourseHasImage() { return courseHasImage; }</b>
+<b class="fc">&nbsp;    public void setCourseHasImage(Boolean courseHasImage) { this.courseHasImage = courseHasImage; }</b>
+&nbsp;
+<b class="fc">&nbsp;    public Boolean getCourseIsActive() { return courseIsActive; }</b>
+<b class="fc">&nbsp;    public void setCourseIsActive(Boolean courseIsActive) { this.courseIsActive = courseIsActive; }</b>
+&nbsp;
+&nbsp;    public LocalDate getCourseCreationDate() {
+<b class="fc">&nbsp;        return courseCreationDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCourseCreationDate(LocalDate courseCreationDate) {
+<b class="fc">&nbsp;        this.courseCreationDate = courseCreationDate;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

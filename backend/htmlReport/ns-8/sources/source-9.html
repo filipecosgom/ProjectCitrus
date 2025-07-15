@@ -1,0 +1,215 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationMapperImpl (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (8/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.9%
+  </span>
+  <span class="absValue">
+    (47/48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.inject.Named;
+&nbsp;import jakarta.inject.Singleton;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import pt.uc.dei.dtos.MessageDTO;
+&nbsp;import pt.uc.dei.dtos.NotificationDTO;
+&nbsp;import pt.uc.dei.entities.NotificationEntity;
+&nbsp;import pt.uc.dei.enums.NotificationType;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2025-07-15T17:25:52+0100&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@Singleton
+&nbsp;@Named
+<b class="fc">&nbsp;public class NotificationMapperImpl implements NotificationMapper {</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private UserMapper userMapper;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public NotificationDTO toDto(NotificationEntity entity) {
+<b class="fc">&nbsp;        if ( entity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        NotificationDTO notificationDTO = new NotificationDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        notificationDTO.setSender( userMapper.toUserResponseDto( entity.getSender() ) );</b>
+<b class="fc">&nbsp;        notificationDTO.setRecipient( userMapper.toUserResponseDto( entity.getUser() ) );</b>
+<b class="fc">&nbsp;        notificationDTO.setNotificationIsRead( entity.getNotificationIsRead() );</b>
+<b class="fc">&nbsp;        notificationDTO.setNotificationIsSeen( entity.getNotificationIsSeen() );</b>
+<b class="fc">&nbsp;        notificationDTO.setId( entity.getId() );</b>
+<b class="pc">&nbsp;        if ( entity.getType() != null ) {</b>
+<b class="fc">&nbsp;            notificationDTO.setType( entity.getType().name() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        notificationDTO.setContent( entity.getContent() );</b>
+<b class="fc">&nbsp;        notificationDTO.setCreationDate( entity.getCreationDate() );</b>
+<b class="fc">&nbsp;        notificationDTO.setMessageCount( entity.getMessageCount() );</b>
+<b class="fc">&nbsp;        notificationDTO.setTimestamp( entity.getTimestamp() );</b>
+<b class="fc">&nbsp;        notificationDTO.setUnreadCount( entity.getUnreadCount() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return notificationDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public NotificationEntity toEntity(NotificationDTO dto) {
+<b class="fc">&nbsp;        if ( dto == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        NotificationEntity notificationEntity = new NotificationEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        notificationEntity.setId( dto.getId() );</b>
+<b class="pc">&nbsp;        if ( dto.getType() != null ) {</b>
+<b class="fc">&nbsp;            notificationEntity.setType( Enum.valueOf( NotificationType.class, dto.getType() ) );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        notificationEntity.setContent( dto.getContent() );</b>
+<b class="fc">&nbsp;        notificationEntity.setCreationDate( dto.getCreationDate() );</b>
+<b class="fc">&nbsp;        notificationEntity.setMessageCount( dto.getMessageCount() );</b>
+<b class="fc">&nbsp;        notificationEntity.setSender( userMapper.toEntity( dto.getSender() ) );</b>
+<b class="fc">&nbsp;        notificationEntity.setTimestamp( dto.getTimestamp() );</b>
+<b class="fc">&nbsp;        notificationEntity.setUnreadCount( dto.getUnreadCount() );</b>
+<b class="fc">&nbsp;        notificationEntity.setNotificationIsRead( dto.getNotificationIsRead() );</b>
+<b class="fc">&nbsp;        notificationEntity.setNotificationIsSeen( dto.getNotificationIsSeen() );</b>
+&nbsp;
+<b class="fc">&nbsp;        setDefaultValues( notificationEntity );</b>
+&nbsp;
+<b class="fc">&nbsp;        return notificationEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public NotificationEntity fromMessageDTO(MessageDTO messageDTO, int unreadCount) {
+<b class="pc">&nbsp;        if ( messageDTO == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        NotificationEntity notificationEntity = new NotificationEntity();</b>
+&nbsp;
+<b class="pc">&nbsp;        if ( messageDTO != null ) {</b>
+<b class="fc">&nbsp;            notificationEntity.setContent( messageDTO.getContent() );</b>
+<b class="fc">&nbsp;            notificationEntity.setId( messageDTO.getId() );</b>
+<b class="fc">&nbsp;            notificationEntity.setRecipientId( messageDTO.getRecipientId() );</b>
+&nbsp;        }
+<b class="fc">&nbsp;        notificationEntity.setMessageCount( unreadCount );</b>
+<b class="fc">&nbsp;        notificationEntity.setSender( mapSenderIdToUser(messageDTO.getSenderId()) );</b>
+<b class="fc">&nbsp;        notificationEntity.setUser( mapRecipientIdToUser(messageDTO.getRecipientId()) );</b>
+<b class="fc">&nbsp;        notificationEntity.setType( NotificationType.MESSAGE );</b>
+<b class="fc">&nbsp;        notificationEntity.setTimestamp( java.time.LocalDateTime.now() );</b>
+<b class="fc">&nbsp;        notificationEntity.setNotificationIsRead( false );</b>
+&nbsp;
+<b class="fc">&nbsp;        setDefaultValues( notificationEntity );</b>
+&nbsp;
+<b class="fc">&nbsp;        return notificationEntity;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

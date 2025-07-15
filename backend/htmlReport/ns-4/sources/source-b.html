@@ -1,0 +1,738 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserEntity</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.entities</a>
+</div>
+
+<h1>Coverage Summary for Class: UserEntity (pt.uc.dei.entities)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserEntity</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.2%
+  </span>
+  <span class="absValue">
+    (55/56)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (69/73)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserEntity$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">UserEntity$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    98.2%
+  </span>
+  <span class="absValue">
+    (55/56)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (69/73)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.entities;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import pt.uc.dei.enums.AccountState;
+&nbsp;import pt.uc.dei.enums.Office;
+&nbsp;import pt.uc.dei.enums.Role;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents a system user with personal and account information.
+&nbsp; * &lt;p&gt;
+&nbsp; * Stores complete user profile including authentication details, roles,
+&nbsp; * and organizational relationships. Managed through the user lifecycle
+&nbsp; * from registration to deletion.
+&nbsp; */
+&nbsp;@NamedQueries({
+&nbsp;        @NamedQuery(
+&nbsp;                name = &quot;User.findUserByEmail&quot;,
+&nbsp;                query = &quot;SELECT u FROM UserEntity u WHERE u.email = :email&quot;
+&nbsp;        ),
+&nbsp;        @NamedQuery(
+&nbsp;                name = &quot;User.findUserById&quot;,
+&nbsp;                query = &quot;SELECT u FROM UserEntity u WHERE u.id = :id&quot;
+&nbsp;        )
+&nbsp;})
+&nbsp;/**
+&nbsp; * Entity representing a system user with personal and account information.
+&nbsp; * &lt;p&gt;
+&nbsp; * Indexes are added to optimize queries for user lookup, active status, manager relationships, account state, and role-based filtering.
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;email: For fast lookup and uniqueness checks by email.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;is_deleted: For filtering active users.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;manager_id: For queries involving manager relationships.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;is_deleted, manager_id: For filtering active users by manager.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;account_state: For filtering by account state.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;role: For filtering by user role.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;is_manager, is_admin, account_state, is_deleted: For filtering managers/admins with complete accounts.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; */
+&nbsp;@Entity
+&nbsp;@Table(
+&nbsp;    name = &quot;useraccount&quot;,
+&nbsp;    indexes = {
+&nbsp;        /**
+&nbsp;         * Index for fast lookup and uniqueness checks by email.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_email&quot;, columnList = &quot;email&quot;, unique = true),
+&nbsp;        /**
+&nbsp;         * Index for filtering active users (not deleted).
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_is_deleted&quot;, columnList = &quot;is_deleted&quot;),
+&nbsp;        /**
+&nbsp;         * Index for queries involving manager relationships.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_manager_id&quot;, columnList = &quot;manager_id&quot;),
+&nbsp;        /**
+&nbsp;         * Composite index for filtering active users by manager.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_is_deleted_manager_id&quot;, columnList = &quot;is_deleted, manager_id&quot;),
+&nbsp;        /**
+&nbsp;         * Index for filtering by account state.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_account_state&quot;, columnList = &quot;account_state&quot;),
+&nbsp;        /**
+&nbsp;         * Index for filtering by user role.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_role&quot;, columnList = &quot;role&quot;),
+&nbsp;        /**
+&nbsp;         * Composite index for filtering managers/admins with complete accounts and not deleted.
+&nbsp;         */
+&nbsp;        @Index(name = &quot;idx_user_manager_admin_state_deleted&quot;, columnList = &quot;is_manager, is_admin, account_state, is_deleted&quot;)
+&nbsp;    }
+&nbsp;)
+&nbsp;public class UserEntity implements Serializable {
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /** Unique identifier, auto-generated by database */
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Column(name = &quot;id&quot;, nullable = false, updatable = false)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    /** User&#39;s unique email address (RFC 5321 compliant) */
+&nbsp;    @Column(name = &quot;email&quot;, nullable = false, unique = true, updatable = false, length = 254)
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    /** Securely hashed password */
+&nbsp;    @Column(name = &quot;password&quot;, nullable = false)
+&nbsp;    private String password;
+&nbsp;
+&nbsp;    /** URL or path to user&#39;s profile picture */
+&nbsp;    @Column(name = &quot;avatar&quot;)
+&nbsp;    private Boolean hasAvatar;
+&nbsp;
+&nbsp;    /** User&#39;s first name */
+&nbsp;    @Column(name = &quot;name&quot;)
+&nbsp;    private String name;
+&nbsp;
+&nbsp;    /** User&#39;s last name */
+&nbsp;    @Column(name = &quot;surname&quot;)
+&nbsp;    private String surname;
+&nbsp;
+&nbsp;    /** Administrator status flag */
+<b class="fc">&nbsp;    @Column(name = &quot;is_admin&quot;, nullable = false, columnDefinition = &quot;boolean&quot;)</b>
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;false&quot;)
+<b class="fc">&nbsp;    private Boolean userIsAdmin = false;</b>
+&nbsp;
+&nbsp;    /** Soft-delete flag */
+<b class="fc">&nbsp;    @Column(name = &quot;is_deleted&quot;, nullable = false, columnDefinition = &quot;boolean&quot;)</b>
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;false&quot;)
+<b class="fc">&nbsp;    private Boolean userIsDeleted = false;</b>
+&nbsp;
+&nbsp;    /** Managerial status flag */
+<b class="fc">&nbsp;    @Column(name = &quot;is_manager&quot;, nullable = false, columnDefinition = &quot;boolean&quot;)</b>
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;false&quot;)
+<b class="fc">&nbsp;    private Boolean userIsManager = false;</b>
+&nbsp;
+&nbsp;    /** User&#39;s primary office location */
+<b class="fc">&nbsp;    @Enumerated(EnumType.STRING)</b>
+&nbsp;    @Column(name = &quot;office&quot;, nullable = false, columnDefinition = &quot;VARCHAR(20)&quot;)
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;&#39;NO_OFFICE&#39;&quot;)
+&nbsp;    private Office office = Office.NO_OFFICE;
+&nbsp;
+&nbsp;    /** Contact phone number */
+&nbsp;    @Column(name = &quot;phone&quot;)
+&nbsp;    private String phone;
+&nbsp;
+&nbsp;    /** Date of birth */
+&nbsp;    @Column(name = &quot;birthdate&quot;)
+&nbsp;    private LocalDate birthdate;
+&nbsp;
+&nbsp;    /** Street address */
+&nbsp;    @Column(name = &quot;street&quot;)
+&nbsp;    private String street;
+&nbsp;
+&nbsp;    /** Postal/ZIP code */
+&nbsp;    @Column(name = &quot;postalcode&quot;)
+&nbsp;    private String postalCode;
+&nbsp;
+&nbsp;    /** City/Municipality */
+&nbsp;    @Column(name = &quot;municipality&quot;)
+&nbsp;    private String municipality;
+&nbsp;
+&nbsp;    /** Personal description/bio */
+&nbsp;    @Column(name = &quot;biography&quot;)
+&nbsp;    private String biography;
+&nbsp;
+&nbsp;    /** Current account status */
+<b class="fc">&nbsp;    @Enumerated(EnumType.STRING)</b>
+&nbsp;    @Column(name = &quot;account_state&quot;, nullable = false, columnDefinition = &quot;VARCHAR(20)&quot;)
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;&#39;INCOMPLETE&#39;&quot;)
+&nbsp;    private AccountState accountState = AccountState.INCOMPLETE;
+&nbsp;
+&nbsp;    /** System role/permissions */
+<b class="fc">&nbsp;    @Enumerated(EnumType.STRING)</b>
+&nbsp;    @Column(name = &quot;role&quot;, nullable = false, columnDefinition = &quot;VARCHAR(20)&quot;)
+&nbsp;    @org.hibernate.annotations.ColumnDefault(&quot;&#39;WITHOUT_ROLE&#39;&quot;)
+&nbsp;    private Role role = Role.WITHOUT_ROLE;
+&nbsp;
+&nbsp;    /** Account creation timestamp (auto-set) */
+<b class="fc">&nbsp;    @Column(name = &quot;creation_date&quot;, nullable = false, updatable = false)</b>
+<b class="fc">&nbsp;    private LocalDateTime creationDate = LocalDateTime.now();</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;secretKey&quot;, nullable = false, updatable = false)
+&nbsp;    private String secretKey;
+&nbsp;
+&nbsp;    /** Account creation timestamp (auto-set) */
+&nbsp;    @Column(name = &quot;lastseen&quot;, nullable = true, updatable = true)
+&nbsp;    private LocalDateTime lastSeen;
+&nbsp;
+&nbsp;    @Column(name = &quot;onlineStatus&quot;, nullable = false, updatable = true)
+&nbsp;    private Boolean onlineStatus;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /** Manager reference (self-relationship) */
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;manager_id&quot;)
+&nbsp;    private UserEntity managerUser;
+&nbsp;
+&nbsp;    /** Performance evaluations received */
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;appraisedUser&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    private List&lt;AppraisalEntity&gt; evaluationsReceived = new ArrayList&lt;&gt;();
+&nbsp;
+&nbsp;    /** Performance evaluations given */
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;appraisingUser&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    private List&lt;AppraisalEntity&gt; evaluationsGiven = new ArrayList&lt;&gt;();
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    private Set&lt;FinishedCourseEntity&gt; completedCourses = new HashSet&lt;&gt;();
+&nbsp;
+&nbsp;    // Constructors
+<b class="fc">&nbsp;    public UserEntity() {</b>
+&nbsp;        // Default constructor required by JPA
+&nbsp;    }
+&nbsp;
+&nbsp;    // Required fields constructor
+<b class="nc">&nbsp;    public UserEntity(String email, String password) {</b>
+<b class="nc">&nbsp;        this.email = email;</b>
+<b class="nc">&nbsp;        this.password = password;</b>
+<b class="nc">&nbsp;        this.creationDate = LocalDateTime.now();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    // Getters and Setters
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the unique identifier for the user.
+&nbsp;     * @return the user ID
+&nbsp;     */
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the unique identifier for the user.
+&nbsp;     * @param id the user ID
+&nbsp;     */
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s email address.
+&nbsp;     * @return the email address
+&nbsp;     */
+&nbsp;    public String getEmail() {
+<b class="fc">&nbsp;        return email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s email address.
+&nbsp;     * @param email the email address
+&nbsp;     */
+&nbsp;    public void setEmail(String email) {
+<b class="fc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s hashed password.
+&nbsp;     * @return the password
+&nbsp;     */
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s hashed password.
+&nbsp;     * @param password the password
+&nbsp;     */
+&nbsp;    public void setPassword(String password) {
+<b class="fc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets whether the user has an avatar.
+&nbsp;     * @return true if the user has an avatar, false otherwise
+&nbsp;     */
+&nbsp;    public Boolean getHasAvatar() {
+<b class="fc">&nbsp;        return hasAvatar;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets whether the user has an avatar.
+&nbsp;     * @param hasAvatar true if the user has an avatar, false otherwise
+&nbsp;     */
+&nbsp;    public void setHasAvatar(Boolean hasAvatar) {
+<b class="fc">&nbsp;        this.hasAvatar = hasAvatar;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s first name.
+&nbsp;     * @return the first name
+&nbsp;     */
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s first name.
+&nbsp;     * @param name the first name
+&nbsp;     */
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s last name.
+&nbsp;     * @return the last name
+&nbsp;     */
+&nbsp;    public String getSurname() {
+<b class="fc">&nbsp;        return surname;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s last name.
+&nbsp;     * @param surname the last name
+&nbsp;     */
+&nbsp;    public void setSurname(String surname) {
+<b class="fc">&nbsp;        this.surname = surname;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets whether the user is an administrator.
+&nbsp;     * @return true if admin, false otherwise
+&nbsp;     */
+&nbsp;    public Boolean getUserIsAdmin() {
+<b class="fc">&nbsp;        return userIsAdmin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets whether the user is an administrator.
+&nbsp;     * @param userIsAdmin true if admin, false otherwise
+&nbsp;     */
+&nbsp;    public void setUserIsAdmin(Boolean userIsAdmin) {
+<b class="fc">&nbsp;        this.userIsAdmin = userIsAdmin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets whether the user is deleted (soft delete).
+&nbsp;     * @return true if deleted, false otherwise
+&nbsp;     */
+&nbsp;    public Boolean getUserIsDeleted() {
+<b class="fc">&nbsp;        return userIsDeleted;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets whether the user is deleted (soft delete).
+&nbsp;     * @param userIsDeleted true if deleted, false otherwise
+&nbsp;     */
+&nbsp;    public void setUserIsDeleted(Boolean userIsDeleted) {
+<b class="fc">&nbsp;        this.userIsDeleted = userIsDeleted;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets whether the user is a manager.
+&nbsp;     * @return true if manager, false otherwise
+&nbsp;     */
+&nbsp;    public Boolean getUserIsManager() {
+<b class="fc">&nbsp;        return userIsManager;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets whether the user is a manager.
+&nbsp;     * @param userIsManager true if manager, false otherwise
+&nbsp;     */
+&nbsp;    public void setUserIsManager(Boolean userIsManager) {
+<b class="fc">&nbsp;        this.userIsManager = userIsManager;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s office location.
+&nbsp;     * @return the office
+&nbsp;     */
+&nbsp;    public Office getOffice() {
+<b class="fc">&nbsp;        return office;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s office location.
+&nbsp;     * @param office the office
+&nbsp;     */
+&nbsp;    public void setOffice(Office office) {
+<b class="fc">&nbsp;        this.office = office;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s phone number.
+&nbsp;     * @return the phone number
+&nbsp;     */
+&nbsp;    public String getPhone() {
+<b class="fc">&nbsp;        return phone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s phone number.
+&nbsp;     * @param phone the phone number
+&nbsp;     */
+&nbsp;    public void setPhone(String phone) {
+<b class="fc">&nbsp;        this.phone = phone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s date of birth.
+&nbsp;     * @return the birthdate
+&nbsp;     */
+&nbsp;    public LocalDate getBirthdate() {
+<b class="fc">&nbsp;        return birthdate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s date of birth.
+&nbsp;     * @param birthdate the birthdate
+&nbsp;     */
+&nbsp;    public void setBirthdate(LocalDate birthdate) {
+<b class="fc">&nbsp;        this.birthdate = birthdate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s street address.
+&nbsp;     * @return the street address
+&nbsp;     */
+&nbsp;    public String getStreet() {
+<b class="fc">&nbsp;        return street;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s street address.
+&nbsp;     * @param street the street address
+&nbsp;     */
+&nbsp;    public void setStreet(String street) {
+<b class="fc">&nbsp;        this.street = street;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s postal code.
+&nbsp;     * @return the postal code
+&nbsp;     */
+&nbsp;    public String getPostalCode() {
+<b class="fc">&nbsp;        return postalCode;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s postal code.
+&nbsp;     * @param postalCode the postal code
+&nbsp;     */
+&nbsp;    public void setPostalCode(String postalCode) {
+<b class="fc">&nbsp;        this.postalCode = postalCode;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s municipality.
+&nbsp;     * @return the municipality
+&nbsp;     */
+&nbsp;    public String getMunicipality() {
+<b class="fc">&nbsp;        return municipality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s municipality.
+&nbsp;     * @param municipality the municipality
+&nbsp;     */
+&nbsp;    public void setMunicipality(String municipality) {
+<b class="fc">&nbsp;        this.municipality = municipality;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s biography.
+&nbsp;     * @return the biography
+&nbsp;     */
+&nbsp;    public String getBiography() {
+<b class="fc">&nbsp;        return biography;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s biography.
+&nbsp;     * @param biography the biography
+&nbsp;     */
+&nbsp;    public void setBiography(String biography) {
+<b class="fc">&nbsp;        this.biography = biography;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s account state.
+&nbsp;     * @return the account state
+&nbsp;     */
+&nbsp;    public AccountState getAccountState() {
+<b class="fc">&nbsp;        return accountState;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s account state.
+&nbsp;     * @param accountState the account state
+&nbsp;     */
+&nbsp;    public void setAccountState(AccountState accountState) {
+<b class="fc">&nbsp;        this.accountState = accountState;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s role.
+&nbsp;     * @return the role
+&nbsp;     */
+&nbsp;    public Role getRole() {
+<b class="fc">&nbsp;        return role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s role.
+&nbsp;     * @param role the role
+&nbsp;     */
+&nbsp;    public void setRole(Role role) {
+<b class="fc">&nbsp;        this.role = role;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the account creation date and time.
+&nbsp;     * @return the creation date and time
+&nbsp;     */
+&nbsp;    public LocalDateTime getCreationDate() {
+<b class="fc">&nbsp;        return creationDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the account creation date and time.
+&nbsp;     * @param creationDate the creation date and time
+&nbsp;     */
+&nbsp;    public void setCreationDate(LocalDateTime creationDate) {
+<b class="fc">&nbsp;        this.creationDate = creationDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s secret key.
+&nbsp;     * @return the secret key
+&nbsp;     */
+&nbsp;    public String getSecretKey() {
+<b class="fc">&nbsp;        return secretKey;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s secret key.
+&nbsp;     * @param secretKey the secret key
+&nbsp;     */
+&nbsp;    public void setSecretKey(String secretKey) {
+<b class="fc">&nbsp;        this.secretKey = secretKey;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user&#39;s manager (if any).
+&nbsp;     * @return the manager user entity
+&nbsp;     */
+&nbsp;    public UserEntity getManagerUser() {
+<b class="fc">&nbsp;        return managerUser;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user&#39;s manager.
+&nbsp;     * @param managerUser the manager user entity
+&nbsp;     */
+&nbsp;    public void setManagerUser(UserEntity managerUser) {
+<b class="fc">&nbsp;        this.managerUser = managerUser;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the list of performance evaluations received by the user.
+&nbsp;     * @return the list of received evaluations
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; getEvaluationsReceived() {
+<b class="fc">&nbsp;        return evaluationsReceived;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the list of performance evaluations received by the user.
+&nbsp;     * @param evaluationsReceived the list of received evaluations
+&nbsp;     */
+&nbsp;    public void setEvaluationsReceived(List&lt;AppraisalEntity&gt; evaluationsReceived) {
+<b class="fc">&nbsp;        this.evaluationsReceived = evaluationsReceived;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the list of performance evaluations given by the user.
+&nbsp;     * @return the list of given evaluations
+&nbsp;     */
+&nbsp;    public List&lt;AppraisalEntity&gt; getEvaluationsGiven() {
+<b class="fc">&nbsp;        return evaluationsGiven;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the list of performance evaluations given by the user.
+&nbsp;     * @param evaluationsGiven the list of given evaluations
+&nbsp;     */
+&nbsp;    public void setEvaluationsGiven(List&lt;AppraisalEntity&gt; evaluationsGiven) {
+<b class="fc">&nbsp;        this.evaluationsGiven = evaluationsGiven;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the set of courses completed by the user.
+&nbsp;     * @return the set of completed courses
+&nbsp;     */
+&nbsp;    public Set&lt;FinishedCourseEntity&gt; getCompletedCourses() {
+<b class="fc">&nbsp;        return completedCourses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the set of courses completed by the user.
+&nbsp;     * @param completedCourses the set of completed courses
+&nbsp;     */
+&nbsp;    public void setCompletedCourses(Set&lt;FinishedCourseEntity&gt; completedCourses) {
+<b class="fc">&nbsp;        this.completedCourses = completedCourses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public LocalDateTime getLastSeen() {
+<b class="fc">&nbsp;        return lastSeen;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLastSeen(LocalDateTime lastSeen) {
+<b class="fc">&nbsp;        this.lastSeen = lastSeen;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean getOnlineStatus() {
+<b class="fc">&nbsp;        return onlineStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOnlineStatus(Boolean onlineStatus) {
+<b class="fc">&nbsp;        this.onlineStatus = onlineStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UserEntity getManager() {
+<b class="fc">&nbsp;        return managerUser;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setManager(UserEntity manager) {
+<b class="fc">&nbsp;        this.managerUser = manager;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

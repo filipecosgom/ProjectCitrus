@@ -1,0 +1,182 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapper (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">UserMapper$MockitoMock$TEkovTau</td>
+  </tr>
+  <tr>
+    <td class="name">UserMapper$MockitoMock$TEkovTau$auxiliary$3mAqp1f3</td>
+  </tr>
+  <tr>
+    <td class="name">UserMapper$MockitoMock$TEkovTau$auxiliary$I1MqNRl0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import org.mapstruct.*;
+&nbsp;import org.mapstruct.factory.Mappers;
+&nbsp;import pt.uc.dei.dtos.ManagerDTO;
+&nbsp;import pt.uc.dei.dtos.UserDTO;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.dtos.UserFullDTO;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.factory.Mappers;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import org.mapstruct.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * MapStruct mapper interface for converting between {@link UserEntity} and its DTO representations.
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Uses CDI component model for dependency injection.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Handles nested mappings for manager, appraisals, and finished courses.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Ignores sensitive fields (e.g., password) in DTOs for security.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Prevents infinite recursion by using qualified mappings for manager fields.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Supports partial updates via {@code updateUserFromDto}.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Provides minimal and full DTO conversions for different use cases.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;b&gt;Mapping summary:&lt;/b&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;{@code toDto}: Maps {@link UserEntity} to {@link UserDTO} (basic user info, manager as {@link ManagerDTO}).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code toEntity}: Maps {@link UserDTO} to {@link UserEntity} (manager as UserEntity, ignores some fields).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code updateUserFromDto}: Updates an existing {@link UserEntity} from a {@link UserDTO}, ignoring nulls and immutable fields.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code toFullDto}: Maps {@link UserEntity} to {@link UserFullDTO} (includes appraisals and completed courses).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code toUserResponseDto}: Maps {@link UserEntity} to {@link UserResponseDTO} (for API responses, includes online status, last seen, etc.).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code toManagerDto}: Maps a manager {@link UserEntity} to {@link ManagerDTO} (for nested manager info).&lt;/li&gt;
+&nbsp; *   &lt;li&gt;{@code toManagerEntity}: Maps {@link ManagerDTO} to a minimal {@link UserEntity} (for manager references).&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;b&gt;Note:&lt;/b&gt; Uses {@link AppraisalMapper}, {@link FinishedCourseMapper}, and {@link CourseMapper} for nested mappings.
+&nbsp; */
+&nbsp;@Mapper(
+&nbsp;        componentModel = &quot;cdi&quot;,
+&nbsp;        uses = {AppraisalMapper.class, FinishedCourseMapper.class, CourseMapper.class},
+&nbsp;        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+&nbsp;)
+&nbsp;public interface UserMapper {
+&nbsp;
+&nbsp;    @Mapping(source = &quot;managerUser&quot;, target = &quot;manager&quot;, qualifiedByName = &quot;toManagerDto&quot;)
+&nbsp;    @Mapping(target = &quot;password&quot;, ignore = true)
+&nbsp;    UserDTO toDto(UserEntity userEntity);
+&nbsp;
+&nbsp;    List&lt;UserDTO&gt; toDtoList(List&lt;UserEntity&gt; users);
+&nbsp;
+&nbsp;    @InheritInverseConfiguration(name = &quot;toDto&quot;)
+&nbsp;    @Mapping(source = &quot;manager&quot;, target = &quot;managerUser&quot;, qualifiedByName = &quot;toManagerEntity&quot;)
+&nbsp;    @Mapping(target = &quot;evaluationsReceived&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;evaluationsGiven&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;completedCourses&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;userIsDeleted&quot;, ignore = true) // &lt;-- updated this line
+&nbsp;    @Mapping(target = &quot;password&quot;, ignore = true)
+&nbsp;    UserEntity toEntity(UserDTO userDTO);
+&nbsp;
+&nbsp;    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;creationDate&quot;, ignore = true)
+&nbsp;    void updateUserFromDto(UserDTO dto, @MappingTarget UserEntity entity);
+&nbsp;
+&nbsp;    @Named(&quot;toFullDto&quot;)
+&nbsp;    @Mapping(target = &quot;manager&quot;, source = &quot;managerUser&quot;, qualifiedByName = &quot;toManagerDto&quot;)
+&nbsp;    @Mapping(target = &quot;evaluationsReceived&quot;, source = &quot;evaluationsReceived&quot;)
+&nbsp;    @Mapping(target = &quot;evaluationsGiven&quot;, source = &quot;evaluationsGiven&quot;)
+&nbsp;    @Mapping(target = &quot;completedCourses&quot;, source = &quot;completedCourses&quot;)
+&nbsp;    @Mapping(target = &quot;password&quot;, ignore = true)
+&nbsp;    UserFullDTO toFullDto(UserEntity entity);
+&nbsp;
+&nbsp;    @Named(&quot;toResponseDto&quot;)
+&nbsp;    @Mapping(target = &quot;id&quot;, source = &quot;id&quot;)
+&nbsp;    @Mapping(target = &quot;email&quot;, source = &quot;email&quot;)
+&nbsp;    @Mapping(target = &quot;userIsAdmin&quot;, source = &quot;userIsAdmin&quot;)
+&nbsp;    @Mapping(target = &quot;userIsManager&quot;, source = &quot;userIsManager&quot;)
+&nbsp;    @Mapping(target = &quot;accountState&quot;, source = &quot;accountState&quot;)
+&nbsp;    @Mapping(target = &quot;role&quot;, source = &quot;role&quot;)
+&nbsp;    @Mapping(target = &quot;name&quot;, source = &quot;name&quot;)
+&nbsp;    @Mapping(target = &quot;surname&quot;, source = &quot;surname&quot;)
+&nbsp;    @Mapping(target = &quot;hasAvatar&quot;, source = &quot;hasAvatar&quot;)
+&nbsp;    @Mapping(target = &quot;lastSeen&quot;, source = &quot;lastSeen&quot;)
+&nbsp;    @Mapping(target = &quot;onlineStatus&quot;, source = &quot;onlineStatus&quot;)
+&nbsp;    @Mapping(target = &quot;manager&quot;, source = &quot;managerUser&quot;, qualifiedByName = &quot;toManagerDto&quot;)
+&nbsp;    @Mapping(target = &quot;password&quot;, ignore = true)
+&nbsp;    UserResponseDTO toUserResponseDto(UserEntity entity);
+&nbsp;
+&nbsp;    @Named(&quot;toManagerDto&quot;)
+&nbsp;    @Mapping(source = &quot;id&quot;, target = &quot;id&quot;)
+&nbsp;    @Mapping(source = &quot;name&quot;, target = &quot;name&quot;)
+&nbsp;    @Mapping(source = &quot;surname&quot;, target = &quot;surname&quot;)
+&nbsp;    @Mapping(source = &quot;role&quot;, target = &quot;role&quot;)
+&nbsp;    @Mapping(source = &quot;hasAvatar&quot;, target = &quot;hasAvatar&quot;)
+&nbsp;    @Mapping(source = &quot;email&quot;, target = &quot;email&quot;)
+&nbsp;    ManagerDTO toManagerDto(UserEntity managerUser);
+&nbsp;
+&nbsp;    @Named(&quot;toManagerEntity&quot;)
+&nbsp;    @Mapping(source = &quot;id&quot;, target = &quot;id&quot;)
+&nbsp;    UserEntity toManagerEntity(ManagerDTO dto);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

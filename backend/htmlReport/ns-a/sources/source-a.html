@@ -1,0 +1,577 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotificationService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65.9%
+  </span>
+  <span class="absValue">
+    (58/88)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.9%
+  </span>
+  <span class="absValue">
+    (177/206)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;
+&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.MessageDTO;
+&nbsp;import pt.uc.dei.dtos.NotificationDTO;
+&nbsp;import pt.uc.dei.dtos.NotificationUpdateDTO;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.entities.AppraisalEntity;
+&nbsp;import pt.uc.dei.entities.CycleEntity;
+&nbsp;import pt.uc.dei.entities.FinishedCourseEntity;
+&nbsp;import pt.uc.dei.entities.NotificationEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.enums.NotificationType;
+&nbsp;import pt.uc.dei.mapper.NotificationMapper;
+&nbsp;import pt.uc.dei.repositories.MessageRepository;
+&nbsp;import pt.uc.dei.repositories.NotificationRepository;
+&nbsp;import pt.uc.dei.repositories.UserRepository;
+&nbsp;import pt.uc.dei.websocket.WsNotifications;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service for creating, sending, and managing user notifications.
+&nbsp; * Handles notifications for messages, appraisals, courses, cycles, and user updates.
+&nbsp; * Integrates with WebSocket for real-time delivery and persists notifications as fallback.
+&nbsp; */
+&nbsp;@Stateless
+&nbsp;public class NotificationService {
+<b class="fc">&nbsp;    private static final Logger logger = LogManager.getLogger(NotificationService.class);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    NotificationRepository notificationRepository;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    WsNotifications wsNotifications;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    MessageRepository messageRepository;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    NotificationMapper notificationMapper;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor for NotificationService.
+&nbsp;     */
+<b class="fc">&nbsp;    public NotificationService() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new message notification based on a MessageDTO.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Checks unread messages, builds NotificationEntity, maps to NotificationDTO,
+&nbsp;     * and tries WebSocket delivery. Falls back to persistence if WebSocket fails.
+&nbsp;     *
+&nbsp;     * @param messageDTO the message data transfer object containing sender and recipient info
+&nbsp;     * @return true if notification was created and sent/persisted successfully, false otherwise
+&nbsp;     */
+&nbsp;    public boolean newMessageNotification(MessageDTO messageDTO) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Long senderId = messageDTO.getSenderId();</b>
+<b class="fc">&nbsp;            Long recipientId = messageDTO.getRecipientId();</b>
+<b class="fc">&nbsp;            int unreadCount = messageRepository.getUnreadMessageCount(recipientId, senderId);</b>
+<b class="fc">&nbsp;            UserEntity recipientUser = userRepository.findUserById(recipientId);</b>
+<b class="fc">&nbsp;            if (recipientUser == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Recipient user {} not found&quot;, recipientId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            UserEntity senderUser = userRepository.findUserById(senderId);</b>
+<b class="fc">&nbsp;            if (senderUser == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Recipient user {} not found&quot;, senderUser);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;            // Try to get existing unread MESSAGE notification between these users
+<b class="fc">&nbsp;            NotificationEntity notificationEntity = notificationRepository.getMessageNotificationBetween(recipientId,</b>
+&nbsp;                    senderId);
+<b class="fc">&nbsp;            if (notificationEntity == null) {</b>
+&nbsp;                // No existing unread notification, create new
+<b class="fc">&nbsp;                notificationEntity = new NotificationEntity();</b>
+<b class="fc">&nbsp;                notificationEntity.setSender(senderUser);</b>
+<b class="fc">&nbsp;                notificationEntity.setUser(recipientUser); // Set managed entity</b>
+<b class="fc">&nbsp;                notificationEntity.setType(NotificationType.MESSAGE);</b>
+<b class="fc">&nbsp;                notificationEntity.setContent(messageDTO.getContent());</b>
+<b class="fc">&nbsp;                notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsSeen(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setMessageCount(unreadCount);</b>
+<b class="fc">&nbsp;                notificationRepository.persist(notificationEntity);</b>
+&nbsp;            } else {
+&nbsp;                // Update existing notification
+<b class="fc">&nbsp;                notificationEntity.setContent(messageDTO.getContent());</b>
+<b class="fc">&nbsp;                notificationEntity.setMessageCount(unreadCount);</b>
+<b class="fc">&nbsp;                notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsSeen(false);</b>
+&nbsp;                // No need to persist explicitly if managed, but can call merge if needed
+&nbsp;                // notificationRepository.merge(notificationEntity);
+&nbsp;            }
+&nbsp;
+&nbsp;            // Map to NotificationDTO for WebSocket delivery
+<b class="fc">&nbsp;            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="fc">&nbsp;            boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="fc">&nbsp;            if (!delivered) {</b>
+<b class="fc">&nbsp;                logger.info(&quot;WebSocket delivery failed, notification persisted for userId {}&quot;, recipientId);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Error creating/sending new message notification&quot;, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all notifications for a given user.
+&nbsp;     *
+&nbsp;     * @param userId the ID of the user
+&nbsp;     * @return list of NotificationDTOs for the user, or empty list on error
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public List&lt;NotificationDTO&gt; getNotifications(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;NotificationEntity&gt; notificationEntities = notificationRepository.getNotifications(userId);</b>
+<b class="fc">&nbsp;            return notificationEntities.stream()</b>
+<b class="fc">&nbsp;                    .map(notificationMapper::toDto)</b>
+<b class="fc">&nbsp;                    .collect(Collectors.toList());</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Failed to get notifications for userId {}&quot;, userId, e);</b>
+<b class="fc">&nbsp;            return java.util.Collections.emptyList();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates notification status (isRead, isSeen) for a user.
+&nbsp;     *
+&nbsp;     * @param updateDTO the DTO containing update information
+&nbsp;     * @param userId the ID of the user
+&nbsp;     * @return true if update was successful, false if not found or not updated
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public boolean updateNotificationStatus(NotificationUpdateDTO updateDTO, Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Long notificationId = updateDTO.getNotificationId();</b>
+<b class="fc">&nbsp;            NotificationEntity notification = notificationRepository.findById(notificationId);</b>
+<b class="fc">&nbsp;            if (notification == null || !notification.getUser().getId().equals(userId)) {</b>
+<b class="fc">&nbsp;                logger.warn(&quot;Notification {} does not exist for userId {}&quot;, notificationId, userId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            boolean changed = false;</b>
+<b class="pc">&nbsp;            if (updateDTO.getNotificationIsRead() != null) {</b>
+<b class="fc">&nbsp;                notification.setNotificationIsRead(updateDTO.getNotificationIsRead());</b>
+<b class="fc">&nbsp;                changed = true;</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (updateDTO.getNotificationIsSeen() != null) {</b>
+<b class="fc">&nbsp;                notification.setNotificationIsSeen(updateDTO.getNotificationIsSeen());</b>
+<b class="fc">&nbsp;                notification.setMessageCount(0);</b>
+<b class="fc">&nbsp;                changed = true;</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (changed) {</b>
+<b class="fc">&nbsp;                notificationRepository.merge(notification);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return changed;</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Error updating notification status {} for userId {}&quot;, updateDTO.getNotificationId(), userId,</b>
+&nbsp;                    e);
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the total number of notifications for a user.
+&nbsp;     *
+&nbsp;     * @param id the user ID
+&nbsp;     * @return total number of notifications, or 0 on error
+&nbsp;     */
+&nbsp;    public int getTotalNotifications(Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return notificationRepository.getTotalNotifications(id);</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Failed to get notifications from user &quot; + id);</b>
+<b class="fc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Marks all message notifications as read for a user.
+&nbsp;     *
+&nbsp;     * @param userId the user ID
+&nbsp;     * @return true if successful, false otherwise
+&nbsp;     */
+&nbsp;    public boolean markMessageNotificationsAsRead(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return notificationRepository.markMessageNotificationsAsRead(userId);</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Error marking message notifications as read for user {}&quot;, userId, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new appraisal notification.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The recipient is the appraisedUser, sender is the appraisingUser, content is
+&nbsp;     * the score (as string or &quot;N/A&quot;).
+&nbsp;     *
+&nbsp;     * @param appraisal the appraisal entity containing users and score
+&nbsp;     * @return true if notification was created and sent/persisted successfully, false otherwise
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public boolean newAppraisalNotification(AppraisalEntity appraisal) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (appraisal == null || appraisal.getAppraisedUser() == null || appraisal.getAppraisingUser() == null) {</b>
+<b class="nc">&nbsp;                logger.error(&quot;Invalid appraisal or users for notification&quot;);</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Long recipientId = appraisal.getAppraisedUser().getId();</b>
+<b class="fc">&nbsp;            Long senderId = appraisal.getAppraisingUser().getId();</b>
+<b class="fc">&nbsp;            UserEntity recipientUser = userRepository.findUserById(recipientId);</b>
+<b class="fc">&nbsp;            if (recipientUser == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Appraised user {} not found&quot;, recipientId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            UserEntity senderUser = userRepository.findUserById(senderId);</b>
+<b class="fc">&nbsp;            if (senderUser == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Appraised user {} not found&quot;, senderId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            NotificationEntity notificationEntity = new NotificationEntity();</b>
+<b class="fc">&nbsp;            notificationEntity.setSender(senderUser);</b>
+<b class="fc">&nbsp;            notificationEntity.setUser(recipientUser);</b>
+<b class="fc">&nbsp;            notificationEntity.setType(NotificationType.APPRAISAL);</b>
+<b class="pc">&nbsp;            String scoreStr = appraisal.getScore() != null ? String.valueOf(appraisal.getScore()) : &quot;N/A&quot;;</b>
+<b class="fc">&nbsp;            notificationEntity.setContent(scoreStr);</b>
+<b class="fc">&nbsp;            notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;            notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;            notificationEntity.setNotificationIsSeen(false);</b>
+<b class="fc">&nbsp;            notificationEntity.setMessageCount(0); // Not relevant for appraisal</b>
+<b class="fc">&nbsp;            notificationRepository.persist(notificationEntity);</b>
+&nbsp;
+<b class="fc">&nbsp;            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="fc">&nbsp;            boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="pc">&nbsp;            if (!delivered) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;WebSocket delivery failed, appraisal notification persisted for userId {}&quot;, recipientId);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Error creating/sending new appraisal notification&quot;, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new course notification.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The recipient is the user, sender is the user&#39;s manager, content is the course id.
+&nbsp;     *
+&nbsp;     * @param finishedCourse the finished course entity
+&nbsp;     * @return true if notification was created and sent/persisted successfully, false otherwise
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public boolean newCourseNotification(FinishedCourseEntity finishedCourse) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (finishedCourse == null || finishedCourse.getUser() == null</b>
+<b class="pc">&nbsp;                    || finishedCourse.getUser().getManager() == null) {</b>
+<b class="nc">&nbsp;                logger.error(&quot;Invalid finished course or users for notification&quot;);</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Long recipientId = finishedCourse.getUser().getId();</b>
+<b class="fc">&nbsp;            Long senderId = finishedCourse.getUser().getManager().getId();</b>
+<b class="fc">&nbsp;            UserEntity recipientUser = userRepository.findUserById(recipientId);</b>
+<b class="fc">&nbsp;            if (recipientUser == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Course recipient user {} not found&quot;, recipientId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            UserEntity sender = userRepository.findUserById(senderId);</b>
+<b class="fc">&nbsp;            if (sender == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Course recipient user {} not found&quot;, senderId);</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            NotificationEntity notificationEntity = new NotificationEntity();</b>
+<b class="fc">&nbsp;            notificationEntity.setSender(sender);</b>
+<b class="fc">&nbsp;            notificationEntity.setUser(recipientUser);</b>
+<b class="fc">&nbsp;            notificationEntity.setType(NotificationType.COURSE);</b>
+<b class="pc">&nbsp;            String courseIdStr = finishedCourse.getCourse() != null ? String.valueOf(finishedCourse.getCourse().getTitle())</b>
+<b class="fc">&nbsp;                    : &quot;N/A&quot;;</b>
+<b class="fc">&nbsp;            notificationEntity.setContent(courseIdStr);</b>
+<b class="fc">&nbsp;            notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;            notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;            notificationEntity.setNotificationIsSeen(false);</b>
+<b class="fc">&nbsp;            notificationEntity.setMessageCount(0); // Not relevant for course</b>
+<b class="fc">&nbsp;            notificationRepository.persist(notificationEntity);</b>
+&nbsp;
+<b class="fc">&nbsp;            NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="fc">&nbsp;            boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="pc">&nbsp;            if (!delivered) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;WebSocket delivery failed, course notification persisted for userId {}&quot;, recipientId);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            logger.error(&quot;Error creating/sending new course notification&quot;, e);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new cycle open notification to a list of users.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * For each user, creates a CYCLE_OPEN notification with the cycle end date as content.
+&nbsp;     *
+&nbsp;     * @param cycle the cycle entity
+&nbsp;     * @param users the list of users to notify
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public void newCycleOpenNotification(CycleEntity cycle, List&lt;UserEntity&gt; users) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (cycle == null || cycle.getAdmin() == null || users == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Invalid cycle or user list for cycle notification&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="fc">&nbsp;            Long senderId = cycle.getAdmin().getId();</b>
+<b class="pc">&nbsp;            String endDateStr = cycle.getEndDate() != null ? cycle.getEndDate().toString() : &quot;N/A&quot;;</b>
+<b class="fc">&nbsp;            for (UserEntity user : users) {</b>
+<b class="pc">&nbsp;                if (user == null)</b>
+&nbsp;                    continue;
+<b class="fc">&nbsp;                Long recipientId = user.getId();</b>
+<b class="fc">&nbsp;                UserEntity recipientUser = userRepository.findUserById(recipientId);</b>
+<b class="fc">&nbsp;                if (recipientUser == null) {</b>
+<b class="fc">&nbsp;                    logger.error(&quot;Cycle notification recipient user {} not found&quot;, recipientId);</b>
+&nbsp;                    continue;
+&nbsp;                }
+<b class="fc">&nbsp;                UserEntity sender = userRepository.findUserById(senderId);</b>
+<b class="pc">&nbsp;                if (sender == null) {</b>
+<b class="nc">&nbsp;                    logger.error(&quot;Cycle notification recipient user {} not found&quot;, senderId);</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                NotificationEntity notificationEntity = new NotificationEntity();</b>
+<b class="fc">&nbsp;                notificationEntity.setSender(sender);</b>
+<b class="fc">&nbsp;                notificationEntity.setUser(recipientUser);</b>
+<b class="fc">&nbsp;                notificationEntity.setType(NotificationType.CYCLE_OPEN);</b>
+<b class="fc">&nbsp;                notificationEntity.setContent(endDateStr);</b>
+<b class="fc">&nbsp;                notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsSeen(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setMessageCount(0); // Not relevant for cycle</b>
+<b class="fc">&nbsp;                notificationRepository.persist(notificationEntity);</b>
+&nbsp;
+<b class="fc">&nbsp;                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="fc">&nbsp;                boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="pc">&nbsp;                if (!delivered) {</b>
+<b class="nc">&nbsp;                    logger.info(&quot;WebSocket delivery failed, cycle notification persisted for userId {}&quot;, recipientId);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            logger.error(&quot;Error creating/sending new cycle notifications&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new cycle close notification to a list of users.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * For each user, creates a CYCLE_CLOSE notification with the cycle end date as content.
+&nbsp;     *
+&nbsp;     * @param cycle the cycle entity
+&nbsp;     * @param users the list of users to notify
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public void newCycleCloseNotification(CycleEntity cycle, List&lt;UserEntity&gt; users) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (cycle == null || cycle.getAdmin() == null || users == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Invalid cycle or user list for cycle notification&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="fc">&nbsp;            Long senderId = cycle.getAdmin().getId();</b>
+<b class="pc">&nbsp;            String endDateStr = cycle.getEndDate() != null ? cycle.getEndDate().toString() : &quot;N/A&quot;;</b>
+<b class="fc">&nbsp;            for (UserEntity user : users) {</b>
+<b class="pc">&nbsp;                if (user == null)</b>
+&nbsp;                    continue;
+<b class="fc">&nbsp;                Long recipientId = user.getId();</b>
+<b class="fc">&nbsp;                UserEntity recipientUser = userRepository.findUserById(recipientId);</b>
+<b class="fc">&nbsp;                if (recipientUser == null) {</b>
+<b class="fc">&nbsp;                    logger.error(&quot;Cycle notification recipient user {} not found&quot;, recipientId);</b>
+&nbsp;                    continue;
+&nbsp;                }
+<b class="fc">&nbsp;                UserEntity sender = userRepository.findUserById(senderId);</b>
+<b class="pc">&nbsp;                if (sender == null) {</b>
+<b class="nc">&nbsp;                    logger.error(&quot;Cycle notification recipient user {} not found&quot;, senderId);</b>
+&nbsp;                    continue;
+&nbsp;                }
+<b class="fc">&nbsp;                NotificationEntity notificationEntity = new NotificationEntity();</b>
+<b class="fc">&nbsp;                notificationEntity.setSender(sender);</b>
+<b class="fc">&nbsp;                notificationEntity.setUser(recipientUser);</b>
+<b class="fc">&nbsp;                notificationEntity.setType(NotificationType.CYCLE_CLOSE);</b>
+<b class="fc">&nbsp;                notificationEntity.setContent(endDateStr);</b>
+<b class="fc">&nbsp;                notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsRead(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setNotificationIsSeen(false);</b>
+<b class="fc">&nbsp;                notificationEntity.setMessageCount(0); // Not relevant for cycle</b>
+<b class="fc">&nbsp;                notificationRepository.persist(notificationEntity);</b>
+&nbsp;
+<b class="fc">&nbsp;                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="fc">&nbsp;                boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="pc">&nbsp;                if (!delivered) {</b>
+<b class="nc">&nbsp;                    logger.info(&quot;WebSocket delivery failed, cycle notification persisted for userId {}&quot;, recipientId);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            logger.error(&quot;Error creating/sending new cycle notifications&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and sends a new user update notification to the user&#39;s manager.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The notification content is the user&#39;s full name.
+&nbsp;     *
+&nbsp;     * @param userUpdated the user entity that was updated
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public void newUserUpdateNotification(UserEntity userUpdated) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (userUpdated == null) {</b>
+<b class="fc">&nbsp;                logger.error(&quot;Invalid user for user update notification&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            if( userUpdated.getManager() == null) {</b>
+<b class="nc">&nbsp;                logger.error(&quot;User {} has no manager for user update notification&quot;, userUpdated.getId());</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;                NotificationEntity notificationEntity = new NotificationEntity();</b>
+<b class="nc">&nbsp;                notificationEntity.setSender(userUpdated);</b>
+<b class="nc">&nbsp;                notificationEntity.setUser(userUpdated.getManager());</b>
+<b class="nc">&nbsp;                notificationEntity.setType(NotificationType.USER_UPDATE);</b>
+<b class="nc">&nbsp;                notificationEntity.setContent(userUpdated.getName() + &quot; &quot; + userUpdated.getSurname());</b>
+<b class="nc">&nbsp;                notificationEntity.setCreationDate(LocalDateTime.now());</b>
+<b class="nc">&nbsp;                notificationEntity.setNotificationIsRead(false);</b>
+<b class="nc">&nbsp;                notificationEntity.setNotificationIsSeen(false);</b>
+<b class="nc">&nbsp;                notificationEntity.setMessageCount(0);</b>
+<b class="nc">&nbsp;                notificationRepository.persist(notificationEntity);</b>
+&nbsp;
+<b class="nc">&nbsp;                NotificationDTO notificationDTO = notificationMapper.toDto(notificationEntity);</b>
+<b class="nc">&nbsp;                boolean delivered = wsNotifications.notifyUser(notificationDTO);</b>
+<b class="nc">&nbsp;                if (!delivered) {</b>
+<b class="nc">&nbsp;                    logger.info(&quot;WebSocket delivery failed, user updated notification persisted for userId {}&quot;, userUpdated.getId());</b>
+&nbsp;                }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            logger.error(&quot;Error creating/sending new cycle notifications&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

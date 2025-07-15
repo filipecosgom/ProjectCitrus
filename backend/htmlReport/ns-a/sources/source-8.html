@@ -1,0 +1,972 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmailService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: EmailService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmailService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/254)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EmailService$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$5</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$6</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EmailService$7</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/268)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;
+&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.ejb.Asynchronous; // ✅ ADICIONAR
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.concurrent.Future; // ✅ ADICIONAR
+&nbsp;import jakarta.ejb.AsyncResult; // ✅ ADICIONAR
+&nbsp;import jakarta.mail.Authenticator;
+&nbsp;import jakarta.mail.Message;
+&nbsp;import jakarta.mail.Transport;
+&nbsp;import jakarta.mail.internet.InternetAddress;
+&nbsp;import jakarta.mail.internet.MimeMessage;
+&nbsp;import jakarta.mail.MessagingException;
+&nbsp;import jakarta.mail.PasswordAuthentication;
+&nbsp;import jakarta.mail.Session;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.config.EmailConfig;
+&nbsp;import pt.uc.dei.config.MessageTemplate;
+&nbsp;import pt.uc.dei.controllers.UserController;
+&nbsp;import pt.uc.dei.dtos.ConfigurationDTO;
+&nbsp;import pt.uc.dei.entities.NotificationEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.repositories.NotificationRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Properties;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class responsible for sending various types of notification emails to users, managers, and administrators.
+&nbsp; * &lt;p&gt;
+&nbsp; * Utilizes the JavaMail API to send HTML-based emails for account activation, password reset, cycle notifications,
+&nbsp; * course assignments, profile updates, and chat/message notifications. Supports both synchronous and asynchronous
+&nbsp; * (rate-limited) email delivery to prevent server or firewall blocks in university environments.
+&nbsp; * &lt;p&gt;
+&nbsp; * Email configuration is loaded from environment variables and configuration services. Logging is provided for all
+&nbsp; * major actions and error conditions.
+&nbsp; */
+&nbsp;@Stateless
+<b class="nc">&nbsp;public class EmailService {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for tracking email events and errors.
+&nbsp;     */
+<b class="nc">&nbsp;    private final Logger LOGGER = LogManager.getLogger(EmailService.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The email account used to send notification emails.
+&nbsp;     * Retrieved from the system environment variables.
+&nbsp;     */
+<b class="nc">&nbsp;    private String emailAccount = System.getenv(&quot;EMAIL&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The password for the email account.
+&nbsp;     * Retrieved from the system environment variables.
+&nbsp;     */
+<b class="nc">&nbsp;    private String password = System.getenv(&quot;PASSWORD&quot;);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    ConfigurationService configurationService;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    NotificationRepository notificationRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends an activation email to the specified recipient.
+&nbsp;     *
+&nbsp;     * @param recipientEmail  The email address of the recipient.
+&nbsp;     * @param activationToken The activation token for the recipient&#39;s account.
+&nbsp;     * @param secretKey       The secret key for two-factor authentication (if applicable).
+&nbsp;     * @param language        The language code for the email template (e.g., &quot;en&quot;, &quot;pt&quot;).
+&nbsp;     */
+&nbsp;    public void sendActivationEmail(String recipientEmail, String activationToken, String secretKey, String language) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+<b class="nc">&nbsp;            String activationLink = &quot;https://localhost:3000/activate?token=&quot; + activationToken + &quot;&amp;lang=&quot; + language;</b>
+<b class="nc">&nbsp;            ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (language) {</b>
+&nbsp;                case &quot;en&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Activate Your Account&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_EN(activationLink,</b>
+<b class="nc">&nbsp;                            (configurationDTO.getVerificationTime() / 60), secretKey);</b>
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;
+&nbsp;                }
+&nbsp;                case &quot;pt&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Ative a sua conta&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.ACCOUNT_ACTIVATION_TEMPLATE_PT(activationLink,</b>
+<b class="nc">&nbsp;                            (configurationDTO.getVerificationTime() / 60), secretKey);</b>
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Sending activation token: {} to: &quot; + recipientEmail, activationToken);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send activation email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a password reset email to the specified recipient.
+&nbsp;     *
+&nbsp;     * @param recipientEmail     The email address of the recipient.
+&nbsp;     * @param passwordResetToken The password reset token for the recipient&#39;s account.
+&nbsp;     * @param language           The language code for the email template (e.g., &quot;en&quot;, &quot;pt&quot;).
+&nbsp;     */
+&nbsp;    public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken, String language) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;            String resetLink = &quot;https://localhost:3000/password-reset?token=&quot; + passwordResetToken + &quot;&amp;lang=&quot;</b>
+&nbsp;                    + language;
+<b class="nc">&nbsp;            ConfigurationDTO configurationDTO = configurationService.getLatestConfiguration();</b>
+<b class="nc">&nbsp;            switch (language) {</b>
+&nbsp;                case &quot;en&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Reset your password&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_EN(resetLink,</b>
+<b class="nc">&nbsp;                            (configurationDTO.getPasswordResetTime() / 60));</b>
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;
+&nbsp;                }
+&nbsp;                case &quot;pt&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - recupere a sua password&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.PASSWORD_RESET_TEMPLATE_PT(resetLink,</b>
+<b class="nc">&nbsp;                            (configurationDTO.getPasswordResetTime() / 60));</b>
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Send the email
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Sending password reset {} to: &quot; + recipientEmail, passwordResetToken);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send password reset email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a cycle open notification email to a manager or administrator.
+&nbsp;     *
+&nbsp;     * @param recipientEmail  The email address of the recipient.
+&nbsp;     * @param cycleId         The ID of the created cycle.
+&nbsp;     * @param startDate       The start date of the cycle.
+&nbsp;     * @param endDate         The end date of the cycle.
+&nbsp;     * @param adminName       The name of the admin who created the cycle.
+&nbsp;     * @param appraisalsCount The number of appraisals created in the cycle.
+&nbsp;     * @param language        The language code for the email template (e.g., &quot;en&quot;, &quot;pt&quot;).
+&nbsp;     */
+&nbsp;    public void sendCycleOpenNotificationEmail(String recipientEmail, String cycleId, String startDate,
+&nbsp;            String endDate, String adminName, int appraisalsCount, String language) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;            String cycleLink = &quot;https://localhost:3000/appraisals&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (language) {</b>
+&nbsp;                case &quot;en&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - New Performance Cycle Started&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                case &quot;pt&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Novo Ciclo de Avaliação Iniciado&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_PT(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                default: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - New Performance Cycle Started&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Send the email
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Cycle notification sent successfully to: {}&quot;, recipientEmail);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send cycle notification email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to send cycle notification email&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Asynchronously sends cycle open notification emails to a list of recipients (managers/admins) with ultra-conservative rate limiting.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+&nbsp;     * with delays between each email and between batches, and logs all progress and errors.
+&nbsp;     *
+&nbsp;     * @param cycleId         The ID of the created cycle.
+&nbsp;     * @param startDate       The start date of the cycle.
+&nbsp;     * @param endDate         The end date of the cycle.
+&nbsp;     * @param adminName       The name of the admin who created the cycle.
+&nbsp;     * @param appraisalsCount The number of appraisals created in the cycle.
+&nbsp;     * @param recipients      The list of user entities to notify.
+&nbsp;     * @return Future&lt;Boolean&gt; indicating if all emails were sent successfully.
+&nbsp;     */
+&nbsp;    @Asynchronous
+&nbsp;    public Future&lt;Boolean&gt; sendCycleOpenNotificationEmailsAsync(
+&nbsp;            String cycleId, String startDate, String endDate,
+&nbsp;            String adminName, int appraisalsCount,
+&nbsp;            java.util.List&lt;UserEntity&gt; recipients) {
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.info(&quot;🔄 Starting ASYNC email notification process for cycle {}&quot;, cycleId);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            boolean allEmailsSent = true;</b>
+<b class="nc">&nbsp;            int emailsSent = 0;</b>
+<b class="nc">&nbsp;            int emailsFailed = 0;</b>
+&nbsp;
+&nbsp;            // ✅ RATE LIMITING ULTRA-CONSERVADOR para ambiente universitário
+<b class="nc">&nbsp;            final int MAX_EMAILS_PER_BATCH = 1; // 1 email por lote</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutos entre lotes</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_EMAILS_MS = 10000; // 10 segundos base</b>
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Will send {} emails with ultra-conservative rate limiting&quot;, recipients.size());</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Rate: 1 email every 3 minutes (max 20 emails/hour)&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; recipients.size(); i++) {</b>
+<b class="nc">&nbsp;                UserEntity user = recipients.get(i);</b>
+&nbsp;
+&nbsp;                try {
+&nbsp;                    // ✅ DELAY progressivo - aumenta com cada email
+<b class="nc">&nbsp;                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000); // +1s por cada email</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (i &gt; 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Waiting {} ms before sending email {}/{}...&quot;,</b>
+<b class="nc">&nbsp;                                delayMs, i + 1, recipients.size());</b>
+<b class="nc">&nbsp;                        Thread.sleep(delayMs);</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                    // ✅ DELAY extra a cada lote
+<b class="nc">&nbsp;                    if (i &gt; 0 &amp;&amp; i % MAX_EMAILS_PER_BATCH == 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Batch delay: waiting {} ms before next batch...&quot;,</b>
+<b class="nc">&nbsp;                                DELAY_BETWEEN_BATCHES_MS);</b>
+<b class="nc">&nbsp;                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    String userLanguage = &quot;en&quot;; // Default language</b>
+&nbsp;
+<b class="nc">&nbsp;                    LOGGER.info(&quot;📤 Sending cycle notification to {} ({}/{})&quot;,</b>
+<b class="nc">&nbsp;                            user.getEmail(), i + 1, recipients.size());</b>
+&nbsp;
+&nbsp;                    // ✅ Usar o método síncrono existente
+<b class="nc">&nbsp;                    sendCycleOpenNotificationEmail(</b>
+<b class="nc">&nbsp;                            user.getEmail(),</b>
+&nbsp;                            cycleId,
+&nbsp;                            startDate,
+&nbsp;                            endDate,
+&nbsp;                            adminName,
+&nbsp;                            appraisalsCount,
+&nbsp;                            userLanguage);
+&nbsp;
+<b class="nc">&nbsp;                    emailsSent++;</b>
+<b class="nc">&nbsp;                    LOGGER.info(&quot;✅ Email {}/{} sent successfully to: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, recipients.size(), user.getEmail());</b>
+&nbsp;
+&nbsp;                } catch (InterruptedException e) {
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Email sending process was interrupted&quot;);</b>
+<b class="nc">&nbsp;                    Thread.currentThread().interrupt();</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+&nbsp;                    break;
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    emailsFailed++;</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Failed to send email {}/{} to {}: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, recipients.size(), user.getEmail(), e.getMessage());</b>
+&nbsp;
+&nbsp;                    // ✅ Continue com outros emails mesmo se um falhar
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 ASYNC notification completed - Sent: {}, Failed: {}, Total: {}&quot;,</b>
+<b class="nc">&nbsp;                    emailsSent, emailsFailed, recipients.size());</b>
+&nbsp;
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(allEmailsSent);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;❌ Critical error in async email sending: {}&quot;, e.getMessage(), e);</b>
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a cycle close notification email to a manager or administrator.
+&nbsp;     *
+&nbsp;     * @param recipientEmail  The email address of the recipient.
+&nbsp;     * @param cycleId         The ID of the closed cycle.
+&nbsp;     * @param startDate       The start date of the cycle.
+&nbsp;     * @param endDate         The end date of the cycle.
+&nbsp;     * @param adminName       The name of the admin who closed the cycle.
+&nbsp;     * @param appraisalsCount The number of appraisals in the cycle.
+&nbsp;     * @param language        The language code for the email template (e.g., &quot;en&quot;, &quot;pt&quot;).
+&nbsp;     */
+&nbsp;    public void sendCycleCloseNotificationEmail(String recipientEmail, String cycleId, String startDate,
+&nbsp;            String endDate, String adminName, int appraisalsCount, String language) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;            String cycleLink = &quot;https://localhost:3000/appraisals&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (language) {</b>
+&nbsp;                case &quot;en&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Performance Cycle Ended&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                case &quot;pt&quot;: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Ciclo de Avaliação Encerrado&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_PT(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                default: {
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - New Performance Cycle Started&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CYCLE_END_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                            cycleId, startDate, endDate, adminName, appraisalsCount, cycleLink);
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Send the email
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Cycle notification sent successfully to: {}&quot;, recipientEmail);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send cycle notification email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to send cycle notification email&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Asynchronously sends cycle close notification emails to a list of recipients (managers/admins) with ultra-conservative rate limiting.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+&nbsp;     * with delays between each email and between batches, and logs all progress and errors.
+&nbsp;     *
+&nbsp;     * @param cycleId         The ID of the closed cycle.
+&nbsp;     * @param startDate       The start date of the cycle.
+&nbsp;     * @param endDate         The end date of the cycle.
+&nbsp;     * @param adminName       The name of the admin who closed the cycle.
+&nbsp;     * @param appraisalsCount The number of appraisals in the cycle.
+&nbsp;     * @param recipients      The list of user entities to notify.
+&nbsp;     * @return Future&lt;Boolean&gt; indicating if all emails were sent successfully.
+&nbsp;     */
+&nbsp;    @Asynchronous
+&nbsp;    public Future&lt;Boolean&gt; sendCycleCloseNotificationEmailsAsync(
+&nbsp;            String cycleId, String startDate, String endDate,
+&nbsp;            String adminName, int appraisalsCount,
+&nbsp;            java.util.List&lt;UserEntity&gt; recipients) {
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.info(&quot;🔄 Starting ASYNC email notification process for cycle {}&quot;, cycleId);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            boolean allEmailsSent = true;</b>
+<b class="nc">&nbsp;            int emailsSent = 0;</b>
+<b class="nc">&nbsp;            int emailsFailed = 0;</b>
+&nbsp;
+&nbsp;            // ✅ RATE LIMITING ULTRA-CONSERVADOR para ambiente universitário
+<b class="nc">&nbsp;            final int MAX_EMAILS_PER_BATCH = 1; // 1 email por lote</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutos entre lotes</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_EMAILS_MS = 10000; // 10 segundos base</b>
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Will send {} emails with ultra-conservative rate limiting&quot;, recipients.size());</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Rate: 1 email every 3 minutes (max 20 emails/hour)&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; recipients.size(); i++) {</b>
+<b class="nc">&nbsp;                UserEntity user = recipients.get(i);</b>
+&nbsp;
+&nbsp;                try {
+&nbsp;                    // ✅ DELAY progressivo - aumenta com cada email
+<b class="nc">&nbsp;                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000); // +1s por cada email</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (i &gt; 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Waiting {} ms before sending email {}/{}...&quot;,</b>
+<b class="nc">&nbsp;                                delayMs, i + 1, recipients.size());</b>
+<b class="nc">&nbsp;                        Thread.sleep(delayMs);</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                    // ✅ DELAY extra a cada lote
+<b class="nc">&nbsp;                    if (i &gt; 0 &amp;&amp; i % MAX_EMAILS_PER_BATCH == 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Batch delay: waiting {} ms before next batch...&quot;,</b>
+<b class="nc">&nbsp;                                DELAY_BETWEEN_BATCHES_MS);</b>
+<b class="nc">&nbsp;                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    String userLanguage = &quot;en&quot;; // Default language</b>
+&nbsp;
+<b class="nc">&nbsp;                    LOGGER.info(&quot;📤 Sending cycle notification to {} ({}/{})&quot;,</b>
+<b class="nc">&nbsp;                            user.getEmail(), i + 1, recipients.size());</b>
+&nbsp;
+&nbsp;                    // ✅ Usar o método síncrono existente
+<b class="nc">&nbsp;                    sendCycleCloseNotificationEmail(</b>
+<b class="nc">&nbsp;                            user.getEmail(),</b>
+&nbsp;                            cycleId,
+&nbsp;                            startDate,
+&nbsp;                            endDate,
+&nbsp;                            adminName,
+&nbsp;                            appraisalsCount,
+&nbsp;                            userLanguage);
+&nbsp;
+<b class="nc">&nbsp;                    emailsSent++;</b>
+<b class="nc">&nbsp;                    LOGGER.info(&quot;✅ Email {}/{} sent successfully to: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, recipients.size(), user.getEmail());</b>
+&nbsp;
+&nbsp;                } catch (InterruptedException e) {
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Email sending process was interrupted&quot;);</b>
+<b class="nc">&nbsp;                    Thread.currentThread().interrupt();</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+&nbsp;                    break;
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    emailsFailed++;</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Failed to send email {}/{} to {}: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, recipients.size(), user.getEmail(), e.getMessage());</b>
+&nbsp;
+&nbsp;                    // ✅ Continue com outros emails mesmo se um falhar
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 ASYNC notification completed - Sent: {}, Failed: {}, Total: {}&quot;,</b>
+<b class="nc">&nbsp;                    emailsSent, emailsFailed, recipients.size());</b>
+&nbsp;
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(allEmailsSent);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;❌ Critical error in async email sending: {}&quot;, e.getMessage(), e);</b>
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a notification email to a user when their profile is updated by a manager.
+&nbsp;     *
+&nbsp;     * @param recipientEmail The email address of the user whose profile was updated.
+&nbsp;     * @param managerName    The name of the manager who performed the update.
+&nbsp;     * @param userName       The name of the user whose profile was updated.
+&nbsp;     * @param userId         The ID of the user whose profile was updated.
+&nbsp;     * @param date           The date of the update.
+&nbsp;     */
+&nbsp;    public void sendUserUpdateNotificationEmail(String recipientEmail, String managerName, String userName,
+&nbsp;            Long userId, String date) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;            String profileLink = &quot;https://localhost:3000/profile?id=&quot; + userId;</b>
+<b class="nc">&nbsp;            message.setSubject(&quot;CITRUS - &quot; + userName + &quot; profile updated&quot;);</b>
+<b class="nc">&nbsp;            String messageBody = MessageTemplate.PROFILE_UPDATE_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                    managerName, userName, date, profileLink);
+<b class="nc">&nbsp;            message.setContent(messageBody, &quot;text/html&quot;);</b>
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Cycle notification sent successfully to: {}&quot;, recipientEmail);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send cycle notification email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to send cycle notification email&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a notification email to a user when a new course is assigned to them by a manager.
+&nbsp;     *
+&nbsp;     * @param recipientEmail The email address of the user assigned to the course.
+&nbsp;     * @param userName       The name of the user assigned to the course.
+&nbsp;     * @param managerName    The name of the manager assigning the course.
+&nbsp;     * @param courseName     The name of the new course.
+&nbsp;     * @param userId         The ID of the user assigned to the course.
+&nbsp;     */
+&nbsp;    public void sendNewCourseNotificationEmail(String recipientEmail, String userName, String managerName,
+&nbsp;            String courseName, Long userId) {
+&nbsp;        try {
+&nbsp;            // Retrieve SMTP properties for configuring email session
+<b class="nc">&nbsp;            Properties properties = EmailConfig.getSMTPProperties();</b>
+&nbsp;
+&nbsp;            // Create a new email session with authentication
+<b class="nc">&nbsp;            Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                    return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                }
+&nbsp;            });
+&nbsp;            // Construct the email message
+<b class="nc">&nbsp;            Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;            message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;            String courseLink = &quot;https://localhost:3000/profile?id=&quot; + userId + &quot;&amp;tab=training&quot;;</b>
+<b class="nc">&nbsp;            String date = LocalDate.now().toString();</b>
+<b class="nc">&nbsp;            message.setSubject(&quot;CITRUS - &quot; + userName + &quot; new course added&quot;);</b>
+<b class="nc">&nbsp;            String messageBody = MessageTemplate.COURSE_ASSIGNMENT_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                    userName, managerName, courseName, date, courseLink);
+<b class="nc">&nbsp;            message.setContent(messageBody, &quot;text/html&quot;);</b>
+<b class="nc">&nbsp;            Transport.send(message);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Course notification sent successfully to: {}&quot;, recipientEmail);</b>
+&nbsp;        } catch (MessagingException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to send course notification email to {}: {}&quot;, recipientEmail, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to send cycle notification email&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Asynchronously sends chat/message notification emails to users with ultra-conservative rate limiting.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+&nbsp;     * with delays between each email and between batches, and logs all progress and errors. Each notification is marked as sent in the database.
+&nbsp;     *
+&nbsp;     * @param notifications The list of NotificationEntity objects representing chat/message notifications to send.
+&nbsp;     * @return Future&lt;Boolean&gt; indicating if all emails were sent successfully.
+&nbsp;     */
+&nbsp;    @Asynchronous
+&nbsp;    public Future&lt;Boolean&gt; sendMessageNotificationEmailsAsync(List&lt;NotificationEntity&gt; notifications) {
+<b class="nc">&nbsp;        LOGGER.info(&quot;🔄 Starting ASYNC email notification process for chat/message notifications&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            boolean allEmailsSent = true;</b>
+<b class="nc">&nbsp;            int emailsSent = 0;</b>
+<b class="nc">&nbsp;            int emailsFailed = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;            final int MAX_EMAILS_PER_BATCH = 1;</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutes</b>
+<b class="nc">&nbsp;            final long DELAY_BETWEEN_EMAILS_MS = 10000;   // 10 seconds</b>
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Will send {} chat/message emails with ultra-conservative rate limiting&quot;, notifications.size());</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 Rate: 1 email every 3 minutes (max 20 emails/hour)&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; notifications.size(); i++) {</b>
+<b class="nc">&nbsp;                NotificationEntity notification = notifications.get(i);</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000);</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (i &gt; 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Waiting {} ms before sending email {}/{}...&quot;,</b>
+<b class="nc">&nbsp;                                delayMs, i + 1, notifications.size());</b>
+<b class="nc">&nbsp;                        Thread.sleep(delayMs);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    if (i &gt; 0 &amp;&amp; i % MAX_EMAILS_PER_BATCH == 0) {</b>
+<b class="nc">&nbsp;                        LOGGER.info(&quot;⏳ Batch delay: waiting {} ms before next batch...&quot;,</b>
+<b class="nc">&nbsp;                                DELAY_BETWEEN_BATCHES_MS);</b>
+<b class="nc">&nbsp;                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    UserEntity recipient = notification.getUser();</b>
+<b class="nc">&nbsp;                    UserEntity sender = notification.getSender();</b>
+<b class="nc">&nbsp;                    String recipientEmail = recipient.getEmail();</b>
+<b class="nc">&nbsp;                    String recipientName = recipient.getName();</b>
+<b class="nc">&nbsp;                    String senderName = sender.getName() + &quot; &quot; + sender.getSurname();</b>
+<b class="nc">&nbsp;                    String chatLink = &quot;https://localhost:3000/messages?id=&quot; + sender.getId();</b>
+&nbsp;
+&nbsp;                    // Build and send the email
+<b class="nc">&nbsp;                    Properties properties = EmailConfig.getSMTPProperties();</b>
+<b class="nc">&nbsp;                    Session session = Session.getInstance(properties, new Authenticator() {</b>
+&nbsp;                        protected PasswordAuthentication getPasswordAuthentication() {
+<b class="nc">&nbsp;                            return new PasswordAuthentication(emailAccount, password);</b>
+&nbsp;                        }
+&nbsp;                    });
+&nbsp;
+<b class="nc">&nbsp;                    Message message = new MimeMessage(session);</b>
+<b class="nc">&nbsp;                    message.setFrom(new InternetAddress(emailAccount));</b>
+<b class="nc">&nbsp;                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));</b>
+&nbsp;
+<b class="nc">&nbsp;                    message.setSubject(&quot;CITRUS - Novo pedido de chat&quot;);</b>
+<b class="nc">&nbsp;                    String messageBody = MessageTemplate.CHAT_REQUEST_NOTIFICATION_TEMPLATE_EN(</b>
+&nbsp;                            recipientName, senderName, chatLink
+&nbsp;                    );
+<b class="nc">&nbsp;                    message.setContent(messageBody, &quot;text/html&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                    Transport.send(message);</b>
+<b class="nc">&nbsp;                    notification.setEmailSent(true);</b>
+<b class="nc">&nbsp;                    notificationRepository.merge(notification);</b>
+<b class="nc">&nbsp;                    emailsSent++;</b>
+<b class="nc">&nbsp;                    LOGGER.info(&quot;✅ Chat/message email {}/{} sent successfully to: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, notifications.size(), recipientEmail);</b>
+&nbsp;
+&nbsp;                } catch (InterruptedException e) {
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Email sending process was interrupted&quot;);</b>
+<b class="nc">&nbsp;                    Thread.currentThread().interrupt();</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+&nbsp;                    break;
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    emailsFailed++;</b>
+<b class="nc">&nbsp;                    allEmailsSent = false;</b>
+<b class="nc">&nbsp;                    LOGGER.error(&quot;❌ Failed to send chat/message email {}/{}: {}&quot;,</b>
+<b class="nc">&nbsp;                            i + 1, notifications.size(), e.getMessage());</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            LOGGER.info(&quot;📧 ASYNC chat/message notification completed - Sent: {}, Failed: {}, Total: {}&quot;,</b>
+<b class="nc">&nbsp;                    emailsSent, emailsFailed, notifications.size());</b>
+&nbsp;
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(allEmailsSent);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;❌ Critical error in async chat/message email sending: {}&quot;, e.getMessage(), e);</b>
+<b class="nc">&nbsp;            return new AsyncResult&lt;&gt;(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and returns SMTP properties with connection, read, and write timeouts configured.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * These properties are used to prevent email sending from blocking indefinitely due to network or server issues.
+&nbsp;     *
+&nbsp;     * @return Properties object with SMTP host, port, authentication, TLS, timeouts, and security settings.
+&nbsp;     */
+&nbsp;    private Properties createEmailPropertiesWithTimeouts() {
+<b class="nc">&nbsp;        Properties props = new Properties();</b>
+&nbsp;
+&nbsp;        // Base configuration
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.host&quot;, &quot;smtp.gmail.com&quot;);</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.port&quot;, &quot;587&quot;);</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.starttls.enable&quot;, &quot;true&quot;);</b>
+&nbsp;
+&nbsp;        // Timeouts to prevent blocking
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.connectiontimeout&quot;, &quot;15000&quot;); // 15 seconds to connect</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.timeout&quot;, &quot;15000&quot;); // 15 seconds for response</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.writetimeout&quot;, &quot;15000&quot;); // 15 seconds for write</b>
+&nbsp;
+&nbsp;        // Security configurations
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.sendpartial&quot;, &quot;true&quot;); // Allow partial send</b>
+<b class="nc">&nbsp;        props.put(&quot;mail.smtp.quitwait&quot;, &quot;false&quot;); // Do not wait for QUIT response</b>
+&nbsp;
+<b class="nc">&nbsp;        return props;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

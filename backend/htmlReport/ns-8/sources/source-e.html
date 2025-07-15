@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AppraisalMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: AppraisalMapper (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">AppraisalMapper$MockitoMock$meTH5y74</td>
+  </tr>
+  <tr>
+    <td class="name">AppraisalMapper$MockitoMock$meTH5y74$auxiliary$OM0Hg8ri</td>
+  </tr>
+  <tr>
+    <td class="name">AppraisalMapper$MockitoMock$meTH5y74$auxiliary$tkYTci7l</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import org.mapstruct.*;
+&nbsp;import pt.uc.dei.dtos.AppraisalDTO;
+&nbsp;import pt.uc.dei.dtos.AppraisalResponseDTO;
+&nbsp;import pt.uc.dei.entities.AppraisalEntity;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * MapStruct mapper interface for converting between {@link AppraisalEntity} and its DTO representations.
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Features:&lt;/b&gt;
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Automatic mapping between {@code AppraisalEntity}, {@code AppraisalDTO}, and {@code AppraisalResponseDTO}&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Handles mapping of nested user and cycle objects, including their IDs and response DTOs&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Supports mapping of collections (lists) of appraisals and DTOs&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Prevents circular references by using qualified mappings for user fields&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Ignores sensitive or unnecessary fields as needed for security and clarity&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Provides update methods for partial entity updates from DTOs&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;p&gt;
+&nbsp; * &lt;b&gt;Usage:&lt;/b&gt; This interface is implemented automatically by MapStruct at build time.
+&nbsp; * Inject or obtain an instance via CDI or the generated implementation for use in your service layer.
+&nbsp; *
+&nbsp; * @author ProjectCitrus Team
+&nbsp; * @version 1.1
+&nbsp; */
+&nbsp;@Mapper(
+&nbsp;        componentModel = &quot;cdi&quot;,
+&nbsp;        uses = {UserMapper.class},
+&nbsp;        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+&nbsp;)
+&nbsp;public interface AppraisalMapper {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps an {@link AppraisalEntity} to an {@link AppraisalDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Maps user and cycle relationships to their respective IDs and response DTOs.
+&nbsp;     *
+&nbsp;     * @param appraisalEntity the entity to convert
+&nbsp;     * @return the mapped DTO, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(source = &quot;appraisedUser.id&quot;, target = &quot;appraisedUserId&quot;)
+&nbsp;    @Mapping(source = &quot;appraisingUser.id&quot;, target = &quot;appraisingUserId&quot;)
+&nbsp;    @Mapping(source = &quot;cycle.id&quot;, target = &quot;cycleId&quot;)
+&nbsp;    @Mapping(source = &quot;appraisedUser&quot;, target = &quot;appraisedUser&quot;, qualifiedByName = &quot;toResponseDto&quot;)
+&nbsp;    @Mapping(source = &quot;appraisingUser&quot;, target = &quot;appraisingUser&quot;, qualifiedByName = &quot;toResponseDto&quot;)
+&nbsp;    AppraisalDTO toDto(AppraisalEntity appraisalEntity);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps an {@link AppraisalEntity} to an {@link AppraisalResponseDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Includes cycle end date and full user objects for richer API responses.
+&nbsp;     *
+&nbsp;     * @param appraisalEntity the entity to convert
+&nbsp;     * @return the mapped response DTO, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(source = &quot;cycle.id&quot;, target = &quot;cycleId&quot;)
+&nbsp;    @Mapping(source = &quot;cycle.endDate&quot;, target = &quot;endDate&quot;)
+&nbsp;    @Mapping(source = &quot;appraisedUser&quot;, target = &quot;appraisedUser&quot;)
+&nbsp;    @Mapping(source = &quot;appraisingUser&quot;, target = &quot;appraisingUser&quot;)
+&nbsp;    AppraisalResponseDTO toResponseDto(AppraisalEntity appraisalEntity);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps an {@link AppraisalDTO} to an {@link AppraisalEntity}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Ignores user and cycle relationships to avoid unintended persistence issues;
+&nbsp;     * these should be set explicitly in the service layer.
+&nbsp;     *
+&nbsp;     * @param appraisalDTO the DTO to convert
+&nbsp;     * @return the mapped entity, or null if input is null
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;appraisedUser&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;appraisingUser&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;cycle&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;editedDate&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true) // ID should be auto-generated
+&nbsp;    AppraisalEntity toEntity(AppraisalDTO appraisalDTO);
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a list of {@link AppraisalEntity} objects to a list of {@link AppraisalDTO} objects.
+&nbsp;     * Returns an empty list if input is null.
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    List&lt;AppraisalDTO&gt; toDtoList(List&lt;AppraisalEntity&gt; appraisals);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a list of {@link AppraisalDTO} objects to a list of {@link AppraisalEntity} objects.
+&nbsp;     * Returns an empty list if input is null.
+&nbsp;     */
+&nbsp;    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+&nbsp;    List&lt;AppraisalEntity&gt; toEntityList(List&lt;AppraisalDTO&gt; appraisalDTOs);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing {@link AppraisalEntity} with values from an {@link AppraisalDTO}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Useful for partial updates while preserving existing entity relationships and IDs.
+&nbsp;     * Ignores user, cycle, and ID fields to avoid accidental changes.
+&nbsp;     *
+&nbsp;     * @param appraisalDTO the DTO containing the new values
+&nbsp;     * @param appraisalEntity the existing entity to update (modified in place)
+&nbsp;     */
+&nbsp;    @Mapping(target = &quot;appraisedUser&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;appraisingUser&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;cycle&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;creationDate&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;editedDate&quot;, ignore = true)
+&nbsp;    void updateEntityFromDto(AppraisalDTO appraisalDTO, @MappingTarget AppraisalEntity appraisalEntity);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

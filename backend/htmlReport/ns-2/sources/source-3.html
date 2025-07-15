@@ -1,0 +1,480 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuthenticationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthenticationController (pt.uc.dei.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthenticationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (48/60)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.2%
+  </span>
+  <span class="absValue">
+    (141/153)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.controllers;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.json.JsonObject;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.*;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+&nbsp;import pt.uc.dei.annotations.AllowAnonymous;
+&nbsp;import pt.uc.dei.dtos.*;
+&nbsp;import pt.uc.dei.services.AuthenticationService;
+&nbsp;import pt.uc.dei.services.ConfigurationService;
+&nbsp;import pt.uc.dei.services.EmailService;
+&nbsp;import pt.uc.dei.services.TokenService;
+&nbsp;import pt.uc.dei.services.UserService;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import pt.uc.dei.utils.ApiResponse;
+&nbsp;import pt.uc.dei.utils.JWTUtil;
+&nbsp;import pt.uc.dei.utils.TwoFactorUtil;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * REST controller for handling authentication requests.
+&nbsp; * &lt;p&gt;
+&nbsp; * - Provides an endpoint for user login.
+&nbsp; * - Uses CDI dependency injection to access services.
+&nbsp; * - Returns a JWT token upon successful authentication.
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+&nbsp;@Path(&quot;/auth&quot;) // Defines the base path for authentication endpoints
+<b class="fc">&nbsp;public class AuthenticationController {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger for tracking authentication requests
+&nbsp;     */
+<b class="fc">&nbsp;    private final Logger LOGGER = LogManager.getLogger(AuthenticationController.class);</b>
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private AuthenticationService authenticationService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected UserService to handle login operations
+&nbsp;     */
+&nbsp;    @Inject
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected TokenService for additional token-related operations
+&nbsp;     */
+&nbsp;    @Inject
+&nbsp;    private TokenService tokenService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private ConfigurationService configurationService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    EmailService emailService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles user login and returns a JWT authentication token.
+&nbsp;     *
+&nbsp;     * @param user The login request containing email and password.
+&nbsp;     * @return HTTP 200 (OK) with a JWT token if authentication is successful,
+&nbsp;     *         otherwise HTTP 401 (Unauthorized) if login fails.
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/login&quot;) // Defines the login endpoint
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+&nbsp;    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+&nbsp;    public Response login(@Valid LoginDTO user) {
+<b class="fc">&nbsp;        ConfigurationDTO config = configurationService.getLatestConfiguration();</b>
+<b class="fc">&nbsp;        if(config.getTwoFactorAuthEnabled()) {</b>
+<b class="fc">&nbsp;            if (!TwoFactorUtil.validateCode(user.getAuthenticationCode())) {</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Invalid Auth Code&quot;, &quot;errorInvalidAuthCode&quot;,</b>
+&nbsp;                                null))
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (!authenticationService.checkAuthenticationCode(user)) {</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Invalid two factor code&quot;,</b>
+&nbsp;                                &quot;errorInvalidAuthCode&quot;, null))
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        // Attempt to authenticate user and generate JWT token
+<b class="fc">&nbsp;        String token = authenticationService.loginUser(user);</b>
+&nbsp;        // If authentication fails, return structured error response
+<b class="fc">&nbsp;        if (token == null) {</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid credentials&quot;, &quot;errorInvalidCredentials&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;        // Retrieve configuration settings
+<b class="fc">&nbsp;        ConfigurationDTO configuration = configurationService.getLatestConfiguration();</b>
+&nbsp;        // Prepare the response with JWT in headers and structured body
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        data.put(&quot;token&quot;, token);</b>
+<b class="fc">&nbsp;        data.put(&quot;sessionDuration&quot;, configuration.getLoginTime()); // &lt;-- Add this line</b>
+&nbsp;        // Prepare the response with JWT in headers and structured body
+<b class="fc">&nbsp;        Response.ResponseBuilder response = Response</b>
+<b class="fc">&nbsp;                .ok(new ApiResponse(true, &quot;Login successful&quot;, null, data));</b>
+<b class="fc">&nbsp;        response.header(&quot;Set-Cookie&quot;,</b>
+&nbsp;                &quot;jwt=&quot; + token +
+<b class="fc">&nbsp;                        &quot;; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=&quot; + (configuration.getLoginTime() * 60));</b>
+<b class="fc">&nbsp;        return response.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles user logout by clearing the JWT cookie.
+&nbsp;     *
+&nbsp;     * @param response The HTTP servlet response to set the cookie header.
+&nbsp;     * @return HTTP 200 (OK) with a logout confirmation message.
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/logout&quot;)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response logout(@Context HttpServletResponse response, @CookieParam(&quot;jwt&quot;) String jwtToken) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Logout request received&quot;);</b>
+&nbsp;        try {
+&nbsp;            // Validate JWT cookie exists
+<b class="pc">&nbsp;            if (jwtToken == null || jwtToken.isEmpty()) {</b>
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Unauthorized logout request: missing JWT cookie&quot;);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Unauthorized&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Extract user ID from JWT
+<b class="fc">&nbsp;            Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (userId == null) {</b>
+<b class="fc">&nbsp;                LOGGER.warn(&quot;Invalid JWT token in logout request&quot;);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Unauthorized&quot;, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (authenticationService.logoutUser(userId)) {</b>
+&nbsp;                // Use response.header to overwrite the previous cookie setting
+<b class="fc">&nbsp;                response.setHeader(&quot;Set-Cookie&quot;,</b>
+&nbsp;                        &quot;jwt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT;&quot;);
+<b class="fc">&nbsp;                LOGGER.info(&quot;JWT cookie cleared for logout&quot;);</b>
+<b class="fc">&nbsp;                return Response.ok(new ApiResponse(true, &quot;Logged out successfully&quot;, null, null)).build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            LOGGER.error(&quot;Logout failed for userId {}&quot;, userId);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Logout failed&quot;, &quot;errorLogoutFailed&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error logging out&quot;, e);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Server error during logout&quot;, &quot;errorServer&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles requests to initiate a password reset process.
+&nbsp;     * Generates a password reset token and sends it via email if the user exists.
+&nbsp;     *
+&nbsp;     * @param emailJSON The JSON object containing the user&#39;s email.
+&nbsp;     * @param language  The language preference from the Accept-Language header.
+&nbsp;     * @return HTTP 201 (Created) if the process is successful, or an error
+&nbsp;     *         response.
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @POST
+&nbsp;    @Path(&quot;/password-reset&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON) // Accepts JSON payload
+&nbsp;    @Produces(MediaType.APPLICATION_JSON) // Ensures response is JSON
+&nbsp;    public Response requestPasswordReset(JsonObject emailJSON, @HeaderParam(&quot;Accept-Language&quot;) String language) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Password reset request received&quot;);</b>
+<b class="pc">&nbsp;        if (language == null || language.trim().isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Language is empty&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing language parameter&quot;,</b>
+&nbsp;                            &quot;errorMissingLanguage&quot;, null))
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (emailJSON == null || !emailJSON.containsKey(&quot;email&quot;) || emailJSON.isNull(&quot;email&quot;)) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Email is missing in request body&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing email&quot;, &quot;errorMissingEmail&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String email = emailJSON.getString(&quot;email&quot;);</b>
+<b class="pc">&nbsp;        if (email == null || email.isEmpty()) {</b>
+<b class="nc">&nbsp;            LOGGER.error(&quot;Email is null or empty&quot;);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing email&quot;, &quot;errorMissingEmail&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!userService.findIfUserExists(email)) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Password reset requested for non-existent user: {}&quot;, email);</b>
+&nbsp;            // Do not reveal user existence for security reasons
+<b class="fc">&nbsp;            return Response.status(Response.Status.CREATED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Password reset token generated successfully&quot;, null, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            String token = tokenService.createNewPasswordResetToken(email);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (token == null) {</b>
+<b class="fc">&nbsp;                LOGGER.error(&quot;Invalid reset token request for {}&quot;, email);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Unauthorized request&quot;, &quot;errorInvalidResetToken&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            emailService.sendPasswordResetEmail(email, token, language);</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Password reset token generated and email sent to {}&quot;, email);</b>
+&nbsp;
+<b class="fc">&nbsp;            return Response.status(Response.Status.CREATED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Password reset token generated successfully&quot;, null, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password reset error for {}: {}&quot;, email, e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Password reset failed&quot;, &quot;errorServerIssue&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks the validity of a password reset token.
+&nbsp;     *
+&nbsp;     * @param passwordResetTokenValue The token value from the request header.
+&nbsp;     * @return HTTP 200 (OK) if the token is valid, otherwise an error response.
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @GET
+&nbsp;    @Path(&quot;/password-reset&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response checkPasswordReset(@HeaderParam(&quot;token&quot;) String passwordResetTokenValue) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Password reset token validation requested&quot;);</b>
+<b class="pc">&nbsp;        if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password update failed due to missing token&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing password reset token&quot;,</b>
+&nbsp;                            &quot;errorMissingPasswordResetToken&quot;, null))
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);</b>
+<b class="fc">&nbsp;        PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (tokenService.isTokenExpired(passwordResetToken)) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password reset attempt with token {} expired&quot;, passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: expired password reset token&quot;,</b>
+&nbsp;                            &quot;errorExpiredPasswordResetToken&quot;, null))
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            LOGGER.info(&quot;Password reset token {} valid&quot;, passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.OK)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Valid password reset token&quot;, &quot;successPasswordResetToken&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the user&#39;s password using a valid password reset token.
+&nbsp;     *
+&nbsp;     * @param passwordResetTokenValue The token value from the request header.
+&nbsp;     * @param newPasswordJSON         The JSON object containing the new password.
+&nbsp;     * @return HTTP 200 (OK) if the password is updated, otherwise an error
+&nbsp;     *         response.
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @PATCH
+&nbsp;    @Path(&quot;/password-reset&quot;)
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response updatePassword(@HeaderParam(&quot;token&quot;) String passwordResetTokenValue, JsonObject newPasswordJSON) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Password update requested&quot;);</b>
+<b class="pc">&nbsp;        if (newPasswordJSON == null || !newPasswordJSON.containsKey(&quot;password&quot;) || newPasswordJSON.isNull(&quot;password&quot;)) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password update failed due to missing password&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing password&quot;, &quot;errorMissingPassword&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String newPassword = newPasswordJSON.getString(&quot;password&quot;);</b>
+<b class="pc">&nbsp;        if (newPassword == null || newPassword.isEmpty()) {</b>
+<b class="nc">&nbsp;            LOGGER.error(&quot;Password update failed due to missing password&quot;);</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="nc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing password&quot;, &quot;errorMissingPassword&quot;, null))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (passwordResetTokenValue == null || passwordResetTokenValue.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password update failed due to missing token&quot;);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.BAD_REQUEST)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: missing password reset token&quot;,</b>
+&nbsp;                            &quot;errorMissingPasswordResetToken&quot;, null))
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PasswordResetTokenDTO passwordResetTokenDTO = new PasswordResetTokenDTO(passwordResetTokenValue);</b>
+<b class="fc">&nbsp;        PasswordResetTokenDTO passwordResetToken = tokenService.getPasswordResetTokenByValue(passwordResetTokenDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (tokenService.isTokenExpired(passwordResetToken)) {</b>
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password reset attempt with token {} expired&quot;, passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Invalid request: expired password reset token&quot;,</b>
+&nbsp;                            &quot;errorExpiredPasswordResetToken&quot;, null))
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (authenticationService.setNewPassword(passwordResetToken, newPassword)) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Password reset successfully for token {}&quot;, passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.OK)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Password reset sucessfully&quot;, &quot;successPasswordResetSuccess&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Password reset failed for token {}&quot;, passwordResetTokenDTO.getTokenValue());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Password reset failed&quot;, &quot;errorPasswordResetFailed&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles requests for generating a two-factor authentication code.
+&nbsp;     *
+&nbsp;     * @param requester The DTO containing the requester&#39;s email.
+&nbsp;     * @return HTTP 200 (OK) with the authentication code, or an error response.
+&nbsp;     */
+&nbsp;    @AllowAnonymous
+&nbsp;    @POST
+&nbsp;    @Consumes(MediaType.APPLICATION_JSON)
+&nbsp;    @Produces(MediaType.APPLICATION_JSON)
+&nbsp;    public Response requestAuthCode(@Valid RequestAuthCodeDTO requester) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Authentication code request received for {}&quot;, requester.getEmail());</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            String authCode = authenticationService.getAuthCode(requester);</b>
+<b class="fc">&nbsp;            if (authCode == null) {</b>
+<b class="fc">&nbsp;                LOGGER.error(&quot;Invalid code request for {}&quot;, requester.getEmail());</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                        .entity(new ApiResponse(false, &quot;Unauthorized request&quot;, &quot;errorInvalidCodeRequest&quot;, null))</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            LOGGER.info(&quot;Authentication code generated for {}&quot;, requester.getEmail());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.OK)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(true, &quot;Authentication code requested sucessfully&quot;, null,</b>
+<b class="fc">&nbsp;                            Map.of(&quot;authCode&quot;, authCode)))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            LOGGER.error(&quot;Authentication request failed for {}: {}&quot;, requester.getEmail(), e.getMessage());</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="fc">&nbsp;                    .entity(new ApiResponse(false, &quot;Authentication request failed&quot;, &quot;errorServerIssue&quot;, null))</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

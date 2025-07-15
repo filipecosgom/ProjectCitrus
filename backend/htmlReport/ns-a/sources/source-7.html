@@ -1,0 +1,782 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CycleService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: CycleService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CycleService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35%
+  </span>
+  <span class="absValue">
+    (7/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    51.2%
+  </span>
+  <span class="absValue">
+    (41/80)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50.6%
+  </span>
+  <span class="absValue">
+    (128/253)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.ejb.EJBException;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.dtos.CycleDTO;
+&nbsp;import pt.uc.dei.entities.AppraisalEntity;
+&nbsp;import pt.uc.dei.dtos.CycleUpdateDTO;
+&nbsp;import pt.uc.dei.entities.CycleEntity;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.enums.AppraisalState;
+&nbsp;import pt.uc.dei.enums.CycleState;
+&nbsp;import pt.uc.dei.mapper.CycleMapper;
+&nbsp;import pt.uc.dei.repositories.AppraisalRepository;
+&nbsp;import pt.uc.dei.repositories.CycleRepository;
+&nbsp;import pt.uc.dei.repositories.UserRepository;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.concurrent.Future;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class for managing cycle-related operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides functionality for cycle creation, retrieval, updating,
+&nbsp; * and filtering. Handles business logic and validation rules.
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
+&nbsp; * and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+<b class="fc">&nbsp;public class CycleService implements Serializable {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this class.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(CycleService.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for serialization support.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private CycleRepository cycleRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private AppraisalRepository appraisalRepository;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private EmailService emailService;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private CycleMapper cycleMapper;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private NotificationService notificationService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new cycle and initializes appraisals for all active users.
+&nbsp;     * Validates that all users have managers before creation.
+&nbsp;     *
+&nbsp;     * @param cycleDTO The DTO containing cycle creation data
+&nbsp;     * @return The created cycle DTO
+&nbsp;     * @throws IllegalArgumentException If validation fails
+&nbsp;     * @throws IllegalStateException If business rules are violated
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public CycleDTO createCycle(CycleDTO cycleDTO) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Creating new cycle from {} to {} with admin {}&quot;, </b>
+<b class="fc">&nbsp;                   cycleDTO.getStartDate(), </b>
+<b class="fc">&nbsp;                   cycleDTO.getEndDate(),</b>
+<b class="fc">&nbsp;                   cycleDTO.getAdminId());</b>
+&nbsp;
+&nbsp;        // VALIDATION 1: Check for users without managers BEFORE creating cycle
+<b class="fc">&nbsp;        List&lt;UserEntity&gt; usersWithoutManager = userRepository.findActiveUsersWithoutManager();</b>
+<b class="fc">&nbsp;        if (!usersWithoutManager.isEmpty()) {</b>
+<b class="fc">&nbsp;            List&lt;String&gt; userEmails = usersWithoutManager.stream()</b>
+<b class="fc">&nbsp;                    .map(UserEntity::getEmail)</b>
+<b class="fc">&nbsp;                    .collect(Collectors.toList());</b>
+&nbsp;            
+<b class="fc">&nbsp;            LOGGER.error(&quot;Cannot create cycle: {} active users without manager assigned: {}&quot;, </b>
+<b class="fc">&nbsp;                        usersWithoutManager.size(), userEmails);</b>
+&nbsp;            
+<b class="fc">&nbsp;            throw new IllegalStateException(</b>
+<b class="fc">&nbsp;                String.format(&quot;Cannot create cycle. %d active user(s) without manager: %s&quot;, </b>
+<b class="fc">&nbsp;                            usersWithoutManager.size(), String.join(&quot;, &quot;, userEmails))</b>
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+&nbsp;        // VALIDATION 2: Validate admin user exists
+<b class="fc">&nbsp;        UserEntity admin = userRepository.find(cycleDTO.getAdminId());</b>
+<b class="fc">&nbsp;        if (admin == null) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Admin user not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // VALIDATION 3: Validate dates
+<b class="fc">&nbsp;        if (cycleDTO.getStartDate().isAfter(cycleDTO.getEndDate())) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Start date must be before end date&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (cycleDTO.getStartDate().isBefore(LocalDate.now())) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Start date cannot be in the past&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // VALIDATION 4: Check for overlapping cycles
+<b class="fc">&nbsp;        if (cycleRepository.hasOverlappingCycles(cycleDTO.getStartDate(), cycleDTO.getEndDate(), null)) {</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(&quot;A cycle already exists for the specified date range&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+&nbsp;            // Create new cycle
+<b class="fc">&nbsp;            CycleEntity cycleEntity = cycleMapper.toEntity(cycleDTO);</b>
+<b class="fc">&nbsp;            cycleEntity.setAdmin(admin);</b>
+<b class="fc">&nbsp;            cycleEntity.setState(CycleState.OPEN);</b>
+&nbsp;
+&nbsp;            // PERSIST CYCLE
+<b class="fc">&nbsp;            cycleRepository.persist(cycleEntity);</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Created cycle with ID: {}&quot;, cycleEntity.getId());</b>
+&nbsp;
+&nbsp;            // CREATE APPRAISALS FOR ALL ACTIVE USERS
+<b class="fc">&nbsp;            createAppraisalsForCycle(cycleEntity);</b>
+&nbsp;
+&nbsp;            // ✅ MODIFICAR: Usar envio assíncrono
+&nbsp;            // Get admin name for email
+<b class="pc">&nbsp;            String adminName = admin != null ? (admin.getName() + &quot; &quot; + admin.getSurname()) : &quot;System Administrator&quot;;</b>
+&nbsp;            
+&nbsp;            // Count created appraisals
+<b class="fc">&nbsp;            int appraisalsCount = appraisalRepository.countAppraisalsByCycleId(cycleEntity.getId());</b>
+&nbsp;            
+&nbsp;            // Get recipients
+<b class="fc">&nbsp;            List&lt;UserEntity&gt; managersAndAdmins = userRepository.findManagersAndAdmins();</b>
+<b class="fc">&nbsp;            notificationService.newCycleOpenNotification(cycleEntity, managersAndAdmins);</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (!managersAndAdmins.isEmpty()) {</b>
+<b class="fc">&nbsp;                LOGGER.info(&quot;🔄 Starting ASYNC email notification for {} recipients&quot;, managersAndAdmins.size());</b>
+&nbsp;                
+&nbsp;                // ✅ ENVIO ASSÍNCRONO - não bloqueia a criação do ciclo
+<b class="fc">&nbsp;                Future&lt;Boolean&gt; emailResult = emailService.sendCycleOpenNotificationEmailsAsync(</b>
+<b class="fc">&nbsp;                    cycleEntity.getId().toString(),</b>
+<b class="fc">&nbsp;                    cycleEntity.getStartDate().toString(),</b>
+<b class="fc">&nbsp;                    cycleEntity.getEndDate().toString(),</b>
+&nbsp;                    adminName,
+&nbsp;                    appraisalsCount,
+&nbsp;                    managersAndAdmins
+&nbsp;                );
+&nbsp;
+<b class="fc">&nbsp;                LOGGER.info(&quot;🔄 Async email process initiated for cycle {}. Emails will be sent in background.&quot;, </b>
+<b class="fc">&nbsp;                           cycleEntity.getId());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                LOGGER.warn(&quot;No managers or administrators found to notify about cycle creation&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;Cycle created successfully with ID: {} by admin: {}&quot;, </b>
+<b class="fc">&nbsp;                       cycleEntity.getId(), admin.getEmail());</b>
+<b class="fc">&nbsp;            return cycleMapper.toDto(cycleEntity);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error creating cycle: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to create cycle: &quot; + e.getMessage(), e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Closes a cycle, changing its state to CLOSED and updating all appraisals to CLOSED.
+&nbsp;     * Validates that all appraisals are COMPLETED before allowing closure.
+&nbsp;     *
+&nbsp;     * @param cycleId The cycle ID
+&nbsp;     * @return The updated cycle DTO
+&nbsp;     * @throws IllegalArgumentException If cycle not found
+&nbsp;     * @throws IllegalStateException If cycle is already closed or has pending appraisals
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public CycleDTO closeCycle(Long cycleId) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Attempting to close cycle with ID: {}&quot;, cycleId);</b>
+&nbsp;
+&nbsp;        // First validate if cycle can be closed (all appraisals COMPLETED)
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; validation = canCloseCycle(cycleId);</b>
+<b class="fc">&nbsp;        boolean canClose = (Boolean) validation.get(&quot;canClose&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!canClose) {</b>
+<b class="fc">&nbsp;            String reason = (String) validation.get(&quot;reason&quot;);</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cannot close cycle {}: {}&quot;, cycleId, reason);</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(reason);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Get the cycle
+<b class="fc">&nbsp;        CycleEntity cycle = cycleRepository.find(cycleId);</b>
+<b class="fc">&nbsp;        UserEntity admin = cycle.getAdmin();</b>
+<b class="pc">&nbsp;        if (admin == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Admin user not found&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        String adminName = admin != null ? (admin.getName() + &quot; &quot; + admin.getSurname()) : &quot;System Administrator&quot;;</b>
+<b class="fc">&nbsp;        int appraisalsCount = appraisalRepository.countAppraisalsByCycleId(cycle.getId());</b>
+&nbsp;
+&nbsp;        // Close the cycle
+<b class="fc">&nbsp;        cycle.setState(CycleState.CLOSED);</b>
+<b class="fc">&nbsp;        cycleRepository.merge(cycle);</b>
+&nbsp;
+&nbsp;        // Now update all COMPLETED appraisals to CLOSED
+<b class="fc">&nbsp;        List&lt;AppraisalEntity&gt; cycleAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId);</b>
+<b class="fc">&nbsp;        long updatedAppraisals = 0;</b>
+&nbsp;
+<b class="pc">&nbsp;        for (AppraisalEntity appraisal : cycleAppraisals) {</b>
+<b class="nc">&nbsp;            if (appraisal.getState() == AppraisalState.COMPLETED) {</b>
+<b class="nc">&nbsp;                appraisal.setState(AppraisalState.CLOSED);</b>
+<b class="nc">&nbsp;                notificationService.newAppraisalNotification(appraisal);</b>
+<b class="nc">&nbsp;                appraisalRepository.merge(appraisal);</b>
+<b class="nc">&nbsp;                updatedAppraisals++;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        List&lt;UserEntity&gt; managersAndAdmins = userRepository.findManagersAndAdmins();</b>
+<b class="fc">&nbsp;        notificationService.newCycleCloseNotification(cycle, managersAndAdmins);</b>
+<b class="pc">&nbsp;        if (!managersAndAdmins.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;🔄 Starting ASYNC email notification for {} recipients&quot;, managersAndAdmins.size());</b>
+&nbsp;
+&nbsp;            // ✅ ENVIO ASSÍNCRONO - não bloqueia a criação do ciclo
+<b class="fc">&nbsp;            Future&lt;Boolean&gt; emailResult = emailService.sendCycleCloseNotificationEmailsAsync(</b>
+<b class="fc">&nbsp;                    cycle.getId().toString(),</b>
+<b class="fc">&nbsp;                    cycle.getStartDate().toString(),</b>
+<b class="fc">&nbsp;                    cycle.getEndDate().toString(),</b>
+&nbsp;                    adminName,
+&nbsp;                    appraisalsCount,
+&nbsp;                    managersAndAdmins
+&nbsp;            );
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;🔄 Async email process initiated for cycle {}. Emails will be sent in background.&quot;,</b>
+<b class="fc">&nbsp;                    cycle.getId());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;No managers or administrators found to notify about cycle creation&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        LOGGER.info(&quot;Successfully closed cycle with ID: {} and updated {} appraisals to CLOSED state&quot;,</b>
+<b class="fc">&nbsp;                cycleId, updatedAppraisals);</b>
+<b class="fc">&nbsp;        return cycleMapper.toDto(cycle);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing cycle with the provided data.
+&nbsp;     *
+&nbsp;     * @param cycleUpdateDTO The DTO containing updated cycle data
+&nbsp;     * @return The updated CycleDTO
+&nbsp;     * @throws IllegalArgumentException If cycle not found or validation fails
+&nbsp;     * @throws IllegalStateException If cycle cannot be modified
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public CycleDTO updateCycle(CycleUpdateDTO cycleUpdateDTO) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Updating cycle with ID: {}&quot;, cycleUpdateDTO.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        CycleEntity cycle = cycleRepository.find(cycleUpdateDTO.getId());</b>
+<b class="fc">&nbsp;        if (cycle == null) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Cycle not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (cycle.getState() == CycleState.CLOSED) {</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(&quot;Cannot modify a closed cycle&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Validate dates
+<b class="fc">&nbsp;        if (cycleUpdateDTO.getStartDate().isAfter(cycleUpdateDTO.getEndDate())) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Start date must be before end date&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Check for overlapping cycles (excluding current cycle)
+<b class="fc">&nbsp;        if (cycleRepository.hasOverlappingCycles(cycleUpdateDTO.getStartDate(), cycleUpdateDTO.getEndDate(), cycle.getId())) {</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(&quot;Another cycle already exists for the specified date range&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Update admin if provided
+<b class="pc">&nbsp;        if (cycleUpdateDTO.getAdminId() != null &amp;&amp; !cycleUpdateDTO.getAdminId().equals(cycle.getAdmin().getId())) {</b>
+<b class="nc">&nbsp;            UserEntity newAdmin = userRepository.find(cycleUpdateDTO.getAdminId());</b>
+<b class="nc">&nbsp;            if (newAdmin == null) {</b>
+<b class="nc">&nbsp;                throw new IllegalArgumentException(&quot;New admin user not found&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            cycle.setAdmin(newAdmin);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Update other fields
+<b class="fc">&nbsp;        cycleMapper.updateEntityFromDto(cycleUpdateDTO, cycle);</b>
+&nbsp;
+<b class="fc">&nbsp;        cycleRepository.merge(cycle);</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Updated cycle with ID: {}&quot;, cycle.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        return cycleMapper.toDto(cycle);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a cycle by its ID.
+&nbsp;     *
+&nbsp;     * @param id The cycle ID
+&nbsp;     * @return The cycle DTO
+&nbsp;     * @throws IllegalArgumentException If cycle not found
+&nbsp;     */
+&nbsp;    public CycleDTO getCycleById(Long id) {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving cycle with ID: {}&quot;, id);</b>
+&nbsp;
+<b class="nc">&nbsp;        CycleEntity cycle = cycleRepository.find(id);</b>
+<b class="nc">&nbsp;        if (cycle == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Cycle not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return cycleMapper.toDto(cycle);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all cycles.
+&nbsp;     *
+&nbsp;     * @return List of all cycle DTOs
+&nbsp;     */
+&nbsp;    public Map&lt;String, Object&gt; getAllCycles(Integer offset, Integer limit) {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving all cycles&quot;);</b>
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; cycles = cycleRepository.getAllCycles();</b>
+<b class="nc">&nbsp;        Long totalCycles = cycleRepository.getTotalCycles();</b>
+<b class="nc">&nbsp;        List&lt;CycleDTO&gt; cycleDtos = cycles.stream()</b>
+<b class="nc">&nbsp;                .map(cycleMapper::toDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; responseData = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        responseData.put(&quot;cycles&quot;, cycleDtos);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;totalCycles&quot;, totalCycles);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;offset&quot;, offset);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;limit&quot;, limit);</b>
+<b class="nc">&nbsp;        return responseData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves cycles with a specific state.
+&nbsp;     *
+&nbsp;     * @param state The cycle state to filter by
+&nbsp;     * @return List of cycle DTOs
+&nbsp;     */
+&nbsp;    public List&lt;CycleDTO&gt; getCyclesByState(CycleState state) {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving cycles with state: {}&quot;, state);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; cycles = cycleRepository.findCyclesByState(state);</b>
+<b class="nc">&nbsp;        return cycleMapper.toDtoList(cycles);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the current active cycle.
+&nbsp;     *
+&nbsp;     * @return The current active cycle DTO, or null if none exists
+&nbsp;     */
+&nbsp;    public CycleDTO getCurrentActiveCycle() {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving current active cycle&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        CycleEntity cycle = cycleRepository.findCurrentActiveCycle();</b>
+<b class="nc">&nbsp;        return cycle != null ? cycleMapper.toDto(cycle) : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves cycles managed by a specific administrator.
+&nbsp;     *
+&nbsp;     * @param adminId The administrator ID
+&nbsp;     * @return List of cycle DTOs
+&nbsp;     */
+&nbsp;    public List&lt;CycleDTO&gt; getCyclesByAdmin(Long adminId) {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving cycles for admin ID: {}&quot;, adminId);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; cycles = cycleRepository.findCyclesByAdmin(adminId);</b>
+<b class="nc">&nbsp;        return cycleMapper.toDtoList(cycles);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves upcoming cycles.
+&nbsp;     *
+&nbsp;     * @return List of upcoming cycle DTOs
+&nbsp;     */
+&nbsp;    public List&lt;CycleDTO&gt; getUpcomingCycles() {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving upcoming cycles&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; cycles = cycleRepository.findUpcomingCycles();</b>
+<b class="nc">&nbsp;        return cycleMapper.toDtoList(cycles);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves cycles with advanced filtering options.
+&nbsp;     *
+&nbsp;     * @param state Optional filter by cycle state
+&nbsp;     * @param adminId Optional filter by administrator ID
+&nbsp;     * @param startDateFrom Optional filter for cycles starting after this date
+&nbsp;     * @param startDateTo Optional filter for cycles starting before this date
+&nbsp;     * @param limit Maximum number of results
+&nbsp;     * @param offset Starting position for pagination
+&nbsp;     * @return List of filtered cycle DTOs
+&nbsp;     */
+&nbsp;    public Map&lt;String, Object&gt; getCyclesWithFilters(CycleState state, Long adminId,
+&nbsp;                                              LocalDate startDateFrom, LocalDate startDateTo,
+&nbsp;                                              Integer limit, Integer offset) {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Retrieving cycles with filters&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; cycles = cycleRepository.findCyclesWithFilters(</b>
+&nbsp;            state, adminId, startDateFrom, startDateTo, limit, offset
+&nbsp;        );
+<b class="nc">&nbsp;        Long totalCycles = cycleRepository.countCyclesWithFilters(state, adminId, startDateFrom, startDateTo);</b>
+<b class="nc">&nbsp;        List&lt;CycleDTO&gt; cycleDTOS = cycles.stream()</b>
+<b class="nc">&nbsp;                .map(cycleMapper::toDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; responseData = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        responseData.put(&quot;cycles&quot;, cycleDTOS);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;totalCycles&quot;, totalCycles);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;offset&quot;, offset);</b>
+<b class="nc">&nbsp;        responseData.put(&quot;limit&quot;, limit);</b>
+<b class="nc">&nbsp;        return responseData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates if a cycle can be closed by checking if all appraisals are in COMPLETED state.
+&nbsp;     *
+&nbsp;     * @param cycleId The cycle ID to validate
+&nbsp;     * @return Map containing validation result and details
+&nbsp;     * @throws IllegalArgumentException If cycle not found
+&nbsp;     */
+&nbsp;    public Map&lt;String, Object&gt; canCloseCycle(Long cycleId) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Validating if cycle {} can be closed&quot;, cycleId);</b>
+&nbsp;
+<b class="fc">&nbsp;        CycleEntity cycle = cycleRepository.find(cycleId);</b>
+<b class="fc">&nbsp;        if (cycle == null) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Cycle not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (cycle.getState() == CycleState.CLOSED) {</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(&quot;Cycle is already closed&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Count appraisals by state
+<b class="fc">&nbsp;        long inProgressCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()</b>
+<b class="fc">&nbsp;                .filter(appraisal -&gt; appraisal.getState() == AppraisalState.IN_PROGRESS)</b>
+<b class="fc">&nbsp;                .count();</b>
+&nbsp;        
+<b class="fc">&nbsp;        long completedCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()</b>
+<b class="fc">&nbsp;                .filter(appraisal -&gt; appraisal.getState() == AppraisalState.COMPLETED)</b>
+<b class="fc">&nbsp;                .count();</b>
+&nbsp;
+<b class="fc">&nbsp;        long closedCount = appraisalRepository.findAppraisalsByCycle(cycleId).stream()</b>
+<b class="fc">&nbsp;                .filter(appraisal -&gt; appraisal.getState() == AppraisalState.CLOSED)</b>
+<b class="fc">&nbsp;                .count();</b>
+&nbsp;
+<b class="fc">&nbsp;        long totalAppraisals = appraisalRepository.findAppraisalsByCycle(cycleId).size();</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean canClose = (completedCount + closedCount) == totalAppraisals;</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        result.put(&quot;canClose&quot;, canClose);</b>
+<b class="fc">&nbsp;        result.put(&quot;totalAppraisals&quot;, totalAppraisals);</b>
+<b class="fc">&nbsp;        result.put(&quot;inProgressCount&quot;, inProgressCount);</b>
+<b class="fc">&nbsp;        result.put(&quot;completedCount&quot;, completedCount);</b>
+<b class="fc">&nbsp;        result.put(&quot;closedCount&quot;, closedCount);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!canClose) {</b>
+<b class="fc">&nbsp;            String reason = String.format(&quot;Cannot close cycle: %d appraisal(s) are still in progress and need to be completed first&quot;, </b>
+<b class="fc">&nbsp;                                        inProgressCount);</b>
+<b class="fc">&nbsp;            result.put(&quot;reason&quot;, reason);</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Cycle {} cannot be closed: {} appraisals still in progress&quot;, cycleId, inProgressCount);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            result.put(&quot;reason&quot;, &quot;All appraisals are completed and ready for cycle closure&quot;);</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Cycle {} can be closed: {} appraisals in progress, {} completed, {} closed&quot;, </b>
+<b class="fc">&nbsp;                       cycleId, inProgressCount, completedCount, closedCount);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Reopens a cycle, changing its state to OPEN.
+&nbsp;     *
+&nbsp;     * @param cycleId The cycle ID
+&nbsp;     * @return The updated cycle DTO
+&nbsp;     * @throws IllegalArgumentException If cycle not found
+&nbsp;     * @throws IllegalStateException If cycle cannot be reopened
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public CycleDTO reopenCycle(Long cycleId) {
+<b class="nc">&nbsp;        LOGGER.info(&quot;Reopening cycle with ID: {}&quot;, cycleId);</b>
+&nbsp;
+<b class="nc">&nbsp;        CycleEntity cycle = cycleRepository.find(cycleId);</b>
+<b class="nc">&nbsp;        if (cycle == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Cycle not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (cycle.getState() == CycleState.OPEN) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Cycle is already open&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Check if reopening would create overlapping cycles
+<b class="nc">&nbsp;        if (cycleRepository.hasOverlappingCycles(cycle.getStartDate(), cycle.getEndDate(), cycle.getId())) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Cannot reopen cycle: would overlap with existing open cycles&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        cycle.setState(CycleState.OPEN);</b>
+<b class="nc">&nbsp;        cycleRepository.merge(cycle);</b>
+<b class="nc">&nbsp;        LOGGER.info(&quot;Reopened cycle with ID: {}&quot;, cycleId);</b>
+&nbsp;
+<b class="nc">&nbsp;        return cycleMapper.toDto(cycle);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a cycle by its ID if it has not started yet.
+&nbsp;     *
+&nbsp;     * @param cycleId The cycle ID
+&nbsp;     * @throws IllegalArgumentException If cycle not found
+&nbsp;     * @throws IllegalStateException If cycle cannot be deleted
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public void deleteCycle(Long cycleId) {
+<b class="nc">&nbsp;        LOGGER.info(&quot;Deleting cycle with ID: {}&quot;, cycleId);</b>
+&nbsp;
+<b class="nc">&nbsp;        CycleEntity cycle = cycleRepository.find(cycleId);</b>
+<b class="nc">&nbsp;        if (cycle == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Cycle not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Business rule: Can only delete cycles that haven&#39;t started yet
+<b class="nc">&nbsp;        if (cycle.getStartDate().isBefore(LocalDate.now())) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Cannot delete a cycle that has already started&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Additional check: Could also verify no appraisals exist for this cycle
+&nbsp;        // This would require injecting AppraisalRepository and checking count
+&nbsp;
+<b class="nc">&nbsp;        cycleRepository.remove(cycle);</b>
+<b class="nc">&nbsp;        LOGGER.info(&quot;Deleted cycle with ID: {}&quot;, cycleId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Automatically closes all expired cycles (end date in the past).
+&nbsp;     *
+&nbsp;     * @return The number of cycles that were closed
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public int closeExpiredCycles() {
+<b class="nc">&nbsp;        LOGGER.info(&quot;Closing expired cycles&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;CycleEntity&gt; expiredCycles = cycleRepository.findExpiredOpenCycles();</b>
+&nbsp;        
+<b class="nc">&nbsp;        for (CycleEntity cycle : expiredCycles) {</b>
+<b class="nc">&nbsp;            cycle.setState(CycleState.CLOSED);</b>
+<b class="nc">&nbsp;            cycleRepository.merge(cycle);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Auto-closed expired cycle with ID: {}&quot;, cycle.getId());</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int closedCount = expiredCycles.size();</b>
+<b class="nc">&nbsp;        LOGGER.info(&quot;Closed {} expired cycles&quot;, closedCount);</b>
+&nbsp;        
+<b class="nc">&nbsp;        return closedCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a single empty appraisal entity.
+&nbsp;     *
+&nbsp;     * @param appraisedUser The user being appraised
+&nbsp;     * @param appraisingUser The manager doing the appraisal
+&nbsp;     * @param cycle The cycle this appraisal belongs to
+&nbsp;     * @return The created appraisal entity
+&nbsp;     */
+&nbsp;    private AppraisalEntity createEmptyAppraisal(UserEntity appraisedUser, UserEntity appraisingUser, CycleEntity cycle) {
+<b class="nc">&nbsp;        AppraisalEntity appraisal = new AppraisalEntity();</b>
+&nbsp;        
+&nbsp;        // Set relationships
+<b class="nc">&nbsp;        appraisal.setAppraisedUser(appraisedUser);</b>
+<b class="nc">&nbsp;        appraisal.setAppraisingUser(appraisingUser);</b>
+<b class="nc">&nbsp;        appraisal.setCycle(cycle);</b>
+&nbsp;        
+&nbsp;        // Set initial state and data
+<b class="nc">&nbsp;        appraisal.setState(AppraisalState.IN_PROGRESS);</b>
+<b class="nc">&nbsp;        appraisal.setFeedback(null);  // Empty initially</b>
+<b class="nc">&nbsp;        appraisal.setScore(null);     // Empty initially</b>
+<b class="nc">&nbsp;        appraisal.setCreationDate(LocalDate.now());</b>
+<b class="nc">&nbsp;        appraisal.setEditedDate(LocalDate.now());</b>
+&nbsp;        
+<b class="nc">&nbsp;        LOGGER.trace(&quot;Created empty appraisal entity for user {} by manager {} in cycle {}&quot;, </b>
+<b class="nc">&nbsp;                    appraisedUser.getEmail(), appraisingUser.getEmail(), cycle.getId());</b>
+&nbsp;        
+<b class="nc">&nbsp;        return appraisal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates empty appraisals for all active users in the given cycle.
+&nbsp;     * Each user receives an appraisal from their assigned manager.
+&nbsp;     *
+&nbsp;     * @param cycle The cycle for which to create appraisals
+&nbsp;     * @throws IllegalStateException If any user has no manager
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    private void createAppraisalsForCycle(CycleEntity cycle) {
+<b class="fc">&nbsp;        LOGGER.info(&quot;Creating appraisals for cycle ID: {}&quot;, cycle.getId());</b>
+&nbsp;
+&nbsp;        // Get all active users
+<b class="fc">&nbsp;        List&lt;UserEntity&gt; activeUsers = userRepository.findActiveUsersForCycle();</b>
+<b class="fc">&nbsp;        LOGGER.debug(&quot;Found {} active users for appraisal creation&quot;, activeUsers.size());</b>
+&nbsp;        
+<b class="pc">&nbsp;        if (activeUsers.isEmpty()) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;No active users found for appraisal creation in cycle ID: {}&quot;, cycle.getId());</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int createdCount = 0;</b>
+<b class="nc">&nbsp;        int skippedCount = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;        for (UserEntity user : activeUsers) {</b>
+&nbsp;            try {
+&nbsp;                // Double-check manager exists (redundant safety check)
+<b class="nc">&nbsp;                if (user.getManagerUser() == null) {</b>
+<b class="nc">&nbsp;                    LOGGER.error(&quot;CRITICAL: User {} (ID: {}) has no manager during appraisal creation&quot;, </b>
+<b class="nc">&nbsp;                                user.getEmail(), user.getId());</b>
+<b class="nc">&nbsp;                    throw new IllegalStateException(&quot;User &quot; + user.getEmail() + &quot; has no manager assigned&quot;);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                // Check if appraisal already exists (safety check)
+<b class="nc">&nbsp;                AppraisalEntity existingAppraisal = appraisalRepository.findAppraisalByUsersAndCycle(</b>
+<b class="nc">&nbsp;                    user.getId(), user.getManagerUser().getId(), cycle.getId()</b>
+&nbsp;                );
+&nbsp;
+<b class="nc">&nbsp;                if (existingAppraisal != null) {</b>
+<b class="nc">&nbsp;                    LOGGER.warn(&quot;Appraisal already exists for user {} in cycle {} - skipping&quot;, </b>
+<b class="nc">&nbsp;                               user.getEmail(), cycle.getId());</b>
+<b class="nc">&nbsp;                    skippedCount++;</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;
+&nbsp;                // Create empty appraisal
+<b class="nc">&nbsp;                AppraisalEntity appraisal = createEmptyAppraisal(user, user.getManagerUser(), cycle);</b>
+<b class="nc">&nbsp;                appraisalRepository.persist(appraisal);</b>
+&nbsp;                
+<b class="nc">&nbsp;                createdCount++;</b>
+<b class="nc">&nbsp;                LOGGER.debug(&quot;Created appraisal ID: {} for user {} (ID: {}) by manager {} (ID: {})&quot;, </b>
+<b class="nc">&nbsp;                            appraisal.getId(),</b>
+<b class="nc">&nbsp;                            user.getEmail(), user.getId(), </b>
+<b class="nc">&nbsp;                            user.getManagerUser().getEmail(), user.getManagerUser().getId());</b>
+&nbsp;
+&nbsp;            } catch (Exception e) {
+<b class="nc">&nbsp;                LOGGER.error(&quot;Error creating appraisal for user {} (ID: {}) in cycle {}&quot;, </b>
+<b class="nc">&nbsp;                            user.getEmail(), user.getId(), cycle.getId(), e);</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Failed to create appraisal for user: &quot; + user.getEmail(), e);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.info(&quot;Appraisal creation summary for cycle ID: {} - Created: {}, Skipped: {}, Total Users: {}&quot;, </b>
+<b class="nc">&nbsp;                   cycle.getId(), createdCount, skippedCount, activeUsers.size());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (createdCount == 0 &amp;&amp; skippedCount == 0) {</b>
+<b class="nc">&nbsp;            LOGGER.warn(&quot;No appraisals were created for cycle ID: {}&quot;, cycle.getId());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public long countAllCycles() {
+<b class="nc">&nbsp;        return cycleRepository.getTotalCycles();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public long countCyclesByState(CycleState state) {
+<b class="nc">&nbsp;        return cycleRepository.countCyclesWithFilters(state, null, null, null);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

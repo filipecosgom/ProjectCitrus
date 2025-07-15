@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FinishedCourseEntity</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.entities</a>
+</div>
+
+<h1>Coverage Summary for Class: FinishedCourseEntity (pt.uc.dei.entities)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FinishedCourseEntity</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FinishedCourseEntity$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">FinishedCourseEntity$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.entities;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;
+&nbsp;/**
+&nbsp; * Entity representing the completion of a course by a user.
+&nbsp; * &lt;p&gt;
+&nbsp; * - Stores user-course completion records in the database.
+&nbsp; * - Ensures uniqueness via a composite key (`user_id`, `course_title`).
+&nbsp; * - Maintains relationships with `UserEntity` and `CourseEntity`.
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+&nbsp;/**
+&nbsp; * Entity representing the completion of a course by a user.
+&nbsp; * &lt;p&gt;
+&nbsp; * Indexes are added to optimize queries filtering by user, course, and completion date.
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;user_id: For queries like &quot;all courses completed by a user&quot;.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;course_id: For queries like &quot;all users who completed a course&quot;.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;completion_date: For filtering or sorting by completion date.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Unique constraint on (user_id, course_id): Ensures a user cannot complete the same course twice and provides a unique index for this pair.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; */
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;user_course_completion&quot;,
+&nbsp;        uniqueConstraints = @UniqueConstraint(columnNames = {&quot;user_id&quot;, &quot;course_id&quot;}),
+&nbsp;        indexes = {
+&nbsp;            /**
+&nbsp;             * Index for queries like &quot;all courses completed by a user&quot;.
+&nbsp;             */
+&nbsp;            @Index(name = &quot;idx_completion_user&quot;, columnList = &quot;user_id&quot;),
+&nbsp;            /**
+&nbsp;             * Index for queries like &quot;all users who completed a course&quot;.
+&nbsp;             */
+&nbsp;            @Index(name = &quot;idx_completion_course&quot;, columnList = &quot;course_id&quot;),
+&nbsp;            /**
+&nbsp;             * Index for filtering or sorting by completion date.
+&nbsp;             */
+&nbsp;            @Index(name = &quot;idx_completion_date&quot;, columnList = &quot;completion_date&quot;)
+&nbsp;        })
+<b class="fc">&nbsp;public class FinishedCourseEntity implements Serializable {</b>
+&nbsp;
+&nbsp;    /** Unique identifier for each course completion record */
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    /** Reference to the user who completed the course */
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;, nullable = false) // Foreign key to UserEntity
+&nbsp;    private UserEntity user;
+&nbsp;
+&nbsp;    /** Reference to the completed course */
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(
+&nbsp;            name = &quot;course_id&quot;,
+&nbsp;            referencedColumnName = &quot;id&quot;, // Maps to CourseEntity.id
+&nbsp;            nullable = false
+&nbsp;    )
+&nbsp;    private CourseEntity course;
+&nbsp;
+&nbsp;    /** Date when the course was completed */
+&nbsp;    @Column(name = &quot;completion_date&quot;, nullable = false)
+&nbsp;    private LocalDate completionDate;
+&nbsp;
+&nbsp;    // ===================== Getters &amp; Setters =====================
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the unique identifier for this course completion record.
+&nbsp;     * @return the record ID
+&nbsp;     */
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the unique identifier for this course completion record.
+&nbsp;     * @param id the record ID
+&nbsp;     */
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the user who completed the course.
+&nbsp;     * @return the user entity
+&nbsp;     */
+&nbsp;    public UserEntity getUser() {
+<b class="fc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the user who completed the course.
+&nbsp;     * @param user the user entity
+&nbsp;     */
+&nbsp;    public void setUser(UserEntity user) {
+<b class="fc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the completed course.
+&nbsp;     * @return the course entity
+&nbsp;     */
+&nbsp;    public CourseEntity getCourse() {
+<b class="fc">&nbsp;        return course;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the completed course.
+&nbsp;     * @param course the course entity
+&nbsp;     */
+&nbsp;    public void setCourse(CourseEntity course) {
+<b class="fc">&nbsp;        this.course = course;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the date when the course was completed.
+&nbsp;     * @return the completion date
+&nbsp;     */
+&nbsp;    public LocalDate getCompletionDate() {
+<b class="fc">&nbsp;        return completionDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the date when the course was completed.
+&nbsp;     * @param completionDate the completion date
+&nbsp;     */
+&nbsp;    public void setCompletionDate(LocalDate completionDate) {
+<b class="fc">&nbsp;        this.completionDate = completionDate;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

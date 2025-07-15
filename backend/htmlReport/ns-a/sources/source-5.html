@@ -1,0 +1,400 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CourseFileService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: CourseFileService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CourseFileService</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.4%
+  </span>
+  <span class="absValue">
+    (2/82)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CourseFileService$CacheData</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (2/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7%
+  </span>
+  <span class="absValue">
+    (6/86)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.apache.tika.Tika;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.nio.file.*;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class for handling course image file operations such as storage, validation, retrieval, and deletion.
+&nbsp; * &lt;p&gt;
+&nbsp; * Supports MIME type validation, file size limits, and file system operations for course images.
+&nbsp; * Uses Apache Tika for MIME type detection and Java NIO for file management.
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+<b class="nc">&nbsp;public class CourseFileService {</b>
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(CourseFileService.class);</b>
+<b class="fc">&nbsp;    private static final List&lt;String&gt; MIME_TYPES_ALLOWED = List.of(</b>
+&nbsp;            &quot;image/jpeg&quot;,
+&nbsp;            &quot;image/jpg&quot;,
+&nbsp;            &quot;image/png&quot;,
+&nbsp;            &quot;image/webp&quot;
+&nbsp;    );
+&nbsp;    private static final int MAX_BYTES = 5 * 1024 * 1024;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the configured storage path for course image files from the system property &#39;course.storage.path&#39;.
+&nbsp;     *
+&nbsp;     * @return The absolute, normalized path to the course image storage directory.
+&nbsp;     * @throws IllegalStateException if the system property is not set or blank.
+&nbsp;     */
+&nbsp;    public static Path getCourseStoragePath() {
+<b class="nc">&nbsp;        System.out.println(System.getProperty(&quot;course.storage.path&quot;));</b>
+<b class="nc">&nbsp;        String configuredPath = System.getProperty(&quot;course.storage.path&quot;); // Uses the same property as avatars for now</b>
+<b class="nc">&nbsp;        if (configuredPath == null || configuredPath.isBlank()) {</b>
+<b class="nc">&nbsp;            LOGGER.error(&quot;System property &#39;course.storage.path&#39; not configured for courses&quot;);</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;System property &#39;course.storage.path&#39; not set for courses!&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Path path = Paths.get(configuredPath).toAbsolutePath().normalize();</b>
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Resolved course image storage path: {}&quot;, path);</b>
+<b class="nc">&nbsp;        return path;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the MIME type of the provided input stream is allowed for course image uploads.
+&nbsp;     *
+&nbsp;     * @param inputStream The input stream of the file to check.
+&nbsp;     * @return true if the MIME type is allowed, false otherwise.
+&nbsp;     */
+&nbsp;    public static boolean isValidMimeType(InputStream inputStream) {
+<b class="nc">&nbsp;        try (BufferedInputStream bufferedStream = new BufferedInputStream(inputStream)) {</b>
+<b class="nc">&nbsp;            bufferedStream.mark(MAX_BYTES + 1);</b>
+<b class="nc">&nbsp;            String mimeType = new Tika().detect(bufferedStream);</b>
+<b class="nc">&nbsp;            bufferedStream.reset();</b>
+<b class="nc">&nbsp;            boolean isValid = MIME_TYPES_ALLOWED.contains(mimeType);</b>
+<b class="nc">&nbsp;            if (!isValid) {</b>
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Invalid MIME type detected: {}&quot;, mimeType);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return isValid;</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error detecting MIME type: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a filename for the course image based on course ID and detected MIME type.
+&nbsp;     *
+&nbsp;     * @param id        The course ID.
+&nbsp;     * @param fileBytes The byte array of the file to detect MIME type.
+&nbsp;     * @return The generated filename with appropriate extension, or ID with no extension if unsupported.
+&nbsp;     * @throws RuntimeException if MIME type detection fails.
+&nbsp;     */
+&nbsp;    public static String getFilename(Long id, byte[] fileBytes) {
+&nbsp;        try {
+<b class="nc">&nbsp;            String mimeType = new Tika().detect(new ByteArrayInputStream(fileBytes));</b>
+<b class="nc">&nbsp;            String extension = switch (mimeType) {</b>
+<b class="nc">&nbsp;                case &quot;image/jpeg&quot;, &quot;image/jpg&quot; -&gt; &quot;.jpg&quot;;</b>
+<b class="nc">&nbsp;                case &quot;image/png&quot; -&gt; &quot;.png&quot;;</b>
+<b class="nc">&nbsp;                case &quot;image/webp&quot; -&gt; &quot;.webp&quot;;</b>
+&nbsp;                default -&gt; {
+<b class="nc">&nbsp;                    LOGGER.warn(&quot;Unsupported MIME type for course image: {}&quot;, mimeType);</b>
+<b class="nc">&nbsp;                    yield &quot;&quot;;</b>
+&nbsp;                }
+&nbsp;            };
+<b class="nc">&nbsp;            return id + extension;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to generate filename for course ID {}: {}&quot;, id, e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to generate filename&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Saves a file to the course image storage directory, enforcing a maximum file size limit.
+&nbsp;     *
+&nbsp;     * @param inputStream The input stream of the file to be saved.
+&nbsp;     * @param filename    The desired filename for the saved file.
+&nbsp;     * @return true if the file was saved successfully and within size limit, false otherwise.
+&nbsp;     */
+&nbsp;    public static boolean saveFileWithSizeLimit(InputStream inputStream, String filename) {
+<b class="nc">&nbsp;        Path filePath = null;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            Path uploadDir = getCourseStoragePath();</b>
+<b class="nc">&nbsp;            Files.createDirectories(uploadDir);</b>
+<b class="nc">&nbsp;            filePath = uploadDir.resolve(filename);</b>
+<b class="nc">&nbsp;            LOGGER.info(&quot;Attempting to save course image to: {}&quot;, filePath);</b>
+<b class="nc">&nbsp;            try (InputStream in = new BufferedInputStream(inputStream);</b>
+<b class="nc">&nbsp;                 OutputStream out = Files.newOutputStream(filePath,</b>
+&nbsp;                         StandardOpenOption.CREATE,
+&nbsp;                         StandardOpenOption.TRUNCATE_EXISTING)) {
+<b class="nc">&nbsp;                byte[] buffer = new byte[8192];</b>
+<b class="nc">&nbsp;                long total = 0;</b>
+&nbsp;                int bytesRead;
+<b class="nc">&nbsp;                int loopCount = 0;</b>
+<b class="nc">&nbsp;                while ((bytesRead = in.read(buffer)) != -1) {</b>
+<b class="nc">&nbsp;                    total += bytesRead;</b>
+<b class="nc">&nbsp;                    if (total &gt; MAX_BYTES) {</b>
+<b class="nc">&nbsp;                        LOGGER.warn(&quot;File size exceeds maximum allowed size ({} bytes)&quot;, MAX_BYTES);</b>
+<b class="nc">&nbsp;                        return false;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    loopCount++;</b>
+<b class="nc">&nbsp;                    out.write(buffer, 0, bytesRead);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                LOGGER.debug(&quot;Course image saved successfully. Loops: {}, Total bytes: {}&quot;, loopCount, total);</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to save course image file {}: {}&quot;, filePath, e.getMessage());</b>
+<b class="nc">&nbsp;            if (filePath != null) {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    Files.deleteIfExists(filePath);</b>
+&nbsp;                } catch (IOException ex) {
+<b class="nc">&nbsp;                    LOGGER.warn(&quot;Failed to clean up partially written course image file {}: {}&quot;, filePath, ex.getMessage());</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resolves the course image file path for a course by ID, checking all supported file extensions.
+&nbsp;     *
+&nbsp;     * @param id The course ID.
+&nbsp;     * @return The Path to the course image file if found, or null if not found.
+&nbsp;     */
+&nbsp;    public static Path resolveCourseImagePath(Long id) {
+<b class="nc">&nbsp;        Path courseDir = getCourseStoragePath();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; extensions = List.of(&quot;.jpg&quot;, &quot;.jpeg&quot;, &quot;.png&quot;, &quot;.webp&quot;);</b>
+<b class="nc">&nbsp;        for (String ext : extensions) {</b>
+<b class="nc">&nbsp;            Path candidate = courseDir.resolve(id + ext);</b>
+<b class="nc">&nbsp;            if (Files.exists(candidate)) {</b>
+<b class="nc">&nbsp;                return candidate;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all existing course image files for a course by ID, across all supported extensions.
+&nbsp;     *
+&nbsp;     * @param id The course ID.
+&nbsp;     * @return true if all files were removed successfully, false otherwise.
+&nbsp;     */
+&nbsp;    public static boolean removeExistingCourseImages(Long id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Path courseDir = getCourseStoragePath();</b>
+<b class="nc">&nbsp;            List&lt;String&gt; extensions = List.of(&quot;.jpg&quot;, &quot;.jpeg&quot;, &quot;.png&quot;, &quot;.webp&quot;);</b>
+<b class="nc">&nbsp;            for (String ext : extensions) {</b>
+<b class="nc">&nbsp;                Path candidate = courseDir.resolve(id + ext);</b>
+<b class="nc">&nbsp;                if (Files.exists(candidate)) {</b>
+<b class="nc">&nbsp;                    Files.deleteIfExists(candidate);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Failed to remove existing course image file: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the MIME type of a file by its path using the system&#39;s file type detector.
+&nbsp;     *
+&nbsp;     * @param filePath The path to the file.
+&nbsp;     * @return The MIME type string, or null if not detected.
+&nbsp;     */
+&nbsp;    public static String getMimeType(Path filePath) {
+&nbsp;        try {
+<b class="nc">&nbsp;            return Files.probeContentType(filePath);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Could not detect MIME type for {}: {}&quot;, filePath, e.getMessage());</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the MIME type of a course image file by course ID.
+&nbsp;     *
+&nbsp;     * @param id The course ID.
+&nbsp;     * @return The MIME type string, or null if not found.
+&nbsp;     */
+&nbsp;    public static String getMimeTypeForCourse(Long id) {
+<b class="nc">&nbsp;        Path path = resolveCourseImagePath(id);</b>
+<b class="nc">&nbsp;        if (path != null) {</b>
+<b class="nc">&nbsp;            return getMimeType(path);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets cache metadata for a file, including last modified time, size, and MIME type.
+&nbsp;     *
+&nbsp;     * @param filePath The path to the file.
+&nbsp;     * @return CacheData object with file metadata.
+&nbsp;     * @throws IOException if file attributes cannot be read.
+&nbsp;     */
+&nbsp;    public static CacheData getCacheData(Path filePath) throws IOException {
+<b class="nc">&nbsp;        return new CacheData(</b>
+<b class="nc">&nbsp;                Files.getLastModifiedTime(filePath).toMillis(),</b>
+<b class="nc">&nbsp;                Files.size(filePath),</b>
+<b class="nc">&nbsp;                Files.probeContentType(filePath)</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Data class representing cache metadata for a file, including last modified time, file size, and MIME type.
+&nbsp;     */
+&nbsp;    public static class CacheData {
+&nbsp;        /** The last modified time of the file in milliseconds since epoch. */
+&nbsp;        public final long lastModified;
+&nbsp;        /** The size of the file in bytes. */
+&nbsp;        public final long fileSize;
+&nbsp;        /** The MIME type of the file. */
+&nbsp;        public final String mimeType;
+&nbsp;        /**
+&nbsp;         * Constructs a CacheData object with the given metadata.
+&nbsp;         *
+&nbsp;         * @param lastModified The last modified time in milliseconds since epoch.
+&nbsp;         * @param fileSize     The size of the file in bytes.
+&nbsp;         * @param mimeType     The MIME type of the file.
+&nbsp;         */
+<b class="fc">&nbsp;        public CacheData(long lastModified, long fileSize, String mimeType) {</b>
+<b class="fc">&nbsp;            this.lastModified = lastModified;</b>
+<b class="fc">&nbsp;            this.fileSize = fileSize;</b>
+<b class="fc">&nbsp;            this.mimeType = mimeType;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

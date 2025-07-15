@@ -1,0 +1,145 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PasswordUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: PasswordUtils (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PasswordUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import at.favre.lib.crypto.bcrypt.BCrypt;
+&nbsp;import at.favre.lib.crypto.bcrypt.BCrypt;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for password encryption and verification using the BCrypt algorithm.
+&nbsp; * &lt;p&gt;
+&nbsp; * - Ensures secure password storage by hashing passwords with a salt.
+&nbsp; * - Allows verification of a plain-text password against its hashed version.
+&nbsp; * - Uses a default hashing strength of 10 rounds.
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+<b class="nc">&nbsp;public class PasswordUtils {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Verifies a password against its stored, hashed version.
+&nbsp;     *
+&nbsp;     * @param hashedPassword The hashed password stored in the database.
+&nbsp;     * @param plainPassword  The plain-text password provided by the user.
+&nbsp;     * @return {@code true} if the password matches the hashed version, {@code false} otherwise.
+&nbsp;     */
+&nbsp;    public static boolean verify(String hashedPassword, String plainPassword) {
+&nbsp;        // Use BCrypt&#39;s built-in verification method to compare hashed password and input password.
+<b class="fc">&nbsp;        BCrypt.Result result = BCrypt.verifyer().verify(plainPassword.toCharArray(), hashedPassword.toCharArray());</b>
+&nbsp;
+&nbsp;        // Returns true if the password matches, false otherwise.
+<b class="fc">&nbsp;        return result.verified;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Encrypts a given password using the BCrypt algorithm with a predefined hashing strength.
+&nbsp;     *
+&nbsp;     * @param password The plain-text password to be encrypted.
+&nbsp;     * @return The securely hashed password string.
+&nbsp;     */
+&nbsp;    public static String encrypt(String password) {
+&nbsp;        // Hash password using BCrypt with a cost factor of 10 (higher values increase security).
+<b class="fc">&nbsp;        return BCrypt.withDefaults().hashToString(10, password.toCharArray());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

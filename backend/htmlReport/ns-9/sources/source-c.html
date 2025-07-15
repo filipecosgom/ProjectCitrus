@@ -1,0 +1,543 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.repositories</a>
+</div>
+
+<h1>Coverage Summary for Class: UserRepository (pt.uc.dei.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (10/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    39.5%
+  </span>
+  <span class="absValue">
+    (34/86)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.9%
+  </span>
+  <span class="absValue">
+    (71/158)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.repositories;
+&nbsp;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.persistence.NoResultException;
+&nbsp;import jakarta.persistence.TypedQuery;
+&nbsp;import jakarta.persistence.criteria.*;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.enums.*;
+&nbsp;import pt.uc.dei.enums.OrderBy;
+&nbsp;import pt.uc.dei.utils.SearchUtils;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository class for managing {@link UserEntity} persistence operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides data access methods specific to user entities, extending the basic
+&nbsp; * CRUD operations from {@link AbstractRepository}. This class handles all
+&nbsp; * database interactions related to user management.
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for
+&nbsp; * dependency injection and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+&nbsp;public class UserRepository extends AbstractRepository&lt;UserEntity&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logger instance for logging operations within this class.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(UserRepository.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Serial version UID for serialization support.
+&nbsp;     */
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new UserRepository instance.
+&nbsp;     * Initializes the repository for {@link UserEntity} operations.
+&nbsp;     */
+&nbsp;    public UserRepository() {
+<b class="fc">&nbsp;        super(UserEntity.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a user entity by email address.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method executes a named query &quot;User.findUserByEmail&quot; to locate
+&nbsp;     * a user with the specified email address. If no user is found,
+&nbsp;     * the method logs a warning and returns null.
+&nbsp;     *
+&nbsp;     * @param email The email address to search for (case-sensitive)
+&nbsp;     * @return The {@link UserEntity} matching the email address, or
+&nbsp;     * null if no user is found
+&nbsp;     * @throws jakarta.persistence.PersistenceException     If an error occurs
+&nbsp;     *                                                      during the database operation
+&nbsp;     * @throws jakarta.persistence.NonUniqueResultException If multiple users
+&nbsp;     *                                                      are found with the same email (should not occur if email is unique)
+&nbsp;     * @see UserEntity
+&nbsp;     */
+&nbsp;    public UserEntity findUserByEmail(String email) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;User.findUserByEmail&quot;, UserEntity.class).setParameter(&quot;email&quot;, email).getSingleResult();</b>
+&nbsp;        } catch (NoResultException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;User not found with email: &quot; + email);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a user entity by its unique identifier.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method executes a named query &quot;User.findUserById&quot; to locate
+&nbsp;     * a user with the specified ID. If no user is found, the method
+&nbsp;     * logs a warning and returns null.
+&nbsp;     *
+&nbsp;     * @param id The unique identifier to search for
+&nbsp;     * @return The {@link UserEntity} matching the ID, or
+&nbsp;     * null if no user is found
+&nbsp;     * @throws jakarta.persistence.PersistenceException     If an error occurs
+&nbsp;     *                                                      during the database operation
+&nbsp;     * @throws jakarta.persistence.NonUniqueResultException If multiple users
+&nbsp;     *                                                      are found with the same ID (should not occur as ID is unique)
+&nbsp;     * @see UserEntity
+&nbsp;     */
+&nbsp;    public UserEntity findUserById(Long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return em.createNamedQuery(&quot;User.findUserById&quot;, UserEntity.class).setParameter(&quot;id&quot;, id).getSingleResult();</b>
+&nbsp;        } catch (NoResultException e) {
+<b class="fc">&nbsp;            LOGGER.warn(&quot;User not found with ID: &quot; + id);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a paginated and filtered list of users based on provided criteria.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
+&nbsp;     * Allows sorting by any parameter and supports pagination.
+&nbsp;     *
+&nbsp;     * @param id           User ID to filter (optional)
+&nbsp;     * @param email        Email to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param name         Name or surname to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param phone        Phone number to filter (optional)
+&nbsp;     * @param accountState Account state to filter (optional)
+&nbsp;     * @param roleStr      Role to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param office       Office to filter (optional)
+&nbsp;     * @param parameter    Sorting parameter (optional)
+&nbsp;     * @param orderBy      Sorting order (ASCENDING or DESCENDING)
+&nbsp;     * @param offset       Pagination offset (start position)
+&nbsp;     * @param limit        Pagination limit (max results)
+&nbsp;     * @return List of users matching the criteria
+&nbsp;     */
+&nbsp;    public List&lt;UserEntity&gt; getUsers(Long id, String email, String name, String phone,
+&nbsp;                                     AccountState accountState, String roleStr, Office office,
+&nbsp;                                     Boolean userIsManager, Boolean userIsAdmin, Boolean userHasManager,
+&nbsp;                                     Parameter parameter, OrderBy orderBy, Integer offset, Integer limit) {
+&nbsp;
+<b class="fc">&nbsp;        CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="fc">&nbsp;        CriteriaQuery&lt;UserEntity&gt; query = cb.createQuery(UserEntity.class);</b>
+<b class="fc">&nbsp;        Root&lt;UserEntity&gt; root = query.from(UserEntity.class);</b>
+<b class="fc">&nbsp;        Join&lt;UserEntity, UserEntity&gt; managerJoin = root.join(&quot;managerUser&quot;, JoinType.LEFT);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        // Dynamic filters
+<b class="pc">&nbsp;        if (id != null) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;id&quot;), id));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(email)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(email)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(email);</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(root.get(&quot;email&quot;), &quot;%&quot; + exact + &quot;%&quot;)); // Full, strict match</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                String normalized = SearchUtils.normalizeString(email.toLowerCase());</b>
+<b class="nc">&nbsp;                Expression&lt;String&gt; unaccentedEmail = cb.function(&quot; &quot;, String.class, cb.lower(root.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(unaccentedEmail, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(name)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(name)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(name);</b>
+<b class="nc">&nbsp;                Predicate nameMatch = cb.like(root.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                Predicate surnameMatch = cb.like(root.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                name = SearchUtils.normalizeString(name);</b>
+<b class="nc">&nbsp;                String[] terms = name.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                for (String term : terms) {</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedName = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedSurname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                            cb.like(unaccentedName, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                            cb.like(unaccentedSurname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                    ));
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(phone)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;phone&quot;), phone));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (accountState != null) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;accountState&quot;), accountState));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(roleStr)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(roleStr)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(roleStr);</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(root.get(&quot;role&quot;), exact)); // Full, strict match</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                String normalizedRole = SearchUtils.normalizeString(roleStr.toLowerCase());</b>
+<b class="nc">&nbsp;                Expression&lt;String&gt; unaccentedRole = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;role&quot;)));</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(unaccentedRole, &quot;%&quot; + normalizedRole + &quot;%&quot;));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (office != null) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;office&quot;), office));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userIsManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isTrue(root.get(&quot;userIsManager&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userIsManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isFalse(root.get(&quot;userIsManager&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userIsAdmin)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isTrue(root.get(&quot;userIsAdmin&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userIsAdmin)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isFalse(root.get(&quot;userIsAdmin&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userHasManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isNotNull(root.get(&quot;managerUser&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userHasManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isNull(root.get(&quot;managerUser&quot;)));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        query.where(predicates.toArray(new Predicate[0]));</b>
+&nbsp;        // Sorting logic
+<b class="pc">&nbsp;        if (parameter != null) {</b>
+&nbsp;            Path&lt;?&gt; sortingField;
+&nbsp;
+<b class="nc">&nbsp;            if (&quot;manager.name&quot;.equals(parameter.getFieldName())) {</b>
+<b class="nc">&nbsp;                sortingField = managerJoin.get(&quot;name&quot;); // nested field</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                sortingField = root.get(parameter.getFieldName());</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            query.orderBy(orderBy == OrderBy.DESCENDING ? cb.desc(sortingField) : cb.asc(sortingField));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        TypedQuery&lt;UserEntity&gt; typedQuery = em.createQuery(query);</b>
+<b class="pc">&nbsp;        if(offset != null &amp;&amp; offset &gt;= 0) {</b>
+<b class="fc">&nbsp;            typedQuery.setFirstResult(offset);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if(limit != null &amp;&amp; limit &gt; 0) {</b>
+<b class="fc">&nbsp;            typedQuery.setMaxResults(limit);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return typedQuery.getResultList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts the total number of users matching the provided filters.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Supports dynamic filtering by ID, email, name, phone, account state, role, and office.
+&nbsp;     *
+&nbsp;     * @param id           User ID to filter (optional)
+&nbsp;     * @param email        Email to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param name         Name or surname to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param phone        Phone number to filter (optional)
+&nbsp;     * @param accountState Account state to filter (optional)
+&nbsp;     * @param roleStr      Role to filter (optional, supports quoted and normalized search)
+&nbsp;     * @param office       Office to filter (optional)
+&nbsp;     * @return Total count of users matching the criteria
+&nbsp;     */
+&nbsp;    public long getTotalUserCount(Long id, String email, String name, String phone, AccountState accountState,
+&nbsp;                                  String roleStr, Office office, Boolean userIsManager,
+&nbsp;                                  Boolean userIsAdmin, Boolean userHasManager) {
+&nbsp;
+<b class="fc">&nbsp;        CriteriaBuilder cb = em.getCriteriaBuilder();</b>
+<b class="fc">&nbsp;        CriteriaQuery&lt;Long&gt; query = cb.createQuery(Long.class);</b>
+<b class="fc">&nbsp;        Root&lt;UserEntity&gt; root = query.from(UserEntity.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        if (id != null) {</b>
+<b class="fc">&nbsp;            predicates.add(cb.equal(root.get(&quot;id&quot;), id));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(email)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(email)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(email);</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(root.get(&quot;email&quot;), &quot;%&quot; + exact + &quot;%&quot;)); // Full, strict match</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                String normalized = SearchUtils.normalizeString(email.toLowerCase());</b>
+<b class="nc">&nbsp;                Expression&lt;String&gt; unaccentedEmail = cb.function(&quot; &quot;, String.class, cb.lower(root.get(&quot;email&quot;)));</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(unaccentedEmail, &quot;%&quot; + normalized + &quot;%&quot;));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(name)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(name)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(name);</b>
+<b class="nc">&nbsp;                Predicate nameMatch = cb.like(root.get(&quot;name&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                Predicate surnameMatch = cb.like(root.get(&quot;surname&quot;), &quot;%&quot; + exact + &quot;%&quot;);</b>
+<b class="nc">&nbsp;                predicates.add(cb.or(nameMatch, surnameMatch));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                name = SearchUtils.normalizeString(name);</b>
+<b class="nc">&nbsp;                String[] terms = name.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;                for (String term : terms) {</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedName = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;name&quot;)));</b>
+<b class="nc">&nbsp;                    Expression&lt;String&gt; unaccentedSurname = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;surname&quot;)));</b>
+<b class="nc">&nbsp;                    predicates.add(cb.or(</b>
+<b class="nc">&nbsp;                            cb.like(unaccentedName, &quot;%&quot; + term + &quot;%&quot;),</b>
+<b class="nc">&nbsp;                            cb.like(unaccentedSurname, &quot;%&quot; + term + &quot;%&quot;)</b>
+&nbsp;                    ));
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (phone != null &amp;&amp; !phone.isEmpty()) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;phone&quot;), phone));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (accountState != null) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;accountState&quot;), accountState));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (SearchUtils.isNotBlank(roleStr)) {</b>
+<b class="nc">&nbsp;            if (SearchUtils.isQuoted(roleStr)) {</b>
+<b class="nc">&nbsp;                String exact = SearchUtils.stripQuotes(roleStr);</b>
+<b class="nc">&nbsp;                predicates.add(cb.equal(root.get(&quot;role&quot;), exact)); // Full, strict match</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                String normalizedRole = SearchUtils.normalizeString(roleStr.toLowerCase());</b>
+<b class="nc">&nbsp;                Expression&lt;String&gt; unaccentedRole = cb.function(&quot;unaccent&quot;, String.class, cb.lower(root.get(&quot;role&quot;)));</b>
+<b class="nc">&nbsp;                predicates.add(cb.like(unaccentedRole, &quot;%&quot; + normalizedRole + &quot;%&quot;));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (office != null) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.equal(root.get(&quot;office&quot;), office));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userIsManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isTrue(root.get(&quot;userIsManager&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userIsManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isFalse(root.get(&quot;userIsManager&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userIsAdmin)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isTrue(root.get(&quot;userIsAdmin&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userIsAdmin)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isFalse(root.get(&quot;userIsAdmin&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(userHasManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isNotNull(root.get(&quot;managerUser&quot;)));</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.FALSE.equals(userHasManager)) {</b>
+<b class="nc">&nbsp;            predicates.add(cb.isNull(root.get(&quot;managerUser&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        query.where(predicates.toArray(new Predicate[0]));</b>
+<b class="fc">&nbsp;        query.select(cb.count(root));</b>
+&nbsp;
+<b class="fc">&nbsp;        return em.createQuery(query).getSingleResult();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all active users (not deleted) for cycle initialization.
+&nbsp;     *
+&nbsp;     * @return List of active user entities
+&nbsp;     */
+&nbsp;    public List&lt;UserEntity&gt; findActiveUsersForCycle() {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;UserEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT u FROM UserEntity u WHERE u.userIsDeleted = false ORDER BY u.id&quot;,
+&nbsp;                    UserEntity.class
+&nbsp;            );
+<b class="fc">&nbsp;            List&lt;UserEntity&gt; result = query.getResultList();</b>
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Found {} active users for cycle creation&quot;, result.size());</b>
+<b class="fc">&nbsp;            return result;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding active users for cycle&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds active users without a manager assigned.
+&nbsp;     * Used for validation before cycle creation.
+&nbsp;     *
+&nbsp;     * @return List of users without manager
+&nbsp;     */
+&nbsp;    public List&lt;UserEntity&gt; findActiveUsersWithoutManager() {
+&nbsp;        try {
+<b class="nc">&nbsp;            TypedQuery&lt;UserEntity&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT u FROM UserEntity u WHERE u.userIsDeleted = false &quot; +
+&nbsp;                            &quot;AND u.userIsAdmin &quot; +
+&nbsp;                            &quot; AND u.managerUser IS NULL ORDER BY u.email&quot;,
+&nbsp;                    UserEntity.class
+&nbsp;            );
+<b class="nc">&nbsp;            List&lt;UserEntity&gt; result = query.getResultList();</b>
+<b class="nc">&nbsp;            LOGGER.debug(&quot;Found {} active users without manager&quot;, result.size());</b>
+<b class="nc">&nbsp;            return result;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding active users without manager&quot;, e);</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts active users without a manager.
+&nbsp;     *
+&nbsp;     * @return Number of users without manager
+&nbsp;     */
+&nbsp;    public long countActiveUsersWithoutManager() {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;Long&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT COUNT(u) FROM UserEntity u WHERE u.userIsDeleted = false &quot; +
+&nbsp;                            &quot;AND u.managerUser IS NULL&quot;,
+&nbsp;                    Long.class
+&nbsp;            );
+<b class="fc">&nbsp;            Long count = query.getSingleResult();</b>
+<b class="fc">&nbsp;            LOGGER.debug(&quot;Count of active users without manager: {}&quot;, count);</b>
+<b class="fc">&nbsp;            return count;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error counting active users without manager&quot;, e);</b>
+<b class="nc">&nbsp;            return 0L;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean checkIfUserStillHasManagedUsers(Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;Long&gt; query = em.createQuery(</b>
+&nbsp;                    &quot;SELECT COUNT(u) FROM UserEntity u WHERE u.managerUser.id = :userId&quot;,
+&nbsp;                    Long.class);
+<b class="fc">&nbsp;            query.setParameter(&quot;userId&quot;, userId);</b>
+<b class="fc">&nbsp;            Long count = query.getSingleResult();</b>
+<b class="fc">&nbsp;            LOGGER.debug(&quot;User with ID {} has {} managed users&quot;, userId, count);</b>
+<b class="fc">&nbsp;            return count &gt; 0;</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error checking if user with ID {} has managed users&quot;, userId, e);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds all users who are managers or administrators with complete accounts.
+&nbsp;     *
+&nbsp;     * @return List of UserEntity objects representing managers and administrators
+&nbsp;     */
+&nbsp;    public List&lt;UserEntity&gt; findManagersAndAdmins() {
+&nbsp;        try {
+<b class="fc">&nbsp;            TypedQuery&lt;UserEntity&gt; query = em.createQuery(</b>
+&nbsp;            &quot;SELECT u FROM UserEntity u WHERE &quot; +
+&nbsp;            &quot;(u.userIsManager = true OR u.userIsAdmin = true) &quot; +
+&nbsp;            &quot;AND u.accountState = :accountState &quot; +
+&nbsp;            &quot;AND u.userIsDeleted = false&quot;,
+&nbsp;            UserEntity.class
+&nbsp;        );
+<b class="fc">&nbsp;        query.setParameter(&quot;accountState&quot;, AccountState.COMPLETE);</b>
+&nbsp;        
+<b class="fc">&nbsp;        return query.getResultList();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            LOGGER.error(&quot;Error finding managers and admins: {}&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

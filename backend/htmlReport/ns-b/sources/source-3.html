@@ -1,0 +1,367 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JWTUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: JWTUtil (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JWTUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    54.5%
+  </span>
+  <span class="absValue">
+    (6/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.7%
+  </span>
+  <span class="absValue">
+    (5/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    34%
+  </span>
+  <span class="absValue">
+    (18/53)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JWTUtil$JwtValidationException</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    58.3%
+  </span>
+  <span class="absValue">
+    (7/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.7%
+  </span>
+  <span class="absValue">
+    (5/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35.2%
+  </span>
+  <span class="absValue">
+    (19/54)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import io.jsonwebtoken.Claims;
+&nbsp;import io.jsonwebtoken.Jwts;
+&nbsp;import io.jsonwebtoken.SignatureAlgorithm;
+&nbsp;import io.jsonwebtoken.security.Keys;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import jakarta.websocket.server.HandshakeRequest;
+&nbsp;import jakarta.ws.rs.container.ContainerRequestContext;
+&nbsp;import jakarta.ws.rs.core.Cookie;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import pt.uc.dei.dtos.UserResponseDTO;
+&nbsp;import pt.uc.dei.entities.ConfigurationEntity;
+&nbsp;import pt.uc.dei.repositories.ConfigurationRepository;
+&nbsp;import java.util.Base64;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;/**
+&nbsp; * Utility class for handling JWT (JSON Web Token) authentication and authorization.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides methods to generate, validate, and extract claims from JWT tokens for user authentication.
+&nbsp; * Uses a secret key stored in environment variables for signing the tokens.
+&nbsp; * Supports extracting user information from HTTP and WebSocket requests.
+&nbsp; * &lt;/p&gt;
+&nbsp; */
+&nbsp;@ApplicationScoped // Ensures this bean is managed by CDI and can be injected
+<b class="nc">&nbsp;public class JWTUtil {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Secret key used for signing JWTs.
+&nbsp;     * Retrieved from environment variables for security purposes.
+&nbsp;     */
+<b class="fc">&nbsp;    public static String SECRET_KEY = System.getenv(&quot;SECRET_KEY&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Injected EJB ConfigurationRepository to fetch configuration settings.
+&nbsp;     * Used to retrieve authentication expiration time for tokens.
+&nbsp;     */
+&nbsp;    @EJB
+&nbsp;    private ConfigurationRepository configurationRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a JWT authentication token for the given user.
+&nbsp;     *
+&nbsp;     * @param user The user DTO containing authentication details.
+&nbsp;     * @return A signed JWT token containing user authentication claims.
+&nbsp;     */
+&nbsp;    public String generateToken(UserResponseDTO user) {
+&nbsp;        // Get latest configuration from database
+<b class="nc">&nbsp;        ConfigurationEntity latestConfiguration = configurationRepository.getLatestConfiguration();</b>
+<b class="nc">&nbsp;        Integer expirationTime = latestConfiguration.getLoginTime() * 60 * 1000; // Convert minutes to milliseconds</b>
+<b class="nc">&nbsp;        System.out.println(SECRET_KEY);</b>
+&nbsp;        // Create JWT token with user details (email, isAdmin, isManager)
+<b class="nc">&nbsp;        return Jwts.builder()</b>
+<b class="nc">&nbsp;                .setSubject(String.valueOf(user.getId())) // Set user&#39;s email as subject</b>
+<b class="nc">&nbsp;                .claim(&quot;userIsAdmin&quot;, user.getUserIsAdmin()) // Store isAdmin flag</b>
+<b class="nc">&nbsp;                .claim(&quot;userIsManager&quot;, user.getUserIsManager()) // Store isManager flag</b>
+<b class="nc">&nbsp;                .claim(&quot;accountState&quot;, user.getAccountState())</b>
+<b class="nc">&nbsp;                .setIssuedAt(new Date()) // Token creation time</b>
+<b class="nc">&nbsp;                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Expiry time</b>
+<b class="nc">&nbsp;                .signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY)), SignatureAlgorithm.HS256) // Secure signing</b>
+<b class="nc">&nbsp;                .compact(); // Final compact JWT</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates a given JWT token and extracts claims.
+&nbsp;     *
+&nbsp;     * @param token The JWT token to validate.
+&nbsp;     * @return Extracted claims from the JWT.
+&nbsp;     * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
+&nbsp;     */
+&nbsp;    public static Claims validateToken(String token) {
+&nbsp;        // Decode secret key and verify JWT signature
+<b class="fc">&nbsp;        return Jwts.parser()</b>
+<b class="fc">&nbsp;                .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY))) // Ensure token integrity</b>
+<b class="fc">&nbsp;                .build()</b>
+<b class="fc">&nbsp;                .parseClaimsJws(token) // Parse JWT</b>
+<b class="fc">&nbsp;                .getBody(); // Extract claims</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the expiration date from a JWT token.
+&nbsp;     *
+&nbsp;     * @param token The JWT token.
+&nbsp;     * @return The expiration date of the token.
+&nbsp;     */
+&nbsp;    public static Date getExpiration(String token) {
+<b class="nc">&nbsp;        return validateToken(token).getExpiration();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the user ID from a JWT token in a ContainerRequestContext (JAX-RS request).
+&nbsp;     *
+&nbsp;     * @param requestContext The ContainerRequestContext containing cookies.
+&nbsp;     * @return The user ID as Long, or null if invalid or missing.
+&nbsp;     */
+&nbsp;    public static Long getIdFromContainerRequestContext(ContainerRequestContext requestContext) {
+<b class="nc">&nbsp;        Cookie cookie = requestContext.getCookies().get(&quot;jwt&quot;);</b>
+<b class="nc">&nbsp;        if (cookie == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Claims claims = validateToken(cookie.getValue());</b>
+<b class="nc">&nbsp;        return Long.parseLong(claims.getSubject());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the user ID from a JWT token in a WebSocket HandshakeRequest.
+&nbsp;     *
+&nbsp;     * @param request The HandshakeRequest containing cookies.
+&nbsp;     * @return The user ID as Long, or null if invalid or missing.
+&nbsp;     */
+&nbsp;    public static Long getUserIdFromToken(HandshakeRequest request) {
+<b class="nc">&nbsp;        if (request != null &amp;&amp; request.getHeaders().containsKey(&quot;cookie&quot;)) {</b>
+<b class="nc">&nbsp;            List&lt;String&gt; cookies = request.getHeaders().get(&quot;cookie&quot;);</b>
+<b class="nc">&nbsp;            String jwt = null;</b>
+<b class="nc">&nbsp;            for (String cookieHeader : cookies) {</b>
+<b class="nc">&nbsp;                for (String cookie : cookieHeader.split(&quot;;&quot;)) {</b>
+<b class="nc">&nbsp;                    String[] parts = cookie.trim().split(&quot;=&quot;, 2);</b>
+<b class="nc">&nbsp;                    if (parts.length == 2 &amp;&amp; parts[0].equals(&quot;jwt&quot;)) {</b>
+<b class="nc">&nbsp;                        jwt = parts[1];</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (jwt != null) {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    Claims claims = validateToken(jwt);</b>
+<b class="nc">&nbsp;                    return Long.parseLong(claims.getSubject());</b>
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    return null;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Optionally, keep the String version for direct JWT usage
+&nbsp;    /**
+&nbsp;     * Extracts the user ID from a JWT token string.
+&nbsp;     *
+&nbsp;     * @param token The JWT token.
+&nbsp;     * @return The user ID as Long, or null if invalid.
+&nbsp;     */
+&nbsp;    public static Long getUserIdFromToken(String token) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Claims claims = validateToken(token);</b>
+<b class="nc">&nbsp;            return Long.parseLong(claims.getSubject());</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the user associated with the JWT token has admin privileges.
+&nbsp;     *
+&nbsp;     * @param jwtToken The JWT token.
+&nbsp;     * @return {@code true} if the user is admin, {@code false} otherwise.
+&nbsp;     */
+&nbsp;    public static boolean isUserAdmin(String jwtToken) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Claims claims = validateToken(jwtToken);</b>
+<b class="nc">&nbsp;            return claims.get(&quot;userIsAdmin&quot;, Boolean.class);</b>
+&nbsp;        } catch (Exception e) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the user ID from a JWT token or throws an exception if invalid.
+&nbsp;     *
+&nbsp;     * @param jwtToken The JWT token.
+&nbsp;     * @return The user ID as Long.
+&nbsp;     * @throws JwtValidationException if the token is missing or invalid.
+&nbsp;     */
+&nbsp;    public static Long extractUserIdOrAbort(String jwtToken) throws JwtValidationException {
+<b class="fc">&nbsp;        if (jwtToken == null || jwtToken.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new JwtValidationException(&quot;Unauthorized: missing JWT token&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Long userId = JWTUtil.getUserIdFromToken(jwtToken);</b>
+<b class="pc">&nbsp;        if (userId == null) {</b>
+<b class="fc">&nbsp;            throw new JwtValidationException(&quot;Unauthorized: invalid JWT token&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return userId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Builds a JAX-RS unauthorized response with a custom message.
+&nbsp;     *
+&nbsp;     * @param message The error message to include in the response.
+&nbsp;     * @return A JAX-RS Response with status 401 and error details.
+&nbsp;     */
+&nbsp;    public static Response buildUnauthorizedResponse(String message) {
+<b class="fc">&nbsp;        return Response.status(Response.Status.UNAUTHORIZED)</b>
+<b class="fc">&nbsp;                .entity(new ApiResponse(false, message, &quot;errorUnauthorized&quot;, null))</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Custom exception to handle JWT validation errors.
+&nbsp;     */
+&nbsp;    public static class JwtValidationException extends Exception {
+&nbsp;        public JwtValidationException(String message) {
+<b class="fc">&nbsp;            super(message);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

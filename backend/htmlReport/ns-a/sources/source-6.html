@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CourseService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.services</a>
+</div>
+
+<h1>Coverage Summary for Class: CourseService (pt.uc.dei.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CourseService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (53/53)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.services;
+&nbsp;
+&nbsp;import jakarta.ejb.EJB;
+&nbsp;import jakarta.ejb.Stateless;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.apache.logging.log4j.ThreadContext;
+&nbsp;import pt.uc.dei.dtos.CourseDTO;
+&nbsp;import pt.uc.dei.dtos.CourseNewDTO;
+&nbsp;import pt.uc.dei.dtos.CourseUpdateDTO;
+&nbsp;import pt.uc.dei.enums.CourseArea;
+&nbsp;import pt.uc.dei.enums.CourseParameter;
+&nbsp;import pt.uc.dei.enums.Language;
+&nbsp;import pt.uc.dei.entities.CourseEntity;
+&nbsp;import pt.uc.dei.enums.OrderBy;
+&nbsp;import pt.uc.dei.repositories.CourseRepository;
+&nbsp;import pt.uc.dei.mapper.CourseMapper;
+&nbsp;import pt.uc.dei.entities.UserEntity;
+&nbsp;import pt.uc.dei.repositories.UserRepository;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class for managing course-related operations.
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides functionality for course retrieval, creation, update, and filtering.
+&nbsp; * Handles business logic and validation rules for courses, including duplicate checks and admin validation.
+&nbsp; * Uses repositories for persistence and a mapper for DTO/entity conversion.
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
+&nbsp; * and transaction management by the EJB container.
+&nbsp; */
+&nbsp;@Stateless
+<b class="fc">&nbsp;public class CourseService implements Serializable {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger LOGGER = LogManager.getLogger(CourseService.class);</b>
+&nbsp;    private static final long serialVersionUID = 1L;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private CourseRepository courseRepository;
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    private CourseMapper courseMapper;
+&nbsp;
+&nbsp;    @EJB
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves courses with advanced filtering options.
+&nbsp;     *
+&nbsp;     * @param id Optional filter by course ID
+&nbsp;     * @param title Optional filter by course title
+&nbsp;     * @param duration Optional filter by course duration
+&nbsp;     * @param description Optional filter by course description
+&nbsp;     * @param area Optional filter by course area
+&nbsp;     * @param language Optional filter by course language
+&nbsp;     * @param adminName Optional filter by admin name
+&nbsp;     * @param courseIsActive Optional filter by active status
+&nbsp;     * @param parameter Optional filter by course parameter
+&nbsp;     * @param orderBy Optional ordering
+&nbsp;     * @param offset Starting position for pagination
+&nbsp;     * @param limit Maximum number of results
+&nbsp;     * @param excludeCompletedByUserId Exclude courses completed by this user
+&nbsp;     * @param excludeCourseIds Exclude these course IDs
+&nbsp;     * @return Map containing filtered course DTOs and pagination info
+&nbsp;     */
+&nbsp;    public Map&lt;String, Object&gt; getCoursesWithFilters(
+&nbsp;            Long id, String title, Integer duration, String description,
+&nbsp;            CourseArea area, Language language, String adminName, Boolean courseIsActive,
+&nbsp;            CourseParameter parameter, OrderBy orderBy, Integer offset, Integer limit, Long excludeCompletedByUserId,
+&nbsp;            List&lt;Long&gt; excludeCourseIds) {
+<b class="fc">&nbsp;        LOGGER.debug(&quot;Retrieving courses with filters&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;CourseEntity&gt; courses = courseRepository.findCoursesWithFilters(</b>
+&nbsp;                id, title, duration, description, area, language, adminName, courseIsActive,
+&nbsp;                parameter, orderBy, offset, limit, excludeCompletedByUserId, excludeCourseIds);
+<b class="fc">&nbsp;        long totalCourses = courseRepository.countCoursesWithFilters(</b>
+&nbsp;                id, title, duration, description, area, language, adminName, courseIsActive, excludeCompletedByUserId, excludeCourseIds);
+&nbsp;
+<b class="fc">&nbsp;        List&lt;CourseDTO&gt; courseDTOs = courses.stream()</b>
+<b class="fc">&nbsp;                .map(courseMapper::toDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; responseData = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        responseData.put(&quot;courses&quot;, courseDTOs);</b>
+<b class="fc">&nbsp;        responseData.put(&quot;totalCourses&quot;, totalCourses);</b>
+<b class="fc">&nbsp;        responseData.put(&quot;offset&quot;, offset);</b>
+<b class="fc">&nbsp;        responseData.put(&quot;limit&quot;, limit);</b>
+<b class="fc">&nbsp;        return responseData;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new course if the title and link do not already exist and the admin user is valid.
+&nbsp;     *
+&nbsp;     * @param dto the CourseNewDTO containing course data (must include adminId)
+&nbsp;     * @param adminId the ID of the admin user creating the course
+&nbsp;     * @return CourseDTO if the course was created, null if a course with the same title or link exists or admin not found
+&nbsp;     * @throws IllegalArgumentException with message &quot;duplicateTitle&quot; or &quot;duplicateLink&quot; if duplicate found
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public CourseDTO createNewCourse(CourseNewDTO dto, Long adminId) {
+<b class="fc">&nbsp;        if (dto == null || dto.getTitle() == null || adminId == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Attempted to create course with null DTO, title, or adminId&quot;);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (courseRepository.existsByTitle(dto.getTitle())) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Course with title &#39;{}&#39; already exists&quot;, dto.getTitle());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;duplicateTitle&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (courseRepository.existsByLink(dto.getLink())) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Course with link &#39;{}&#39; already exists&quot;, dto.getLink());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;duplicateLink&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserEntity admin = userRepository.findUserById(adminId);</b>
+<b class="fc">&nbsp;        if (admin == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Admin user with id {} not found&quot;, adminId);</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        CourseEntity entity = courseMapper.toEntity(dto);</b>
+<b class="fc">&nbsp;        entity.setCreationDate(java.time.LocalDate.now());</b>
+<b class="fc">&nbsp;        entity.setAdmin(admin);</b>
+<b class="fc">&nbsp;        courseRepository.persist(entity);</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Created new course with title &#39;{}&#39; and admin id {}&quot;, dto.getTitle(), adminId);</b>
+<b class="fc">&nbsp;        return courseMapper.toDto(entity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing course with new data.
+&nbsp;     *
+&nbsp;     * @param dto the CourseUpdateDTO containing updated course data (must include course id)
+&nbsp;     * @return true if the course was updated, false if not found or invalid input
+&nbsp;     * @throws IllegalArgumentException with message &quot;duplicateTitle&quot; or &quot;duplicateLink&quot; if duplicate found
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    public boolean updateCourse(CourseUpdateDTO dto) {
+<b class="fc">&nbsp;        if (dto == null || dto.getId() == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Attempted to update course with null DTO or id&quot;);</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        CourseEntity entity = courseRepository.findCourseById(dto.getId());</b>
+<b class="fc">&nbsp;        if (entity == null) {</b>
+<b class="fc">&nbsp;            LOGGER.warn(&quot;Course with id {} not found&quot;, dto.getId());</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (courseRepository.existsByTitle(dto.getTitle())) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Course with title &#39;{}&#39; already exists&quot;, dto.getTitle());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;duplicateTitle&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (courseRepository.existsByLink(dto.getLink())) {</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Course with link &#39;{}&#39; already exists&quot;, dto.getLink());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;duplicateLink&quot;);</b>
+&nbsp;        }
+&nbsp;        // Use MapStruct mapper for partial update
+<b class="fc">&nbsp;        courseMapper.updateEntityFromUpdateDto(dto, entity);</b>
+<b class="fc">&nbsp;        courseRepository.persist(entity);</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;clientIP = {}&quot;, ThreadContext.get(&quot;clientIP&quot;));</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Updated course with id {} (via mapper)&quot;, dto.getId());</b>
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts all courses in the system.
+&nbsp;     *
+&nbsp;     * @return The total number of courses.
+&nbsp;     */
+&nbsp;    public long countAllCourses() {
+<b class="fc">&nbsp;        return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, null, null, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Counts all courses filtered by active status.
+&nbsp;     *
+&nbsp;     * @param active true to count only active courses, false for inactive
+&nbsp;     * @return The number of courses matching the active status.
+&nbsp;     */
+&nbsp;    public long countCoursesByActive(boolean active) {
+<b class="fc">&nbsp;        return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, active, null, null);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

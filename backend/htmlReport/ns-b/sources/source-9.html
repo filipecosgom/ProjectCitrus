@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TwoFactorUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: TwoFactorUtil (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TwoFactorUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import com.warrenstrange.googleauth.GoogleAuthenticator;
+&nbsp;import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for Two-Factor Authentication (2FA) operations using TOTP (Time-based One-Time Passwords).
+&nbsp; * &lt;p&gt;
+&nbsp; * Provides methods to generate secret keys, extract secret strings, verify TOTP codes, and validate code format.
+&nbsp; * Uses the GoogleAuthenticator library for TOTP generation and validation.
+&nbsp; */
+<b class="nc">&nbsp;public class TwoFactorUtil {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Reusable GoogleAuthenticator instance for TOTP operations.
+&nbsp;     */
+<b class="fc">&nbsp;    private static final GoogleAuthenticator gAuth = new GoogleAuthenticator();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a new TOTP secret key for 2FA.
+&nbsp;     *
+&nbsp;     * @return a {@link GoogleAuthenticatorKey} containing the generated secret key and related data
+&nbsp;     */
+&nbsp;    public static GoogleAuthenticatorKey generateSecretKey() {
+<b class="fc">&nbsp;        return gAuth.createCredentials();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the Base32-encoded secret string from the provided {@link GoogleAuthenticatorKey}.
+&nbsp;     *
+&nbsp;     * @param key the {@link GoogleAuthenticatorKey} obtained from {@link #generateSecretKey()}
+&nbsp;     * @return the Base32-encoded secret string
+&nbsp;     */
+&nbsp;    public static String getSecretKeyString(GoogleAuthenticatorKey key) {
+<b class="fc">&nbsp;        return key.getKey();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Verifies the provided TOTP code against the stored secret key.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The code is parsed as an integer and checked using the GoogleAuthenticator library.
+&nbsp;     *
+&nbsp;     * @param secretKey the user&#39;s stored secret key (Base32 encoded)
+&nbsp;     * @param userCode the code entered by the user
+&nbsp;     * @return {@code true} if the code is valid, {@code false} otherwise
+&nbsp;     * @throws NumberFormatException if {@code userCode} is null, empty, or not a valid integer
+&nbsp;     */
+&nbsp;    public static boolean verifyTwoFactorCode(String secretKey, String userCode) {
+<b class="pc">&nbsp;        if (userCode == null || userCode.isEmpty()) {}</b>
+<b class="fc">&nbsp;        return gAuth.authorize(secretKey, Integer.parseInt(userCode));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates if the provided code is a 6-digit string (after trimming).
+&nbsp;     *
+&nbsp;     * @param userCode the code entered by the user
+&nbsp;     * @return {@code true} if the code is exactly 6 digits after trimming, {@code false} otherwise
+&nbsp;     */
+&nbsp;    public static boolean validateCode(String userCode) {
+<b class="fc">&nbsp;        String trimmed = userCode.trim();</b>
+<b class="fc">&nbsp;        return trimmed.matches(&quot;\\d{6}&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

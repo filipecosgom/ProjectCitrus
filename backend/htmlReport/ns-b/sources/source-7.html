@@ -1,0 +1,452 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PdfGenerator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: PdfGenerator (pt.uc.dei.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PdfGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/71)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/158)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.utils;
+&nbsp;
+&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPage;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPageContentStream;
+&nbsp;import org.apache.pdfbox.pdmodel.common.PDRectangle;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDFont;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDType0Font;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDType1Font;
+&nbsp;import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+&nbsp;import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+&nbsp;import pt.uc.dei.dtos.AppraisalResponseDTO;
+&nbsp;import pt.uc.dei.enums.Language;
+&nbsp;
+&nbsp;import java.awt.*;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.io.OutputStream;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class for generating PDF reports for employee appraisals using Apache PDFBox.
+&nbsp; * &lt;p&gt;
+&nbsp; * This class provides a method to export a list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects to a PDF file,
+&nbsp; * with support for language-specific headers, custom fonts, color schemes, and multi-page layouts.
+&nbsp; * &lt;p&gt;
+&nbsp; * The generated PDF includes:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Header with logo and report date&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Summary section with total and average scores&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Table of appraisals with feedback and manager info&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Custom fonts and color styling&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Automatic page breaks and footers&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; *
+&nbsp; * &lt;b&gt;Note:&lt;/b&gt; Uses Apache PDFBox for PDF generation. Throws a {@link RuntimeException} on failure.
+&nbsp; */
+<b class="nc">&nbsp;public class PdfGenerator {</b>
+&nbsp;
+&nbsp;    // Color scheme
+<b class="nc">&nbsp;    private static final Color TITLE_COLOR = new Color(156, 47, 49);    // #9C2F31</b>
+<b class="nc">&nbsp;    private static final Color SUBTITLE_COLOR = new Color(66, 67, 89);  // #424359</b>
+<b class="nc">&nbsp;    private static final Color ACCENT_COLOR = new Color(136, 144, 159); // #88909F</b>
+<b class="nc">&nbsp;    private static final Color TEXT_COLOR = Color.BLACK;</b>
+&nbsp;
+&nbsp;    // Layout constants
+&nbsp;    private static final float MARGIN = 50;
+&nbsp;    private static final float LOGO_SCALE = 0.08f;
+&nbsp;    private static final int LINE_HEIGHT = 15;
+&nbsp;    private static final int FEEDBACK_INDENT = 10;
+&nbsp;
+&nbsp;    // Table column widths (Date, Appraised, Manager, Score)
+<b class="nc">&nbsp;    private static final float[] COLUMN_WIDTHS = { 100, 120, 120, 210 }; // Feedback not a column</b>
+&nbsp;
+&nbsp;    static {
+&nbsp;        // Configure PDFBox to avoid memory mapping issues
+<b class="nc">&nbsp;        System.setProperty(&quot;org.apache.pdfbox.baseParser.pushBackSize&quot;, &quot;1000000&quot;);</b>
+<b class="nc">&nbsp;        System.setProperty(&quot;org.apache.pdfbox.rendering.UsePureJavaCMYKConversion&quot;, &quot;true&quot;);</b>
+<b class="nc">&nbsp;        System.setProperty(&quot;org.apache.pdfbox.usePureJavaCMYK&quot;, &quot;true&quot;);</b>
+<b class="nc">&nbsp;        System.setProperty(&quot;org.apache.pdfbox.forcePureJavaIO&quot;, &quot;true&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper for label translation
+&nbsp;    private static String t(String key, Language lang) {
+<b class="nc">&nbsp;        switch (key) {</b>
+<b class="nc">&nbsp;            case &quot;date&quot;: return lang == Language.PORTUGUESE ? &quot;Data&quot; : &quot;Date&quot;;</b>
+<b class="nc">&nbsp;            case &quot;appraised&quot;: return lang == Language.PORTUGUESE ? &quot;Avaliado&quot; : &quot;Appraised&quot;;</b>
+<b class="nc">&nbsp;            case &quot;manager&quot;: return &quot;Manager&quot;;</b>
+<b class="nc">&nbsp;            case &quot;score&quot;: return &quot;Score&quot;;</b>
+<b class="nc">&nbsp;            case &quot;feedback&quot;: return &quot;Feedback&quot;;</b>
+<b class="nc">&nbsp;            case &quot;summary&quot;: return lang == Language.PORTUGUESE ? &quot;Resumo&quot; : &quot;Summary&quot;;</b>
+<b class="nc">&nbsp;            case &quot;total&quot;: return lang == Language.PORTUGUESE ? &quot;Avaliações totais&quot; : &quot;Total Appraisals&quot;;</b>
+<b class="nc">&nbsp;            case &quot;average&quot;: return lang == Language.PORTUGUESE ? &quot;Média&quot; : &quot;Average Score&quot;;</b>
+<b class="nc">&nbsp;            case &quot;report&quot;: return lang == Language.PORTUGUESE ? &quot;Relatório gerado&quot; : &quot;Report generated&quot;;</b>
+<b class="nc">&nbsp;            default: return key;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a PDF report from a list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The output includes a header, summary, table of appraisals, and feedback, with support for Portuguese and English.
+&nbsp;     * Custom fonts and colors are applied for improved readability and branding.
+&nbsp;     *
+&nbsp;     * @param appraisals    the list of {@link pt.uc.dei.dtos.AppraisalResponseDTO} objects to export
+&nbsp;     * @param outputStream  the {@link OutputStream} to write the PDF to
+&nbsp;     * @param lang          the {@link pt.uc.dei.enums.Language} for translation
+&nbsp;     * @throws IOException  if PDF generation fails
+&nbsp;     */
+&nbsp;    public static void generateAppraisalsPdf(List&lt;AppraisalResponseDTO&gt; appraisals,
+&nbsp;                                             OutputStream outputStream,
+&nbsp;                                             Language lang) throws IOException {
+<b class="nc">&nbsp;        PDDocument document = new PDDocument();</b>
+<b class="nc">&nbsp;        PDFont[] fonts = loadFonts(document);</b>
+<b class="nc">&nbsp;        PDImageXObject logo = loadLogo(document);</b>
+&nbsp;
+<b class="nc">&nbsp;        PDPage page = new PDPage(PDRectangle.A4);</b>
+<b class="nc">&nbsp;        document.addPage(page);</b>
+&nbsp;
+<b class="nc">&nbsp;        PDPageContentStream contentStream = null;</b>
+<b class="nc">&nbsp;        int yPosition = (int) (PDRectangle.A4.getHeight() - MARGIN);</b>
+&nbsp;
+&nbsp;        try {
+&nbsp;            // Draw logo if available
+<b class="nc">&nbsp;            if (logo != null) {</b>
+<b class="nc">&nbsp;                try (PDPageContentStream logoStream = new PDPageContentStream(</b>
+&nbsp;                        document, page, PDPageContentStream.AppendMode.APPEND, true)) {
+<b class="nc">&nbsp;                    float logoHeight = logo.getHeight() * LOGO_SCALE;</b>
+<b class="nc">&nbsp;                    float logoWidth = logo.getWidth() * LOGO_SCALE;</b>
+<b class="nc">&nbsp;                    float xLogo = (float) PDRectangle.A4.getWidth() - MARGIN - logoWidth;</b>
+<b class="nc">&nbsp;                    float yLogo = yPosition - logoHeight;</b>
+<b class="nc">&nbsp;                    logoStream.drawImage(logo, xLogo, yLogo, logoWidth, logoHeight);</b>
+&nbsp;                    // Only move yPosition down if you want to avoid overlap with header
+<b class="nc">&nbsp;                    yPosition -= logoHeight + 20;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);</b>
+&nbsp;
+<b class="nc">&nbsp;            int pageNum = 1;</b>
+<b class="nc">&nbsp;            yPosition = renderHeader(contentStream, fonts, yPosition, lang);</b>
+<b class="nc">&nbsp;            yPosition = renderSummary(contentStream, fonts, appraisals, yPosition, lang);</b>
+<b class="nc">&nbsp;            yPosition = renderTableHeader(contentStream, fonts, yPosition, lang);</b>
+&nbsp;
+<b class="nc">&nbsp;            for (AppraisalResponseDTO appraisal : appraisals) {</b>
+<b class="nc">&nbsp;                if (yPosition &lt; 100) { // New page needed</b>
+<b class="nc">&nbsp;                    renderFooter(contentStream, fonts[1], pageNum); // Render footer before closing</b>
+&nbsp;                    contentStream.close();
+<b class="nc">&nbsp;                    page = new PDPage(PDRectangle.A4);</b>
+<b class="nc">&nbsp;                    document.addPage(page);</b>
+<b class="nc">&nbsp;                    contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);</b>
+<b class="nc">&nbsp;                    pageNum++;</b>
+<b class="nc">&nbsp;                    yPosition = (int) (PDRectangle.A4.getHeight() - MARGIN);</b>
+&nbsp;
+<b class="nc">&nbsp;                    yPosition = renderTableHeader(contentStream, fonts, yPosition, lang);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                String date = appraisal.getSubmissionDate() != null ? appraisal.getSubmissionDate().toString() : &quot;N/A&quot;;</b>
+<b class="nc">&nbsp;                String employee = appraisal.getAppraisedUser().getName() + &quot; &quot; + appraisal.getAppraisedUser().getSurname();</b>
+<b class="nc">&nbsp;                String manager = appraisal.getAppraisingUser().getName() + &quot; &quot; + appraisal.getAppraisingUser().getSurname();</b>
+<b class="nc">&nbsp;                String scoreDisplay = getScoreDisplay(appraisal, lang);</b>
+<b class="nc">&nbsp;                String feedback = appraisal.getFeedback() != null ? appraisal.getFeedback() : &quot;No feedback provided&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;                float x = MARGIN;</b>
+<b class="nc">&nbsp;                String[] values = { date, employee, manager, scoreDisplay };</b>
+<b class="nc">&nbsp;                for (int i = 0; i &lt; values.length; i++) {</b>
+<b class="nc">&nbsp;                    drawText(contentStream, values[i], fonts[1], 10, TEXT_COLOR, x, yPosition);</b>
+<b class="nc">&nbsp;                    x += COLUMN_WIDTHS[i];</b>
+&nbsp;                }
+<b class="nc">&nbsp;                yPosition -= LINE_HEIGHT;</b>
+&nbsp;
+&nbsp;                // Feedback (multi-line, indented, with label)
+<b class="nc">&nbsp;                String[] feedbackLines = splitStringIntoLines(feedback, 90); // wider lines</b>
+<b class="nc">&nbsp;                float feedbackX = MARGIN + FEEDBACK_INDENT;</b>
+<b class="nc">&nbsp;                int feedbackY = yPosition;</b>
+<b class="nc">&nbsp;                drawText(contentStream, t(&quot;feedback&quot;, lang) + &quot;:&quot;, fonts[2], 10, ACCENT_COLOR, feedbackX, feedbackY);</b>
+<b class="nc">&nbsp;                feedbackY -= LINE_HEIGHT;</b>
+<b class="nc">&nbsp;                for (String line : feedbackLines) {</b>
+<b class="nc">&nbsp;                    drawText(contentStream, line, fonts[1], 10, TEXT_COLOR, feedbackX + 20, feedbackY);</b>
+<b class="nc">&nbsp;                    feedbackY -= LINE_HEIGHT;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                yPosition = feedbackY;</b>
+&nbsp;
+&nbsp;                // Draw a separator line under each row+feedback
+<b class="nc">&nbsp;                float rowLineLength = (float) PDRectangle.A4.getWidth() - 2 * MARGIN;</b>
+<b class="nc">&nbsp;                drawLine(contentStream, ACCENT_COLOR, MARGIN, yPosition + 5, rowLineLength, 0.2f);</b>
+<b class="nc">&nbsp;                yPosition -= 5;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Render footer for the last page
+<b class="nc">&nbsp;            renderFooter(contentStream, fonts[1], pageNum);</b>
+&nbsp;
+&nbsp;            contentStream.close();
+<b class="nc">&nbsp;            document.save(outputStream);</b>
+&nbsp;
+&nbsp;        } finally {
+<b class="nc">&nbsp;            if (contentStream != null) {</b>
+<b class="nc">&nbsp;                try { contentStream.close(); } catch (IOException e) { /* Ignore */ }</b>
+&nbsp;            }
+&nbsp;            document.close();
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static PDFont[] loadFonts(PDDocument document) throws IOException {
+<b class="nc">&nbsp;        PDFont[] fonts = new PDFont[3];</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            try (InputStream boldFontStream = PdfGenerator.class.getResourceAsStream(&quot;/fonts/IstokWeb-Bold.ttf&quot;);</b>
+<b class="nc">&nbsp;                 InputStream regularFontStream = PdfGenerator.class.getResourceAsStream(&quot;/fonts/Catamaran-Regular.ttf&quot;);</b>
+<b class="nc">&nbsp;                 InputStream semiBoldFontStream = PdfGenerator.class.getResourceAsStream(&quot;/fonts/Catamaran-SemiBold.ttf&quot;)) {</b>
+&nbsp;
+<b class="nc">&nbsp;                if (boldFontStream != null) fonts[0] = PDType0Font.load(document, boldFontStream);</b>
+<b class="nc">&nbsp;                if (regularFontStream != null) fonts[1] = PDType0Font.load(document, regularFontStream);</b>
+<b class="nc">&nbsp;                if (semiBoldFontStream != null) fonts[2] = PDType0Font.load(document, semiBoldFontStream);</b>
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            fonts[0] = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);</b>
+<b class="nc">&nbsp;            fonts[1] = new PDType1Font(Standard14Fonts.FontName.HELVETICA);</b>
+<b class="nc">&nbsp;            fonts[2] = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return fonts;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static PDImageXObject loadLogo(PDDocument document) throws IOException {
+<b class="nc">&nbsp;        try (InputStream logoStream = PdfGenerator.class.getResourceAsStream(&quot;/logo/logo.png&quot;)) {</b>
+<b class="nc">&nbsp;            if (logoStream != null) {</b>
+<b class="nc">&nbsp;                return PDImageXObject.createFromByteArray(document,</b>
+<b class="nc">&nbsp;                        logoStream.readAllBytes(), &quot;logo&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static int renderHeader(PDPageContentStream cs, PDFont[] fonts, int yPosition, Language lang) throws IOException {
+<b class="nc">&nbsp;        drawText(cs, &quot;EMPLOYEE PERFORMANCE APPRAISALS&quot;, fonts[0], 22,</b>
+&nbsp;                TITLE_COLOR, MARGIN, yPosition);
+<b class="nc">&nbsp;        yPosition -= 30;</b>
+&nbsp;
+<b class="nc">&nbsp;        String formattedDate = LocalDate.now()</b>
+<b class="nc">&nbsp;                .format(DateTimeFormatter.ofPattern(&quot;dd MMMM yyyy&quot;));</b>
+<b class="nc">&nbsp;        drawText(cs, t(&quot;report&quot;, lang) + &quot;: &quot; + formattedDate, fonts[1], 10,</b>
+&nbsp;                ACCENT_COLOR, MARGIN, yPosition);
+<b class="nc">&nbsp;        yPosition -= 40;</b>
+&nbsp;
+<b class="nc">&nbsp;        return yPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static int renderSummary(PDPageContentStream cs, PDFont[] fonts,
+&nbsp;                                     List&lt;AppraisalResponseDTO&gt; appraisals,
+&nbsp;                                     int yPosition, Language lang) throws IOException {
+<b class="nc">&nbsp;        drawText(cs, t(&quot;summary&quot;, lang).toUpperCase(), fonts[2], 12, SUBTITLE_COLOR, MARGIN, yPosition);</b>
+<b class="nc">&nbsp;        drawLine(cs, SUBTITLE_COLOR, MARGIN, yPosition - 5, 100, 0.5f);</b>
+<b class="nc">&nbsp;        yPosition -= 25;</b>
+&nbsp;
+<b class="nc">&nbsp;        drawText(cs, t(&quot;total&quot;, lang) + &quot;: &quot; + appraisals.size(), fonts[1], 10,</b>
+&nbsp;                TEXT_COLOR, MARGIN, yPosition);
+<b class="nc">&nbsp;        yPosition -= LINE_HEIGHT;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!appraisals.isEmpty()) {</b>
+<b class="nc">&nbsp;            double avgScore = appraisals.stream()</b>
+<b class="nc">&nbsp;                    .filter(a -&gt; a.getScore() != null &amp;&amp; a.getScore() &gt; 0)</b>
+<b class="nc">&nbsp;                    .mapToInt(AppraisalResponseDTO::getScore)</b>
+<b class="nc">&nbsp;                    .average()</b>
+<b class="nc">&nbsp;                    .orElse(0.0);</b>
+&nbsp;
+<b class="nc">&nbsp;            drawText(cs, String.format(&quot;%s: %.1f&quot;, t(&quot;average&quot;, lang), avgScore),</b>
+&nbsp;                    fonts[1], 10, TEXT_COLOR, MARGIN, yPosition);
+<b class="nc">&nbsp;            yPosition -= LINE_HEIGHT;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return yPosition - 20;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static int renderTableHeader(PDPageContentStream cs, PDFont[] fonts, int yPosition, Language lang) throws IOException {
+<b class="nc">&nbsp;        float x = MARGIN;</b>
+<b class="nc">&nbsp;        String[] headers = { t(&quot;date&quot;, lang), t(&quot;appraised&quot;, lang), t(&quot;manager&quot;, lang), t(&quot;score&quot;, lang) };</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; headers.length; i++) {</b>
+<b class="nc">&nbsp;            drawText(cs, headers[i], fonts[2], 11, SUBTITLE_COLOR, x, yPosition);</b>
+<b class="nc">&nbsp;            x += COLUMN_WIDTHS[i];</b>
+&nbsp;        }
+<b class="nc">&nbsp;        yPosition -= LINE_HEIGHT;</b>
+&nbsp;        // Draw line from left margin to right margin
+<b class="nc">&nbsp;        float lineLength = (float) PDRectangle.A4.getWidth() - 2 * MARGIN;</b>
+<b class="nc">&nbsp;        drawLine(cs, ACCENT_COLOR, MARGIN, yPosition + 5, lineLength, 0.5f);</b>
+<b class="nc">&nbsp;        yPosition -= 5;</b>
+<b class="nc">&nbsp;        return yPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static String getScoreDisplay(AppraisalResponseDTO appraisal, Language lang) {
+<b class="nc">&nbsp;        Integer scoreNum = appraisal.getScore();</b>
+<b class="nc">&nbsp;        String scoreDesc = pt.uc.dei.enums.ScoreDescription.fromScore(scoreNum)</b>
+<b class="nc">&nbsp;                .getDescription(lang);</b>
+<b class="nc">&nbsp;        return (scoreNum != null &amp;&amp; scoreNum &gt; 0) ?</b>
+<b class="nc">&nbsp;                scoreNum + &quot; - &quot; + scoreDesc : scoreDesc;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void renderFooter(PDPageContentStream cs, PDFont font,
+&nbsp;                                     int pageNum) throws IOException {
+&nbsp;        // Only the number, no label
+<b class="nc">&nbsp;        drawText(cs, Integer.toString(pageNum), font, 8,</b>
+<b class="nc">&nbsp;                ACCENT_COLOR, PDRectangle.A4.getWidth() - MARGIN - 10, 30);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static String[] splitStringIntoLines(String text, int maxLineLength) {
+<b class="nc">&nbsp;        if (text == null || text.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new String[]{&quot;No feedback provided&quot;};</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;String&gt; lines = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        StringBuilder currentLine = new StringBuilder();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (String word : text.split(&quot;\\s+&quot;)) {</b>
+<b class="nc">&nbsp;            if (currentLine.length() + word.length() + 1 &gt; maxLineLength) {</b>
+<b class="nc">&nbsp;                lines.add(currentLine.toString());</b>
+<b class="nc">&nbsp;                currentLine = new StringBuilder(word);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                if (currentLine.length() &gt; 0) {</b>
+<b class="nc">&nbsp;                    currentLine.append(&quot; &quot;);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                currentLine.append(word);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        lines.add(currentLine.toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        return lines.toArray(new String[0]);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void drawText(PDPageContentStream cs, String text,
+&nbsp;                                 PDFont font, float fontSize,
+&nbsp;                                 Color color, float x, float y) throws IOException {
+<b class="nc">&nbsp;        cs.setFont(font, fontSize);</b>
+<b class="nc">&nbsp;        cs.setNonStrokingColor(color);</b>
+<b class="nc">&nbsp;        cs.beginText();</b>
+<b class="nc">&nbsp;        cs.newLineAtOffset(x, y);</b>
+<b class="nc">&nbsp;        cs.showText(text);</b>
+<b class="nc">&nbsp;        cs.endText();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void drawLine(PDPageContentStream cs, Color color,
+&nbsp;                                 float startX, float startY,
+&nbsp;                                 float length, float width) throws IOException {
+<b class="nc">&nbsp;        cs.setLineWidth(width);</b>
+<b class="nc">&nbsp;        cs.setStrokingColor(color);</b>
+<b class="nc">&nbsp;        cs.moveTo(startX, startY);</b>
+<b class="nc">&nbsp;        cs.lineTo(startX + length, startY);</b>
+<b class="nc">&nbsp;        cs.stroke();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static float sum(float[] arr) {
+<b class="nc">&nbsp;        float s = 0;</b>
+<b class="nc">&nbsp;        for (float v : arr) s += v;</b>
+<b class="nc">&nbsp;        return s;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>

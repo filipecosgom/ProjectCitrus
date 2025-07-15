@@ -1,0 +1,326 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CourseMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">pt.uc.dei.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: CourseMapperImpl (pt.uc.dei.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CourseMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.3%
+  </span>
+  <span class="absValue">
+    (38/60)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.4%
+  </span>
+  <span class="absValue">
+    (106/110)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package pt.uc.dei.mapper;
+&nbsp;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import pt.uc.dei.dtos.CourseDTO;
+&nbsp;import pt.uc.dei.dtos.CourseNewDTO;
+&nbsp;import pt.uc.dei.dtos.CourseUpdateDTO;
+&nbsp;import pt.uc.dei.entities.CourseEntity;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2025-07-15T17:25:53+0100&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;public class CourseMapperImpl implements CourseMapper {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CourseDTO toDto(CourseEntity courseEntity) {
+<b class="fc">&nbsp;        if ( courseEntity == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CourseDTO courseDTO = new CourseDTO();</b>
+&nbsp;
+<b class="fc">&nbsp;        courseDTO.setId( courseEntity.getId() );</b>
+<b class="fc">&nbsp;        courseDTO.setTitle( courseEntity.getTitle() );</b>
+<b class="fc">&nbsp;        courseDTO.setCreationDate( courseEntity.getCreationDate() );</b>
+<b class="fc">&nbsp;        courseDTO.setDuration( courseEntity.getDuration() );</b>
+<b class="fc">&nbsp;        courseDTO.setLanguage( courseEntity.getLanguage() );</b>
+<b class="fc">&nbsp;        courseDTO.setArea( courseEntity.getArea() );</b>
+<b class="fc">&nbsp;        courseDTO.setDescription( courseEntity.getDescription() );</b>
+<b class="fc">&nbsp;        courseDTO.setLink( courseEntity.getLink() );</b>
+<b class="fc">&nbsp;        courseDTO.setCourseHasImage( courseEntity.getCourseHasImage() );</b>
+<b class="fc">&nbsp;        courseDTO.setCourseIsActive( courseEntity.getCourseIsActive() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return courseDTO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CourseEntity toEntity(CourseDTO courseDTO) {
+<b class="fc">&nbsp;        if ( courseDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CourseEntity courseEntity = new CourseEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        courseEntity.setId( courseDTO.getId() );</b>
+<b class="fc">&nbsp;        courseEntity.setTitle( courseDTO.getTitle() );</b>
+<b class="fc">&nbsp;        courseEntity.setCreationDate( courseDTO.getCreationDate() );</b>
+<b class="fc">&nbsp;        courseEntity.setDuration( courseDTO.getDuration() );</b>
+<b class="fc">&nbsp;        courseEntity.setLanguage( courseDTO.getLanguage() );</b>
+<b class="fc">&nbsp;        courseEntity.setArea( courseDTO.getArea() );</b>
+<b class="fc">&nbsp;        courseEntity.setDescription( courseDTO.getDescription() );</b>
+<b class="fc">&nbsp;        courseEntity.setLink( courseDTO.getLink() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseHasImage( courseDTO.getCourseHasImage() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseIsActive( courseDTO.getCourseIsActive() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return courseEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CourseEntity toEntity(CourseUpdateDTO courseUpdateDTO) {
+<b class="fc">&nbsp;        if ( courseUpdateDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CourseEntity courseEntity = new CourseEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        courseEntity.setId( courseUpdateDTO.getId() );</b>
+<b class="fc">&nbsp;        courseEntity.setTitle( courseUpdateDTO.getTitle() );</b>
+<b class="fc">&nbsp;        courseEntity.setCreationDate( courseUpdateDTO.getCreationDate() );</b>
+<b class="fc">&nbsp;        courseEntity.setDuration( courseUpdateDTO.getDuration() );</b>
+<b class="fc">&nbsp;        courseEntity.setLanguage( courseUpdateDTO.getLanguage() );</b>
+<b class="fc">&nbsp;        courseEntity.setArea( courseUpdateDTO.getArea() );</b>
+<b class="fc">&nbsp;        courseEntity.setDescription( courseUpdateDTO.getDescription() );</b>
+<b class="fc">&nbsp;        courseEntity.setLink( courseUpdateDTO.getLink() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseHasImage( courseUpdateDTO.getCourseHasImage() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseIsActive( courseUpdateDTO.getCourseIsActive() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return courseEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CourseEntity toEntity(CourseNewDTO courseNewDTO) {
+<b class="fc">&nbsp;        if ( courseNewDTO == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CourseEntity courseEntity = new CourseEntity();</b>
+&nbsp;
+<b class="fc">&nbsp;        courseEntity.setTitle( courseNewDTO.getTitle() );</b>
+<b class="fc">&nbsp;        courseEntity.setCreationDate( courseNewDTO.getCreationDate() );</b>
+<b class="fc">&nbsp;        courseEntity.setDuration( courseNewDTO.getDuration() );</b>
+<b class="fc">&nbsp;        courseEntity.setLanguage( courseNewDTO.getLanguage() );</b>
+<b class="fc">&nbsp;        courseEntity.setArea( courseNewDTO.getArea() );</b>
+<b class="fc">&nbsp;        courseEntity.setDescription( courseNewDTO.getDescription() );</b>
+<b class="fc">&nbsp;        courseEntity.setLink( courseNewDTO.getLink() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseHasImage( courseNewDTO.getCourseHasImage() );</b>
+<b class="fc">&nbsp;        courseEntity.setCourseIsActive( courseNewDTO.getCourseIsActive() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return courseEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;CourseDTO&gt; toDtoList(List&lt;CourseEntity&gt; courses) {
+<b class="fc">&nbsp;        if ( courses == null ) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;CourseDTO&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;CourseDTO&gt; list = new ArrayList&lt;CourseDTO&gt;( courses.size() );</b>
+<b class="fc">&nbsp;        for ( CourseEntity courseEntity : courses ) {</b>
+<b class="fc">&nbsp;            list.add( toDto( courseEntity ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;CourseEntity&gt; toEntityList(List&lt;CourseDTO&gt; courseDTOs) {
+<b class="fc">&nbsp;        if ( courseDTOs == null ) {</b>
+<b class="fc">&nbsp;            return new ArrayList&lt;CourseEntity&gt;();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;CourseEntity&gt; list = new ArrayList&lt;CourseEntity&gt;( courseDTOs.size() );</b>
+<b class="fc">&nbsp;        for ( CourseDTO courseDTO : courseDTOs ) {</b>
+<b class="fc">&nbsp;            list.add( toEntity( courseDTO ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateEntityFromDto(CourseDTO courseDTO, CourseEntity courseEntity) {
+<b class="pc">&nbsp;        if ( courseDTO == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( courseDTO.getId() != null ) {</b>
+<b class="nc">&nbsp;            courseEntity.setId( courseDTO.getId() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getTitle() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setTitle( courseDTO.getTitle() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getCreationDate() != null ) {</b>
+<b class="nc">&nbsp;            courseEntity.setCreationDate( courseDTO.getCreationDate() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getDuration() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setDuration( courseDTO.getDuration() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getLanguage() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setLanguage( courseDTO.getLanguage() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getArea() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setArea( courseDTO.getArea() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getDescription() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setDescription( courseDTO.getDescription() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getLink() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setLink( courseDTO.getLink() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getCourseHasImage() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setCourseHasImage( courseDTO.getCourseHasImage() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseDTO.getCourseIsActive() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setCourseIsActive( courseDTO.getCourseIsActive() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateEntityFromUpdateDto(CourseUpdateDTO courseUpdateDTO, CourseEntity courseEntity) {
+<b class="pc">&nbsp;        if ( courseUpdateDTO == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getId() != null ) {</b>
+<b class="nc">&nbsp;            courseEntity.setId( courseUpdateDTO.getId() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getTitle() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setTitle( courseUpdateDTO.getTitle() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getCreationDate() != null ) {</b>
+<b class="nc">&nbsp;            courseEntity.setCreationDate( courseUpdateDTO.getCreationDate() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getDuration() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setDuration( courseUpdateDTO.getDuration() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getLanguage() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setLanguage( courseUpdateDTO.getLanguage() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getArea() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setArea( courseUpdateDTO.getArea() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getDescription() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setDescription( courseUpdateDTO.getDescription() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getLink() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setLink( courseUpdateDTO.getLink() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getCourseHasImage() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setCourseHasImage( courseUpdateDTO.getCourseHasImage() );</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if ( courseUpdateDTO.getCourseIsActive() != null ) {</b>
+<b class="fc">&nbsp;            courseEntity.setCourseIsActive( courseUpdateDTO.getCourseIsActive() );</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-07-15 20:29</div>
+</div>
+</body>
+</html>
