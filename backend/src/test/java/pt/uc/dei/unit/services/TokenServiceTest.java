@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.entities.*;
 import pt.uc.dei.repositories.*;
+import pt.uc.dei.services.TokenService;
+import pt.uc.dei.services.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Base64;

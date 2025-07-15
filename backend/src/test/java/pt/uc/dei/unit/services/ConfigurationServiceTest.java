@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +13,8 @@ import pt.uc.dei.entities.ConfigurationEntity;
 import pt.uc.dei.entities.UserEntity;
 import pt.uc.dei.repositories.ConfigurationRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.services.ConfigurationService;
+import pt.uc.dei.services.UserService;
 
 import java.time.LocalDateTime;
 

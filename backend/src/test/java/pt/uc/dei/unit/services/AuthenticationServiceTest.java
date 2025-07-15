@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +14,7 @@ import pt.uc.dei.entities.*;
 import pt.uc.dei.enums.AccountState;
 import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.repositories.*;
+import pt.uc.dei.services.AuthenticationService;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.utils.PasswordUtils;
 import pt.uc.dei.utils.TwoFactorUtil;

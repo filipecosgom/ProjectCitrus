@@ -1,4 +1,4 @@
-package pt.uc.dei.controllers;
+package pt.uc.dei.unit.controllers;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.MockedStatic;
+
+import pt.uc.dei.controllers.AuthenticationController;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.services.*;
 import pt.uc.dei.utils.ApiResponse;

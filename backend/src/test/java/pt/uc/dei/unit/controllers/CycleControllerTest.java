@@ -1,4 +1,4 @@
-package pt.uc.dei.controllers;
+package pt.uc.dei.unit.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import pt.uc.dei.controllers.CycleController;
 import pt.uc.dei.dtos.CycleDTO;
 import pt.uc.dei.dtos.CycleUpdateDTO;
 import pt.uc.dei.enums.CycleState;

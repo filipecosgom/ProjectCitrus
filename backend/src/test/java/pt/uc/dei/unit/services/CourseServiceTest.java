@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +19,7 @@ import pt.uc.dei.enums.OrderBy;
 import pt.uc.dei.mapper.CourseMapper;
 import pt.uc.dei.repositories.CourseRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.services.CourseService;
 
 import java.time.LocalDate;
 import java.util.Collections;

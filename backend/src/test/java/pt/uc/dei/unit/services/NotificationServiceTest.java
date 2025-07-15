@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +18,7 @@ import pt.uc.dei.mapper.NotificationMapper;
 import pt.uc.dei.repositories.MessageRepository;
 import pt.uc.dei.repositories.NotificationRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.services.NotificationService;
 import pt.uc.dei.websocket.WsNotifications;
 
 import java.time.LocalDateTime;

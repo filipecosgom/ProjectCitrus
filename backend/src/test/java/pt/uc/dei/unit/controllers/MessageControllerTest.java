@@ -1,4 +1,4 @@
-package pt.uc.dei.controllers;
+package pt.uc.dei.unit.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import pt.uc.dei.controllers.MessageController;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.services.MessageService;
 import pt.uc.dei.services.NotificationService;

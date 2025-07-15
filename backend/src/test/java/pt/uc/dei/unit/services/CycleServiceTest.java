@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +20,9 @@ import pt.uc.dei.mapper.CycleMapper;
 import pt.uc.dei.repositories.AppraisalRepository;
 import pt.uc.dei.repositories.CycleRepository;
 import pt.uc.dei.repositories.UserRepository;
+import pt.uc.dei.services.CycleService;
+import pt.uc.dei.services.EmailService;
+import pt.uc.dei.services.NotificationService;
 
 import java.time.LocalDate;
 import java.util.*;

@@ -1,4 +1,4 @@
-package pt.uc.dei.controllers;
+package pt.uc.dei.unit.controllers;
 
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import pt.uc.dei.controllers.AppraisalController;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.services.AppraisalService;

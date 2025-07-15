@@ -1,4 +1,4 @@
-package pt.uc.dei.controllers;
+package pt.uc.dei.unit.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
+import pt.uc.dei.controllers.CourseController;
 import pt.uc.dei.dtos.*;
 import pt.uc.dei.enums.*;
 import pt.uc.dei.services.CourseService;

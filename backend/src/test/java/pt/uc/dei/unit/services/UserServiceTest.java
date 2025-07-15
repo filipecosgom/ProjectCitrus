@@ -1,4 +1,4 @@
-package pt.uc.dei.services;
+package pt.uc.dei.unit.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,10 @@ import pt.uc.dei.enums.*;
 import pt.uc.dei.mapper.FinishedCourseMapper;
 import pt.uc.dei.mapper.UserMapper;
 import pt.uc.dei.repositories.*;
+import pt.uc.dei.services.EmailService;
+import pt.uc.dei.services.NotificationService;
+import pt.uc.dei.services.TokenService;
+import pt.uc.dei.services.UserService;
 import pt.uc.dei.utils.CSVGenerator;
 import pt.uc.dei.utils.JWTUtil;
 import pt.uc.dei.utils.TwoFactorUtil;
