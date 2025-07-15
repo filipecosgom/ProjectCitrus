@@ -8,6 +8,11 @@ import {
 import "./Settings.css";
 import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
 import { useTranslation } from "react-i18next";
+import { updateTwoFactorAuth } from "../../api/settingsApi";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../utils/toastConfig/toastConfig";
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -26,8 +31,15 @@ const Settings = () => {
     }));
   };
 
-  const handleSave = () => {
-    // TODO: Save to API
+  const handleSave = async () => {
+    try {
+      await updateTwoFactorAuth(!settings.disableGoogleAuthenticator);
+      showSuccessToast(
+        "Configuração de autenticação 2 fatores atualizada com sucesso!"
+      );
+    } catch (error) {
+      showErrorToast("Erro ao atualizar autenticação 2 fatores.");
+    }
   };
 
   return (
