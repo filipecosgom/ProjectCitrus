@@ -10,9 +10,9 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Se user não é admin, redireciona para profile (ou outra página)
+  // Se user não é admin, redireciona para profile com id
   if (!isUserAdmin) {
-    return <Navigate to="/profile" replace />;
+    return <Navigate to={`/profile?id=${user.id}`} replace />;
   }
 
   // Se é admin, renderiza o componente
