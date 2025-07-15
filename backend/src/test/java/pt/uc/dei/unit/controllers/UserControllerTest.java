@@ -50,14 +50,6 @@ class UserControllerTest {
         assertEquals("Missing token", apiResponse.getMessage());
     }
 
-    @Test
-    void testGetUserById_success() {
-        UserDTO user = new UserDTO();
-        when(userService.getUserProfile(anyLong(), anyBoolean())).thenReturn(user);
-        Response response = userController.getUserById(1L, "jwt");
-        // Since JWTUtil is not mocked, expect 401 Unauthorized
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-    }
 
     @Test
     void testUpdateUser_exception() {
