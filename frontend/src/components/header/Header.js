@@ -32,7 +32,7 @@ import useWebSocketNotifications from "../../websockets/useWebSocketNotification
 export default function Header({ language, setLanguage }) {
   useWebSocketNotifications();
   // Lê o user do store global
-  const { user } = useAuthStore();
+  const { user, avatar } = useAuthStore();
 
   // Protege contra user null
   const firstName = user?.name || "";
@@ -212,7 +212,7 @@ export default function Header({ language, setLanguage }) {
           )}
         </div>
         {/* FIX: Pass the full user object to UserIcon, not just avatar */}
-        <UserIcon user={user} status="check" />
+        <UserIcon user={user} avatar={avatar} status="check" />
       </div>
       {/* Nome e email do user (desktop apenas) */}
       <div className="header-cell header-user">
