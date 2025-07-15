@@ -427,8 +427,6 @@ const en = {
     cycleCreated: "Cycle created successfully!",
     cycleCreatedEmailWarning:
       "Cycle created, but some email notifications failed to send.",
-    errorCreateCycle: "Failed to create cycle. Please try again.",
-    errorInvalidDateRange: "Please select a valid date range.",
   },
 
   courses: {

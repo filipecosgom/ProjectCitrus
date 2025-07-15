@@ -46,7 +46,6 @@ import { useTranslation } from "react-i18next";
 import handleLogin from "../../handles/handleLogin";
 import useAuthStore from "../../stores/useAuthStore";
 import handleNotification from "../../handles/handleNotification";
-import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -54,7 +53,7 @@ export default function Login() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, touchedFields, isSubmitted },
+    formState: { errors, isSubmitted },
     trigger,
   } = useForm();
   useEffect(() => {
@@ -66,7 +65,6 @@ export default function Login() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
-  const isUserManager = useAuthStore((state) => state.isUserManager());
 
   const onSubmit = async (loginData) => {
     const userData = {

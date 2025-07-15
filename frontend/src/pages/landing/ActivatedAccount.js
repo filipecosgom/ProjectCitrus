@@ -35,8 +35,6 @@ import handleNotification from "../../handles/handleNotification";
 export default function ActivatedAccount() {
   const { t } = useTranslation();
   const token = new URLSearchParams(useLocation().search).get("token");
-  const language =
-    new URLSearchParams(useLocation().search).get("lang") || "en";
   const navigate = useNavigate();
   const segundos = 50;
   const [countdown, setCountdown] = useState(null);

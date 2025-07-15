@@ -1,19 +1,13 @@
-import useAuthStore from "../stores/useAuthStore";
 import { useEffect, useRef } from "react";
 import useNotificationStore from "../stores/useNotificationStore";
 
 function useWebSocketNotifications() {
-  const { user } = useAuthStore();
   const WS_URL = "wss://localhost:8443/projectcitrus/websocket/notifications/";
   const websocketRef = useRef(null); // <-- Only use ref
   const addMessageNotification =
     useNotificationStore.getState().addMessageNotification;
   const addOtherNotification =
     useNotificationStore.getState().addOtherNotification;
-  const setMessageNotifications =
-    useNotificationStore.getState().setMessageNotifications;
-  const setOtherNotifications =
-    useNotificationStore.getState().setOtherNotifications;
 
   useEffect(() => {
     if (websocketRef.current) {

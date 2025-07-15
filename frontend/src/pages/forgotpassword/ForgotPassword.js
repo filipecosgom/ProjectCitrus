@@ -9,7 +9,6 @@ import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function ForgotPassword({ onClose }) {
   const { t } = useTranslation();
-  const [email, setEmail] = useState("");
   const {
     register,
     handleSubmit,

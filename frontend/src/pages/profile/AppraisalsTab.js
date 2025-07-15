@@ -8,7 +8,6 @@ import SortControls from "../../components/sortControls/SortControls";
 import Pagination from "../../components/pagination/Pagination";
 import SearchBar from "../../components/searchbar/Searchbar";
 import { useTranslation } from "react-i18next";
-import { handleGetAppraisals } from "../../handles/handleGetAppraisals";
 import { handleGetAppraisalStates } from "../../handles/handleGetEnums";
 import {
   appraisalSearchFilters,
