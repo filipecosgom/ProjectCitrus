@@ -29,6 +29,7 @@ public class SettingsController {
         }
     }
 
+    @AdminOnly
     @GET
     @Path("/twofactor")
     public Response getTwoFactorAuthStatus() {

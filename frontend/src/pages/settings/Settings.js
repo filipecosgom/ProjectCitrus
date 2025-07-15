@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IoSettings,
   IoSave,
@@ -8,7 +8,10 @@ import {
 import "./Settings.css";
 import AdminPermissionsOffcanvas from "../../components/settings/AdminPermissionsOffcanvas";
 import { useTranslation } from "react-i18next";
-import { updateTwoFactorAuth } from "../../api/settingsApi";
+import {
+  getTwoFactorAuthStatus,
+  updateTwoFactorAuth,
+} from "../../api/settingsApi";
 import {
   showSuccessToast,
   showErrorToast,
@@ -23,6 +26,21 @@ const Settings = () => {
   });
 
   const [showAdminOffcanvas, setShowAdminOffcanvas] = useState(false);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const enabled = await getTwoFactorAuthStatus();
+        setSettings((prev) => ({
+          ...prev,
+          disableGoogleAuthenticator: !enabled, // Mantém se o toggle for "Desativar"
+        }));
+      } catch (error) {
+        showErrorToast("Erro ao carregar estado da autenticação 2 fatores.");
+      }
+    }
+    fetchSettings();
+  }, []);
 
   const handleSettingChange = (key, value) => {
     setSettings((prev) => ({

@@ -1,14 +1,14 @@
+import axios from "axios";
+import { apiBaseUrl } from "../config";
+
 export async function updateTwoFactorAuth(enabled) {
   try {
-    const response = await fetch(`/api/settings/twofactor?enabled=${enabled}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Erro ao atualizar 2FA");
-    return data;
+    const response = await axios.put(
+      `${apiBaseUrl}/settings/twofactor?enabled=${enabled}`,
+      {},
+      { withCredentials: true }
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -16,16 +16,10 @@ export async function updateTwoFactorAuth(enabled) {
 
 export async function getTwoFactorAuthStatus() {
   try {
-    const response = await fetch("/api/settings/twofactor", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await axios.get(`${apiBaseUrl}/settings/twofactor`, {
+      withCredentials: true,
     });
-    const data = await response.json();
-    if (!response.ok)
-      throw new Error(data.message || "Erro ao obter estado 2FA");
-    return data.enabled; // espera que o backend devolva { enabled: true/false }
+    return response.data.enabled;
   } catch (error) {
     throw error;
   }
