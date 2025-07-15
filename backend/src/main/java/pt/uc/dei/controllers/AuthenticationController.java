@@ -1,5 +1,4 @@
 package pt.uc.dei.controllers;
-
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,8 +11,11 @@ import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import pt.uc.dei.annotations.AllowAnonymous;
 import pt.uc.dei.dtos.*;
-import pt.uc.dei.services.*;
-
+import pt.uc.dei.services.AuthenticationService;
+import pt.uc.dei.services.ConfigurationService;
+import pt.uc.dei.services.EmailService;
+import pt.uc.dei.services.TokenService;
+import pt.uc.dei.services.UserService;
 import jakarta.ws.rs.*;
 
 import org.apache.logging.log4j.Logger;
@@ -186,8 +188,13 @@ public class AuthenticationController {
                             "errorMissingLanguage", null))
                     .build();
         }
+        if (emailJSON == null || !emailJSON.containsKey("email") || emailJSON.isNull("email")) {
+            LOGGER.error("Email is missing in request body");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing email", "errorMissingEmail", null))
+                    .build();
+        }
         String email = emailJSON.getString("email");
-
         if (email == null || email.isEmpty()) {
             LOGGER.error("Email is null or empty");
             return Response.status(Response.Status.BAD_REQUEST)
@@ -278,6 +285,12 @@ public class AuthenticationController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePassword(@HeaderParam("token") String passwordResetTokenValue, JsonObject newPasswordJSON) {
         LOGGER.info("Password update requested");
+        if (newPasswordJSON == null || !newPasswordJSON.containsKey("password") || newPasswordJSON.isNull("password")) {
+            LOGGER.error("Password update failed due to missing password");
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ApiResponse(false, "Invalid request: missing password", "errorMissingPassword", null))
+                    .build();
+        }
         String newPassword = newPasswordJSON.getString("password");
         if (newPassword == null || newPassword.isEmpty()) {
             LOGGER.error("Password update failed due to missing password");

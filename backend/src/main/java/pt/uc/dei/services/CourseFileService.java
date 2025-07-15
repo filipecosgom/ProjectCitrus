@@ -8,6 +8,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 
+/**
+ * Service class for handling course image file operations such as storage, validation, retrieval, and deletion.
+ * <p>
+ * Supports MIME type validation, file size limits, and file system operations for course images.
+ * Uses Apache Tika for MIME type detection and Java NIO for file management.
+ * </p>
+ */
 public class CourseFileService {
     private static final Logger LOGGER = LogManager.getLogger(CourseFileService.class);
     private static final List<String> MIME_TYPES_ALLOWED = List.of(
@@ -18,6 +25,12 @@ public class CourseFileService {
     );
     private static final int MAX_BYTES = 5 * 1024 * 1024;
 
+    /**
+     * Retrieves the configured storage path for course image files from the system property 'course.storage.path'.
+     *
+     * @return The absolute, normalized path to the course image storage directory.
+     * @throws IllegalStateException if the system property is not set or blank.
+     */
     public static Path getCourseStoragePath() {
         System.out.println(System.getProperty("course.storage.path"));
         String configuredPath = System.getProperty("course.storage.path"); // Uses the same property as avatars for now
@@ -30,6 +43,12 @@ public class CourseFileService {
         return path;
     }
 
+    /**
+     * Checks if the MIME type of the provided input stream is allowed for course image uploads.
+     *
+     * @param inputStream The input stream of the file to check.
+     * @return true if the MIME type is allowed, false otherwise.
+     */
     public static boolean isValidMimeType(InputStream inputStream) {
         try (BufferedInputStream bufferedStream = new BufferedInputStream(inputStream)) {
             bufferedStream.mark(MAX_BYTES + 1);
@@ -46,6 +65,14 @@ public class CourseFileService {
         }
     }
 
+    /**
+     * Generates a filename for the course image based on course ID and detected MIME type.
+     *
+     * @param id        The course ID.
+     * @param fileBytes The byte array of the file to detect MIME type.
+     * @return The generated filename with appropriate extension, or ID with no extension if unsupported.
+     * @throws RuntimeException if MIME type detection fails.
+     */
     public static String getFilename(Long id, byte[] fileBytes) {
         try {
             String mimeType = new Tika().detect(new ByteArrayInputStream(fileBytes));
@@ -65,6 +92,13 @@ public class CourseFileService {
         }
     }
 
+    /**
+     * Saves a file to the course image storage directory, enforcing a maximum file size limit.
+     *
+     * @param inputStream The input stream of the file to be saved.
+     * @param filename    The desired filename for the saved file.
+     * @return true if the file was saved successfully and within size limit, false otherwise.
+     */
     public static boolean saveFileWithSizeLimit(InputStream inputStream, String filename) {
         Path filePath = null;
         try {
@@ -105,6 +139,12 @@ public class CourseFileService {
         }
     }
 
+    /**
+     * Resolves the course image file path for a course by ID, checking all supported file extensions.
+     *
+     * @param id The course ID.
+     * @return The Path to the course image file if found, or null if not found.
+     */
     public static Path resolveCourseImagePath(Long id) {
         Path courseDir = getCourseStoragePath();
         List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
@@ -117,6 +157,12 @@ public class CourseFileService {
         return null;
     }
 
+    /**
+     * Removes all existing course image files for a course by ID, across all supported extensions.
+     *
+     * @param id The course ID.
+     * @return true if all files were removed successfully, false otherwise.
+     */
     public static boolean removeExistingCourseImages(Long id) {
         try {
             Path courseDir = getCourseStoragePath();
@@ -134,6 +180,12 @@ public class CourseFileService {
         }
     }
 
+    /**
+     * Gets the MIME type of a file by its path using the system's file type detector.
+     *
+     * @param filePath The path to the file.
+     * @return The MIME type string, or null if not detected.
+     */
     public static String getMimeType(Path filePath) {
         try {
             return Files.probeContentType(filePath);
@@ -143,6 +195,12 @@ public class CourseFileService {
         }
     }
 
+    /**
+     * Gets the MIME type of a course image file by course ID.
+     *
+     * @param id The course ID.
+     * @return The MIME type string, or null if not found.
+     */
     public static String getMimeTypeForCourse(Long id) {
         Path path = resolveCourseImagePath(id);
         if (path != null) {
@@ -151,6 +209,13 @@ public class CourseFileService {
         return null;
     }
 
+    /**
+     * Gets cache metadata for a file, including last modified time, size, and MIME type.
+     *
+     * @param filePath The path to the file.
+     * @return CacheData object with file metadata.
+     * @throws IOException if file attributes cannot be read.
+     */
     public static CacheData getCacheData(Path filePath) throws IOException {
         return new CacheData(
                 Files.getLastModifiedTime(filePath).toMillis(),
@@ -159,10 +224,23 @@ public class CourseFileService {
         );
     }
 
+    /**
+     * Data class representing cache metadata for a file, including last modified time, file size, and MIME type.
+     */
     public static class CacheData {
+        /** The last modified time of the file in milliseconds since epoch. */
         public final long lastModified;
+        /** The size of the file in bytes. */
         public final long fileSize;
+        /** The MIME type of the file. */
         public final String mimeType;
+        /**
+         * Constructs a CacheData object with the given metadata.
+         *
+         * @param lastModified The last modified time in milliseconds since epoch.
+         * @param fileSize     The size of the file in bytes.
+         * @param mimeType     The MIME type of the file.
+         */
         public CacheData(long lastModified, long fileSize, String mimeType) {
             this.lastModified = lastModified;
             this.fileSize = fileSize;

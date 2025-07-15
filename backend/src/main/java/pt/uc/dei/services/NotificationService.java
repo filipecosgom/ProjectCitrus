@@ -27,6 +27,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for creating, sending, and managing user notifications.
+ * Handles notifications for messages, appraisals, courses, cycles, and user updates.
+ * Integrates with WebSocket for real-time delivery and persists notifications as fallback.
+ */
 @Stateless
 public class NotificationService {
     private static final Logger logger = LogManager.getLogger(NotificationService.class);
@@ -46,14 +51,20 @@ public class NotificationService {
     @Inject
     UserRepository userRepository;
 
+    /**
+     * Default constructor for NotificationService.
+     */
     public NotificationService() {
     }
 
     /**
      * Creates and sends a new message notification based on a MessageDTO.
+     * <p>
      * Checks unread messages, builds NotificationEntity, maps to NotificationDTO,
-     * and tries WebSocket delivery.
-     * Falls back to persistence if WebSocket fails.
+     * and tries WebSocket delivery. Falls back to persistence if WebSocket fails.
+     *
+     * @param messageDTO the message data transfer object containing sender and recipient info
+     * @return true if notification was created and sent/persisted successfully, false otherwise
      */
     public boolean newMessageNotification(MessageDTO messageDTO) {
         try {
@@ -109,6 +120,12 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Retrieves all notifications for a given user.
+     *
+     * @param userId the ID of the user
+     * @return list of NotificationDTOs for the user, or empty list on error
+     */
     @Transactional
     public List<NotificationDTO> getNotifications(Long userId) {
         try {
@@ -123,8 +140,11 @@ public class NotificationService {
     }
 
     /**
-     * Updates notification status (isRead, isSeen) for a user. Returns true if
-     * successful, false if not found or not updated.
+     * Updates notification status (isRead, isSeen) for a user.
+     *
+     * @param updateDTO the DTO containing update information
+     * @param userId the ID of the user
+     * @return true if update was successful, false if not found or not updated
      */
     @Transactional
     public boolean updateNotificationStatus(NotificationUpdateDTO updateDTO, Long userId) {
@@ -156,6 +176,12 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Gets the total number of notifications for a user.
+     *
+     * @param id the user ID
+     * @return total number of notifications, or 0 on error
+     */
     public int getTotalNotifications(Long id) {
         try {
             return notificationRepository.getTotalNotifications(id);
@@ -165,6 +191,12 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Marks all message notifications as read for a user.
+     *
+     * @param userId the user ID
+     * @return true if successful, false otherwise
+     */
     public boolean markMessageNotificationsAsRead(Long userId) {
         try {
             return notificationRepository.markMessageNotificationsAsRead(userId);
@@ -176,8 +208,12 @@ public class NotificationService {
 
     /**
      * Creates and sends a new appraisal notification.
+     * <p>
      * The recipient is the appraisedUser, sender is the appraisingUser, content is
      * the score (as string or "N/A").
+     *
+     * @param appraisal the appraisal entity containing users and score
+     * @return true if notification was created and sent/persisted successfully, false otherwise
      */
     @Transactional
     public boolean newAppraisalNotification(AppraisalEntity appraisal) {
@@ -225,8 +261,11 @@ public class NotificationService {
 
     /**
      * Creates and sends a new course notification.
-     * The recipient is the user, sender is the user's manager, content is the
-     * course id.
+     * <p>
+     * The recipient is the user, sender is the user's manager, content is the course id.
+     *
+     * @param finishedCourse the finished course entity
+     * @return true if notification was created and sent/persisted successfully, false otherwise
      */
     @Transactional
     public boolean newCourseNotification(FinishedCourseEntity finishedCourse) {
@@ -275,9 +314,12 @@ public class NotificationService {
     }
 
     /**
-     * Creates and sends a new cycle notification to a list of users.
-     * For each user, creates a CYCLE notification with the cycle end date as
-     * content.
+     * Creates and sends a new cycle open notification to a list of users.
+     * <p>
+     * For each user, creates a CYCLE_OPEN notification with the cycle end date as content.
+     *
+     * @param cycle the cycle entity
+     * @param users the list of users to notify
      */
     @Transactional
     public void newCycleOpenNotification(CycleEntity cycle, List<UserEntity> users) {
@@ -325,6 +367,14 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Creates and sends a new cycle close notification to a list of users.
+     * <p>
+     * For each user, creates a CYCLE_CLOSE notification with the cycle end date as content.
+     *
+     * @param cycle the cycle entity
+     * @param users the list of users to notify
+     */
     @Transactional
     public void newCycleCloseNotification(CycleEntity cycle, List<UserEntity> users) {
         try {
@@ -371,9 +421,11 @@ public class NotificationService {
     }
 
     /**
-     * Creates and sends a new cycle notification to a list of users.
-     * For each user, creates a CYCLE notification with the cycle end date as
-     * content.
+     * Creates and sends a new user update notification to the user's manager.
+     * <p>
+     * The notification content is the user's full name.
+     *
+     * @param userUpdated the user entity that was updated
      */
     @Transactional
     public void newUserUpdateNotification(UserEntity userUpdated) {

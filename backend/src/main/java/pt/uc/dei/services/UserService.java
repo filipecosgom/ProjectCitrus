@@ -38,16 +38,13 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
- * Service class for managing user-related operations.
+ * Service class for managing user-related operations in the system.
  * <p>
- * Provides functionality for user verification, registration, activation,
- * and temporary user management. Utilizes {@link UserRepository},
- * {@link TemporaryUserRepository}, and {@link ActivationTokenRepository} for
- * persistence operations.
- *
- * @Stateless Marks this class as a stateless EJB, making it eligible for
- *            dependency injection
- *            and transaction management by the EJB container.
+ * Provides functionality for user verification, registration, activation, profile management,
+ * finished courses, admin permissions, and temporary user management. Integrates with repositories,
+ * mappers, notification and email services, and utilities for persistence and business logic.
+ * <p>
+ * This class is a stateless EJB, making it eligible for dependency injection and transaction management.
  */
 @Stateless
 public class UserService implements Serializable {
@@ -116,14 +113,10 @@ public class UserService implements Serializable {
     /**
      * Checks if a user with the given email exists in the system.
      * <p>
-     * Searches both permanent and temporary repositories to verify whether the
-     * email is registered.
+     * Searches both permanent and temporary repositories to verify whether the email is registered.
      *
      * @param email The email address to check for existence.
-     * @return {@code true} if a user (permanent or temporary) exists with the
-     *         email, {@code false} otherwise.
-     * @throws jakarta.persistence.PersistenceException If an error occurs during
-     *                                                  database operations.
+     * @return {@code true} if a user (permanent or temporary) exists with the email, {@code false} otherwise.
      */
     public boolean findIfUserExists(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
@@ -134,11 +127,11 @@ public class UserService implements Serializable {
     /**
      * Registers a new temporary user in the system.
      * <p>
-     * Generates an activation token and persists the temporary user in the
-     * repository.
+     * Generates an activation token and persists the temporary user in the repository.
+     * Also generates a secret key for two-factor authentication.
      *
      * @param newUser The temporary user data transfer object.
-     * @return The generated activation token for the new user.
+     * @return Map containing the generated activation token and secret key for the new user.
      */
     @Transactional
     public Map<String, String> registerUser(TemporaryUserDTO newUser) {
@@ -166,6 +159,7 @@ public class UserService implements Serializable {
     /**
      * Updates an existing user with the provided data.
      * Only non-null fields in the DTO are updated.
+     * Also updates manager status and notifies relevant parties if needed.
      *
      * @param id            The ID of the user to update
      * @param updateUserDTO The DTO containing updated user data
@@ -269,6 +263,13 @@ public class UserService implements Serializable {
         return userDTO;
     }
 
+    /**
+     * Retrieves a user profile by ID, with either full or summary response.
+     *
+     * @param id           The user ID
+     * @param fullResponse If true, returns full DTO; if false, returns summary DTO
+     * @return The mapped UserDTO (full or summary), or null if not found
+     */
     public UserDTO getUserProfile(Long id, boolean fullResponse) {
         UserEntity user = userRepository.findUserById(id);
         UserDTO userDTO = new UserDTO();
@@ -282,20 +283,22 @@ public class UserService implements Serializable {
     }
 
     /**
-     * Retrieves a paginated and filtered list of users as DTOs, with total count
-     * and pagination info.
+     * Retrieves a paginated and filtered list of users as DTOs, with total count and pagination info.
      *
-     * @param id           User ID to filter (optional)
-     * @param email        Email to filter (optional)
-     * @param name         Name or surname to filter (optional)
-     * @param phone        Phone number to filter (optional)
-     * @param accountState Account state to filter (optional)
-     * @param roleStr      Role to filter (optional)
-     * @param office       Office to filter (optional)
-     * @param parameter    Sorting parameter (optional)
-     * @param orderBy      Sorting order (ASCENDING or DESCENDING)
-     * @param offset       Pagination offset (start position)
-     * @param limit        Pagination limit (max results)
+     * @param id             User ID to filter (optional)
+     * @param email          Email to filter (optional)
+     * @param name           Name or surname to filter (optional)
+     * @param phone          Phone number to filter (optional)
+     * @param accountState   Account state to filter (optional)
+     * @param roleStr        Role to filter (optional)
+     * @param office         Office to filter (optional)
+     * @param userIsManager  Manager filter (optional)
+     * @param userIsAdmin    Admin filter (optional)
+     * @param userHasManager Managed filter (optional)
+     * @param parameter      Sorting parameter (optional)
+     * @param orderBy        Sorting order (ASCENDING or DESCENDING)
+     * @param offset         Pagination offset (start position)
+     * @param limit          Pagination limit (max results)
      * @return Map containing the list of users, total count, offset, and limit
      */
     public Map<String, Object> getUsers(Long id, String email, String name, String phone,
@@ -322,8 +325,7 @@ public class UserService implements Serializable {
     }
 
     /**
-     * Generates a CSV file of all users matching the given filters and sorting (no
-     * pagination).
+     * Generates a CSV file of all users matching the given filters and sorting (no pagination).
      *
      * @param id             User ID to filter (optional)
      * @param email          Email to filter (optional)
@@ -335,9 +337,12 @@ public class UserService implements Serializable {
      * @param userIsManager  Manager filter (optional)
      * @param userIsAdmin    Admin filter (optional)
      * @param userHasManager Managed filter (optional)
+     * @param lang           Language for header translation
      * @param parameter      Sorting parameter (optional)
      * @param orderBy        Sorting order (ASCENDING or DESCENDING)
+     * @param isAdmin        Whether the export is performed by an admin (affects columns)
      * @return CSV file as byte array
+     * @throws RuntimeException if CSV generation fails
      */
     @Transactional
     public byte[] generateUsersCSV(Long id, String email, String name, String phone,
@@ -378,11 +383,12 @@ public class UserService implements Serializable {
      * @param userIsManager  Manager filter (optional)
      * @param userIsAdmin    Admin filter (optional)
      * @param userHasManager Managed filter (optional)
+     * @param lang           Language for header translation
      * @param parameter      Sorting parameter (optional)
      * @param orderBy        Sorting order (ASCENDING or DESCENDING)
-     * @param lang           Language for header translation
      * @param isAdmin        Whether the export is performed by an admin (affects columns)
      * @return XLSX file as byte array
+     * @throws RuntimeException if XLSX generation fails
      */
     @Transactional
     public byte[] generateUsersXLSX(Long id, String email, String name, String phone,
@@ -447,6 +453,13 @@ public class UserService implements Serializable {
         }
     }
 
+    /**
+     * Checks if a user is managed by a specific manager.
+     *
+     * @param userId    The user ID
+     * @param managerId The manager ID
+     * @return true if the user is managed by the given manager, false otherwise
+     */
     public boolean checkIfManagerOfUser(Long userId, Long managerId) {
         UserEntity user = userRepository.findUserById(userId);
         if (user == null) {
@@ -459,6 +472,12 @@ public class UserService implements Serializable {
         return isManager;
     }
 
+    /**
+     * Checks if a user is an admin.
+     *
+     * @param userId The user ID
+     * @return true if the user is an admin, false otherwise
+     */
     public boolean checkIfUserIsAdmin(Long userId) {
         UserEntity user = userRepository.findUserById(userId);
         if (user == null) {
@@ -489,8 +508,7 @@ public class UserService implements Serializable {
      * Checks and updates the account state of a user based on profile completeness.
      *
      * @param userId The user ID to check
-     * @return true if the account state was updated or already correct, false
-     *         otherwise
+     * @return true if the account state was updated or already correct, false otherwise
      */
     @Transactional
     public boolean checkAndUpdateAccountState(Long userId) {
@@ -516,12 +534,15 @@ public class UserService implements Serializable {
         return true;
     }
     /**
-     * Adds a finished course for a user. Throws exceptions if user or course not found.
+     * Adds a finished course for a user. Throws exceptions if user or course not found, or if already completed.
+     * <p>
+     * Also sends notification and email to the user and their manager.
      *
      * @param userId   The user ID
      * @param courseId The course ID
-     * @return The created FinishedCourseEntity
+     * @return The created FinishedCourseDTO
      * @throws IllegalArgumentException if user or course not found
+     * @throws IllegalStateException if the user already has this course as completed
      */
     @Transactional
     public FinishedCourseDTO addFinishedCourse(Long userId, Long courseId) {
@@ -556,6 +577,12 @@ public class UserService implements Serializable {
         return finishedCourseMapper.toDto(finished);
     }
 
+    /**
+     * Checks if a user with the given ID still manages any users.
+     *
+     * @param managerId The manager's user ID
+     * @return true if the user still manages others, false otherwise
+     */
     private boolean checkIfUserStillIsManager(Long managerId) {
         if (userRepository.checkIfUserStillHasManagedUsers(managerId)) {
             LOGGER.info("User with ID {} still manages users", managerId);
@@ -566,6 +593,11 @@ public class UserService implements Serializable {
         }
     }
 
+    /**
+     * Updates the manager status of a user to false and persists the change.
+     *
+     * @param user The user entity to update
+     */
     private void updateManagerStatus(UserEntity user) {
         user.setUserIsManager(false);
         userRepository.persist(user);
@@ -574,11 +606,11 @@ public class UserService implements Serializable {
 
     /**
      * Updates admin permissions for a user.
-     * Only administrators can use this functionality.
-     * Users cannot remove their own admin permissions.
+     * <p>
+     * Only administrators can use this functionality. Users cannot remove their own admin permissions.
      *
-     * @param userId The ID of the user to update
-     * @param isAdmin The new admin status
+     * @param userId      The ID of the user to update
+     * @param isAdmin     The new admin status
      * @param requesterId The ID of the user making the request
      * @return true if update was successful, false otherwise
      */

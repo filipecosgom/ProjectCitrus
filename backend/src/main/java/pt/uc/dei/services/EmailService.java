@@ -31,20 +31,25 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Service class responsible for sending activation emails to users.
- * Utilizes JavaMail API to send HTML-based emails containing an activation
- * link.
+ * Service class responsible for sending various types of notification emails to users, managers, and administrators.
+ * <p>
+ * Utilizes the JavaMail API to send HTML-based emails for account activation, password reset, cycle notifications,
+ * course assignments, profile updates, and chat/message notifications. Supports both synchronous and asynchronous
+ * (rate-limited) email delivery to prevent server or firewall blocks in university environments.
+ * <p>
+ * Email configuration is loaded from environment variables and configuration services. Logging is provided for all
+ * major actions and error conditions.
  */
 @Stateless
 public class EmailService {
 
     /**
-     * Logger instance for tracking registration events.
+     * Logger instance for tracking email events and errors.
      */
     private final Logger LOGGER = LogManager.getLogger(EmailService.class);
 
     /**
-     * The email account used to send activation emails.
+     * The email account used to send notification emails.
      * Retrieved from the system environment variables.
      */
     private String emailAccount = System.getenv("EMAIL");
@@ -66,6 +71,8 @@ public class EmailService {
      *
      * @param recipientEmail  The email address of the recipient.
      * @param activationToken The activation token for the recipient's account.
+     * @param secretKey       The secret key for two-factor authentication (if applicable).
+     * @param language        The language code for the email template (e.g., "en", "pt").
      */
     public void sendActivationEmail(String recipientEmail, String activationToken, String secretKey, String language) {
         try {
@@ -112,10 +119,9 @@ public class EmailService {
     /**
      * Sends a password reset email to the specified recipient.
      *
-     * @param recipientEmail     The email address of the recipient
-     * @param passwordResetToken The password reset token for the recipient's
-     *                           account
-     * @param language           The language code for the email template
+     * @param recipientEmail     The email address of the recipient.
+     * @param passwordResetToken The password reset token for the recipient's account.
+     * @param language           The language code for the email template (e.g., "en", "pt").
      */
     public void sendPasswordResetEmail(String recipientEmail, String passwordResetToken, String language) {
         try {
@@ -165,15 +171,15 @@ public class EmailService {
     }
 
     /**
-     * Sends cycle notification emails to managers and administrators.
+     * Sends a cycle open notification email to a manager or administrator.
      *
-     * @param recipientEmail  The email address of the recipient
-     * @param cycleId         The ID of the created cycle
-     * @param startDate       The start date of the cycle
-     * @param endDate         The end date of the cycle
-     * @param adminName       The name of the admin who created the cycle
-     * @param appraisalsCount The number of appraisals created in the cycle
-     * @param language        The language code for the email template
+     * @param recipientEmail  The email address of the recipient.
+     * @param cycleId         The ID of the created cycle.
+     * @param startDate       The start date of the cycle.
+     * @param endDate         The end date of the cycle.
+     * @param adminName       The name of the admin who created the cycle.
+     * @param appraisalsCount The number of appraisals created in the cycle.
+     * @param language        The language code for the email template (e.g., "en", "pt").
      */
     public void sendCycleOpenNotificationEmail(String recipientEmail, String cycleId, String startDate,
             String endDate, String adminName, int appraisalsCount, String language) {
@@ -229,8 +235,18 @@ public class EmailService {
     }
 
     /**
-     * ✅ NOVO: Método assíncrono para envio de notificações de ciclo
-     * Envia emails com rate limiting conservador para evitar bloqueios de firewall
+     * Asynchronously sends cycle open notification emails to a list of recipients (managers/admins) with ultra-conservative rate limiting.
+     * <p>
+     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+     * with delays between each email and between batches, and logs all progress and errors.
+     *
+     * @param cycleId         The ID of the created cycle.
+     * @param startDate       The start date of the cycle.
+     * @param endDate         The end date of the cycle.
+     * @param adminName       The name of the admin who created the cycle.
+     * @param appraisalsCount The number of appraisals created in the cycle.
+     * @param recipients      The list of user entities to notify.
+     * @return Future<Boolean> indicating if all emails were sent successfully.
      */
     @Asynchronous
     public Future<Boolean> sendCycleOpenNotificationEmailsAsync(
@@ -319,6 +335,17 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a cycle close notification email to a manager or administrator.
+     *
+     * @param recipientEmail  The email address of the recipient.
+     * @param cycleId         The ID of the closed cycle.
+     * @param startDate       The start date of the cycle.
+     * @param endDate         The end date of the cycle.
+     * @param adminName       The name of the admin who closed the cycle.
+     * @param appraisalsCount The number of appraisals in the cycle.
+     * @param language        The language code for the email template (e.g., "en", "pt").
+     */
     public void sendCycleCloseNotificationEmail(String recipientEmail, String cycleId, String startDate,
             String endDate, String adminName, int appraisalsCount, String language) {
         try {
@@ -373,8 +400,18 @@ public class EmailService {
     }
 
     /**
-     * ✅ NOVO: Método assíncrono para envio de notificações de ciclo
-     * Envia emails com rate limiting conservador para evitar bloqueios de firewall
+     * Asynchronously sends cycle close notification emails to a list of recipients (managers/admins) with ultra-conservative rate limiting.
+     * <p>
+     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+     * with delays between each email and between batches, and logs all progress and errors.
+     *
+     * @param cycleId         The ID of the closed cycle.
+     * @param startDate       The start date of the cycle.
+     * @param endDate         The end date of the cycle.
+     * @param adminName       The name of the admin who closed the cycle.
+     * @param appraisalsCount The number of appraisals in the cycle.
+     * @param recipients      The list of user entities to notify.
+     * @return Future<Boolean> indicating if all emails were sent successfully.
      */
     @Asynchronous
     public Future<Boolean> sendCycleCloseNotificationEmailsAsync(
@@ -463,6 +500,15 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a notification email to a user when their profile is updated by a manager.
+     *
+     * @param recipientEmail The email address of the user whose profile was updated.
+     * @param managerName    The name of the manager who performed the update.
+     * @param userName       The name of the user whose profile was updated.
+     * @param userId         The ID of the user whose profile was updated.
+     * @param date           The date of the update.
+     */
     public void sendUserUpdateNotificationEmail(String recipientEmail, String managerName, String userName,
             Long userId, String date) {
         try {
@@ -493,6 +539,15 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a notification email to a user when a new course is assigned to them by a manager.
+     *
+     * @param recipientEmail The email address of the user assigned to the course.
+     * @param userName       The name of the user assigned to the course.
+     * @param managerName    The name of the manager assigning the course.
+     * @param courseName     The name of the new course.
+     * @param userId         The ID of the user assigned to the course.
+     */
     public void sendNewCourseNotificationEmail(String recipientEmail, String userName, String managerName,
             String courseName, Long userId) {
         try {
@@ -524,116 +579,129 @@ public class EmailService {
         }
     }
 
+    /**
+     * Asynchronously sends chat/message notification emails to users with ultra-conservative rate limiting.
+     * <p>
+     * This method is designed for university environments to avoid firewall or SMTP server blocks. It sends emails one by one,
+     * with delays between each email and between batches, and logs all progress and errors. Each notification is marked as sent in the database.
+     *
+     * @param notifications The list of NotificationEntity objects representing chat/message notifications to send.
+     * @return Future<Boolean> indicating if all emails were sent successfully.
+     */
     @Asynchronous
-public Future<Boolean> sendMessageNotificationEmailsAsync(List<NotificationEntity> notifications) {
-    LOGGER.info("🔄 Starting ASYNC email notification process for chat/message notifications");
+    public Future<Boolean> sendMessageNotificationEmailsAsync(List<NotificationEntity> notifications) {
+        LOGGER.info("🔄 Starting ASYNC email notification process for chat/message notifications");
 
-    try {
-        boolean allEmailsSent = true;
-        int emailsSent = 0;
-        int emailsFailed = 0;
+        try {
+            boolean allEmailsSent = true;
+            int emailsSent = 0;
+            int emailsFailed = 0;
 
-        final int MAX_EMAILS_PER_BATCH = 1;
-        final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutes
-        final long DELAY_BETWEEN_EMAILS_MS = 10000;   // 10 seconds
+            final int MAX_EMAILS_PER_BATCH = 1;
+            final long DELAY_BETWEEN_BATCHES_MS = 180000; // 3 minutes
+            final long DELAY_BETWEEN_EMAILS_MS = 10000;   // 10 seconds
 
-        LOGGER.info("📧 Will send {} chat/message emails with ultra-conservative rate limiting", notifications.size());
-        LOGGER.info("📧 Rate: 1 email every 3 minutes (max 20 emails/hour)");
+            LOGGER.info("📧 Will send {} chat/message emails with ultra-conservative rate limiting", notifications.size());
+            LOGGER.info("📧 Rate: 1 email every 3 minutes (max 20 emails/hour)");
 
-        for (int i = 0; i < notifications.size(); i++) {
-            NotificationEntity notification = notifications.get(i);
-            try {
-                long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000);
+            for (int i = 0; i < notifications.size(); i++) {
+                NotificationEntity notification = notifications.get(i);
+                try {
+                    long delayMs = DELAY_BETWEEN_EMAILS_MS + (i * 1000);
 
-                if (i > 0) {
-                    LOGGER.info("⏳ Waiting {} ms before sending email {}/{}...",
-                            delayMs, i + 1, notifications.size());
-                    Thread.sleep(delayMs);
-                }
-
-                if (i > 0 && i % MAX_EMAILS_PER_BATCH == 0) {
-                    LOGGER.info("⏳ Batch delay: waiting {} ms before next batch...",
-                            DELAY_BETWEEN_BATCHES_MS);
-                    Thread.sleep(DELAY_BETWEEN_BATCHES_MS);
-                }
-
-                UserEntity recipient = notification.getUser();
-                UserEntity sender = notification.getSender();
-                String recipientEmail = recipient.getEmail();
-                String recipientName = recipient.getName();
-                String senderName = sender.getName() + " " + sender.getSurname();
-                String chatLink = "https://localhost:3000/messages?id=" + sender.getId();
-
-                // Build and send the email
-                Properties properties = EmailConfig.getSMTPProperties();
-                Session session = Session.getInstance(properties, new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(emailAccount, password);
+                    if (i > 0) {
+                        LOGGER.info("⏳ Waiting {} ms before sending email {}/{}...",
+                                delayMs, i + 1, notifications.size());
+                        Thread.sleep(delayMs);
                     }
-                });
 
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(emailAccount));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+                    if (i > 0 && i % MAX_EMAILS_PER_BATCH == 0) {
+                        LOGGER.info("⏳ Batch delay: waiting {} ms before next batch...",
+                                DELAY_BETWEEN_BATCHES_MS);
+                        Thread.sleep(DELAY_BETWEEN_BATCHES_MS);
+                    }
 
-                        message.setSubject("CITRUS - Novo pedido de chat");
-                        String messageBody = MessageTemplate.CHAT_REQUEST_NOTIFICATION_TEMPLATE_EN(
-                                recipientName, senderName, chatLink
-                        );
-                        message.setContent(messageBody, "text/html");
+                    UserEntity recipient = notification.getUser();
+                    UserEntity sender = notification.getSender();
+                    String recipientEmail = recipient.getEmail();
+                    String recipientName = recipient.getName();
+                    String senderName = sender.getName() + " " + sender.getSurname();
+                    String chatLink = "https://localhost:3000/messages?id=" + sender.getId();
 
-                Transport.send(message);
-                notification.setEmailSent(true);
-                notificationRepository.merge(notification);
-                emailsSent++;
-                LOGGER.info("✅ Chat/message email {}/{} sent successfully to: {}",
-                        i + 1, notifications.size(), recipientEmail);
+                    // Build and send the email
+                    Properties properties = EmailConfig.getSMTPProperties();
+                    Session session = Session.getInstance(properties, new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(emailAccount, password);
+                        }
+                    });
 
-            } catch (InterruptedException e) {
-                LOGGER.error("❌ Email sending process was interrupted");
-                Thread.currentThread().interrupt();
-                allEmailsSent = false;
-                break;
-            } catch (Exception e) {
-                emailsFailed++;
-                allEmailsSent = false;
-                LOGGER.error("❌ Failed to send chat/message email {}/{}: {}",
-                        i + 1, notifications.size(), e.getMessage());
-                continue;
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(emailAccount));
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+
+                    message.setSubject("CITRUS - Novo pedido de chat");
+                    String messageBody = MessageTemplate.CHAT_REQUEST_NOTIFICATION_TEMPLATE_EN(
+                            recipientName, senderName, chatLink
+                    );
+                    message.setContent(messageBody, "text/html");
+
+                    Transport.send(message);
+                    notification.setEmailSent(true);
+                    notificationRepository.merge(notification);
+                    emailsSent++;
+                    LOGGER.info("✅ Chat/message email {}/{} sent successfully to: {}",
+                            i + 1, notifications.size(), recipientEmail);
+
+                } catch (InterruptedException e) {
+                    LOGGER.error("❌ Email sending process was interrupted");
+                    Thread.currentThread().interrupt();
+                    allEmailsSent = false;
+                    break;
+                } catch (Exception e) {
+                    emailsFailed++;
+                    allEmailsSent = false;
+                    LOGGER.error("❌ Failed to send chat/message email {}/{}: {}",
+                            i + 1, notifications.size(), e.getMessage());
+                    continue;
+                }
             }
+
+            LOGGER.info("📧 ASYNC chat/message notification completed - Sent: {}, Failed: {}, Total: {}",
+                    emailsSent, emailsFailed, notifications.size());
+
+            return new AsyncResult<>(allEmailsSent);
+
+        } catch (Exception e) {
+            LOGGER.error("❌ Critical error in async chat/message email sending: {}", e.getMessage(), e);
+            return new AsyncResult<>(false);
         }
-
-        LOGGER.info("📧 ASYNC chat/message notification completed - Sent: {}, Failed: {}, Total: {}",
-                emailsSent, emailsFailed, notifications.size());
-
-        return new AsyncResult<>(allEmailsSent);
-
-    } catch (Exception e) {
-        LOGGER.error("❌ Critical error in async chat/message email sending: {}", e.getMessage(), e);
-        return new AsyncResult<>(false);
     }
-}
 
     /**
-     * ✅ NOVO: Properties com timeouts configurados
+     * Creates and returns SMTP properties with connection, read, and write timeouts configured.
+     * <p>
+     * These properties are used to prevent email sending from blocking indefinitely due to network or server issues.
+     *
+     * @return Properties object with SMTP host, port, authentication, TLS, timeouts, and security settings.
      */
     private Properties createEmailPropertiesWithTimeouts() {
         Properties props = new Properties();
 
-        // Configuração base
+        // Base configuration
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
 
-        // ✅ TIMEOUTS para prevenir bloqueios
-        props.put("mail.smtp.connectiontimeout", "15000"); // 15 segundos para conectar
-        props.put("mail.smtp.timeout", "15000"); // 15 segundos para resposta
-        props.put("mail.smtp.writetimeout", "15000"); // 15 segundos para escrita
+        // Timeouts to prevent blocking
+        props.put("mail.smtp.connectiontimeout", "15000"); // 15 seconds to connect
+        props.put("mail.smtp.timeout", "15000"); // 15 seconds for response
+        props.put("mail.smtp.writetimeout", "15000"); // 15 seconds for write
 
-        // ✅ CONFIGURAÇÕES de segurança
-        props.put("mail.smtp.sendpartial", "true"); // Permite envio parcial
-        props.put("mail.smtp.quitwait", "false"); // Não espera resposta do QUIT
+        // Security configurations
+        props.put("mail.smtp.sendpartial", "true"); // Allow partial send
+        props.put("mail.smtp.quitwait", "false"); // Do not wait for QUIT response
 
         return props;
     }

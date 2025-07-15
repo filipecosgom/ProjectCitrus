@@ -35,6 +35,16 @@ import java.util.stream.Collectors;
  * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
  * and transaction management by the EJB container.
  */
+
+/**
+ * Service class for managing appraisal-related operations.
+ * <p>
+ * Provides functionality for appraisal creation, retrieval, updating, and filtering.
+ * Handles business logic and validation rules.
+ *
+ * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
+ * and transaction management by the EJB container.
+ */
 @Stateless
 public class AppraisalService implements Serializable {
 
@@ -60,6 +70,14 @@ public class AppraisalService implements Serializable {
     @Inject
     private AppraisalMapper appraisalMapper;
 
+    /**
+     * Creates a new appraisal.
+     *
+     * @param createAppraisalDTO The DTO containing appraisal creation data
+     * @return The created appraisal DTO
+     * @throws IllegalArgumentException If validation fails
+     * @throws IllegalStateException    If business rules are violated
+     */
     /**
      * Creates a new appraisal.
      *
@@ -134,6 +152,15 @@ public class AppraisalService implements Serializable {
      * @throws IllegalArgumentException If appraisal not found
      * @throws IllegalStateException    If appraisal cannot be modified
      */
+    /**
+     * Updates an existing appraisal with the provided data.
+     *
+     * @param updateAppraisalDTO The DTO containing updated appraisal data
+     * @param isAdmin            Whether the update is performed by an admin
+     * @return The updated AppraisalDTO
+     * @throws IllegalArgumentException If appraisal not found
+     * @throws IllegalStateException    If appraisal cannot be modified
+     */
     @Transactional
     public AppraisalDTO updateAppraisal(UpdateAppraisalDTO updateAppraisalDTO, boolean isAdmin) {
         LOGGER.info("Updating appraisal with ID: {}", updateAppraisalDTO.getId());
@@ -171,6 +198,13 @@ public class AppraisalService implements Serializable {
      * @return The mapped AppraisalDTO, or throws if not found
      * @throws IllegalArgumentException If appraisal not found
      */
+    /**
+     * Retrieves an appraisal by its ID and maps to a DTO.
+     *
+     * @param id The appraisal ID
+     * @return The mapped AppraisalDTO, or throws if not found
+     * @throws IllegalArgumentException If appraisal not found
+     */
     public AppraisalDTO getAppraisalById(Long id) {
         LOGGER.debug("Retrieving appraisal with ID: {}", id);
 
@@ -182,6 +216,12 @@ public class AppraisalService implements Serializable {
         return appraisalMapper.toDto(appraisal);
     }
 
+    /**
+     * Retrieves all appraisals for a specific user (as appraised).
+     *
+     * @param userId The user ID
+     * @return List of AppraisalDTOs for the user
+     */
     /**
      * Retrieves all appraisals for a specific user (as appraised).
      *
@@ -201,6 +241,12 @@ public class AppraisalService implements Serializable {
      * @param managerId The manager user ID
      * @return List of appraisal DTOs
      */
+    /**
+     * Retrieves all appraisals created by a specific manager.
+     *
+     * @param managerId The manager user ID
+     * @return List of appraisal DTOs
+     */
     public List<AppraisalDTO> getAppraisalsByManager(Long managerId) {
         LOGGER.debug("Retrieving appraisals created by manager ID: {}", managerId);
 
@@ -208,6 +254,12 @@ public class AppraisalService implements Serializable {
         return appraisalMapper.toDtoList(appraisals);
     }
 
+    /**
+     * Retrieves all appraisals within a specific cycle.
+     *
+     * @param cycleId The cycle ID
+     * @return List of appraisal DTOs
+     */
     /**
      * Retrieves all appraisals within a specific cycle.
      *
@@ -231,6 +283,23 @@ public class AppraisalService implements Serializable {
      * @param limit            Maximum number of results
      * @param offset           Starting position for pagination
      * @return List of filtered appraisal DTOs
+     */
+    /**
+     * Retrieves appraisals with advanced filtering options.
+     *
+     * @param appraisedUserId    Optional filter by appraised user ID
+     * @param appraisedUserName  Optional filter by appraised user name
+     * @param appraisedUserEmail Optional filter by appraised user email
+     * @param appraisingUserId   Optional filter by appraising user ID
+     * @param appraisingUserName Optional filter by appraising user name
+     * @param appraisingUserEmail Optional filter by appraising user email
+     * @param cycleId            Optional filter by cycle ID
+     * @param state              Optional filter by appraisal state
+     * @param parameter          Optional filter by appraisal parameter
+     * @param orderBy            Optional ordering
+     * @param limit              Maximum number of results
+     * @param offset             Starting position for pagination
+     * @return Map containing filtered appraisal DTOs and metadata
      */
     public Map<String, Object> getAppraisalsWithFilters(Long appraisedUserId, String appraisedUserName, String appraisedUserEmail,
                                                         Long appraisingUserId, String appraisingUserName, String appraisingUserEmail,
@@ -257,6 +326,22 @@ public class AppraisalService implements Serializable {
         return responseData;
     }
 
+    /**
+     * Generates a PDF of appraisals with the given filters.
+     *
+     * @param appraisedUserId    Optional filter by appraised user ID
+     * @param appraisedUserName  Optional filter by appraised user name
+     * @param appraisedUserEmail Optional filter by appraised user email
+     * @param appraisingUserId   Optional filter by appraising user ID
+     * @param appraisingUserName Optional filter by appraising user name
+     * @param appraisingUserEmail Optional filter by appraising user email
+     * @param cycleId            Optional filter by cycle ID
+     * @param state              Optional filter by appraisal state
+     * @param parameter          Optional filter by appraisal parameter
+     * @param orderBy            Optional ordering
+     * @param language           Language for the PDF
+     * @return StreamingOutput for the generated PDF
+     */
     @Transactional
     public StreamingOutput getPDFOfAppraisals(Long appraisedUserId,
                                               String appraisedUserName,
@@ -310,6 +395,14 @@ public class AppraisalService implements Serializable {
      * @throws IllegalArgumentException If appraisal not found
      * @throws IllegalStateException    If appraisal cannot be completed
      */
+    /**
+     * Completes an appraisal, changing its state to COMPLETED.
+     *
+     * @param appraisalId The appraisal ID
+     * @return The updated appraisal DTO
+     * @throws IllegalArgumentException If appraisal not found
+     * @throws IllegalStateException    If appraisal cannot be completed
+     */
     @Transactional
     public AppraisalDTO completeAppraisal(Long appraisalId) {
         LOGGER.info("Completing appraisal with ID: {}", appraisalId);
@@ -331,6 +424,13 @@ public class AppraisalService implements Serializable {
         return appraisalMapper.toDto(appraisal);
     }
 
+    /**
+     * Closes an appraisal, changing its state to CLOSED.
+     *
+     * @param appraisalId The appraisal ID
+     * @return The updated appraisal DTO
+     * @throws IllegalArgumentException If appraisal not found
+     */
     /**
      * Closes an appraisal, changing its state to CLOSED.
      *
@@ -362,6 +462,13 @@ public class AppraisalService implements Serializable {
      * @throws IllegalArgumentException If appraisal not found
      * @throws IllegalStateException    If appraisal cannot be deleted
      */
+    /**
+     * Deletes an appraisal by its ID.
+     *
+     * @param appraisalId The appraisal ID
+     * @throws IllegalArgumentException If appraisal not found
+     * @throws IllegalStateException    If appraisal cannot be deleted
+     */
     @Transactional
     public void deleteAppraisal(Long appraisalId) {
         LOGGER.info("Deleting appraisal with ID: {}", appraisalId);
@@ -384,6 +491,12 @@ public class AppraisalService implements Serializable {
      * @param userId The user ID
      * @return Map containing appraisal statistics
      */
+    /**
+     * Gets appraisal statistics for a user.
+     *
+     * @param userId The user ID
+     * @return AppraisalStatsDTO containing appraisal statistics
+     */
     public AppraisalStatsDTO getAppraisalStats(Long userId) {
         LOGGER.debug("Getting appraisal statistics for user ID: {}", userId);
         Long receivedCount = appraisalRepository.countAppraisalsByUser(userId, true);
@@ -404,18 +517,19 @@ public class AppraisalService implements Serializable {
      * @param user    The user to check
      * @return True if manager is authorized to appraise the user
      */
-    private boolean isManagerOfUser(UserEntity manager, UserEntity user) {
-        // This is a simplified check. In a real implementation, you might:
-        // 1. Check if manager.getId().equals(user.getManagerUser().getId())
-        // 2. Check role hierarchy
-        // 3. Check organizational structure
-
-        // For now, we'll assume any user can appraise any other user
-        // You should implement proper authorization logic here
-        return !manager.getId().equals(user.getId()); // Can't appraise yourself
+    public boolean isManagerOfUser(UserEntity manager, UserEntity user) {
+        return !manager.getId().equals(user.getId());
     }
 
 
+    /**
+     * Closes specific appraisals by their IDs.
+     * Only COMPLETED appraisals in OPEN cycles can be closed.
+     *
+     * @param appraisalIds List of appraisal IDs to close
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If no valid appraisals found
+     */
     /**
      * Closes specific appraisals by their IDs.
      * Only COMPLETED appraisals in OPEN cycles can be closed.
@@ -451,6 +565,14 @@ public class AppraisalService implements Serializable {
         return closedCount;
     }
 
+    /**
+     * Closes all COMPLETED appraisals in a specific cycle.
+     * Only works if the cycle is OPEN.
+     *
+     * @param cycleId The cycle ID
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If cycle not found or not OPEN
+     */
     /**
      * Closes all COMPLETED appraisals in a specific cycle.
      * Only works if the cycle is OPEN.
@@ -499,6 +621,14 @@ public class AppraisalService implements Serializable {
      * @return Number of successfully closed appraisals
      * @throws IllegalArgumentException If user not found
      */
+    /**
+     * Closes all COMPLETED appraisals for a specific user.
+     * Only works for appraisals in OPEN cycles.
+     *
+     * @param userId The user ID (appraised user)
+     * @return Number of successfully closed appraisals
+     * @throws IllegalArgumentException If user not found
+     */
     @Transactional
     public int closeCompletedAppraisalsByUserId(Long userId) {
         LOGGER.info("Attempting to close all COMPLETED appraisals for user ID: {}", userId);
@@ -534,6 +664,12 @@ public class AppraisalService implements Serializable {
      *
      * @return Number of successfully closed appraisals
      */
+    /**
+     * Closes all COMPLETED appraisals in all OPEN cycles.
+     * Administrative operation.
+     *
+     * @return Number of successfully closed appraisals
+     */
     @Transactional
     public int closeAllCompletedAppraisals() {
         LOGGER.info("Attempting to close ALL COMPLETED appraisals in OPEN cycles");
@@ -557,6 +693,13 @@ public class AppraisalService implements Serializable {
         return closedCount;
     }
 
+    /**
+     * Checks if the given manager is the appraising user for the specified appraisal.
+     *
+     * @param appraisalId The appraisal ID
+     * @param managerId   The manager's user ID
+     * @return True if the manager is the appraising user, false otherwise
+     */
     public boolean checkIfManagerOfUser(Long appraisalId, Long managerId) {
         try {
             AppraisalEntity appraisal = appraisalRepository.find(appraisalId);
@@ -571,10 +714,21 @@ public class AppraisalService implements Serializable {
         }
     }
 
+    /**
+     * Counts all appraisals in the system.
+     *
+     * @return Total number of appraisals
+     */
     public long countAllAppraisals() {
         return appraisalRepository.getTotalAppraisalsWithFilters(null, null, null, null, null, null, null, null);
     }
 
+    /**
+     * Counts all appraisals by a specific state.
+     *
+     * @param state The appraisal state to filter by
+     * @return Total number of appraisals in the given state
+     */
     public long countAppraisalsByState(AppraisalState state) {
         return appraisalRepository.getTotalAppraisalsWithFilters(null, null, null, null, null, null, null, state);
     }

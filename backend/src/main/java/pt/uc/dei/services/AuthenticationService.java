@@ -199,7 +199,6 @@ public class AuthenticationService implements Serializable {
         }
     }
 
-    //SUPPORT FUNCTIONS
     private UserEntity findUserByEmail(String email) {
         UserEntity user = userRepository.findUserByEmail(email);
         return user;

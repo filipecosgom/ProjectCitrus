@@ -616,13 +616,13 @@ public class AppraisalController {
         }
 
         private Response validateUpdateAppraisalDTO (UpdateAppraisalDTO dto) {
-            if (dto.getState() == AppraisalState.IN_PROGRESS) {
-                return null;
-            }
             if (dto.getId() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity(new ApiResponse(false, "Appraisal ID is required", "errorMissingId", null))
                         .build();
+            }
+            if (dto.getState() == AppraisalState.IN_PROGRESS) {
+                return null;
             }
             if (dto.getFeedback() != null && dto.getFeedback().isBlank()) {
                 return Response.status(Response.Status.BAD_REQUEST)

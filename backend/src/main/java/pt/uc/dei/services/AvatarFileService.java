@@ -8,6 +8,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 
+/**
+ * Service class for handling avatar file operations such as storage, validation, retrieval, and deletion.
+ * <p>
+ * Supports MIME type validation, file size limits, and file system operations for user avatars.
+ * Uses Apache Tika for MIME type detection and Java NIO for file management.
+ * </p>
+ */
 public class AvatarFileService {
     private static final Logger LOGGER = LogManager.getLogger(AvatarFileService.class);
     private static final List<String> MIME_TYPES_ALLOWED = List.of(
@@ -18,6 +25,12 @@ public class AvatarFileService {
     );
     private static final int MAX_BYTES = 5 * 1024 * 1024;
 
+    /**
+     * Retrieves the configured storage path for avatar files from the system property 'avatar.storage.path'.
+     *
+     * @return The absolute, normalized path to the avatar storage directory.
+     * @throws IllegalStateException if the system property is not set or blank.
+     */
     public static Path getAvatarStoragePath() {
         String configuredPath = System.getProperty("avatar.storage.path");
         if (configuredPath == null || configuredPath.isBlank()) {
@@ -30,6 +43,12 @@ public class AvatarFileService {
         return path;
     }
 
+    /**
+     * Checks if the MIME type of the provided input stream is allowed for avatar uploads.
+     *
+     * @param inputStream The input stream of the file to check.
+     * @return true if the MIME type is allowed, false otherwise.
+     */
     public static boolean isValidMimeType(InputStream inputStream) {
         try (BufferedInputStream bufferedStream = new BufferedInputStream(inputStream)) {
             bufferedStream.mark(MAX_BYTES + 1);  // Allow Tika to re-read the stream
@@ -47,6 +66,14 @@ public class AvatarFileService {
         }
     }
 
+    /**
+     * Generates a filename for the avatar based on user ID and detected MIME type.
+     *
+     * @param id        The user ID.
+     * @param fileBytes The byte array of the file to detect MIME type.
+     * @return The generated filename with appropriate extension, or ID with no extension if unsupported.
+     * @throws RuntimeException if MIME type detection fails.
+     */
     public static String getFilename(Long id, byte[] fileBytes) {
         try {
             String mimeType = new Tika().detect(new ByteArrayInputStream(fileBytes));
@@ -72,6 +99,13 @@ public class AvatarFileService {
      * @param inputStream The input stream of the file to be saved
      * @param filename    The desired filename for the saved file
      * @return true if the file was saved successfully, false if it exceeds the size limit
+     */
+    /**
+     * Saves a file to the avatar storage directory, enforcing a maximum file size limit.
+     *
+     * @param inputStream The input stream of the file to be saved.
+     * @param filename    The desired filename for the saved file.
+     * @return true if the file was saved successfully and within size limit, false otherwise.
      */
     public static boolean saveFileWithSizeLimit(InputStream inputStream, String filename) {
         Path filePath = null;
@@ -123,6 +157,12 @@ public class AvatarFileService {
      * @param id The user ID
      * @return The Path to the avatar file if found, or null if not found
      */
+    /**
+     * Resolves the avatar file path for a user by ID, checking all supported file extensions.
+     *
+     * @param id The user ID.
+     * @return The Path to the avatar file if found, or null if not found.
+     */
     public static Path resolveAvatarPath(Long id) {
         Path avatarDir = getAvatarStoragePath();
         List<String> extensions = List.of(".jpg", ".jpeg", ".png", ".webp");
@@ -142,6 +182,12 @@ public class AvatarFileService {
      *
      * @param id The user ID
      * @return true if all files were removed successfully, false otherwise
+     */
+    /**
+     * Removes all existing avatar files for a user by ID, across all supported extensions.
+     *
+     * @param id The user ID.
+     * @return true if all files were removed successfully, false otherwise.
      */
     public static boolean removeExistingFiles(Long id) {
         try {
@@ -166,6 +212,12 @@ public class AvatarFileService {
      * @param filePath The path to the file
      * @return The MIME type string, or null if not detected
      */
+    /**
+     * Gets the MIME type of a file by its path using the system's file type detector.
+     *
+     * @param filePath The path to the file.
+     * @return The MIME type string, or null if not detected.
+     */
     public static String getMimeType(Path filePath) {
         try {
             return Files.probeContentType(filePath);
@@ -180,6 +232,12 @@ public class AvatarFileService {
      *
      * @param id The user ID
      * @return The MIME type string, or null if not found
+     */
+    /**
+     * Gets the MIME type of a user's avatar file by user ID.
+     *
+     * @param id The user ID.
+     * @return The MIME type string, or null if not found.
      */
     public static String getMimeTypeForUser(Long id) {
         Path path = resolveAvatarPath(id);
@@ -196,6 +254,13 @@ public class AvatarFileService {
      * @return CacheData object with file metadata
      * @throws IOException if file attributes cannot be read
      */
+    /**
+     * Gets cache metadata for a file, including last modified time, size, and MIME type.
+     *
+     * @param filePath The path to the file.
+     * @return CacheData object with file metadata.
+     * @throws IOException if file attributes cannot be read.
+     */
     public static CacheData getCacheData(Path filePath) throws IOException {
         return new CacheData(
                 Files.getLastModifiedTime(filePath).toMillis(),
@@ -204,11 +269,24 @@ public class AvatarFileService {
         );
     }
 
+    /**
+     * Data class representing cache metadata for a file, including last modified time, file size, and MIME type.
+     */
     public static class CacheData {
+        /** The last modified time of the file in milliseconds since epoch. */
         public final long lastModified;
+        /** The size of the file in bytes. */
         public final long fileSize;
+        /** The MIME type of the file. */
         public final String mimeType;
 
+        /**
+         * Constructs a CacheData object with the given metadata.
+         *
+         * @param lastModified The last modified time in milliseconds since epoch.
+         * @param fileSize     The size of the file in bytes.
+         * @param mimeType     The MIME type of the file.
+         */
         public CacheData(long lastModified, long fileSize, String mimeType) {
             this.lastModified = lastModified;
             this.fileSize = fileSize;

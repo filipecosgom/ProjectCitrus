@@ -30,8 +30,10 @@ import java.util.stream.Collectors;
 /**
  * Service class for managing course-related operations.
  * <p>
- * Provides functionality for course retrieval and filtering.
- * Handles business logic and validation rules.
+ * Provides functionality for course retrieval, creation, update, and filtering.
+ * Handles business logic and validation rules for courses, including duplicate checks and admin validation.
+ * Uses repositories for persistence and a mapper for DTO/entity conversion.
+ * </p>
  *
  * @Stateless Marks this class as a stateless EJB, making it eligible for dependency injection
  * and transaction management by the EJB container.
@@ -54,12 +56,20 @@ public class CourseService implements Serializable {
     /**
      * Retrieves courses with advanced filtering options.
      *
-     * @param area      Optional filter by course area
-     * @param language  Optional filter by course language
-     * @param adminName   Optional filter by admin name
-     * @param courseIsActive  Optional filter by active status
-     * @param limit     Maximum number of results
-     * @param offset    Starting position for pagination
+     * @param id Optional filter by course ID
+     * @param title Optional filter by course title
+     * @param duration Optional filter by course duration
+     * @param description Optional filter by course description
+     * @param area Optional filter by course area
+     * @param language Optional filter by course language
+     * @param adminName Optional filter by admin name
+     * @param courseIsActive Optional filter by active status
+     * @param parameter Optional filter by course parameter
+     * @param orderBy Optional ordering
+     * @param offset Starting position for pagination
+     * @param limit Maximum number of results
+     * @param excludeCompletedByUserId Exclude courses completed by this user
+     * @param excludeCourseIds Exclude these course IDs
      * @return Map containing filtered course DTOs and pagination info
      */
     public Map<String, Object> getCoursesWithFilters(
@@ -88,8 +98,10 @@ public class CourseService implements Serializable {
     }
 
     /**
-     * Creates a new course if the title and link do not already exist.
+     * Creates a new course if the title and link do not already exist and the admin user is valid.
+     *
      * @param dto the CourseNewDTO containing course data (must include adminId)
+     * @param adminId the ID of the admin user creating the course
      * @return CourseDTO if the course was created, null if a course with the same title or link exists or admin not found
      * @throws IllegalArgumentException with message "duplicateTitle" or "duplicateLink" if duplicate found
      */
@@ -122,8 +134,10 @@ public class CourseService implements Serializable {
 
     /**
      * Updates an existing course with new data.
+     *
      * @param dto the CourseUpdateDTO containing updated course data (must include course id)
-     * @return true if the course was updated, false if not found
+     * @return true if the course was updated, false if not found or invalid input
+     * @throws IllegalArgumentException with message "duplicateTitle" or "duplicateLink" if duplicate found
      */
     @Transactional
     public boolean updateCourse(CourseUpdateDTO dto) {
@@ -152,10 +166,21 @@ public class CourseService implements Serializable {
         return true;
     }
 
+    /**
+     * Counts all courses in the system.
+     *
+     * @return The total number of courses.
+     */
     public long countAllCourses() {
         return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, null, null, null);
     }
 
+    /**
+     * Counts all courses filtered by active status.
+     *
+     * @param active true to count only active courses, false for inactive
+     * @return The number of courses matching the active status.
+     */
     public long countCoursesByActive(boolean active) {
         return courseRepository.countCoursesWithFilters(null, null, null, null, null, null, null, active, null, null);
     }
