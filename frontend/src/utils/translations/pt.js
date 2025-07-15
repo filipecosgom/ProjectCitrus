@@ -34,7 +34,7 @@ const pt = {
 
   loginErrorEmailMissing: "O email é necessário",
   loginErrorEmailInvalid: "Formato de email inválido",
-  loginErrorPasswordMissing: "A palavra-passe é necessária",
+  loginErrorPasswordMissing: "A password é necessária",
   loginErrorAuthenticationCodeMissing: "O código 2FA é necessário",
   loginErrorAuthenticationCodeInvalid: "Código 2FA inválido",
   passwordResetRequestFailure:

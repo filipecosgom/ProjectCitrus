@@ -49,13 +49,17 @@ import handleNotification from "../../handles/handleNotification";
 import useLocaleStore from "../../stores/useLocaleStore";
 
 export default function Login() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, touchedFields, isSubmitted },
+    trigger,
   } = useForm();
+  useEffect(() => {
+    trigger();
+  }, [i18n.language, trigger]);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
@@ -63,7 +67,6 @@ export default function Login() {
   const user = useAuthStore((state) => state.user);
   const isUserAdmin = useAuthStore((state) => state.isUserAdmin());
   const isUserManager = useAuthStore((state) => state.isUserManager());
-  const locale = useLocaleStore((state) => state.locale); // Get current locale from store
 
   const onSubmit = async (loginData) => {
     const userData = {
@@ -115,9 +118,9 @@ export default function Login() {
                 <label className="login-label" htmlFor="login-email">
                   {t("loginFieldEmail")}
                 </label>
-                <span className="error-message">
-                  {errors.email ? errors.email.message : "\u00A0"}
-                </span>
+                {errors.email && isSubmitted && (
+                  <span className="error-message">{errors.email.message}</span>
+                )}
               </div>
 
               <input
@@ -138,9 +141,9 @@ export default function Login() {
                 <label className="login-label" htmlFor="login-password">
                   {t("loginFieldPassword")}
                 </label>
-                <span className="error-message">
-                  {errors.password ? errors.password.message : "\u00A0"}
-                </span>
+                {errors.password && isSubmitted && (
+                  <span className="error-message">{errors.password.message}</span>
+                )}
               </div>
 
               <div className="password-input-wrapper">
@@ -188,11 +191,9 @@ export default function Login() {
                 <label className="login-label" htmlFor="login-TwoFAuth">
                   {t("loginFieldTwoFAuth")}
                 </label>
-                <span className="error-message">
-                  {errors.authenticationCode
-                    ? errors.authenticationCode.message
-                    : "\u00A0"}
-                </span>
+                {errors.authenticationCode && isSubmitted && (
+                  <span className="error-message">{errors.authenticationCode.message}</span>
+                )}
               </div>
               <input
                 id="login-authenticationCode"

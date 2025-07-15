@@ -66,6 +66,7 @@ const Courses = () => {
 
   // NOVO: Função para abrir offcanvas
   const handleViewDetails = (course) => {
+    console.log("handleViewDetails called", course);
     setSelectedCourse(course);
     setOffcanvasOpen(true);
   };
@@ -221,6 +222,10 @@ const Courses = () => {
       )
     );
   };
+
+  useEffect(() => {
+    console.log("offcanvasOpen:", offcanvasOpen, "selectedCourse:", selectedCourse);
+  }, [offcanvasOpen, selectedCourse]);
 
   if (pageLoading) return <Spinner />;
 
