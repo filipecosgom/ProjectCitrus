@@ -205,6 +205,8 @@ const en = {
   profileErrorAddressStreetInvalid: "Street contains invalid characters",
   profileErrorAddressMunicipalityInvalid:
     "Municipality contains invalid characters",
+    profileErrorFirstNameTooLong: "First name must be at most 50 characters long",
+  profileErrorLastNameTooLong: "Last name must be at most 50 characters long",
 
   // Profile Tabs
   profileTabProfile: "Profile",
