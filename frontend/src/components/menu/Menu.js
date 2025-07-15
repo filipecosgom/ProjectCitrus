@@ -69,7 +69,7 @@ export default function Menu({
       icon: <TbLayoutDashboardFilled />,
       color: "#B61B23",
       route: "/dashboard",
-      adminOnly: false,
+      adminOnly: true, // <-- só admins!
       managerOnly: false,
     },
     {
