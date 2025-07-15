@@ -28,4 +28,16 @@ public class SettingsController {
                 .entity(new ApiResponse(false, "Failed to update 2FA", "error", null)).build();
         }
     }
+
+    @GET
+    @Path("/twofactor")
+    public Response getTwoFactorAuthStatus() {
+        Boolean enabled = settingsService.getTwoFactorAuthEnabled();
+        if (enabled != null) {
+            return Response.ok("{\"enabled\":" + enabled + "}").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("{\"message\":\"Configuração não encontrada\"}").build();
+        }
+    }
 }

@@ -17,4 +17,12 @@ public class SettingsService {
             return false;
         }
     }
+
+    public Boolean getTwoFactorAuthEnabled() {
+        try {
+            return configurationRepository.getLatestTwoFactorAuthEnabled();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
