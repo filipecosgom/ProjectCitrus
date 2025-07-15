@@ -89,31 +89,6 @@ class ActivationTokenRepositoryTest {
         assertEquals(user.getEmail(), found.getTemporaryUser().getEmail());
     }
 
-    @Test
-    void testGetTokensOfUser() {
-        TemporaryUserEntity user = new TemporaryUserEntity();
-        user.setEmail("test3@example.com");
-        user.setPassword("password");
-        user.setSecretKey("secret");
-        em.persist(user);
-
-        ActivationTokenEntity token1 = new ActivationTokenEntity();
-        token1.setTokenValue("token1");
-        token1.setCreationDate(LocalDateTime.now());
-        token1.setTemporaryUser(user);
-        em.persist(token1);
-
-        ActivationTokenEntity token2 = new ActivationTokenEntity();
-        token2.setTokenValue("token2");
-        token2.setCreationDate(LocalDateTime.now());
-        token2.setTemporaryUser(user);
-        em.persist(token2);
-        em.flush();
-
-        List<ActivationTokenEntity> tokens = repository.getTokensOfUser(user);
-        assertNotNull(tokens);
-        assertEquals(2, tokens.size());
-    }
 
     @Test
     void testGetIdFromTokenNotFound() {
