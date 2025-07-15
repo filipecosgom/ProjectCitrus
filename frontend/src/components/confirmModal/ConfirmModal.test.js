@@ -1,5 +1,21 @@
+// Mocks primeiro!
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key, fallback) => fallback || key,
+  }),
+}));
+jest.mock("react-icons/fa", () => ({
+  FaTimes: () => <span data-testid="icon-close" />,
+  FaExclamationTriangle: () => <span data-testid="icon-warning" />,
+}));
+
 import React from "react";
-import { render, screen, fireEvent, waitForElementToBeRemoved } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import ConfirmModal from "./ConfirmModal";
 
 describe("ConfirmModal", () => {
@@ -13,7 +29,13 @@ describe("ConfirmModal", () => {
 
   it("renders when open", () => {
     render(
-      <ConfirmModal isOpen={true} onClose={onClose} onConfirm={onConfirm} title="Test Title" message="Test Message" />
+      <ConfirmModal
+        isOpen={true}
+        onClose={onClose}
+        onConfirm={onConfirm}
+        title="Test Title"
+        message="Test Message"
+      />
     );
     expect(screen.getByText("Test Title")).toBeInTheDocument();
     expect(screen.getByText("Test Message")).toBeInTheDocument();
@@ -21,12 +43,22 @@ describe("ConfirmModal", () => {
 
   it("does not render when closed", async () => {
     const { rerender } = render(
-      <ConfirmModal isOpen={true} onClose={onClose} onConfirm={onConfirm} title="Test Title" />
+      <ConfirmModal
+        isOpen={true}
+        onClose={onClose}
+        onConfirm={onConfirm}
+        title="Test Title"
+      />
     );
     expect(screen.getByText("Test Title")).toBeInTheDocument();
 
     rerender(
-      <ConfirmModal isOpen={false} onClose={onClose} onConfirm={onConfirm} title="Test Title" />
+      <ConfirmModal
+        isOpen={false}
+        onClose={onClose}
+        onConfirm={onConfirm}
+        title="Test Title"
+      />
     );
 
     await waitForElementToBeRemoved(() => screen.queryByText("Test Title"));
@@ -36,7 +68,7 @@ describe("ConfirmModal", () => {
     render(
       <ConfirmModal isOpen={true} onClose={onClose} onConfirm={onConfirm} />
     );
-    const closeBtn = screen.getByRole("button", { name: "" });
+    const closeBtn = screen.getByTestId("icon-close");
     fireEvent.click(closeBtn);
     expect(onClose).toHaveBeenCalled();
   });
@@ -45,9 +77,9 @@ describe("ConfirmModal", () => {
     render(
       <ConfirmModal isOpen={true} onClose={onClose} onConfirm={onConfirm} />
     );
-    const confirmBtn = screen.getAllByRole("button").find(btn =>
-      btn.className.includes("confirm-modal-button-confirm")
-    );
+    const confirmBtn = screen
+      .getAllByRole("button")
+      .find((btn) => btn.className.includes("confirm-modal-button-confirm"));
     fireEvent.click(confirmBtn);
     expect(onConfirm).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();

@@ -212,6 +212,7 @@ const CycleDetailsOffcanvas = ({ isOpen, onClose, cycle }) => {
         isAnimating ? "open" : ""
       }`}
       onClick={handleBackdropClick}
+      data-testid="cycle-details-offcanvas-backdrop"
     >
       <div className={`cycle-details-offcanvas ${isAnimating ? "open" : ""}`}>
         <button className="cycle-details-offcanvas-close" onClick={onClose}>

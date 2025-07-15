@@ -192,16 +192,18 @@ export default function Header({ language, setLanguage }) {
           )}
         </div>
         <div className="header-icon-wrapper" ref={notificationRef}>
-          <FaRegBell
-            style={{ cursor: "pointer" }}
-            onClick={async () => {
-              if (!showNotifications && unreadOtherCount > 0) {
-                await handleMarkAllNotificationsAsRead();
-              }
-              setShowNotifications((v) => !v);
-              setShowMessages(false);
-            }}
-          />
+          <span data-testid="notification-bell">
+            <FaRegBell
+              style={{ cursor: "pointer" }}
+              onClick={async () => {
+                if (!showNotifications && unreadOtherCount > 0) {
+                  await handleMarkAllNotificationsAsRead();
+                }
+                setShowNotifications((v) => !v);
+                setShowMessages(false);
+              }}
+            />
+          </span>
           {unreadOtherCount > 0 && (
             <span className="header-badge">{unreadOtherCount}</span>
           )}
